@@ -89,7 +89,7 @@ The underscore character `_` (`U+005F`) is considered a letter.
 
 ```
 letter                   = unicode_letter | "_" .
-binary_digit             = "0" … "1" .
+binary_digit             = "0" | "1" .
 ternary_digit            = "0" … "2" .
 quaternary_digit         = "0" … "3" .
 quinary_digit            = "0" … "4" .
