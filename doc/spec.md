@@ -43,11 +43,10 @@ Lower-case production names are used to identify lexical tokens. Non-terminals
 are in CamelCase. Lexical tokens are enclosed in double quotes "" or back quotes
 \`\`.
 
-The form a … b represents the set of characters from a through b as
-alternatives. The horizontal ellipsis … is also used elsewhere in the spec to
+The form `a … b` represents the set of characters from `a` through `b` as
+alternatives. The horizontal ellipsis `…` is also used elsewhere in the spec to
 informally denote various enumerations or code snippets that are not further
-specified. The character … (as opposed to the three characters ...) is not a
-token of the Rufus language.
+specified. The character `…` is not a token of the Rufus language.
 
 ## Source code representation
 
@@ -61,12 +60,12 @@ Each code point is distinct; for instance, upper and lower case letters are
 different characters.
 
 Implementation restriction: For compatibility with other tools, a compiler may
-disallow the NUL character (U+0000) in the source text.
+disallow the `NUL` character (`U+0000`) in the source text.
 
 Implementation restriction: For compatibility with other tools, a compiler may
-ignore a UTF-8-encoded byte order mark (U+FEFF) if it is the first Unicode code
-point in the source text. A byte order mark may be disallowed anywhere else in
-the source.
+ignore a UTF-8-encoded byte order mark (`U+FEFF`) if it is the first Unicode
+code point in the source text. A byte order mark may be disallowed anywhere else
+in the source.
 
 ### Characters
 
@@ -81,12 +80,12 @@ unicode_digit  = /* a Unicode code point classified as "Number, decimal digit" *
 
 In [The Unicode Standard 8.0](http://www.unicode.org/versions/Unicode8.0.0/), Section 4.5 "General Category" defines a set
 of character categories. Rufus treats all characters in any of the Letter
-categories Lu, Ll, Lt, Lm, or Lo as Unicode letters, and those in the Number
-category Nd as Unicode digits.
+categories `Lu`, `Ll`, `Lt`, `Lm`, or `Lo` as Unicode letters, and those in the
+Number category `Nd` as Unicode digits.
 
 ### Letters and digits
 
-The underscore character _ (U+005F) is considered a letter.
+The underscore character `_` (`U+005F`) is considered a letter.
 
 ```
 letter                   = unicode_letter | "_" .
@@ -109,7 +108,7 @@ septendecimal_digit      = "0" … "9" | "A" … "G" | "a" … "g" .
 octodecimal_digit        = "0" … "9" | "A" … "H" | "a" … "h" .
 nonadecimal_digit        = "0" … "9" | "A" … "I" | "a" … "i" .
 vigesimal_digit          = "0" … "9" | "A" … "J" | "a" … "j" .
-unvigesimal_digit        = "0" … "9" | "A" … "K" | "a" … "k" .
+unvigenary_digit         = "0" … "9" | "A" … "K" | "a" … "k" .
 duovigesimal_digit       = "0" … "9" | "A" … "L" | "a" … "l" .
 trivigesimal_digit       = "0" … "9" | "A" … "M" | "a" … "m" .
 quattuorvigesimal_digit  = "0" … "9" | "A" … "N" | "a" … "n" .
@@ -119,7 +118,7 @@ septevigesimal_digit     = "0" … "9" | "A" … "Q" | "a" … "q" .
 octovigesimal_digit      = "0" … "9" | "A" … "R" | "a" … "r" .
 nonavigesimal_digit      = "0" … "9" | "A" … "S" | "a" … "s" .
 trigesimal_digit         = "0" … "9" | "A" … "T" | "a" … "t" .
-untrigesimal_digit       = "0" … "9" | "A" … "U" | "a" … "u" .
+untrigenary_digit        = "0" … "9" | "A" … "U" | "a" … "u" .
 duotrigesimal_digit      = "0" … "9" | "A" … "V" | "a" … "v" .
 tritrigesimal_digit      = "0" … "9" | "A" … "W" | "a" … "w" .
 quattuortrigesimal_digit = "0" … "9" | "A" … "X" | "a" … "x" .
@@ -137,8 +136,8 @@ Comments start with the character sequence `//` and stop at the end of the line.
 
 Tokens form the vocabulary of the Rufus language. There are four classes:
 identifiers, keywords, operators and punctuation, and literals. White space,
-formed from spaces (U+0020) and horizontal tabs (U+0009) is ignored except as it
-separates tokens that would otherwise combine into a single token. While
+formed from spaces (`U+0020`) and horizontal tabs (`U+0009`) is ignored except
+as it separates tokens that would otherwise combine into a single token. While
 breaking the input into tokens, the next token is the longest sequence of
 characters that form a valid token.
 
@@ -189,9 +188,9 @@ operators) and punctuation:
 ### Integer literals
 
 An integer literal is a sequence of digits representing an integer constant in
-base 10. An optional prefix can be used to specify the base in the range 2…36.
-In integer literals with a base greater than 10, letters starting at `a` and
-increasing monotonically from there represent values greater than 9.
+base 10. An optional prefix can be used to specify the base in the range 2
+through 36. In integer literals with a base greater than 10, letters starting at
+`a` and increasing monotonically from there represent values greater than 9.
 
 ```
 int_lit                 = binary_lit |
@@ -200,7 +199,7 @@ int_lit                 = binary_lit |
                           quinary_lit |
                           senary_lit |
                           septenary_lit |
-                          octoary_lit |
+                          octonary_lit |
                           nonary_lit |
                           decimal_lit |
                           undenary_lit |
@@ -213,31 +212,32 @@ int_lit                 = binary_lit |
                           octodecimal_lit |
                           nonadecimal_lit |
                           vigesimal_lit |
-                          unvigesimal_lit |
+                          unvigenary_lit |
                           duovigesimal_lit |
                           trivigesimal_lit |
                           quattuorvigesimal_lit |
                           quinvigesimal_lit |
-                          sexvigesimal_lit |
+                          sexavigesimal_lit |
                           septevigesimal_lit |
                           octovigesimal_lit |
                           nonavigesimal_lit |
                           trigesimal_lit |
-                          untrigesimal_lit |
+                          untrigenary_lit |
                           duotrigesimal_lit |
                           tritrigesimal_lit |
                           quattuortrigresimal_lit |
                           quintrigesimal_lit |
-                          sextrigesimal_lit .
+                          sexatrigesimal_lit .
 binary_lit              = "2#" binary_digit { binary_digit} .
 ternary_lit             = "3#" ternary_digit { ternary_digit} .
 quaternary_lit          = "4#" quaternary_digit { quaternary_digit} .
 quinary_lit             = "5#" quinary_digit { quinary_digit} .
 senary_lit              = "6#" senary_digit { senary_digit} .
 septenary_lit           = "7#" septenary_digit { septenary_digit} .
-octoary_lit             = "8#" octoary_digit { octoary_digit} .
+octonary_lit            = "8#" octonary_digit { octonary_digit} .
 nonary_lit              = "9#" nonary_digit { nonary_digit} .
-decimal_lit             = (( decimal_digit ) { decimal_digit }) | ("10#" ( decimal_digit ) { decimal_digit }) .
+decimal_lit             = "10#" decimal_digit { decimal_digit } |
+                           decimal_digit { decimal_digit } .
 undenary_lit            = "11#" undenary_digit { undenary_digit} .
 duodecimal_lit          = "12#" duodecimal_digit { duodecimal_digit} .
 tridecimal_lit          = "13#" tridecimal_digit { tridecimal_digit} .
@@ -248,27 +248,93 @@ septedecimal_lit        = "17#" septedecimal_digit { septedecimal_digit} .
 octodecimal_lit         = "18#" octodecimal_digit { octodecimal_digit} .
 nonadecimal_lit         = "19#" nonadecimal_digit { nonadecimal_digit} .
 vigesimal_lit           = "20#" vigesimal_digit { vigesimal_digit} .
-unvigesimal_lit         = "21#" unvigesimal_digit { unvigesimal_digit} .
+unvigenary_lit          = "21#" unvigenary_digit { unvigenary_digit} .
 duovigesimal_lit        = "22#" duovigesimal_digit { duovigesimal_digit} .
 trivigesimal_lit        = "23#" trivigesimal_digit { trivigesimal_digit} .
 quattuorvigesimal_lit   = "24#" quattuorvigesimal_digit { quattuorvigesimal_digit} .
 quinvigesimal_lit       = "25#" quinvigesimal_digit { quinvigesimal_digit} .
-sexvigesimal_lit        = "26#" sexvigesimal_digit { sexvigesimal_digit} .
+sexavigesimal_lit       = "26#" sexavigesimal_digit { sexavigesimal_digit} .
 septevigesimal_lit      = "27#" septevigesimal_digit { septevigesimal_digit} .
 octovigesimal_lit       = "28#" octovigesimal_digit { octovigesimal_digit} .
 nonavigesimal_lit       = "29#" nonavigesimal_digit { nonavigesimal_digit} .
 trigesimal_lit          = "30#" trigesimal_digit { trigesimal_digit} .
-untrigesimal_lit        = "31#" untrigesimal_digit { untrigesimal_digit} .
+untrigenary_lit         = "31#" untrigenary_digit { untrigenary_digit} .
 duotrigesimal_lit       = "32#" duotrigesimal_digit { duotrigesimal_digit} .
 tritrigesimal_lit       = "33#" tritrigesimal_digit { tritrigesimal_digit} .
 quattuortrigresimal_lit = "34#" quattuortrigresimal_digit { quattuortrigresimal_digit} .
 quintrigesimal_lit      = "35#" quintrigesimal_digit { quintrigesimal_digit} .
-sextrigesimal_lit       = "36#" sextrigesimal_digit { sextrigesimal_digit} .
+sexatrigesimal_lit      = "36#" sexatrigesimal_digit { sexatrigesimal_digit} .
 ```
 ```
 000003
 42
 8#60
-29#TheRufusProgrammingLanguage
+31#TheRufusProgrammingLanguage
 170141183460469231731687303715884105727
+```
+
+### Floating-point literals
+
+A floating-point literal is a decimal representation of a floating-point
+constant. It has an integer part, a decimal point, a fractional part, and an
+exponent part. The integer and fractional part comprise decimal digits; the
+exponent part is an `e` or `E` followed by an optionally signed decimal
+exponent. One of the integer part or the fractional part may be elided; one of
+the decimal point or the exponent may be elided.
+
+```
+float_lit = decimals "." [ decimals ] [ exponent ] |
+            decimals exponent |
+            "." decimals [ exponent ] .
+decimals  = decimal_digit { decimal_digit } .
+exponent  = ( "e" | "E" ) [ "+" | "-" ] decimals .
+```
+```
+0.
+72.40
+072.40
+2.71828
+1.e+0
+6.67428e-11
+1E6
+.25
+.12345E+5
+```
+
+### String literals
+
+A string literal represents a string constant obtained from concatenating a
+sequence of characters. String literals are character sequences between double
+quotes, as in `"bar"`. Within the quotes, any character may appear except
+newline and unescaped double quote. The text between the quotes forms the value
+of the literal, with backslash escapes interpreted as they are in rune literals
+(except that `\'` is illegal and `\"` is legal), with the same restrictions. The
+three-digit octal (`\nnn`) and two-digit hexadecimal (`\xnn`) escapes represent
+individual bytes of the resulting string; all other escapes represent the
+(possibly multi-byte) UTF-8 encoding of individual characters. Thus inside a
+string literal `\377` and `\xFF` represent a single byte of value `0xFF=255`,
+while `ÿ`, `\u00FF`, `\U000000FF` and `\xc3\xbf` represent the two bytes `0xc3
+0xbf` of the UTF-8 encoding of character `U+00FF`.
+
+```
+string_lit = `"` { unicode_value | byte_value } `"` .
+```
+```
+"\n"
+"\""
+"Hello, world!\n"
+"日本語"
+"\u65e5本\U00008a9e"
+"\xff\u00FF"
+"\uD800"             // illegal: surrogate half
+"\U00110000"         // illegal: invalid Unicode code point
+```
+
+These examples all represent the same string:
+
+```
+"日本語"                                 // UTF-8 input text
+"\u65e5\u672c\u8a9e"                    // the explicit Unicode code points
+"\U000065e5\U0000672c\U00008a9e"        // the explicit Unicode code points
+"\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e"  // the explicit UTF-8 bytes
 ```
