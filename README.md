@@ -2,6 +2,7 @@ A programming language for the BEAM.
 
 ## Design goals
 
+- Approachable and teachable.
 - Encourage a consistent programming style.
 - Scale up to support many people working on very large software projects.
 - Scale down to support small experiments.
@@ -18,20 +19,20 @@ Only single-line comments that start with `//`.
 
 ## Primitive types
 
+- Symbols of type `atom`
+  - `:value`
 - Booleans of type `bool`
   - `true`
   - `false`
-- Numbers of type `int`
-  - `value` in base 10.
-  - `base#value` for integers with the base base, that must be an integer in the
-    range 2..36.
 - Numbers of type `float`
   - `2.3`
   - `2.3e2`
   - `2.4e-2`
-- Symbols of type `symbol`
-  - `:value`
-- Strings of type `string`
+- Numbers of type `int`
+  - `value` in base 10.
+  - `base#value` for integers with the base base, that must be an integer in the
+    range 2..36.
+- Strings of type `unicode`
   - Always encoded in UTF-8
   - `"value"`
 - Bitstrings and binaries of type `binary`

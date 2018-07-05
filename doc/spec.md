@@ -88,42 +88,10 @@ Number category `Nd` as Unicode digits.
 The underscore character `_` (`U+005F`) is considered a letter.
 
 ```
-letter                   = unicode_letter | "_" .
-binary_digit             = "0" | "1" .
-ternary_digit            = "0" … "2" .
-quaternary_digit         = "0" … "3" .
-quinary_digit            = "0" … "4" .
-senary_digit             = "0" … "5" .
-septenary_digit          = "0" … "6" .
-octonary_digit           = "0" … "7" .
-nonary_digit             = "0" … "8" .
-decimal_digit            = "0" … "9" .
-undenary_digit           = "0" … "9" | "A" | "a" .
-duodecimal_digit         = "0" … "9" | "A" … "B" | "a" … "b" .
-tridecimal_digit         = "0" … "9" | "A" … "C" | "a" … "c" .
-quattuordecimal_digit    = "0" … "9" | "A" … "D" | "a" … "d" .
-quindecimal_digit        = "0" … "9" | "A" … "E" | "a" … "e" .
-sexadecimal_digit        = "0" … "9" | "A" … "F" | "a" … "f" .
-septendecimal_digit      = "0" … "9" | "A" … "G" | "a" … "g" .
-octodecimal_digit        = "0" … "9" | "A" … "H" | "a" … "h" .
-nonadecimal_digit        = "0" … "9" | "A" … "I" | "a" … "i" .
-vigesimal_digit          = "0" … "9" | "A" … "J" | "a" … "j" .
-unvigenary_digit         = "0" … "9" | "A" … "K" | "a" … "k" .
-duovigesimal_digit       = "0" … "9" | "A" … "L" | "a" … "l" .
-trivigesimal_digit       = "0" … "9" | "A" … "M" | "a" … "m" .
-quattuorvigesimal_digit  = "0" … "9" | "A" … "N" | "a" … "n" .
-quinvigesimal_digit      = "0" … "9" | "A" … "O" | "a" … "o" .
-sexavigesimal_digit      = "0" … "9" | "A" … "P" | "a" … "p" .
-septevigesimal_digit     = "0" … "9" | "A" … "Q" | "a" … "q" .
-octovigesimal_digit      = "0" … "9" | "A" … "R" | "a" … "r" .
-nonavigesimal_digit      = "0" … "9" | "A" … "S" | "a" … "s" .
-trigesimal_digit         = "0" … "9" | "A" … "T" | "a" … "t" .
-untrigenary_digit        = "0" … "9" | "A" … "U" | "a" … "u" .
-duotrigesimal_digit      = "0" … "9" | "A" … "V" | "a" … "v" .
-tritrigesimal_digit      = "0" … "9" | "A" … "W" | "a" … "w" .
-quattuortrigesimal_digit = "0" … "9" | "A" … "X" | "a" … "x" .
-quintrigesimal_digit     = "0" … "9" | "A" … "Y" | "a" … "y" .
-sexatrigesimal_digit     = "0" … "9" | "A" … "Z" | "a" … "z" .
+letter        = unicode_letter | "_" .
+decimal_digit = "0" … "9" .
+octal_digit   = "0" … "7" .
+hex_digit     = "0" … "9" | "A" … "F" | "a" … "f" .```
 ```
 
 ## Lexical elements
@@ -187,89 +155,21 @@ operators) and punctuation:
 
 ### Integer literals
 
-An integer literal is a sequence of digits representing an integer constant in
-base 10. An optional prefix can be used to specify the base in the range 2
-through 36. In integer literals with a base greater than 10, letters starting at
-`a` and increasing monotonically from there represent values greater than 9.
+An integer literal is a sequence of digits representing an integer constant. An
+optional prefix sets a non-decimal base: `0` for octal, `0x` or `0X` for
+hexadecimal. In hexadecimal literals, letters `a-f` and `A-F` represent values
+10 through 15.
 
 ```
-int_lit                 = binary_lit |
-                          ternary_lit |
-                          quaternary_lit |
-                          quinary_lit |
-                          senary_lit |
-                          septenary_lit |
-                          octonary_lit |
-                          nonary_lit |
-                          decimal_lit |
-                          undenary_lit |
-                          duodecimal_lit |
-                          tridecimal_lit |
-                          quattuordecimal_lit |
-                          quindecimal_lit |
-                          sexadecimal_lit |
-                          septedecimal_lit |
-                          octodecimal_lit |
-                          nonadecimal_lit |
-                          vigesimal_lit |
-                          unvigenary_lit |
-                          duovigesimal_lit |
-                          trivigesimal_lit |
-                          quattuorvigesimal_lit |
-                          quinvigesimal_lit |
-                          sexavigesimal_lit |
-                          septevigesimal_lit |
-                          octovigesimal_lit |
-                          nonavigesimal_lit |
-                          trigesimal_lit |
-                          untrigenary_lit |
-                          duotrigesimal_lit |
-                          tritrigesimal_lit |
-                          quattuortrigresimal_lit |
-                          quintrigesimal_lit |
-                          sexatrigesimal_lit .
-binary_lit              = "2#" binary_digit { binary_digit} .
-ternary_lit             = "3#" ternary_digit { ternary_digit} .
-quaternary_lit          = "4#" quaternary_digit { quaternary_digit} .
-quinary_lit             = "5#" quinary_digit { quinary_digit} .
-senary_lit              = "6#" senary_digit { senary_digit} .
-septenary_lit           = "7#" septenary_digit { septenary_digit} .
-octonary_lit            = "8#" octonary_digit { octonary_digit} .
-nonary_lit              = "9#" nonary_digit { nonary_digit} .
-decimal_lit             = "10#" decimal_digit { decimal_digit } |
-                           decimal_digit { decimal_digit } .
-undenary_lit            = "11#" undenary_digit { undenary_digit} .
-duodecimal_lit          = "12#" duodecimal_digit { duodecimal_digit} .
-tridecimal_lit          = "13#" tridecimal_digit { tridecimal_digit} .
-quattuordecimal_lit     = "14#" quattuordecimal_digit { quattuordecimal_digit} .
-quindecimal_lit         = "15#" quindecimal_digit { quindecimal_digit} .
-sexadecimal_lit         = "16#" sexadecimal_digit { sexadecimal_digit} .
-septedecimal_lit        = "17#" septedecimal_digit { septedecimal_digit} .
-octodecimal_lit         = "18#" octodecimal_digit { octodecimal_digit} .
-nonadecimal_lit         = "19#" nonadecimal_digit { nonadecimal_digit} .
-vigesimal_lit           = "20#" vigesimal_digit { vigesimal_digit} .
-unvigenary_lit          = "21#" unvigenary_digit { unvigenary_digit} .
-duovigesimal_lit        = "22#" duovigesimal_digit { duovigesimal_digit} .
-trivigesimal_lit        = "23#" trivigesimal_digit { trivigesimal_digit} .
-quattuorvigesimal_lit   = "24#" quattuorvigesimal_digit { quattuorvigesimal_digit} .
-quinvigesimal_lit       = "25#" quinvigesimal_digit { quinvigesimal_digit} .
-sexavigesimal_lit       = "26#" sexavigesimal_digit { sexavigesimal_digit} .
-septevigesimal_lit      = "27#" septevigesimal_digit { septevigesimal_digit} .
-octovigesimal_lit       = "28#" octovigesimal_digit { octovigesimal_digit} .
-nonavigesimal_lit       = "29#" nonavigesimal_digit { nonavigesimal_digit} .
-trigesimal_lit          = "30#" trigesimal_digit { trigesimal_digit} .
-untrigenary_lit         = "31#" untrigenary_digit { untrigenary_digit} .
-duotrigesimal_lit       = "32#" duotrigesimal_digit { duotrigesimal_digit} .
-tritrigesimal_lit       = "33#" tritrigesimal_digit { tritrigesimal_digit} .
-quattuortrigresimal_lit = "34#" quattuortrigresimal_digit { quattuortrigresimal_digit} .
-quintrigesimal_lit      = "35#" quintrigesimal_digit { quintrigesimal_digit} .
-sexatrigesimal_lit      = "36#" sexatrigesimal_digit { sexatrigesimal_digit} .
+int_lit     = decimal_lit | octal_lit | hex_lit .
+decimal_lit = ( "1" … "9" ) { decimal_digit } .
+octal_lit   = "0" { octal_digit } .
+hex_lit     = "0" ( "x" | "X" ) hex_digit { hex_digit } .
 ```
 ```
-000003
 42
-8#60
-31#TheRufusProgrammingLanguage
+0600
+0xBadFace
 170141183460469231731687303715884105727
 ```
 
@@ -299,6 +199,85 @@ exponent  = ( "e" | "E" ) [ "+" | "-" ] decimals .
 1E6
 .25
 .12345E+5
+```
+
+### Rune literals
+
+A rune literal represents a rune constant, an integer value identifying a
+Unicode code point. A rune literal is expressed as one or more characters
+enclosed in single quotes, as in `'x'` or `'\n'`. Within the quotes, any
+character may appear except newline and unescaped single quote. A single quoted
+character represents the Unicode value of the character itself, while
+multi-character sequences beginning with a backslash encode values in various
+formats.
+
+The simplest form represents the single character within the quotes; since Rufus
+source text is Unicode characters encoded in UTF-8, multiple UTF-8-encoded bytes
+may represent a single integer value. For instance, the literal `'a'` holds a
+single byte representing a literal `a`, Unicode `U+0061`, value `0x61`, while
+`'ä'` holds two bytes (`0xc3` `0xa4`) representing a literal `a`-dieresis,
+`U+00E4`, value `0xe4`.
+
+Several backslash escapes allow arbitrary values to be encoded as ASCII text.
+There are four ways to represent the integer value as a numeric constant: `\x`
+followed by exactly two hexadecimal digits; `\u` followed by exactly four
+hexadecimal digits; `\U` followed by exactly eight hexadecimal digits, and a
+plain backslash `\` followed by exactly three octal digits. In each case the
+value of the literal is the value represented by the digits in the corresponding
+base.
+
+Although these representations all result in an integer, they have different
+valid ranges. Octal escapes must represent a value between `0` and `255`
+inclusive. Hexadecimal escapes satisfy this condition by construction. The
+escapes `\u` and `\U` represent Unicode code points so within them some values
+are illegal, in particular those above `0x10FFFF` and surrogate halves.
+
+After a backslash, certain single-character escapes represent special values:
+
+```
+\a   U+0007 alert or bell
+\b   U+0008 backspace
+\f   U+000C form feed
+\n   U+000A line feed or newline
+\r   U+000D carriage return
+\t   U+0009 horizontal tab
+\v   U+000b vertical tab
+\\   U+005c backslash
+\'   U+0027 single quote  (valid escape only within rune literals)
+\"   U+0022 double quote  (valid escape only within string literals)
+```
+
+All other sequences starting with a backslash are illegal inside rune literals.
+
+```
+rune_lit         = "'" ( unicode_value | byte_value ) "'" .
+unicode_value    = unicode_char | little_u_value | big_u_value | escaped_char .
+byte_value       = octal_byte_value | hex_byte_value .
+octal_byte_value = `\` octal_digit octal_digit octal_digit .
+hex_byte_value   = `\` "x" hex_digit hex_digit .
+little_u_value   = `\` "u" hex_digit hex_digit hex_digit hex_digit .
+big_u_value      = `\` "U" hex_digit hex_digit hex_digit hex_digit
+                           hex_digit hex_digit hex_digit hex_digit .
+escaped_char     = `\` ( "a" | "b" | "f" | "n" | "r" | "t" | "v" | `\` | "'" | `"` ) .
+```
+```
+'a'
+'ä'
+'本'
+'\t'
+'\000'
+'\007'
+'\377'
+'\x07'
+'\xff'
+'\u12e4'
+'\U00101234'
+'\''         // rune literal containing single quote character
+'aa'         // illegal: too many characters
+'\xa'        // illegal: too few hexadecimal digits
+'\0'         // illegal: too few octal digits
+'\uDFFF'     // illegal: surrogate half
+'\U00110000' // illegal: invalid Unicode code point
 ```
 
 ### String literals
@@ -338,3 +317,279 @@ These examples all represent the same string:
 "\U000065e5\U0000672c\U00008a9e"        // the explicit Unicode code points
 "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e"  // the explicit UTF-8 bytes
 ```
+
+## Types
+
+### List types
+
+A list is an ordered sequence of elements of a single type, called the element
+type. A list is either an empty list or consists of a head element and tail
+(remainder of the list). The tail is also a list of the same type.
+
+```
+ListType = "[" "]" ElementType .
+```
+```
+[]unicode
+[][]int
+```
+
+Lists are always one-dimensional but may be composed to construct
+higher-dimensional objects.
+
+### Function types
+
+A function type denotes the set of all functions with the same parameter and
+result types.
+
+```
+FunctionType   = "func" Signature .
+Signature      = Parameters [ Result ] .
+Result         = Type .
+Parameters     = "(" [ ParameterList [ "," ] ] ")" .
+ParameterList  = ParameterDecl { "," ParameterDecl } .
+ParameterDecl  = [ IdentifierList ] Type .
+```
+
+Within a list of parameters or results, the names (`IdentifierList`) must either
+all be present or all be absent. If present, each name stands for one item
+(parameter or result) of the specified type and all non-blank names in the
+signature must be unique. If absent, each type stands for one item of that type.
+Parameter and result lists are always parenthesized except that if there is
+exactly one unnamed result it may be written as an unparenthesized type.
+
+The final incoming parameter in a function signature may have a type prefixed
+with `...`. A function with such a parameter is called variadic and may be
+invoked with zero or more arguments for that parameter.
+
+```
+func()
+func(x int) int
+func(a, _ int, z float) bool
+func(a, b int, z float) (bool)
+func(prefix unicode)
+func(int, int, float) (float, []int)
+func(n int) func(p T)
+```
+
+## Declarations and scope
+
+A *declaration* binds a non-blank identifier to a constant, type, variable,
+function, label, or package. Every identifier in a program must be declared. No
+identifier may be declared twice in the same block, and no identifier may be
+declared in both the file and package block.
+
+The blank identifier may be used like any other identifier in a declaration, but
+it does not introduce a binding and thus is not declared.
+
+```
+Declaration   = ConstDecl | TypeDecl .
+TopLevelDecl  = Declaration | FunctionDecl .
+```
+
+The scope of a declared identifier is the extent of source text in which the
+identifier denotes the specified constant, type, variable, function, label, or
+package.
+
+Rufus is lexically scoped using blocks:
+
+1. The scope of a predeclared identifier is the universe block.
+2. The scope of an identifier denoting a constant, type, variable, or function
+   declared at top level (outside any function) is the package block.
+3. The scope of the package name of an imported package is the file block of the
+   file containing the import declaration.
+4. The scope of an identifier denoting a function parameter, or result variable
+   is the function body.
+5. The scope of a constant or variable identifier declared inside a function
+   begins at the end of the ConstSpec or VarSpec (ShortVarDecl for short
+   variable declarations) and ends at the end of the innermost containing block.
+6. The scope of a type identifier declared inside a function begins at the
+   identifier in the TypeSpec and ends at the end of the innermost containing
+   block.
+
+An identifier declared in a block may be redeclared in an inner block. While the
+identifier of the inner declaration is in scope, it denotes the entity declared
+by the inner declaration.
+
+The package clause is not a declaration; the package name does not appear in any
+scope. Its purpose is to identify the files belonging to the same package and to
+specify the default package name for import declarations.
+
+### Blank identifier
+
+The *blank identifier* is represented by the underscore character `_`. It serves
+as an anonymous placeholder instead of a regular (non-blank) identifier and has
+special meaning in declarations, as an operand, and in assignments.
+
+### Predeclared identifiers
+
+The following identifiers are implicitly declared in the universe block:
+
+```
+Types:
+	atom bool binary float int rune unicode
+
+Constants:
+	true false
+
+Functions:
+    len
+```
+
+## Expressions
+
+An expression specifies the computation of a value by applying operators and
+functions to operands.
+
+### Operands
+
+Operands denote the elementary values in an expression. An operand may be a
+literal, a (possibly qualified) non-blank identifier denoting a constant,
+variable, or function, or a parenthesized expression.
+
+The blank identifier may appear as an operand only on the left-hand side of an
+assignment.
+
+```
+Operand     = Literal | OperandName | "(" Expression ")" .
+Literal     = BasicLit | CompositeLit | FunctionLit .
+BasicLit    = int_lit | float_lit | imaginary_lit | rune_lit | string_lit .
+OperandName = identifier | QualifiedIdent.
+```
+
+### Qualified operators
+
+A qualified identifier is an identifier qualified with a package name prefix.
+Both the package name and the identifier must not be blank.
+
+```
+QualifiedIdent = PackageName "." identifier .
+```
+
+A qualified identifier accesses an identifier in a different package, which must
+be imported. The identifier must be exported and declared in the package block
+of that package.
+
+```
+math.Sin // denotes the Sin function in package math
+```
+
+### Composite literals
+
+Composite literals construct values for lists, maps, structs, and tuples and
+create a new value each time they are evaluated. They consist of the type of the
+literal followed by a brace-bound list of elements. Each element may optionally
+be preceded by a corresponding key.
+
+```
+CompositeLit  = LiteralType LiteralValue .
+LiteralType   = ListType | "[" "..." "]" ElementType | MapType | StructType |
+                TupleType | TypeName .
+LiteralValue  = "{" [ ElementList [ "," ] ] "}" .
+ElementList   = KeyedElement { "," KeyedElement } .
+KeyedElement  = [ Key ":" ] Element .
+Key           = FieldName | Expression | LiteralValue .
+FieldName     = identifier .
+Element       = Expression | LiteralValue .
+```
+
+The LiteralType's underlying type must be a list, map, struct or tuple type (the
+grammar enforces this constraint except when the type is given as a TypeName).
+The types of the elements and keys must be assignable to the respective field,
+element, and key types of the literal type; there is no additional conversion.
+The key is interpreted as a field name for struct literals, an index for array
+and slice literals, and a key for map literals. For map literals, all elements
+must have a key. It is an error to specify multiple elements with the same field
+name or constant key value. For non-constant map keys, see the section on
+evaluation order.
+
+For struct literals the following rules apply:
+
+- A key must be a field name declared in the struct type.
+- An element list must contain a keys for each struct field.
+- It is an error to specify an element for a non-exported field of a struct
+  belonging to a different package.
+
+Given the declarations
+
+```
+type Point struct { x, y float }
+type Line struct { p, q Point }
+```
+
+one may write
+
+```
+origin := Point{x: 1.1, y: -4.2}
+line := Line{origin, Point{x: 5.6, y: -0.3}}
+```
+
+A list literal describes the entire underlying sequence. A list literal has the
+form
+
+```
+[]T{x1, x2, … xn}
+```
+
+Within a composite literal of list, map, or tuple type T, elements or map keys
+that are themselves composite literals may elide the respective literal type if
+it is identical to the element or key type of T.
+
+```
+[][]int{{1, 2, 3}, {4, 5}}           // same as [][]int{[]int{1, 2, 3}, []int{4, 5}}
+[][]Point{{{0, 1}, {1, 2}}}          // same as [][]Point{[]Point{Point{0, 1}, Point{1, 2}}}
+map[unicode]Point{"orig": {0, 0}}    // same as map[unicode]Point{"orig": Point{0, 0}}
+map[Point]unicode{{0, 0}: "orig"}    // same as map[Point]unicode{Point{0, 0}: "orig"}
+tuple[unicode, Point]{"orig", {0, 0} // same as tuple[unicode, Point]{"orig", Point{0,0}}
+```
+
+A parsing ambiguity arises when a composite literal using the TypeName form of
+the LiteralType appears as an operand between the keyword and the opening brace
+of the block of an "if", "for", or "switch" statement, and the composite literal
+is not enclosed in parentheses, square brackets, or curly braces. In this rare
+case, the opening brace of the literal is erroneously parsed as the one
+introducing the block of statements. To resolve the ambiguity, the composite
+literal must appear within parentheses.
+
+```
+if x == (T{a,b,c}[i]) { … }
+if (x == T{a,b,c}[i]) { … }
+```
+
+Examples of valid list, map, and tuple literals:
+
+```
+// list of prime numbers
+primes := []int{2, 3, 5, 7, 9, 2147483647}
+
+// frequencies in Hz for equal-tempered scale (A4 = 440Hz)
+noteFrequency := map[string]float{
+    "C0": 16.35,"D0": 18.35, "E0": 20.60, "F0": 21.83,
+    "G0": 24.50, "A0": 27.50, "B0": 30.87,
+
+// tuple of RGB color codes
+purple := tuple[int, int, int]{58, 21, 168}
+```
+
+### Function literals
+
+A function literal represents an anonymous function.
+
+```
+FunctionLit = "func" Signature FunctionBody .
+```
+```
+func(a, b int, z float) bool { return a*b < int(z) }
+```
+
+A function literal can be assigned to a variable or invoked directly.
+
+```
+f := func(x, y int) int { x + y }
+func(s unicode) { string:reverse(s) }("noon")
+```
+
+Function literals are closures: they may refer to variables defined in a
+surrounding function. Those variables are then shared between the surrounding
+function and the function literal, and they survive as long as they are
+accessible.
