@@ -15,6 +15,34 @@ License](https://creativecommons.org/licenses/by/3.0/).
 This specification is licensed under the [Creative Commons 3.0 Attribution
 License](https://creativecommons.org/licenses/by/3.0/).
 
+## Table of contents
+
+* [Notation](#notation)
+* [Source code representation](#source-code-representation)
+  * [Characters](#characters)
+  * [Letters and digits](#letters-and-digits)
+* [Lexical elements](#lexical-elements)
+  * [Comments](#comments)
+  * [Tokens](#tokens)
+  * [Identifiers](#identifiers)
+  * [Keywords](#keywords)
+  * [Operators and punctuation](#operators-and-punctuation)
+  * [Integer literals](#integer-literals)
+  * [Floating-point literals](#floating-point-literals)
+  * [Rune literals](#rune-literals)
+  * [String literals](#string-literals)
+* [Types](#types)
+  * [List types](#list-types)
+  * [Function types](#function-types)
+* [Declarations and scope](#declarations-and-scope)
+  * [Blank identifier](#blank-identifier)
+  * [Predeclared identifiers](#predeclared-identifiers)
+* [Expressions](#expressions)
+  * [Operands](#operands)
+  * [Qualified operators](#qualified-operators)
+  * [Composite literals](#composite-literals)
+  * [Function literals](#function-literals)
+
 ## Notation
 
 The syntax is specified using Extended Backus-Naur Form (EBNF):
