@@ -1,4 +1,4 @@
--module(rfc).
+-module(rfc_parser).
 
 %% API exports
 -export([
@@ -11,8 +11,8 @@
 %%====================================================================
 
 parse_string(String) ->
-    {ok, Tokens, _EndLine} = rfc_grammar:string(String),
-    {ok, Spec} = rfc_parser:parse(Tokens),
+    {ok, Tokens, _EndLine} = rfc_leex:string(String),
+    {ok, Spec} = rfc_yecc:parse(Tokens),
     Spec.
 
 matches({predicate,{var,Var},Comparator,Critereon}, Props) ->
