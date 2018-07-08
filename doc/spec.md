@@ -34,14 +34,21 @@ License](https://creativecommons.org/licenses/by/3.0/).
 * [Types](#types)
   * [List types](#list-types)
   * [Function types](#function-types)
+* [Blocks](#blocks)
 * [Declarations and scope](#declarations-and-scope)
   * [Blank identifier](#blank-identifier)
   * [Predeclared identifiers](#predeclared-identifiers)
+  * [Exported identifiers](#exported-identifiers)
 * [Expressions](#expressions)
   * [Operands](#operands)
   * [Qualified operators](#qualified-operators)
   * [Composite literals](#composite-literals)
   * [Function literals](#function-literals)
+* [Packages](#packages)
+  * [Source file organization](#source-file-organization)
+  * [Package clause](#package-clause)
+  * [Import declarations](#import-declarations)
+  * [An example package](#an-example-package)
 
 ## Notation
 
@@ -400,6 +407,28 @@ func(int, int, float) (float, []int)
 func(n int) func(p T)
 ```
 
+## Blocks
+
+A *block* is a possibly empty sequence of declarations and statements within
+matching brace brackets.
+
+```
+Block = "{" StatementList "}" .
+StatementList = { Statement ";" } .
+```
+
+In addition to explicit blocks in the source code, there are implicit blocks:
+
+1. The universe block encompasses all Rufus source text.
+2. Each package has a *package block* containing all Rufus source text for that
+   package.
+3. Each file has a *file block* containing all Rufus source text in that file.
+4. Each "if", "for", and "match" statement is considered to be in its own
+   implicit block.
+5. Each clause in a "match" statement acts as an implicit block.
+
+Blocks nest and influence scoping.
+
 ## Declarations and scope
 
 A *declaration* binds a non-blank identifier to a constant, type, variable,
@@ -463,6 +492,18 @@ Constants:
 Functions:
     len
 ```
+
+### Exported identifiers
+
+An identifier may be *exported* to permit access to it from another package. An
+identifier is exported if both:
+
+1. the first character of the identifier's name is a Unicode upper case letter
+   (Unicode class "Lu");
+2. and the identifier is declared in the package block or it is a field name or
+   method name.
+
+All other identifiers are not exported.
 
 ## Expressions
 
@@ -621,3 +662,113 @@ Function literals are closures: they may refer to variables defined in a
 surrounding function. Those variables are then shared between the surrounding
 function and the function literal, and they survive as long as they are
 accessible.
+
+## Packages
+
+Rufus programs are constructed by linking together packages. A package in turn
+is constructed from one or more source files that together declare constants,
+types, and functions belonging to the package and which are accessible in all
+files of the same package. Those elements may be exported and used in another
+package.
+
+### Source file organization
+
+Each source file consists of a package clause defining the package to which it
+belongs, followed by a possibly empty set of import declarations that declare
+packages whose contents it wishes to use, followed by a possibly empty set of
+declarations of constants, types, and functions.
+
+```
+SourceFile       = PackageClause ";" { ImportDecl ";" } { TopLevelDecl ";" } .
+```
+
+### Package clause
+
+A package clause begins each source file and defines the package to which the
+file belongs.
+
+```
+PackageClause  = "package" PackageName .
+PackageName    = identifier .
+``
+
+The PackageName must not be the blank identifier.
+
+``
+package math
+```
+
+A set of files sharing the same PackageName form the implementation of a
+package. An implementation may require that all source files for a package
+inhabit the same directory.
+
+### Import declarations
+
+An import declaration states that the source file containing the declaration
+depends on functionality of the _imported_ package and enables access to
+exported identifiers of that package. The import names an identifier
+(PackageName) to be used for access and an ImportPath that specifies the package
+to be imported.
+
+```
+ImportDecl       = "import" ( ImportSpec | "(" { ImportSpec ";" } ")" ) .
+ImportSpec       = [ "." | PackageName ] ImportPath .
+ImportPath       = string_lit .
+```
+
+The PackageName is used in qualified identifiers to access exported identifiers
+of the package within the importing source file. It is declared in the file
+block. If the PackageName is omitted, it defaults to the identifier specified in
+the package clause of the imported package. If an explicit period (`.`) appears
+instead of a name, all the package's exported identifiers declared in that
+package's package block will be declared in the importing source file's file
+block and must be accessed without a qualifier.
+
+The interpretation of the ImportPath is implementation-dependent but it is
+typically a substring of the full file name of the compiled package and may be
+relative to a repository of installed packages.
+
+Implementation restriction: A compiler may restrict ImportPaths to non-empty
+strings using only characters belonging to Unicode's L, M, N, P, and S general
+categories (the Graphic characters without spaces) and may also exclude the
+characters `!"#$%&'()*,:;<=>?[\]^`{|}` and the Unicode replacement character
+`U+FFFD`.
+
+Assume we have compiled a package containing the package clause package math,
+which exports function `Sin`, and installed the compiled package in the file
+identified by "`lib/math`". This table illustrates how `Sin` is accessed in
+files that import the package after the various types of import declaration.
+
+```
+Import declaration          Local name of Sin
+
+import   "lib/math"         math.Sin
+import m "lib/math"         m.Sin
+```
+
+An import declaration declares a dependency relation between the importing and
+imported package. It is illegal for a package to import itself, directly or
+indirectly, or to directly import a package without referring to any of its
+exported identifiers.
+
+### An example package
+
+Here is a complete Rufus package that implements a prime sieve.
+
+```
+package main
+
+import "std/lists"
+
+sieve([] []int) []int {
+    []
+}
+sieve([h|t] []int) []int {
+    list = lists.Filter(func(n int) { n % h != 0 }, t)
+    [h|sieve(list)]
+}
+
+main() {
+    sieve(lists.Seq(2, 30))
+}
+```
