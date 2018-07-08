@@ -690,11 +690,11 @@ file belongs.
 ```
 PackageClause  = "package" PackageName .
 PackageName    = identifier .
-``
+```
 
-The PackageName must not be the blank identifier.
+The PackageName must not be the [blank identifier](#blank-identifier).
 
-``
+```
 package math
 ```
 
@@ -764,7 +764,7 @@ sieve([] []int) []int {
     []
 }
 sieve([h|t] []int) []int {
-    list = lists.Filter(func(n int) { n % h != 0 }, t)
+    list = lists.Filter(func(n int) bool { n % h != 0 }, t)
     [h|sieve(list)]
 }
 
