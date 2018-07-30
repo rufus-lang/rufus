@@ -7,8 +7,8 @@ float_test() ->
     [
      {const, 1, "const"},
      {identifier, 1, "Float"},
-     {match, 1, "="},
-     {float_lit, 1, "3.1415"}
+     {'=', 1},
+     {float_lit, 1, 3.1415}
     ] = Tokens.
 
 negative_float_test() ->
@@ -16,8 +16,8 @@ negative_float_test() ->
     [
      {const, 1, "const"},
      {identifier, 1, "NegativeFloat"},
-     {match, 1, "="},
-     {float_lit, 1, "-3.1415"}
+     {'=', 1},
+     {float_lit, 1, -3.1415}
     ] = Tokens.
 
 float_with_positive_exponent_test() ->
@@ -25,8 +25,8 @@ float_with_positive_exponent_test() ->
     [
      {const, 1, "const"},
      {identifier, 1, "FloatWithPositiveExponent"},
-     {match, 1, "="},
-     {float_lit, 1, "4.0e+2"}
+     {'=', 1},
+     {float_lit, 1, 4.0e+2}
     ] = Tokens.
 
 negative_float_with_positive_exponent_test() ->
@@ -34,8 +34,8 @@ negative_float_with_positive_exponent_test() ->
     [
      {const, 1, "const"},
      {identifier, 1, "NegativeFloatWithPositiveExponent"},
-     {match, 1, "="},
-     {float_lit, 1, "-4.0e+2"}
+     {'=', 1},
+     {float_lit, 1, -4.0e+2}
     ] = Tokens.
 
 float_with_negative_exponent_test() ->
@@ -43,8 +43,8 @@ float_with_negative_exponent_test() ->
     [
      {const, 1, "const"},
      {identifier, 1, "FloatWithNegativeExponent"},
-     {match, 1, "="},
-     {float_lit, 1, "48.0e-2"}
+     {'=', 1},
+     {float_lit, 1, 48.0e-2}
     ] = Tokens.
 
 negative_float_with_negative_exponent_test() ->
@@ -52,8 +52,8 @@ negative_float_with_negative_exponent_test() ->
     [
      {const, 1, "const"},
      {identifier, 1, "NegativeFloatWithNegativeExponent"},
-     {match, 1, "="},
-     {float_lit, 1, "-48.0e-2"}
+     {'=', 1},
+     {float_lit, 1, -48.0e-2}
     ] = Tokens.
 
 int_test() ->
@@ -61,8 +61,8 @@ int_test() ->
     [
      {const, 1, "const"},
      {identifier, 1, "Int"},
-     {match, 1, "="},
-     {int_lit, 1, "1"}
+     {'=', 1},
+     {int_lit, 1, 1}
     ] = Tokens.
 
 negative_int_test() ->
@@ -70,8 +70,8 @@ negative_int_test() ->
     [
      {const, 1, "const"},
      {identifier, 1, "NegativeInt"},
-     {match, 1, "="},
-     {int_lit, 1, "-1"}
+     {'=', 1},
+     {int_lit, 1, -1}
     ] = Tokens.
 
 string_test() ->
@@ -79,7 +79,7 @@ string_test() ->
     [
      {const, 1, "const"},
      {identifier, 1, "Name"},
-     {match, 1, "="},
+     {'=', 1},
      {string_lit, 1, "Rufus"}
     ] = Tokens.
 
@@ -88,7 +88,7 @@ string_with_whitespace_test() ->
     [
      {const, 1, "const"},
      {identifier, 1, "Whitespace"},
-     {match, 1, "="},
+     {'=', 1},
      {string_lit, 1, "hello world"}
     ] = Tokens.
 

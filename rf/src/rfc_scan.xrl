@@ -44,18 +44,18 @@ Rules.
 {Import}        : {token, {import, TokenLine, TokenChars}}.
 {Func}          : {token, {func, TokenLine, TokenChars}}.
 
-{FloatLiteral}  : {token, {float_lit, TokenLine, TokenChars}}.
-{IntLiteral}    : {token, {int_lit, TokenLine, TokenChars}}.
+{FloatLiteral}  : {token, {float_lit, TokenLine, list_to_float(TokenChars)}}.
+{IntLiteral}    : {token, {int_lit, TokenLine, list_to_integer(TokenChars)}}.
 {StringLiteral} : S = strip(TokenChars, TokenLen),
                   {token, {string_lit, TokenLine, S}}.
 
-{LeftParen}     : {token, {paren_begin, TokenLine, TokenChars}}.
-{RightParen}    : {token, {paren_end, TokenLine, TokenChars}}.
-{LeftBrace}     : {token, {block_begin, TokenLine, TokenChars}}.
-{RightBrace}    : {token, {block_end, TokenLine, TokenChars}}.
-{Comma}         : {token, {comma, TokenLine, TokenChars}}.
-{Match}         : {token, {match, TokenLine, TokenChars}}.
-{Plus}          : {token, {plus, TokenLine, TokenChars}}.
+{LeftParen}     : {token, {'(', TokenLine}}.
+{RightParen}    : {token, {')', TokenLine}}.
+{LeftBrace}     : {token, {'{', TokenLine}}.
+{RightBrace}    : {token, {'}', TokenLine}}.
+{Comma}         : {token, {',', TokenLine}}.
+{Match}         : {token, {'=', TokenLine}}.
+{Plus}          : {token, {'+', TokenLine}}.
 {Identifier}    : {token, {identifier, TokenLine, TokenChars}}.
 
 Erlang code.

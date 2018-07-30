@@ -7,12 +7,12 @@ function_returns_a_float_test() ->
     [
      {func, 1, "func"},
      {identifier, 1, "number42"},
-     {paren_begin, 1, "("},
-     {paren_end, 1, ")"},
+     {'(', 1},
+     {')', 1},
      {float, 1, "float"},
-     {block_begin, 1, "{"},
-     {float_lit, 1, "42.0"},
-     {block_end, 1, "}"}
+     {'{', 1},
+     {float_lit, 1, 42.0},
+     {'}', 1}
     ] = Tokens.
 
 function_returns_an_int_test() ->
@@ -20,12 +20,12 @@ function_returns_an_int_test() ->
     [
      {func, 1, "func"},
      {identifier, 1, "number42"},
-     {paren_begin, 1, "("},
-     {paren_end, 1, ")"},
+     {'(', 1},
+     {')', 1},
      {int, 1, "int"},
-     {block_begin, 1, "{"},
-     {int_lit, 1, "42"},
-     {block_end, 1, "}"}
+     {'{', 1},
+     {int_lit, 1, 42},
+     {'}', 1}
     ] = Tokens.
 
 function_returns_a_string_test() ->
@@ -33,12 +33,12 @@ function_returns_a_string_test() ->
     [
      {func, 1, "func"},
      {identifier, 1, "int42"},
-     {paren_begin, 1, "("},
-     {paren_end, 1, ")"},
+     {'(', 1},
+     {')', 1},
      {string, 1, "string"},
-     {block_begin, 1, "{"},
+     {'{', 1},
      {string_lit, 1, "hello"},
-     {block_end, 1, "}"}
+     {'}', 1}
     ] = Tokens.
 
 multiline_function_returns_a_string_test() ->
@@ -50,12 +50,12 @@ func int42() string {
     [
      {func, 2, "func"},
      {identifier, 2, "int42"},
-     {paren_begin, 2, "("},
-     {paren_end, 2, ")"},
+     {'(', 2},
+     {')', 2},
      {string, 2, "string"},
-     {block_begin, 2, "{"},
+     {'{', 2},
      {string_lit, 3, "hello"},
-     {block_end, 4, "}"}
+     {'}', 4}
     ] = Tokens.
 
 function_takes_an_int_and_returns_an_int_test() ->
@@ -63,14 +63,14 @@ function_takes_an_int_and_returns_an_int_test() ->
     [
      {func, 1, "func"},
      {identifier, 1, "echo"},
-     {paren_begin, 1, "("},
+     {'(', 1},
      {identifier, 1, "n"},
      {int, 1, "int"},
-     {paren_end, 1, ")"},
+     {')', 1},
      {int, 1, "int"},
-     {block_begin, 1, "{"},
+     {'{', 1},
      {identifier, 1, "n"},
-     {block_end, 1, "}"}
+     {'}', 1}
     ] = Tokens.
 
 function_tokes_an_int_and_a_string_and_returns_a_float_test() ->
@@ -78,17 +78,17 @@ function_tokes_an_int_and_a_string_and_returns_a_float_test() ->
     [
      {func, 1, "func"},
      {identifier, 1, "float42"},
-     {paren_begin, 1, "("},
+     {'(', 1},
      {identifier, 1, "n"},
      {int, 1, "int"},
-     {comma, 1, ","},
+     {',', 1},
      {identifier, 1, "s"},
      {string, 1, "string"},
-     {paren_end, 1, ")"},
+     {')', 1},
      {float, 1, "float"},
-     {block_begin, 1, "{"},
-     {float_lit, 1, "42.0"},
-     {block_end, 1, "}"}
+     {'{', 1},
+     {float_lit, 1, 42.0},
+     {'}', 1}
     ] = Tokens.
 
 %% function_takes_an_unused_argument_test() ->
