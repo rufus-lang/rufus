@@ -2,8 +2,6 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-% Functions
-
 arity0_function_returns_a_float_test() ->
     {ok, Tokens, _} = rfc_leex:string("
 package arity0
