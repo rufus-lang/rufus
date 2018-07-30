@@ -167,6 +167,11 @@ Some identifiers are predeclared.
 The following keywords are reserved and may not be used as identifiers.
 
 ```
+func
+package
+
+
+maybe later:
 break        default      func         interface    select
 case         defer        go           map          struct
 chan         else         goto         package      switch

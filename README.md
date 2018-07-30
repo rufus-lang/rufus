@@ -12,6 +12,7 @@ A programming language for the BEAM.
 - Type safe to prevent bugs and support refactoring.
 - Data over types.
 - Straight-forward tooling.
+- Next more than one step away from type information.
 
 ## Comments
 
@@ -46,16 +47,86 @@ Only single-line comments that start with `//`.
 
 ## Compound types
 
-- Maps
-  - `map[string]int`
-- Lists
-  - `[]string`
-- Structs
-  - `type Struct struct { fields }` such as `type Person struct { firstName string, lastName string }`.
-  - Literals like `Person{firstName: "John", lastName: "Smith"}`.
 - Tuples
-  - `type Tuple tuple { fields }` such as `type Person tuple { string, string }`.
-  - Literals like `Person{"John", "Smith"}`.
+  - `tuple[unicode, int]`
+  - `score = tuple[unicode, int]{"red", 2}`
+- Lists
+  - `[]unicode`
+  - `colors := []unicode{"red", "green", "blue"}
+  - `list[unicode]`
+  - `colors := list[unicode]{"red", "green", "blue"}
+- Maps
+  - `map[unicode]int`
+  - `teams := map[unicode]int{"red": 2, "green": 1, "blue": 3}`
+- Structs
+  - `type Struct struct { fields }` such as `type Person struct { FirstName unicode, LastName unicode }`.
+  - Literals like `Person{firstName: "John", lastName: "Smith"}`.
+
+```
+type retval atom
+const ok = :ok
+const error = :error
+
+
+type PersonAge tuple {name string, age int}
+
+pa := PersonAge{"Alice", 37}
+```
+
+## Project layout
+
+A project contains code, dependencies and other artifacts and uses a standard
+layout:
+
+- `$projectroot/cmd/$name` - A directory containing a `main` package that will
+  be built as `$projectroot/_build/bin/$name`.
+- `$projectroot/src/` - A directory that contains `.rf` files with source text
+  for the `$projectroot` package.
+
+`rf new lib example` creates a new project skeleton for a library package:
+
+```
+example/
+  .gitignore
+  README.md
+  rf.toml
+  src/
+```
+
+`rf new app example` creates a new project skeleton for an app package:
+
+```
+example/
+  .gitignore
+  README.md
+  rf.toml
+  cmd/main.rf
+  src/
+```
+
+`main.rf`:
+
+```
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Print("Hello, world!\n")
+}
+```
+
+`rf.toml`:
+
+```toml
+[package]
+name = "example"
+version = "0.1.0"
+authors = ["Jamu Kakar <jkakar@kakar.ca>"]
+
+[dependencies]
+"github.com/jkakar/healthcheck" = "0.2.1"
+```
 
 ## Packages
 
@@ -89,6 +160,34 @@ func validate(name string) bool {
 `validate` is a private function that may only be called by code within the
 `thing` package.
 
+## Importing packages
+
+```
+import (
+    "encoding/json"                     // stdlib imports
+    "html"
+    "net/http"
+
+    "github.com/jkakar/healthcheck"     // third-party imports
+    "github.com/jkakar/middleware"
+
+    "github.com/jkakar/website/routes"  // local imports
+)
+```
+
+The import path `[$(syspath)/lib, $(projectpath)/deps, $(rootpath)]` defines the
+location and precedence of packages available to the compiler. When resolving a
+package name to import:
+
+1. the standard library path `$(syspath)/lib` is checked first;
+2. the third-party dependencies path in `$(projectpath)/deps` is checked next;
+3. finally, the local source path `$(rootpath)` is checked last. It's the
+   path of the first top-level `src` directory found when traversing up the
+   tree from `$(projectpath)`.
+
+An import error occurs if the imported package can't be found in any of these
+locations.
+
 ## Functions
 
 All functions must have a return type. Functions can be tail recursive:
@@ -104,7 +203,7 @@ func InfiniteLoop(n int) {
 Types that end in a `?` are generic and are instantiated at compile time.
 
 ```
-func All([h|t] []T?, fn func(T) bool) bool {
+func All([h|t] list[T?], fn func(T) bool) bool {
     case fn(h) {
     true:
         All(t, fn)
@@ -113,7 +212,37 @@ func All([h|t] []T?, fn func(T) bool) bool {
     }
 }
 
-func All([] []T?, fn func(T) bool) bool {
+func All([] list[T?], fn func(T) bool) bool {
     true
 }
 ```
+
+## Spawning a new process
+
+A function can be run in a new process with `spawn`:
+
+```
+pid = spawn mypackage.SomeFunction(some, args)
+```
+
+That function can be shutdown, too:
+
+```
+exit(pid, :example) // No return value!
+```
+
+## Software lifecycle
+
+Think through the lifecycle of a software project. It's created, it gets
+iterated on, people have to read the code to understand how things work,
+dependencies change, it must be deployed, it may be a fork, etc. The `rf` tool
+should support developers from this perspective.
+
+### 1// Inception
+
+We need a way to quickly create a project skeleton to start new projects.
+
+### Iteration
+### Release testing
+### Publication
+### Transfer
