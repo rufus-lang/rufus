@@ -1,4 +1,5 @@
-A programming language for the BEAM.
+Rufus is a language syntax and type system for the language semantics provided
+by the BEAM.
 
 ## Design goals
 
@@ -22,28 +23,35 @@ Only single-line comments that start with `//`.
 
 - Symbols of type `atom`
   - `:value`
+  - No zero value
 - Booleans of type `bool`
   - `true`
   - `false`
+  - Zero value is `false`
 - Numbers of type `float`
   - `2.3`
   - `2.3e2`
   - `2.4e-2`
+  - Zero value is `0.0`
 - Numbers of type `int`
   - `value` in base 10.
   - `base#value` for integers with the base base, that must be an integer in the
     range 2..36.
+  - Zero value is `0`.
 - Strings of type `unicode`
   - Always encoded in UTF-8
   - `"value"`
+  - Zero value is `""`
 - Bitstrings and binaries of type `binary`
   - `<<10,20>>`
   - `<<"ABC">>`
   - `<<1:0,1:1>>`
+  - Zero value is `<<"">>`
 - Functions
   - `type Func func (args) returnType`
   - `type Func func (args) value` such as `func() :ok { :ok }` for a function
     that takes no arguments always returns the value `:ok`.
+  - No zero value
 
 ## Compound types
 

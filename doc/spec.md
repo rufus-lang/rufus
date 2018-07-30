@@ -4,7 +4,8 @@
 
 Rufus is a general-purpose programming language for the BEAM. Erlang and Go are
 primary influences in the design and ergonomics of the language. It is designed
-for many people to effectively build large systems over long periods of time.
+with teams building and operating large systems over long periods of time in
+mind.
 
 This specification is heavily influenced by [The Go Programming Language
 Specification](https://golang.org/ref/spec#Introduction). Many sections have been reproduced without changes and many
