@@ -1,16 +1,16 @@
--module(rfc_leex_package_test).
+-module(rfc_scan_package_test).
 
 -include_lib("eunit/include/eunit.hrl").
 
 empty_package_test() ->
-    {ok, Tokens, _} = rfc_leex:string("package empty"),
+    {ok, Tokens, _} = rfc_scan:string("package empty"),
     [
      {package, 1, "package"},
      {identifier, 1, "empty"}
     ] = Tokens.
 
 import_test() ->
-    {ok, Tokens, _} = rfc_leex:string("
+    {ok, Tokens, _} = rfc_scan:string("
 package foo
 import \"bar\"
 "),
