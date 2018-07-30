@@ -17,7 +17,7 @@ func Greet(name string) string {
     \"Hello \" + name
 }
 ",
-    Tokens = rfc_leex:string(SourceText),
+    Tokens = rfc_scan:string(SourceText),
     io:format("~s~n~n", [SourceText]),
     io:format("rfc_leex:string(SourceText) => ~p~n", [Tokens]),
     erlang:halt(0).
