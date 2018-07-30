@@ -14,6 +14,7 @@ IntLiteral     = {Digit}+
 
 Rules.
 
+int            : {token, {int, TokenLine, TokenChars}}.
 func           : {token, {func, TokenLine, TokenChars}}.
 package        : {token, {package, TokenLine, TokenChars}}.
 {Identifier}   : {token, {identifier, TokenLine, TokenChars}}.
