@@ -17,37 +17,6 @@
 strip(TokenChars, TokenLen) ->
     lists:sublist(TokenChars, 2, TokenLen - 2).
 
-%% Definitions.
-
-%% Newline       = \n
-%% UnicodeLetter = [A-Za-z]
-%% Digit         = [0-9]
-%% Letter        = ({UnicodeLetter}|"_")
-%% Identifier    = {Letter}({Letter}|{Digit})*
-%% WS            = ([\000-\s]|%.*)
-
-%% Rules.
-
-%% (package)\s+{Identifier} : {token, {package, TokenLine, TokenChars}}.
-%% \.{WS}                 : {end_token, {dot, TokenLine}}.
-%% {WS}+                  : skip_token.
-
-%% Erlang code.
-
-%% strip(TokenChars,TokenLen) ->
-%%     lists:sublist(TokenChars, 2, TokenLen - 2).
-
-%% in     : {token,{set,TokenLine,list_to_atom(TokenChars)}}.
-%% or     : {token,{union,TokenLine,list_to_atom(TokenChars)}}.
-%% and    : {token,{intersection,TokenLine,list_to_atom(TokenChars)}}.
-%% {C}    : {token,{comparator,TokenLine,list_to_atom(TokenChars)}}.
-%% '{L}+' : S = strip(TokenChars,TokenLen),
-%%          {token,{string,TokenLine,S}}.
-%% {L}+   : {token,{var,TokenLine,list_to_atom(TokenChars)}}.
-%% {D}+   : {token,{integer,TokenLine,list_to_integer(TokenChars)}}.
-%% [(),]  : {token,{list_to_atom(TokenChars),TokenLine}}.
-%% {WS}+  : skip_token.
-
 -file("/usr/local/Cellar/erlang/20.3.4/lib/erlang/lib/parsetools-2.1.6/include/leexinc.hrl", 14).
 
 format_error({illegal,S}) -> ["illegal characters ",io_lib:write_string(S)];
@@ -339,7 +308,7 @@ adjust_line(T, A, [_|Cs], L) ->
 %% return signal either an unrecognised character or end of current
 %% input.
 
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_leex.erl", 341).
+-file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_leex.erl", 310).
 yystate() -> 48.
 
 yystate(55, [45|Ics], Line, Tlen, _, _) ->
