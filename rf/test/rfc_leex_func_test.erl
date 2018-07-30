@@ -2,7 +2,7 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-arity0_function_returns_a_float_test() ->
+function_returns_a_float_test() ->
     {ok, Tokens, _} = rfc_leex:string("func number42() float { 42.0 }"),
     [
      {func, 1, "func"},
@@ -15,7 +15,7 @@ arity0_function_returns_a_float_test() ->
      {block_end, 1, "}"}
     ] = Tokens.
 
-arity0_function_returns_an_int_test() ->
+function_returns_an_int_test() ->
     {ok, Tokens, _} = rfc_leex:string("func number42() int { 42 }"),
     [
      {func, 1, "func"},
@@ -28,7 +28,7 @@ arity0_function_returns_an_int_test() ->
      {block_end, 1, "}"}
     ] = Tokens.
 
-arity0_function_returns_a_string_test() ->
+function_returns_a_string_test() ->
     {ok, Tokens, _} = rfc_leex:string("func int42() string { \"hello\" }"),
     [
      {func, 1, "func"},
@@ -41,7 +41,7 @@ arity0_function_returns_a_string_test() ->
      {block_end, 1, "}"}
     ] = Tokens.
 
-arity0_multiline_function_returns_a_string_test() ->
+multiline_function_returns_a_string_test() ->
     {ok, Tokens, _} = rfc_leex:string("
 func int42() string {
     \"hello\"
@@ -58,7 +58,7 @@ func int42() string {
      {block_end, 4, "}"}
     ] = Tokens.
 
-arity1_function_takes_an_int_and_returns_an_int_test() ->
+function_takes_an_int_and_returns_an_int_test() ->
     {ok, Tokens, _} = rfc_leex:string("func echo(n int) int { n }"),
     [
      {func, 1, "func"},
@@ -73,7 +73,7 @@ arity1_function_takes_an_int_and_returns_an_int_test() ->
      {block_end, 1, "}"}
     ] = Tokens.
 
-arity2_function_tokes_an_int_and_a_string_and_returns_a_float_test() ->
+function_tokes_an_int_and_a_string_and_returns_a_float_test() ->
     {ok, Tokens, _} = rfc_leex:string("func float42(n int, s string) float { 42.0 }"),
     [
      {func, 1, "func"},
@@ -90,3 +90,9 @@ arity2_function_tokes_an_int_and_a_string_and_returns_a_float_test() ->
      {float_lit, 1, "42.0"},
      {block_end, 1, "}"}
     ] = Tokens.
+
+%% function_takes_an_unused_argument_test() ->
+%%     {ok, Tokens, _} = rfc_leex:string("func unused(_ int) int { 0 }")
+
+%% function_takes_an_unused_named_argument_test() ->
+%%     {ok, Tokens, _} = rfc_leex:string("func unused(_num int) int { 0 }")
