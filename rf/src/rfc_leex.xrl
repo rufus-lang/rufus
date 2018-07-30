@@ -1,32 +1,46 @@
 Definitions.
 
-Newline        = \n
-UnicodeLetter  = [A-Za-z]
-Digit          = [0-9]
-Letter         = ({UnicodeLetter}|"_")
-Identifier     = {Letter}({Letter}|{Digit})*
-Whitespace     = [\s\t]
-LeftParen      = \(
-RightParen     = \)
-LeftBrace      = \{
-RightBrace     = \}
-IntLiteral     = {Digit}+
+Newline       = \n
+UnicodeLetter = [A-Za-z]
+Digit         = [0-9]
+Letter        = ({UnicodeLetter}|"_")
+Identifier    = {Letter}({Letter}|{Digit})*
+Whitespace    = [\s\t]
+LeftParen     = \(
+RightParen    = \)
+LeftBrace     = \{
+RightBrace    = \}
+IntLiteral    = {Digit}+
+DoubleQuote   = \"
+StringLiteral = {DoubleQuote}{UnicodeLetter}+{DoubleQuote}
 
 Rules.
 
-int            : {token, {int, TokenLine, TokenChars}}.
-func           : {token, {func, TokenLine, TokenChars}}.
-package        : {token, {package, TokenLine, TokenChars}}.
-{Identifier}   : {token, {identifier, TokenLine, TokenChars}}.
-{IntLiteral}   : {token, {int, TokenLine, TokenChars}}.
-{Whitespace}+  : skip_token.
-{Newline}+     : skip_token.
-{LeftParen}    : {token, {paren_begin, TokenLine, TokenChars}}.
-{RightParen}   : {token, {paren_end, TokenLine, TokenChars}}.
-{LeftBrace}    : {token, {block_begin, TokenLine, TokenChars}}.
-{RightBrace}   : {token, {block_end, TokenLine, TokenChars}}.
+{Whitespace}+   : skip_token.
+{Newline}+      : skip_token.
+
+float           : {token, {float_type, TokenLine, TokenChars}}.
+int             : {token, {int_type, TokenLine, TokenChars}}.
+string          : {token, {string_type, TokenLine, TokenChars}}.
+
+func            : {token, {func, TokenLine, TokenChars}}.
+package         : {token, {package, TokenLine, TokenChars}}.
+
+{IntLiteral}    : {token, {int, TokenLine, TokenChars}}.
+{StringLiteral} : S = strip(TokenChars, TokenLen),
+                  {token, {string, TokenLine, S}}.
+
+{LeftParen}     : {token, {paren_begin, TokenLine, TokenChars}}.
+{RightParen}    : {token, {paren_end, TokenLine, TokenChars}}.
+{LeftBrace}     : {token, {block_begin, TokenLine, TokenChars}}.
+{RightBrace}    : {token, {block_end, TokenLine, TokenChars}}.
+
+{Identifier}    : {token, {identifier, TokenLine, TokenChars}}.
 
 Erlang code.
+
+strip(TokenChars, TokenLen) ->
+    lists:sublist(TokenChars, 2, TokenLen - 2).
 
 %% Definitions.
 
