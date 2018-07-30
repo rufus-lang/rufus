@@ -20,11 +20,12 @@ IntType       = int
 StringType    = string
 
 Func          = func
+Import        = import
 Package       = package
 
 Exponent      = (e|E)?(\+|\-)?{Digit}+
-FloatLiteral  = {Digit}+\.{Digit}+{Exponent}?
-IntLiteral    = {Digit}+
+FloatLiteral  = \-?{Digit}+\.{Digit}+{Exponent}?
+IntLiteral    = \-?{Digit}+
 StringLiteral = \"{UnicodeLetter}+\"
 
 Rules.
@@ -38,6 +39,7 @@ Rules.
 {StringType}    : {token, {string_type, TokenLine, TokenChars}}.
 
 {Func}          : {token, {func, TokenLine, TokenChars}}.
+{Import}        : {token, {import, TokenLine, TokenChars}}.
 {Package}       : {token, {package, TokenLine, TokenChars}}.
 
 {FloatLiteral}  : {token, {float, TokenLine, TokenChars}}.
