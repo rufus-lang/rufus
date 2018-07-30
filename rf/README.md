@@ -1,14 +1,11 @@
-rf
-=====
+# rf
 
-An escript
+`rf` provides tools for working with Rufus.
 
-Build
------
+## Build
 
-    $ rebar3 escriptize
+    `rebar3 escriptize`
 
-Run
----
+## Run
 
-    $ _build/default/bin/rf
+    `_build/default/bin/rf`

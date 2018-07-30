@@ -1,9 +1,10 @@
 {application, rf,
- [{description, "An escript"},
+ [{description, "rf provides tools for working with Rufus"},
   {vsn, "0.1.0"},
   {registered, []},
   {applications,
-   [kernel,
+   [
+    kernel,
     stdlib
    ]},
   {env,[]},
