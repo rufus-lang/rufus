@@ -100,6 +100,15 @@ const Name = \"Rufus\""),
      {const_type, 3, "const"}, {identifier, 3, "Name"}, {match, 3, "="}, {string, 3, "Rufus"}
     ] = Tokens.
 
+string_with_whitespace_test() ->
+    {ok, Tokens, _} = rfc_leex:string("
+package literal
+const Whitespace = \"hello world\""),
+    [
+     {package, 2, "package"}, {identifier, 2, "literal"},
+     {const_type, 3, "const"}, {identifier, 3, "Whitespace"}, {match, 3, "="}, {string, 3, "hello world"}
+    ] = Tokens.
+
 % Functions
 
 arity0_function_returns_a_float_test() ->
@@ -136,6 +145,20 @@ func int42() string { \"hello\" }
      {func, 3, "func"}, {identifier, 3, "int42"},
      {paren_begin, 3, "("}, {paren_end, 3, ")"}, {string_type, 3, "string"},
      {block_begin, 3, "{"}, {string, 3, "hello"}, {block_end, 3, "}"}
+    ] = Tokens.
+
+arity0_multiline_function_returns_a_string_test() ->
+    {ok, Tokens, _} = rfc_leex:string("
+package arity0
+func int42() string {
+    \"hello\"
+}
+"),
+    [
+     {package,  2, "package"}, {identifier, 2, "arity0"},
+     {func, 3, "func"}, {identifier, 3, "int42"},
+     {paren_begin, 3, "("}, {paren_end, 3, ")"}, {string_type, 3, "string"},
+     {block_begin, 3, "{"}, {string, 4, "hello"}, {block_end, 5, "}"}
     ] = Tokens.
 
 arity1_function_takes_an_int_and_returns_an_int_test() ->

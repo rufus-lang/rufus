@@ -11,8 +11,6 @@ LeftParen     = \(
 RightParen    = \)
 LeftBrace     = \{
 RightBrace    = \}
-Comma         = ,
-Match         = =
 
 ConstType     = const
 FloatType     = float
@@ -26,7 +24,11 @@ Package       = package
 Exponent      = (e|E)?(\+|\-)?{Digit}+
 FloatLiteral  = \-?{Digit}+\.{Digit}+{Exponent}?
 IntLiteral    = \-?{Digit}+
-StringLiteral = \"{UnicodeLetter}+\"
+StringLiteral = \"({UnicodeLetter}|{Whitespace})+\"
+
+Comma         = ,
+Match         = =
+Plus          = \+
 
 Rules.
 
@@ -53,6 +55,7 @@ Rules.
 {RightBrace}    : {token, {block_end, TokenLine, TokenChars}}.
 {Comma}         : {token, {comma, TokenLine, TokenChars}}.
 {Match}         : {token, {match, TokenLine, TokenChars}}.
+{Plus}          : {token, {plus, TokenLine, TokenChars}}.
 {Identifier}    : {token, {identifier, TokenLine, TokenChars}}.
 
 Erlang code.
