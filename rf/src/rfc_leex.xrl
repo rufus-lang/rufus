@@ -17,9 +17,9 @@ FloatType     = float
 IntType       = int
 StringType    = string
 
-Func          = func
-Import        = import
 Package       = package
+Import        = import
+Func          = func
 
 Exponent      = (e|E)?(\+|\-)?{Digit}+
 FloatLiteral  = \-?{Digit}+\.{Digit}+{Exponent}?
@@ -35,19 +35,19 @@ Rules.
 {Whitespace}+   : skip_token.
 {Newline}+      : skip_token.
 
-{ConstType}     : {token, {const_type, TokenLine, TokenChars}}.
-{FloatType}     : {token, {float_type, TokenLine, TokenChars}}.
-{IntType}       : {token, {int_type, TokenLine, TokenChars}}.
-{StringType}    : {token, {string_type, TokenLine, TokenChars}}.
+{ConstType}     : {token, {const, TokenLine, TokenChars}}.
+{FloatType}     : {token, {float, TokenLine, TokenChars}}.
+{IntType}       : {token, {int, TokenLine, TokenChars}}.
+{StringType}    : {token, {string, TokenLine, TokenChars}}.
 
-{Func}          : {token, {func, TokenLine, TokenChars}}.
-{Import}        : {token, {import, TokenLine, TokenChars}}.
 {Package}       : {token, {package, TokenLine, TokenChars}}.
+{Import}        : {token, {import, TokenLine, TokenChars}}.
+{Func}          : {token, {func, TokenLine, TokenChars}}.
 
-{FloatLiteral}  : {token, {float, TokenLine, TokenChars}}.
-{IntLiteral}    : {token, {int, TokenLine, TokenChars}}.
+{FloatLiteral}  : {token, {float_lit, TokenLine, TokenChars}}.
+{IntLiteral}    : {token, {int_lit, TokenLine, TokenChars}}.
 {StringLiteral} : S = strip(TokenChars, TokenLen),
-                  {token, {string, TokenLine, S}}.
+                  {token, {string_lit, TokenLine, S}}.
 
 {LeftParen}     : {token, {paren_begin, TokenLine, TokenChars}}.
 {RightParen}    : {token, {paren_end, TokenLine, TokenChars}}.

@@ -458,15 +458,15 @@ yystate(47, [C|Ics], Line, Tlen, _, _) when C >= 48, C =< 57 ->
 yystate(47, Ics, Line, Tlen, _, _) ->
     {9,Tlen,Ics,Line,47};
 yystate(46, [34|Ics], Line, Tlen, _, _) ->
-    yystate(23, Ics, Line, Tlen+1, 6, Tlen);
+    yystate(23, Ics, Line, Tlen+1, 8, Tlen);
 yystate(46, [C|Ics], Line, Tlen, _, _) when C >= 48, C =< 57 ->
-    yystate(20, Ics, Line, Tlen+1, 6, Tlen);
+    yystate(20, Ics, Line, Tlen+1, 8, Tlen);
 yystate(46, [C|Ics], Line, Tlen, _, _) when C >= 65, C =< 90 ->
-    yystate(20, Ics, Line, Tlen+1, 6, Tlen);
+    yystate(20, Ics, Line, Tlen+1, 8, Tlen);
 yystate(46, [C|Ics], Line, Tlen, _, _) when C >= 97, C =< 122 ->
-    yystate(20, Ics, Line, Tlen+1, 6, Tlen);
+    yystate(20, Ics, Line, Tlen+1, 8, Tlen);
 yystate(46, Ics, Line, Tlen, _, _) ->
-    {6,Tlen,Ics,Line,46};
+    {8,Tlen,Ics,Line,46};
 yystate(45, [103|Ics], Line, Tlen, _, _) ->
     yystate(37, Ics, Line, Tlen+1, 19, Tlen);
 yystate(45, [34|Ics], Line, Tlen, _, _) ->
@@ -614,15 +614,15 @@ yystate(30, [C|Ics], Line, Tlen, _, _) when C >= 98, C =< 122 ->
 yystate(30, Ics, Line, Tlen, _, _) ->
     {19,Tlen,Ics,Line,30};
 yystate(29, [34|Ics], Line, Tlen, _, _) ->
-    yystate(23, Ics, Line, Tlen+1, 8, Tlen);
+    yystate(23, Ics, Line, Tlen+1, 6, Tlen);
 yystate(29, [C|Ics], Line, Tlen, _, _) when C >= 48, C =< 57 ->
-    yystate(20, Ics, Line, Tlen+1, 8, Tlen);
+    yystate(20, Ics, Line, Tlen+1, 6, Tlen);
 yystate(29, [C|Ics], Line, Tlen, _, _) when C >= 65, C =< 90 ->
-    yystate(20, Ics, Line, Tlen+1, 8, Tlen);
+    yystate(20, Ics, Line, Tlen+1, 6, Tlen);
 yystate(29, [C|Ics], Line, Tlen, _, _) when C >= 97, C =< 122 ->
-    yystate(20, Ics, Line, Tlen+1, 8, Tlen);
+    yystate(20, Ics, Line, Tlen+1, 6, Tlen);
 yystate(29, Ics, Line, Tlen, _, _) ->
-    {8,Tlen,Ics,Line,29};
+    {6,Tlen,Ics,Line,29};
 yystate(28, Ics, Line, Tlen, _, _) ->
     {11,Tlen,Ics,Line};
 yystate(27, Ics, Line, Tlen, _, _) ->
@@ -1009,27 +1009,27 @@ yyaction_1() ->
 -compile({inline,yyaction_2/2}).
 -file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_leex.xrl", 36).
 yyaction_2(TokenChars, TokenLine) ->
-     { token, { const_type, TokenLine, TokenChars } } .
+     { token, { const, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_3/2}).
 -file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_leex.xrl", 37).
 yyaction_3(TokenChars, TokenLine) ->
-     { token, { float_type, TokenLine, TokenChars } } .
+     { token, { float, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_4/2}).
 -file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_leex.xrl", 38).
 yyaction_4(TokenChars, TokenLine) ->
-     { token, { int_type, TokenLine, TokenChars } } .
+     { token, { int, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_5/2}).
 -file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_leex.xrl", 39).
 yyaction_5(TokenChars, TokenLine) ->
-     { token, { string_type, TokenLine, TokenChars } } .
+     { token, { string, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_6/2}).
 -file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_leex.xrl", 41).
 yyaction_6(TokenChars, TokenLine) ->
-     { token, { func, TokenLine, TokenChars } } .
+     { token, { package, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_7/2}).
 -file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_leex.xrl", 42).
@@ -1039,23 +1039,23 @@ yyaction_7(TokenChars, TokenLine) ->
 -compile({inline,yyaction_8/2}).
 -file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_leex.xrl", 43).
 yyaction_8(TokenChars, TokenLine) ->
-     { token, { package, TokenLine, TokenChars } } .
+     { token, { func, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_9/2}).
 -file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_leex.xrl", 45).
 yyaction_9(TokenChars, TokenLine) ->
-     { token, { float, TokenLine, TokenChars } } .
+     { token, { float_lit, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_10/2}).
 -file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_leex.xrl", 46).
 yyaction_10(TokenChars, TokenLine) ->
-     { token, { int, TokenLine, TokenChars } } .
+     { token, { int_lit, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_11/3}).
 -file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_leex.xrl", 47).
 yyaction_11(TokenChars, TokenLen, TokenLine) ->
      S = strip (TokenChars, TokenLen),
-     { token, { string, TokenLine, S } } .
+     { token, { string_lit, TokenLine, S } } .
 
 -compile({inline,yyaction_12/2}).
 -file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_leex.xrl", 50).

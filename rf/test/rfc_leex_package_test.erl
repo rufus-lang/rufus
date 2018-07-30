@@ -9,8 +9,9 @@ empty_package_test() ->
 import_test() ->
     {ok, Tokens, _} = rfc_leex:string("
 package foo
-import \"bar\""),
+import \"bar\"
+"),
     [
      {package, 2, "package"}, {identifier, 2, "foo"},
-     {import, 3, "import"}, {string, 3, "bar"}
+     {import, 3, "import"}, {string_lit, 3, "bar"}
     ] = Tokens.
