@@ -1,17 +1,29 @@
 Definitions.
 
-Newline       = \n
-UnicodeLetter = [A-Za-z]
-Digit         = [0-9]
-Letter        = ({UnicodeLetter}|"_")
-Identifier    = {Letter}({Letter}|{Digit})*
-Whitespace    = [\s\t]
+Newline        = \n
+UnicodeLetter  = [A-Za-z]
+Digit          = [0-9]
+Letter         = ({UnicodeLetter}|"_")
+Identifier     = {Letter}({Letter}|{Digit})*
+Whitespace     = [\s\t]
+LeftParen      = \(
+RightParen     = \)
+LeftBrace      = \{
+RightBrace     = \}
+IntLiteral     = {Digit}+
 
 Rules.
 
-package       : {token, {package, TokenLine, TokenChars}}.
-{Identifier}  : {token, {identifier, TokenLine, TokenChars}}.
-{Whitespace}+ : skip_token.
+func           : {token, {func, TokenLine, TokenChars}}.
+package        : {token, {package, TokenLine, TokenChars}}.
+{Identifier}   : {token, {identifier, TokenLine, TokenChars}}.
+{IntLiteral}   : {token, {int, TokenLine, TokenChars}}.
+{Whitespace}+  : skip_token.
+{Newline}+     : skip_token.
+{LeftParen}    : {token, {paren_begin, TokenLine, TokenChars}}.
+{RightParen}   : {token, {paren_end, TokenLine, TokenChars}}.
+{LeftBrace}    : {token, {block_begin, TokenLine, TokenChars}}.
+{RightBrace}   : {token, {block_end, TokenLine, TokenChars}}.
 
 Erlang code.
 
