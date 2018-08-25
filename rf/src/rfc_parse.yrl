@@ -1,11 +1,10 @@
-Nonterminals root import.
+Nonterminals root.
 
-Terminals identifier package string_lit.
+Terminals package identifier.
 
 Rootsymbol root.
 
 root -> package identifier : {package, unwrap('$2')}.
-%% import -> string_lit : {import, '$1'}.
 
 Erlang code.
 
