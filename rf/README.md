@@ -1,6 +1,6 @@
 # rf
 
-`rf` provides tools for working with Rufus.
+`rf` provides tools for working with Rufus programs.
 
 ## Build
 

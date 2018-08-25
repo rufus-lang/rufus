@@ -5,18 +5,18 @@
 empty_package_test() ->
     {ok, Tokens, _} = rfc_scan:string("package empty"),
     [
-     {package, 1, "package"},
+     {package, 1},
      {identifier, 1, "empty"}
     ] = Tokens.
 
 import_test() ->
     {ok, Tokens, _} = rfc_scan:string("
-package foo
-import \"bar\"
-"),
+     package foo
+     import \"bar\"
+    "),
     [
-     {package, 2, "package"},
+     {package, 2},
      {identifier, 2, "foo"},
-     {import, 3, "import"},
+     {import, 3},
      {string_lit, 3, "bar"}
     ] = Tokens.

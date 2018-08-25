@@ -35,14 +35,14 @@ Rules.
 {Whitespace}+   : skip_token.
 {Newline}+      : skip_token.
 
-{ConstType}     : {token, {const, TokenLine, TokenChars}}.
-{FloatType}     : {token, {float, TokenLine, TokenChars}}.
-{IntType}       : {token, {int, TokenLine, TokenChars}}.
-{StringType}    : {token, {string, TokenLine, TokenChars}}.
+{ConstType}     : {token, {const, TokenLine}}.
+{FloatType}     : {token, {float, TokenLine}}.
+{IntType}       : {token, {int, TokenLine}}.
+{StringType}    : {token, {string, TokenLine}}.
 
-{Package}       : {token, {package, TokenLine, TokenChars}}.
-{Import}        : {token, {import, TokenLine, TokenChars}}.
-{Func}          : {token, {func, TokenLine, TokenChars}}.
+{Package}       : {token, {package, TokenLine}}.
+{Import}        : {token, {import, TokenLine}}.
+{Func}          : {token, {func, TokenLine}}.
 
 {FloatLiteral}  : {token, {float_lit, TokenLine, list_to_float(TokenChars)}}.
 {IntLiteral}    : {token, {int_lit, TokenLine, list_to_integer(TokenChars)}}.

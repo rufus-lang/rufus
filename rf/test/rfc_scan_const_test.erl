@@ -5,7 +5,7 @@
 float_test() ->
     {ok, Tokens, _} = rfc_scan:string("const Float = 3.1415"),
     [
-     {const, 1, "const"},
+     {const, 1},
      {identifier, 1, "Float"},
      {'=', 1},
      {float_lit, 1, 3.1415}
@@ -14,7 +14,7 @@ float_test() ->
 negative_float_test() ->
     {ok, Tokens, _} = rfc_scan:string("const NegativeFloat = -3.1415"),
     [
-     {const, 1, "const"},
+     {const, 1},
      {identifier, 1, "NegativeFloat"},
      {'=', 1},
      {float_lit, 1, -3.1415}
@@ -23,7 +23,7 @@ negative_float_test() ->
 float_with_positive_exponent_test() ->
     {ok, Tokens, _} = rfc_scan:string("const FloatWithPositiveExponent = 4.0e+2"),
     [
-     {const, 1, "const"},
+     {const, 1},
      {identifier, 1, "FloatWithPositiveExponent"},
      {'=', 1},
      {float_lit, 1, 4.0e+2}
@@ -32,7 +32,7 @@ float_with_positive_exponent_test() ->
 negative_float_with_positive_exponent_test() ->
     {ok, Tokens, _} = rfc_scan:string("const NegativeFloatWithPositiveExponent = -4.0e+2"),
     [
-     {const, 1, "const"},
+     {const, 1},
      {identifier, 1, "NegativeFloatWithPositiveExponent"},
      {'=', 1},
      {float_lit, 1, -4.0e+2}
@@ -41,7 +41,7 @@ negative_float_with_positive_exponent_test() ->
 float_with_negative_exponent_test() ->
     {ok, Tokens, _} = rfc_scan:string("const FloatWithNegativeExponent = 48.0e-2"),
     [
-     {const, 1, "const"},
+     {const, 1},
      {identifier, 1, "FloatWithNegativeExponent"},
      {'=', 1},
      {float_lit, 1, 48.0e-2}
@@ -50,7 +50,7 @@ float_with_negative_exponent_test() ->
 negative_float_with_negative_exponent_test() ->
     {ok, Tokens, _} = rfc_scan:string("const NegativeFloatWithNegativeExponent = -48.0e-2"),
     [
-     {const, 1, "const"},
+     {const, 1},
      {identifier, 1, "NegativeFloatWithNegativeExponent"},
      {'=', 1},
      {float_lit, 1, -48.0e-2}
@@ -59,7 +59,7 @@ negative_float_with_negative_exponent_test() ->
 int_test() ->
     {ok, Tokens, _} = rfc_scan:string("const Int = 1"),
     [
-     {const, 1, "const"},
+     {const, 1},
      {identifier, 1, "Int"},
      {'=', 1},
      {int_lit, 1, 1}
@@ -68,7 +68,7 @@ int_test() ->
 negative_int_test() ->
     {ok, Tokens, _} = rfc_scan:string("const NegativeInt = -1"),
     [
-     {const, 1, "const"},
+     {const, 1},
      {identifier, 1, "NegativeInt"},
      {'=', 1},
      {int_lit, 1, -1}
@@ -77,7 +77,7 @@ negative_int_test() ->
 string_test() ->
     {ok, Tokens, _} = rfc_scan:string("const Name = \"Rufus\""),
     [
-     {const, 1, "const"},
+     {const, 1},
      {identifier, 1, "Name"},
      {'=', 1},
      {string_lit, 1, "Rufus"}
@@ -86,7 +86,7 @@ string_test() ->
 string_with_whitespace_test() ->
     {ok, Tokens, _} = rfc_scan:string("const Whitespace = \"hello world\""),
     [
-     {const, 1, "const"},
+     {const, 1},
      {identifier, 1, "Whitespace"},
      {'=', 1},
      {string_lit, 1, "hello world"}
