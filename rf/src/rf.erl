@@ -51,14 +51,16 @@ version(_Args) ->
 
 parse(_Args) ->
     SourceText = "
-    package example
+    package rand
 
-    func Greet(name string) string {
-        \"Hello \" + name
+    func Int() int {
+        42
     }
 ",
     {ok, Tokens, _Lines} = rfc_scan:string(SourceText),
-    ok = rfc_parse:parse(Tokens),
+    {ok, AST} = rfc_parse:parse(Tokens),
+    io:format("source text =>~n~s~n~n", [SourceText]),
+    io:format("scanned tokens =>~n~n    ~p~n", [AST]),
     ok.
 
 scan(_Args) ->
