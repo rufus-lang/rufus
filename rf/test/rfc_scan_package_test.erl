@@ -11,9 +11,9 @@ empty_package_test() ->
 
 import_test() ->
     {ok, Tokens, _} = rfc_scan:string("
-package foo
-import \"bar\"
-"),
+     package foo
+     import \"bar\"
+    "),
     [
      {package, 2},
      {identifier, 2, "foo"},
