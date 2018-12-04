@@ -4,11 +4,49 @@
 
 ## Build
 
-    `rebar3 escriptize`
+Run the tests and build an `rf` binary:
+
+```
+make
+```
 
 ## Run
 
-    `_build/default/bin/rf`
+There's a single `rf` escript command that contains subcommands for all Rufus
+tools.
+
+```
+rf
+```
+```
+rf provides tools for working with Rufus programs.
+
+Usage:
+
+    rf COMMAND [OPTION]...
+
+The commands are:
+
+    compile:parse   parse source code and print AST
+    compile:scan    scan source code and print tokens
+    version         print Rufus version
+
+Use "rf help [command]" for more information about that command
+
+Additional help topics:
+
+    spec            language specification
+
+Use "rf help [topic]" for more information about that topic
+```
+
+## Test
+
+Run the tests:
+
+```
+make check
+```
 
 ## Code layout
 

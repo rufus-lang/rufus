@@ -27,7 +27,7 @@ help(_Args) ->
     io:format("~n"),
     io:format("Usage:~n"),
     io:format("~n"),
-    io:format("    rf command [OPTION]...~n"),
+    io:format("    rf COMMAND [OPTION]...~n"),
     io:format("~n"),
     io:format("The commands are:~n"),
     io:format("~n"),
