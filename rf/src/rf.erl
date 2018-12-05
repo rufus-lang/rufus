@@ -7,6 +7,8 @@
 %% escript entry point.
 main(Args) ->
     case Args of
+        ["compile:core-erlang"|CmdArgs] ->
+            compile(CmdArgs);
         ["compile:parse"|CmdArgs] ->
             parse(CmdArgs);
         ["compile:scan"|CmdArgs] ->
@@ -31,9 +33,10 @@ help(_Args) ->
     io:format("~n"),
     io:format("The commands are:~n"),
     io:format("~n"),
-    io:format("    compile:parse   parse source code and print AST~n"),
-    io:format("    compile:scan    scan source code and print tokens~n"),
-    io:format("    version         print Rufus version~n"),
+    io:format("    compile:core-erlang   parse source code and print Core Erlang translation~n"),
+    io:format("    compile:parse         parse source code and print AST~n"),
+    io:format("    compile:scan          scan source code and print tokens~n"),
+    io:format("    version               print Rufus version~n"),
     io:format("~n"),
     io:format("Use \"rf help [command]\" for more information about that command~n"),
     io:format("~n"),
@@ -74,4 +77,18 @@ scan(_Args) ->
     {ok, Tokens, _Lines} = rfc_scan:string(SourceText),
     io:format("source text =>~n~s~n~n", [SourceText]),
     io:format("scanned tokens =>~n~n    ~p~n", [Tokens]),
+    ok.
+
+compile(_Args) ->
+    SourceText ="
+    package example
+
+    func Greet(name string) string {
+        \"Hello \" + name
+    }
+",
+    {ok, Tokens, _Lines} = rfc_scan:string(SourceText),
+    io:format("source text =>~n~s~n~n", [SourceText]),
+    io:format("scanned tokens =>~n~n    ~p~n", [Tokens]),
+    undefined = rfc_compile:beam(Tokens),
     ok.

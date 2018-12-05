@@ -27,9 +27,10 @@ Usage:
 
 The commands are:
 
-    compile:parse   parse source code and print AST
-    compile:scan    scan source code and print tokens
-    version         print Rufus version
+    compile:core-erlang   parse source code and print Core Erlang translation
+    compile:parse         parse source code and print AST
+    compile:scan          scan source code and print tokens
+    version               print Rufus version
 
 Use "rf help [command]" for more information about that command
 
