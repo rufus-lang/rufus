@@ -24,7 +24,7 @@ Func          = func
 Exponent      = (e|E)?(\+|\-)?{Digit}+
 FloatLiteral  = \-?{Digit}+\.{Digit}+{Exponent}?
 IntLiteral    = \-?{Digit}+
-StringLiteral = \"({UnicodeLetter}|{Whitespace})+\"
+StringLiteral = \"({Digit}|{UnicodeLetter}|{Whitespace})+\"
 
 Comma         = ,
 Match         = =
