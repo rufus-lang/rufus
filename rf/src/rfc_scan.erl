@@ -1,4 +1,4 @@
--file("/usr/local/Cellar/erlang/20.3.4/lib/erlang/lib/parsetools-2.1.6/include/leexinc.hrl", 0).
+-file("/usr/local/Cellar/erlang/21.1.4/lib/erlang/lib/parsetools-2.1.8/include/leexinc.hrl", 0).
 %% The source of this file is part of leex distribution, as such it
 %% has the same Copyright as the other files in the leex
 %% distribution. The Copyright is defined in the accompanying file
@@ -12,12 +12,12 @@
 -export([format_error/1]).
 
 %% User code. This is placed here to allow extra attributes.
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 61).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 61).
 
 strip(TokenChars, TokenLen) ->
     lists:sublist(TokenChars, 2, TokenLen - 2).
 
--file("/usr/local/Cellar/erlang/20.3.4/lib/erlang/lib/parsetools-2.1.6/include/leexinc.hrl", 14).
+-file("/usr/local/Cellar/erlang/21.1.4/lib/erlang/lib/parsetools-2.1.8/include/leexinc.hrl", 14).
 
 format_error({illegal,S}) -> ["illegal characters ",io_lib:write_string(S)];
 format_error({user,S}) -> S.
@@ -308,7 +308,7 @@ adjust_line(T, A, [_|Cs], L) ->
 %% return signal either an unrecognised character or end of current
 %% input.
 
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.erl", 310).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.erl", 310).
 yystate() -> 48.
 
 yystate(55, [45|Ics], Line, Tlen, _, _) ->
@@ -564,6 +564,8 @@ yystate(36, [34|Ics], Line, Tlen, Action, Alen) ->
 yystate(36, [32|Ics], Line, Tlen, Action, Alen) ->
     yystate(36, Ics, Line, Tlen+1, Action, Alen);
 yystate(36, [9|Ics], Line, Tlen, Action, Alen) ->
+    yystate(36, Ics, Line, Tlen+1, Action, Alen);
+yystate(36, [C|Ics], Line, Tlen, Action, Alen) when C >= 48, C =< 57 ->
     yystate(36, Ics, Line, Tlen+1, Action, Alen);
 yystate(36, [C|Ics], Line, Tlen, Action, Alen) when C >= 65, C =< 90 ->
     yystate(36, Ics, Line, Tlen+1, Action, Alen);
@@ -879,6 +881,8 @@ yystate(4, [32|Ics], Line, Tlen, Action, Alen) ->
     yystate(36, Ics, Line, Tlen+1, Action, Alen);
 yystate(4, [9|Ics], Line, Tlen, Action, Alen) ->
     yystate(36, Ics, Line, Tlen+1, Action, Alen);
+yystate(4, [C|Ics], Line, Tlen, Action, Alen) when C >= 48, C =< 57 ->
+    yystate(36, Ics, Line, Tlen+1, Action, Alen);
 yystate(4, [C|Ics], Line, Tlen, Action, Alen) when C >= 65, C =< 90 ->
     yystate(36, Ics, Line, Tlen+1, Action, Alen);
 yystate(4, [C|Ics], Line, Tlen, Action, Alen) when C >= 97, C =< 122 ->
@@ -983,104 +987,104 @@ yyaction(19, TokenLen, YYtcs, TokenLine) ->
 yyaction(_, _, _, _) -> error.
 
 -compile({inline,yyaction_0/0}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 33).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 33).
 yyaction_0() ->
      skip_token .
 
 -compile({inline,yyaction_1/0}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 34).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 34).
 yyaction_1() ->
      skip_token .
 
 -compile({inline,yyaction_2/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 36).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 36).
 yyaction_2(TokenLine) ->
      { token, { const, TokenLine } } .
 
 -compile({inline,yyaction_3/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 37).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 37).
 yyaction_3(TokenLine) ->
      { token, { float, TokenLine } } .
 
 -compile({inline,yyaction_4/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 38).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 38).
 yyaction_4(TokenLine) ->
      { token, { int, TokenLine } } .
 
 -compile({inline,yyaction_5/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 39).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 39).
 yyaction_5(TokenLine) ->
      { token, { string, TokenLine } } .
 
 -compile({inline,yyaction_6/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 41).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 41).
 yyaction_6(TokenLine) ->
      { token, { package, TokenLine } } .
 
 -compile({inline,yyaction_7/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 42).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 42).
 yyaction_7(TokenLine) ->
      { token, { import, TokenLine } } .
 
 -compile({inline,yyaction_8/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 43).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 43).
 yyaction_8(TokenLine) ->
      { token, { func, TokenLine } } .
 
 -compile({inline,yyaction_9/2}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 45).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 45).
 yyaction_9(TokenChars, TokenLine) ->
      { token, { float_lit, TokenLine, list_to_float (TokenChars) } } .
 
 -compile({inline,yyaction_10/2}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 46).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 46).
 yyaction_10(TokenChars, TokenLine) ->
      { token, { int_lit, TokenLine, list_to_integer (TokenChars) } } .
 
 -compile({inline,yyaction_11/3}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 47).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 47).
 yyaction_11(TokenChars, TokenLen, TokenLine) ->
      S = strip (TokenChars, TokenLen),
      { token, { string_lit, TokenLine, S } } .
 
 -compile({inline,yyaction_12/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 50).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 50).
 yyaction_12(TokenLine) ->
      { token, { '(', TokenLine } } .
 
 -compile({inline,yyaction_13/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 51).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 51).
 yyaction_13(TokenLine) ->
      { token, { ')', TokenLine } } .
 
 -compile({inline,yyaction_14/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 52).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 52).
 yyaction_14(TokenLine) ->
      { token, { '{', TokenLine } } .
 
 -compile({inline,yyaction_15/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 53).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 53).
 yyaction_15(TokenLine) ->
      { token, { '}', TokenLine } } .
 
 -compile({inline,yyaction_16/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 54).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 54).
 yyaction_16(TokenLine) ->
      { token, { ',', TokenLine } } .
 
 -compile({inline,yyaction_17/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 55).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 55).
 yyaction_17(TokenLine) ->
      { token, { '=', TokenLine } } .
 
 -compile({inline,yyaction_18/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 56).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 56).
 yyaction_18(TokenLine) ->
      { token, { '+', TokenLine } } .
 
 -compile({inline,yyaction_19/2}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_scan.xrl", 57).
+-file("/Users/jkakar/rufus/rf/src/rfc_scan.xrl", 57).
 yyaction_19(TokenChars, TokenLine) ->
      { token, { identifier, TokenLine, TokenChars } } .
 
--file("/usr/local/Cellar/erlang/20.3.4/lib/erlang/lib/parsetools-2.1.6/include/leexinc.hrl", 313).
+-file("/usr/local/Cellar/erlang/21.1.4/lib/erlang/lib/parsetools-2.1.8/include/leexinc.hrl", 313).

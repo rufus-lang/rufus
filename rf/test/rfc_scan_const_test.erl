@@ -83,6 +83,15 @@ string_test() ->
      {string_lit, 1, "Rufus"}
     ] = Tokens.
 
+string_with_numnber_test() ->
+    {ok, Tokens, _} = rfc_scan:string("const Number = \"42\""),
+    [
+     {const, 1},
+     {identifier, 1, "Number"},
+     {'=', 1},
+     {string_lit, 1, "42"}
+    ] = Tokens.
+
 string_with_whitespace_test() ->
     {ok, Tokens, _} = rfc_scan:string("const Whitespace = \"hello world\""),
     [
