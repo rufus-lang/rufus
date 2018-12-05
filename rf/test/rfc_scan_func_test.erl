@@ -29,32 +29,32 @@ function_returns_an_int_test() ->
     ] = Tokens.
 
 function_returns_a_string_test() ->
-    {ok, Tokens, _} = rfc_scan:string("func int42() string { \"hello\" }"),
+    {ok, Tokens, _} = rfc_scan:string("func text42() string { \"42\" }"),
     [
      {func, 1},
-     {identifier, 1, "int42"},
+     {identifier, 1, "text42"},
      {'(', 1},
      {')', 1},
      {string, 1},
      {'{', 1},
-     {string_lit, 1, "hello"},
+     {string_lit, 1, "42"},
      {'}', 1}
     ] = Tokens.
 
 multiline_function_returns_a_string_test() ->
     {ok, Tokens, _} = rfc_scan:string("
-func int42() string {
-    \"hello\"
+func text42() string {
+    \"42\"
 }
 "),
     [
      {func, 2},
-     {identifier, 2, "int42"},
+     {identifier, 2, "text42"},
      {'(', 2},
      {')', 2},
      {string, 2},
      {'{', 2},
-     {string_lit, 3, "hello"},
+     {string_lit, 3, "42"},
      {'}', 4}
     ] = Tokens.
 
