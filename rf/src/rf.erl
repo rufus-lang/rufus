@@ -106,11 +106,11 @@ compile(_Args) ->
     {ok, ErlangForms} = rfc_erlang_compiler:forms(Forms),
     io:format("ErlangForms =>~n~n    ~p~n~n", [ErlangForms]),
     case compile:forms(ErlangForms) of
-        {ok, example, BinaryOrCode, Warnings} ->
+        {ok, Module, BinaryOrCode, Warnings} ->
             io:format("Warnings =>~n~n    ~p~n", [Warnings]),
-            code:load_binary(example, "nofile", BinaryOrCode);
-        {ok, example, BinaryOrCode} ->
-            code:load_binary(example, "nofile", BinaryOrCode);
+            code:load_binary(Module, "nofile", BinaryOrCode);
+        {ok, Module, BinaryOrCode} ->
+            code:load_binary(Module, "nofile", BinaryOrCode);
         {error, Errors, Warnings} ->
             io:format("Errors =>~n~n    ~p~n", [Errors]),
             io:format("Warnings =>~n~n    ~p~n", [Warnings]);
