@@ -54,4 +54,4 @@ make check
 
 - The `rf` module defines the escript that provides the `rf` command-line
   interface.
-- Modules that start with `rfc_` are part of the Rufus compiler.
+- Modules that start with `rufus_` are part of the Rufus toolchain.

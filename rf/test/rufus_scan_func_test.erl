@@ -1,9 +1,9 @@
--module(rfc_scan_func_test).
+-module(rufus_scan_func_test).
 
 -include_lib("eunit/include/eunit.hrl").
 
 function_returns_a_float_test() ->
-    {ok, Tokens, _} = rfc_scan:string("func number42() float { 42.0 }"),
+    {ok, Tokens, _} = rufus_scan:string("func number42() float { 42.0 }"),
     [
      {func, 1},
      {identifier, 1, "number42"},
@@ -16,7 +16,7 @@ function_returns_a_float_test() ->
     ] = Tokens.
 
 function_returns_an_int_test() ->
-    {ok, Tokens, _} = rfc_scan:string("func number42() int { 42 }"),
+    {ok, Tokens, _} = rufus_scan:string("func number42() int { 42 }"),
     [
      {func, 1},
      {identifier, 1, "number42"},
@@ -29,7 +29,7 @@ function_returns_an_int_test() ->
     ] = Tokens.
 
 function_returns_a_string_test() ->
-    {ok, Tokens, _} = rfc_scan:string("func text42() string { \"42\" }"),
+    {ok, Tokens, _} = rufus_scan:string("func text42() string { \"42\" }"),
     [
      {func, 1},
      {identifier, 1, "text42"},
@@ -42,7 +42,7 @@ function_returns_a_string_test() ->
     ] = Tokens.
 
 multiline_function_returns_a_string_test() ->
-    {ok, Tokens, _} = rfc_scan:string("
+    {ok, Tokens, _} = rufus_scan:string("
 func text42() string {
     \"42\"
 }
@@ -59,7 +59,7 @@ func text42() string {
     ] = Tokens.
 
 function_takes_an_int_and_returns_an_int_test() ->
-    {ok, Tokens, _} = rfc_scan:string("func echo(n int) int { n }"),
+    {ok, Tokens, _} = rufus_scan:string("func echo(n int) int { n }"),
     [
      {func, 1},
      {identifier, 1, "echo"},
@@ -74,7 +74,7 @@ function_takes_an_int_and_returns_an_int_test() ->
     ] = Tokens.
 
 function_tokes_an_int_and_a_string_and_returns_a_float_test() ->
-    {ok, Tokens, _} = rfc_scan:string("func float42(n int, s string) float { 42.0 }"),
+    {ok, Tokens, _} = rufus_scan:string("func float42(n int, s string) float { 42.0 }"),
     [
      {func, 1},
      {identifier, 1, "float42"},
@@ -92,7 +92,7 @@ function_tokes_an_int_and_a_string_and_returns_a_float_test() ->
     ] = Tokens.
 
 %% function_takes_an_unused_argument_test() ->
-%%     {ok, Tokens, _} = rfc_scan:string("func unused(_ int) int { 0 }")
+%%     {ok, Tokens, _} = rufus_scan:string("func unused(_ int) int { 0 }")
 
 %% function_takes_an_unused_named_argument_test() ->
-%%     {ok, Tokens, _} = rfc_scan:string("func unused(_num int) int { 0 }")
+%%     {ok, Tokens, _} = rufus_scan:string("func unused(_num int) int { 0 }")

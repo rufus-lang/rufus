@@ -61,9 +61,9 @@ parse(_Args) ->
     }
 ",
     io:format("RufusText =>~n    ~s~n", [RufusText]),
-    {ok, Tokens, _Lines} = rfc_scan:string(RufusText),
+    {ok, Tokens, _Lines} = rufus_scan:string(RufusText),
     io:format("Tokens =>~n~n    ~p~n~n", [Tokens]),
-    case rfc_parse:parse(Tokens) of
+    case rufus_parse:parse(Tokens) of
         {ok, Forms} ->
             io:format("Forms =>~n~n    ~p~n", [Forms]),
             ok;
@@ -86,7 +86,7 @@ scan(_Args) ->
     }
 ",
     io:format("RufusText =>~n    ~s~n", [RufusText]),
-    {ok, Tokens, _Lines} = rfc_scan:string(RufusText),
+    {ok, Tokens, _Lines} = rufus_scan:string(RufusText),
     io:format("Tokens =>~n~n    ~p~n", [Tokens]),
     ok.
 
@@ -99,11 +99,11 @@ compile(_Args) ->
     }
 ",
     io:format("RufusText =>~n    ~s~n", [RufusText]),
-    {ok, Tokens, _Lines} = rfc_scan:string(RufusText),
+    {ok, Tokens, _Lines} = rufus_scan:string(RufusText),
     io:format("Tokens =>~n~n    ~p~n~n", [Tokens]),
-    {ok, Forms} = rfc_parse:parse(Tokens),
+    {ok, Forms} = rufus_parse:parse(Tokens),
     io:format("Forms =>~n~n    ~p~n~n", [Forms]),
-    {ok, ErlangForms} = rfc_erlang_compiler:forms(Forms),
+    {ok, ErlangForms} = rufus_erlang_compiler:forms(Forms),
     io:format("ErlangForms =>~n~n    ~p~n~n", [ErlangForms]),
     case compile:forms(ErlangForms) of
         {ok, Module, BinaryOrCode, Warnings} ->
