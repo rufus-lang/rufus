@@ -21,7 +21,8 @@ forms(Acc, [{expr, LineNumber, {int, Value}}|T]) ->
     Form = {clause,LineNumber,[],[],[{integer, LineNumber, Value}]},
     forms([Form|Acc], T);
 forms(Acc, [{expr, LineNumber, {string, Value}}|T]) ->
-    Form = {clause,LineNumber,[],[],[{bin, LineNumber, [{bin_element, LineNumber, {string, LineNumber, Value}, default, default}]}]},
+    StringExpr = {bin_element, LineNumber, {string, LineNumber, Value}, default, default},
+    Form = {clause,LineNumber,[],[],[{bin, LineNumber, [StringExpr]}]},
     forms([Form|Acc], T);
 forms(Acc, [{func, LineNumber, Name, _Args, _ReturnType, Exprs}|T]) ->
     ExprForms = lists:reverse(forms([], Exprs)),

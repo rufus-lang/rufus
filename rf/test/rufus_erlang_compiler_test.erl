@@ -40,9 +40,10 @@ forms_for_function_returning_a_string_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang_compiler:forms(Forms),
+    StringExpr = {bin, 3, [{bin_element, 3, {string, 3, "Hello"}, default, default}]},
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Greeting', 0}]},
-        {function, 3, 'Greeting', 0, [{clause, 3, [], [], [{bin, 3, [{bin_element, 3, {string, 3, "Hello"}, default, default}]}]}]}
+        {function, 3, 'Greeting', 0, [{clause, 3, [], [], [StringExpr]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
