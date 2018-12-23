@@ -1,6 +1,6 @@
 -module(rfc_parse).
 -export([parse/1, parse_and_scan/1, format_error/1]).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_parse.yrl", 20).
+-file("/Users/jkakar/rufus/rf/src/rfc_parse.yrl", 20).
 
 token_chars({_TokenType, _TokenLine, TokenChars}) ->
     TokenChars.
@@ -13,11 +13,11 @@ token_line({_TokenType, TokenLine, _TokenChars}) ->
 token_type({TokenType, _TokenLine}) ->
     TokenType.
 
--file("/usr/local/Cellar/erlang/20.3.4/lib/erlang/lib/parsetools-2.1.6/include/yeccpre.hrl", 0).
+-file("/usr/local/Cellar/erlang/21.2/lib/erlang/lib/parsetools-2.1.8/include/yeccpre.hrl", 0).
 %%
 %% %CopyrightBegin%
 %%
-%% Copyright Ericsson AB 1996-2017. All Rights Reserved.
+%% Copyright Ericsson AB 1996-2018. All Rights Reserved.
 %%
 %% Licensed under the Apache License, Version 2.0 (the "License");
 %% you may not use this file except in compliance with the License.
@@ -72,8 +72,7 @@ return_error(Line, Message) ->
 yeccpars0(Tokens, Tzr, State, States, Vstack) ->
     try yeccpars1(Tokens, Tzr, State, States, Vstack)
     catch 
-        error: Error ->
-            Stacktrace = erlang:get_stacktrace(),
+        error: Error: Stacktrace ->
             try yecc_error_type(Error, Stacktrace) of
                 Desc ->
                     erlang:raise(error, {yecc_bug, ?CODE_VERSION, Desc},
@@ -186,7 +185,7 @@ yecctoken2string(Other) ->
 
 
 
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_parse.erl", 189).
+-file("/Users/jkakar/rufus/rf/src/rfc_parse.erl", 188).
 
 -dialyzer({nowarn_function, yeccpars2/7}).
 yeccpars2(0=S, Cat, Ss, Stack, T, Ts, Tzr) ->
@@ -368,7 +367,7 @@ yeccgoto_type(11, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_12(12, Cat, Ss, Stack, T, Ts, Tzr).
 
 -compile({inline,yeccpars2_3_/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_parse.yrl", 3).
+-file("/Users/jkakar/rufus/rf/src/rfc_parse.yrl", 3).
 yeccpars2_3_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -376,7 +375,7 @@ yeccpars2_3_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_7_/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_parse.yrl", 7).
+-file("/Users/jkakar/rufus/rf/src/rfc_parse.yrl", 7).
 yeccpars2_7_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -384,7 +383,7 @@ yeccpars2_7_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_8_/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_parse.yrl", 6).
+-file("/Users/jkakar/rufus/rf/src/rfc_parse.yrl", 6).
 yeccpars2_8_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -392,7 +391,7 @@ yeccpars2_8_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_13_/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_parse.yrl", 12).
+-file("/Users/jkakar/rufus/rf/src/rfc_parse.yrl", 12).
 yeccpars2_13_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -400,7 +399,7 @@ yeccpars2_13_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_16_/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_parse.yrl", 14).
+-file("/Users/jkakar/rufus/rf/src/rfc_parse.yrl", 14).
 yeccpars2_16_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -408,7 +407,7 @@ yeccpars2_16_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_17_/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_parse.yrl", 10).
+-file("/Users/jkakar/rufus/rf/src/rfc_parse.yrl", 10).
 yeccpars2_17_(__Stack0) ->
  [__8,__7,__6,__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -416,7 +415,7 @@ yeccpars2_17_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_18_/1}).
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_parse.yrl", 4).
+-file("/Users/jkakar/rufus/rf/src/rfc_parse.yrl", 4).
 yeccpars2_18_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -424,4 +423,4 @@ yeccpars2_18_(__Stack0) ->
   end | __Stack].
 
 
--file("/Users/jkakar/rufus/rf/_build/default/lib/rf/src/rfc_parse.yrl", 32).
+-file("/Users/jkakar/rufus/rf/src/rfc_parse.yrl", 32).
