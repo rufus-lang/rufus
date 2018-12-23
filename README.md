@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/rufus-lang/rufus.svg?branch=master)](https://travis-ci.com/rufus-lang/rufus)
 # Rufus
 
 A programming language for the BEAM.
