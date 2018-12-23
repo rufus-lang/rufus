@@ -7,7 +7,7 @@
 %% escript entry point.
 main(Args) ->
     case Args of
-        ["compile:core-erlang"|CmdArgs] ->
+        ["compile:abstract-erlang"|CmdArgs] ->
             compile(CmdArgs);
         ["compile:parse"|CmdArgs] ->
             parse(CmdArgs);
@@ -33,10 +33,10 @@ help(_Args) ->
     io:format("~n"),
     io:format("The commands are:~n"),
     io:format("~n"),
-    io:format("    compile:core-erlang   parse source code and print Core Erlang translation~n"),
-    io:format("    compile:parse         parse source code and print AST~n"),
-    io:format("    compile:scan          scan source code and print tokens~n"),
-    io:format("    version               print Rufus version~n"),
+    io:format("    compile:abstract-erlang  Parse source code and print Erlang's abstract form~n"),
+    io:format("    compile:parse            Parse source code and print parse forms~n"),
+    io:format("    compile:scan             Scan source code and print parse tokens~n"),
+    io:format("    version                  Print Rufus version~n"),
     io:format("~n"),
     io:format("Use \"rf help [command]\" for more information about that command~n"),
     io:format("~n"),
@@ -53,42 +53,69 @@ version(_Args) ->
     ok.
 
 parse(_Args) ->
-    SourceText = "
+    RufusText = "
     package rand
 
     func Int() int {
         42
     }
 ",
-    {ok, Tokens, _Lines} = rfc_scan:string(SourceText),
-    {ok, AST} = rfc_parse:parse(Tokens),
-    io:format("source text =>~n~s~n~n", [SourceText]),
-    io:format("scanned tokens =>~n~n    ~p~n", [AST]),
-    ok.
+    io:format("RufusText =>~n    ~s~n", [RufusText]),
+    {ok, Tokens, _Lines} = rfc_scan:string(RufusText),
+    io:format("Tokens =>~n~n    ~p~n~n", [Tokens]),
+    case rfc_parse:parse(Tokens) of
+        {ok, Forms} ->
+            io:format("Forms =>~n~n    ~p~n", [Forms]),
+            ok;
+        {error, {Line, _, [{ErrorPrefix, ErrorSuffix}, Token]}} ->
+            Error = {error, {Line, {ErrorPrefix, ErrorSuffix}, Token}},
+            io:format("Error =>~n~n    ~p~n", [Error]),
+            error;
+        {error, {Line, _, [Error, Token]}} ->
+            Error = {error, {Line, Error, Token}},
+            io:format("Error =>~n~n    ~p~n", [Error]),
+            error
+    end.
 
 scan(_Args) ->
-    SourceText = "
+    RufusText = "
     package example
 
     func Greet(name string) string {
         \"Hello \" + name
     }
 ",
-    {ok, Tokens, _Lines} = rfc_scan:string(SourceText),
-    io:format("source text =>~n~s~n~n", [SourceText]),
-    io:format("scanned tokens =>~n~n    ~p~n", [Tokens]),
+    io:format("RufusText =>~n    ~s~n", [RufusText]),
+    {ok, Tokens, _Lines} = rfc_scan:string(RufusText),
+    io:format("Tokens =>~n~n    ~p~n", [Tokens]),
     ok.
 
 compile(_Args) ->
-    SourceText ="
+    RufusText ="
     package example
 
-    func Greet(name string) string {
-        \"Hello \" + name
+    func Number() int {
+        42
     }
 ",
-    {ok, Tokens, _Lines} = rfc_scan:string(SourceText),
-    io:format("source text =>~n~s~n~n", [SourceText]),
-    io:format("scanned tokens =>~n~n    ~p~n", [Tokens]),
-    undefined = rfc_compile:beam(Tokens),
+    io:format("RufusText =>~n    ~s~n", [RufusText]),
+    {ok, Tokens, _Lines} = rfc_scan:string(RufusText),
+    io:format("Tokens =>~n~n    ~p~n~n", [Tokens]),
+    {ok, Forms} = rfc_parse:parse(Tokens),
+    io:format("Forms =>~n~n    ~p~n~n", [Forms]),
+    {ok, ErlangForms} = rfc_erlang_compiler:forms(Forms),
+    io:format("ErlangForms =>~n~n    ~p~n~n", [ErlangForms]),
+    case compile:forms(ErlangForms) of
+        {ok, example, BinaryOrCode, Warnings} ->
+            io:format("Warnings =>~n~n    ~p~n", [Warnings]),
+            code:load_binary(example, "nofile", BinaryOrCode);
+        {ok, example, BinaryOrCode} ->
+            code:load_binary(example, "nofile", BinaryOrCode);
+        {error, Errors, Warnings} ->
+            io:format("Errors =>~n~n    ~p~n", [Errors]),
+            io:format("Warnings =>~n~n    ~p~n", [Warnings]);
+        error ->
+            io:format("ERROR!~n")
+    end,
+    io:format("example:Number() =>~n~n    ~p~n", [example:'Number'()]),
     ok.
