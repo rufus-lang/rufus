@@ -1,16 +1,16 @@
--module(rfc_scan_package_test).
+-module(rufus_scan_package_test).
 
 -include_lib("eunit/include/eunit.hrl").
 
 empty_package_test() ->
-    {ok, Tokens, _} = rfc_scan:string("package empty"),
+    {ok, Tokens, _} = rufus_scan:string("package empty"),
     [
      {package, 1},
      {identifier, 1, "empty"}
     ] = Tokens.
 
 import_test() ->
-    {ok, Tokens, _} = rfc_scan:string("
+    {ok, Tokens, _} = rufus_scan:string("
      package foo
      import \"bar\"
     "),

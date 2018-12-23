@@ -1,9 +1,9 @@
--module(rfc_scan_const_test).
+-module(rufus_scan_const_test).
 
 -include_lib("eunit/include/eunit.hrl").
 
 float_test() ->
-    {ok, Tokens, _} = rfc_scan:string("const Float = 3.1415"),
+    {ok, Tokens, _} = rufus_scan:string("const Float = 3.1415"),
     [
      {const, 1},
      {identifier, 1, "Float"},
@@ -12,7 +12,7 @@ float_test() ->
     ] = Tokens.
 
 negative_float_test() ->
-    {ok, Tokens, _} = rfc_scan:string("const NegativeFloat = -3.1415"),
+    {ok, Tokens, _} = rufus_scan:string("const NegativeFloat = -3.1415"),
     [
      {const, 1},
      {identifier, 1, "NegativeFloat"},
@@ -21,7 +21,7 @@ negative_float_test() ->
     ] = Tokens.
 
 float_with_positive_exponent_test() ->
-    {ok, Tokens, _} = rfc_scan:string("const FloatWithPositiveExponent = 4.0e+2"),
+    {ok, Tokens, _} = rufus_scan:string("const FloatWithPositiveExponent = 4.0e+2"),
     [
      {const, 1},
      {identifier, 1, "FloatWithPositiveExponent"},
@@ -30,7 +30,7 @@ float_with_positive_exponent_test() ->
     ] = Tokens.
 
 negative_float_with_positive_exponent_test() ->
-    {ok, Tokens, _} = rfc_scan:string("const NegativeFloatWithPositiveExponent = -4.0e+2"),
+    {ok, Tokens, _} = rufus_scan:string("const NegativeFloatWithPositiveExponent = -4.0e+2"),
     [
      {const, 1},
      {identifier, 1, "NegativeFloatWithPositiveExponent"},
@@ -39,7 +39,7 @@ negative_float_with_positive_exponent_test() ->
     ] = Tokens.
 
 float_with_negative_exponent_test() ->
-    {ok, Tokens, _} = rfc_scan:string("const FloatWithNegativeExponent = 48.0e-2"),
+    {ok, Tokens, _} = rufus_scan:string("const FloatWithNegativeExponent = 48.0e-2"),
     [
      {const, 1},
      {identifier, 1, "FloatWithNegativeExponent"},
@@ -48,7 +48,7 @@ float_with_negative_exponent_test() ->
     ] = Tokens.
 
 negative_float_with_negative_exponent_test() ->
-    {ok, Tokens, _} = rfc_scan:string("const NegativeFloatWithNegativeExponent = -48.0e-2"),
+    {ok, Tokens, _} = rufus_scan:string("const NegativeFloatWithNegativeExponent = -48.0e-2"),
     [
      {const, 1},
      {identifier, 1, "NegativeFloatWithNegativeExponent"},
@@ -57,7 +57,7 @@ negative_float_with_negative_exponent_test() ->
     ] = Tokens.
 
 int_test() ->
-    {ok, Tokens, _} = rfc_scan:string("const Int = 1"),
+    {ok, Tokens, _} = rufus_scan:string("const Int = 1"),
     [
      {const, 1},
      {identifier, 1, "Int"},
@@ -66,7 +66,7 @@ int_test() ->
     ] = Tokens.
 
 negative_int_test() ->
-    {ok, Tokens, _} = rfc_scan:string("const NegativeInt = -1"),
+    {ok, Tokens, _} = rufus_scan:string("const NegativeInt = -1"),
     [
      {const, 1},
      {identifier, 1, "NegativeInt"},
@@ -75,7 +75,7 @@ negative_int_test() ->
     ] = Tokens.
 
 string_test() ->
-    {ok, Tokens, _} = rfc_scan:string("const Name = \"Rufus\""),
+    {ok, Tokens, _} = rufus_scan:string("const Name = \"Rufus\""),
     [
      {const, 1},
      {identifier, 1, "Name"},
@@ -84,7 +84,7 @@ string_test() ->
     ] = Tokens.
 
 string_with_numnber_test() ->
-    {ok, Tokens, _} = rfc_scan:string("const Number = \"42\""),
+    {ok, Tokens, _} = rufus_scan:string("const Number = \"42\""),
     [
      {const, 1},
      {identifier, 1, "Number"},
@@ -93,7 +93,7 @@ string_with_numnber_test() ->
     ] = Tokens.
 
 string_with_whitespace_test() ->
-    {ok, Tokens, _} = rfc_scan:string("const Whitespace = \"hello world\""),
+    {ok, Tokens, _} = rufus_scan:string("const Whitespace = \"hello world\""),
     [
      {const, 1},
      {identifier, 1, "Whitespace"},
