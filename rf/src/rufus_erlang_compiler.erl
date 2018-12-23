@@ -14,10 +14,13 @@ forms(Forms) ->
 
 %% Private API
 
+forms(Acc, [{expr, LineNumber, {float, Value}}|T]) ->
+    Form = {clause,LineNumber,[],[],[{float, LineNumber, Value}]},
+    forms([Form|Acc], T);
 forms(Acc, [{expr, LineNumber, {int, Value}}|T]) ->
     Form = {clause,LineNumber,[],[],[{integer, LineNumber, Value}]},
     forms([Form|Acc], T);
-forms(Acc, [{func, LineNumber, Name, _Args, int, Exprs}|T]) ->
+forms(Acc, [{func, LineNumber, Name, _Args, _ReturnType, Exprs}|T]) ->
     ExprForms = lists:reverse(forms([], Exprs)),
     ExportForms = {attribute, LineNumber, export, [{list_to_atom(Name), 0}]},
     Forms = {function, LineNumber, list_to_atom(Name), 0, ExprForms},
