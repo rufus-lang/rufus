@@ -8,21 +8,21 @@
 
 %% API
 
-forms(Forms) ->
-    ErlangForms = lists:reverse(forms([], Forms)),
+forms(RufusForms) ->
+    ErlangForms = lists:reverse(forms([], RufusForms)),
     {ok, ErlangForms}.
 
 %% Private API
 
 forms(Acc, [{expr, LineNumber, {float, Value}}|T]) ->
-    Form = {clause,LineNumber,[],[],[{float, LineNumber, Value}]},
+    Form = {clause, LineNumber, [], [], [{float, LineNumber, Value}]},
     forms([Form|Acc], T);
 forms(Acc, [{expr, LineNumber, {int, Value}}|T]) ->
-    Form = {clause,LineNumber,[],[],[{integer, LineNumber, Value}]},
+    Form = {clause, LineNumber, [], [], [{integer, LineNumber, Value}]},
     forms([Form|Acc], T);
 forms(Acc, [{expr, LineNumber, {string, Value}}|T]) ->
     StringExpr = {bin_element, LineNumber, {string, LineNumber, Value}, default, default},
-    Form = {clause,LineNumber,[],[],[{bin, LineNumber, [StringExpr]}]},
+    Form = {clause, LineNumber, [], [], [{bin, LineNumber, [StringExpr]}]},
     forms([Form|Acc], T);
 forms(Acc, [{func, LineNumber, Name, _Args, _ReturnType, Exprs}|T]) ->
     ExprForms = lists:reverse(forms([], Exprs)),
