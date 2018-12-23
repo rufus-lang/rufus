@@ -1,0 +1,2 @@
+test:
+	@cd rf && make
