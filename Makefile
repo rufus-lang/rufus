@@ -1,2 +1,2 @@
 test:
-	@cd rf && make
+	@cd rf && make && rf compile:abstract-erlang
