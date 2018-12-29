@@ -8,18 +8,20 @@
 %% escript entry point
 
 main(Args) ->
+    application:start(rf),
     case Args of
-        ["compile:abstract-erlang"|CmdArgs] ->
-            compile(CmdArgs);
-        ["compile:parse"|CmdArgs] ->
-            parse(CmdArgs);
-        ["compile:scan"|CmdArgs] ->
-            scan(CmdArgs);
-        ["version"|CmdArgs] ->
-            version(CmdArgs);
+        ["compile:abstract-erlang"|SubArgs] ->
+            compile(SubArgs);
+        ["compile:parse"|SubArgs] ->
+            parse(SubArgs);
+        ["compile:scan"|SubArgs] ->
+            scan(SubArgs);
+        ["version"|SubArgs] ->
+            version(SubArgs);
         _ ->
             help(Args)
     end,
+    application:stop(rf),
     erlang:halt(0).
 
 %% Private API
@@ -49,7 +51,12 @@ help(_Args) ->
     ok.
 
 version(_Args) ->
-    io:format("rufus version v0.1.0~n"),
+    case application:get_key(rf, vsn) of
+        {ok, Version} ->
+            io:format("rufus version v~s~n", [Version]);
+        Error ->
+            io:format("Error: ~p~n", [Error])
+    end,
     ok.
 
 parse(_Args) ->
