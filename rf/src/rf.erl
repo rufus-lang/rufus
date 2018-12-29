@@ -2,9 +2,11 @@
 -module(rf).
 
 %% API exports
+
 -export([main/1]).
 
-%% escript entry point.
+%% escript entry point
+
 main(Args) ->
     case Args of
         ["compile:abstract-erlang"|CmdArgs] ->
@@ -20,9 +22,7 @@ main(Args) ->
     end,
     erlang:halt(0).
 
-%%====================================================================
-%% Commands
-%%====================================================================
+%% Private API
 
 help(_Args) ->
     io:format("rf provides tools for working with Rufus programs.~n"),
@@ -103,6 +103,8 @@ compile(_Args) ->
     io:format("Tokens =>~n~n    ~p~n~n", [Tokens]),
     {ok, Forms} = rufus_parse:parse(Tokens),
     io:format("Forms =>~n~n    ~p~n~n", [Forms]),
+    {ok, Forms} = rufus_return_type:check(Forms),
+    io:format("rufus_return_type:check(Forms) =>~n~n    ok~n~n", []),
     {ok, ErlangForms} = rufus_erlang_compiler:forms(Forms),
     io:format("ErlangForms =>~n~n    ~p~n~n", [ErlangForms]),
     case compile:forms(ErlangForms) of
