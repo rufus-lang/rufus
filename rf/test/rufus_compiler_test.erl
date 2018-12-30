@@ -22,7 +22,7 @@ eval_with_function_returning_a_float_test() ->
     func Pi() float { 3.14159265359 }
     ",
     {ok, example} = rufus_compiler:eval(RufusText),
-    ?assertEqual(3.14159265359, example:'Pi'()).
+    ?assertEqual({float, 3.14159265359}, example:'Pi'()).
 
 eval_with_function_returning_an_int_test() ->
     RufusText = "
@@ -30,7 +30,7 @@ eval_with_function_returning_an_int_test() ->
     func Number() int { 42 }
     ",
     {ok, example} = rufus_compiler:eval(RufusText),
-    ?assertEqual(42, example:'Number'()).
+    ?assertEqual({int, 42}, example:'Number'()).
 
 eval_with_function_returning_a_string_test() ->
     RufusText = "
@@ -38,7 +38,7 @@ eval_with_function_returning_a_string_test() ->
     func Greeting() string { \"Hello\" }
     ",
     {ok, example} = rufus_compiler:eval(RufusText),
-    ?assertEqual(<<"Hello">>, example:'Greeting'()).
+    ?assertEqual({string, <<"Hello">>}, example:'Greeting'()).
 
 eval_with_function_having_unmatched_return_types_test() ->
     RufusText = "
