@@ -10,10 +10,12 @@ forms_for_function_returning_a_float_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang_compiler:forms(Forms),
+    FloatExpr = {float, 3, 3.14159265359},
+    BoxedFloatExpr = {tuple, 3, [{atom, 3, float}, FloatExpr]},
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Pi', 0}]},
-        {function, 3, 'Pi', 0, [{clause, 3, [], [], [{float, 3, 3.14159265359}]}]}
+        {function, 3, 'Pi', 0, [{clause, 3, [], [], [BoxedFloatExpr]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
 
@@ -25,10 +27,12 @@ forms_for_function_returning_an_int_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang_compiler:forms(Forms),
+    IntegerExpr = {integer, 3, 42},
+    BoxedIntegerExpr = {tuple, 3, [{atom, 3, int}, IntegerExpr]},
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Number', 0}]},
-        {function, 3, 'Number', 0, [{clause, 3, [], [], [{integer, 3, 42}]}]}
+        {function, 3, 'Number', 0, [{clause, 3, [], [], [BoxedIntegerExpr]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
 
@@ -41,9 +45,10 @@ forms_for_function_returning_a_string_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang_compiler:forms(Forms),
     StringExpr = {bin, 3, [{bin_element, 3, {string, 3, "Hello"}, default, default}]},
+    BoxedStringExpr = {tuple, 3, [{atom, 3, string}, StringExpr]},
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Greeting', 0}]},
-        {function, 3, 'Greeting', 0, [{clause, 3, [], [], [StringExpr]}]}
+        {function, 3, 'Greeting', 0, [{clause, 3, [], [], [BoxedStringExpr]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
