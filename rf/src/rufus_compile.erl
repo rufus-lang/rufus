@@ -23,7 +23,7 @@ eval(RufusText) ->
     Handlers = [fun scan/1,
                 fun rufus_parse:parse/1,
                 fun rufus_return_type:check/1,
-                fun rufus_erlang_compiler:forms/1,
+                fun rufus_compile_erlang:forms/1,
                 fun compile/1
                ],
     eval_chain(RufusText, Handlers).
