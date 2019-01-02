@@ -22,7 +22,7 @@ eval(RufusText) ->
     %% handler returns an error.
     Handlers = [fun scan/1,
                 fun rufus_parse:parse/1,
-                fun rufus_return_type:check/1,
+                fun rufus_check_types:forms/1,
                 fun rufus_compile_erlang:forms/1,
                 fun compile/1
                ],
