@@ -1,5 +1,5 @@
-%% rufus_compiler compiles and loads Rufus source code.
--module(rufus_compiler).
+%% rufus_compile compiles and loads Rufus source code.
+-module(rufus_compile).
 
 %% API exports
 

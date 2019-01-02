@@ -107,6 +107,6 @@ compile(_Args) ->
     }
 ",
     io:format("RufusText =>~n    ~s~n", [RufusText]),
-    {ok, example} = rufus_compiler:eval(RufusText),
+    {ok, example} = rufus_compile:eval(RufusText),
     io:format("example:Number() =>~n~n    ~p~n", [example:'Number'()]),
     0.
