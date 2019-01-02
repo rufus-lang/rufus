@@ -1,6 +1,6 @@
-%% rufus_erlang_compiler transforms Rufus's abstract form into Erlang's abstract
+%% rufus_compile_erlang transforms Rufus's abstract form into Erlang's abstract
 %% form.
--module(rufus_erlang_compiler).
+-module(rufus_compile_erlang).
 
 %% API exports
 
