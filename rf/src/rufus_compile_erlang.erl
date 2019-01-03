@@ -14,6 +14,9 @@ forms(RufusForms) ->
 
 %% Private API
 
+forms(Acc, [{expr, LineNumber, {bool, Value}}|T]) ->
+    Form = {clause, LineNumber, [], [], [box({bool, LineNumber, Value})]},
+    forms([Form|Acc], T);
 forms(Acc, [{expr, LineNumber, {float, Value}}|T]) ->
     Form = {clause, LineNumber, [], [], [box({float, LineNumber, Value})]},
     forms([Form|Acc], T);
@@ -39,6 +42,8 @@ forms(Acc, []) ->
 %% turning `3.14159265359` into `{float, 3.14159265359}`, for example.
 box(Expr = {bin, LineNumber, _Value}) ->
     {tuple, LineNumber, [{atom, LineNumber, string}, Expr]};
+box({bool, LineNumber, Value}) ->
+    {tuple, LineNumber, [{atom, LineNumber, bool}, {atom, LineNumber, Value}]};
 box(Expr = {float, LineNumber, _Value}) ->
     {tuple, LineNumber, [{atom, LineNumber, float}, Expr]};
 box(Expr = {integer, LineNumber, _Value}) ->

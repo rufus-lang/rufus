@@ -37,6 +37,7 @@ Rules.
 {Whitespace}+   : skip_token.
 {Newline}+      : skip_token.
 
+{BoolType}      : {token, {bool, TokenLine}}.
 {ConstType}     : {token, {const, TokenLine}}.
 {FloatType}     : {token, {float, TokenLine}}.
 {IntType}       : {token, {int, TokenLine}}.
