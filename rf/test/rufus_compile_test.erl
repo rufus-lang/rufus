@@ -13,8 +13,16 @@ eval_chain_with_error_handler_test() ->
     Error = fun(_) -> {error, reason} end,
     Explode = fun(_) -> throw(explode) end,
     %% Explode never runs because eval_chain stops iterating over handlers when
-    %% it encounters an error.
+    %% it encounters a failure from Error.
     ?assertEqual({error, reason}, rufus_compile:eval_chain("haha", [Error, Explode])).
+
+eval_with_function_returning_a_bool_test() ->
+    RufusText = "
+    package example
+    func True() bool { true }
+    ",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual({bool, true}, example:'True'()).
 
 eval_with_function_returning_a_float_test() ->
     RufusText = "

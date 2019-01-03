@@ -2,6 +2,23 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
+forms_for_function_returning_a_bool_test() ->
+    RufusText = "
+    package example
+    func False() bool { false }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
+    BoolExpr = {atom, 3, false},
+    BoxedBoolExpr = {tuple, 3, [{atom, 3, bool}, BoolExpr]},
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'False', 0}]},
+        {function, 3, 'False', 0, [{clause, 3, [], [], [BoxedBoolExpr]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
 forms_for_function_returning_a_float_test() ->
     RufusText = "
     package example
