@@ -12,6 +12,7 @@ RightParen    = \)
 LeftBrace     = \{
 RightBrace    = \}
 
+BoolType      = bool
 ConstType     = const
 FloatType     = float
 IntType       = int
@@ -21,6 +22,7 @@ Package       = package
 Import        = import
 Func          = func
 
+BoolLiteral   = (true|false)
 Exponent      = (e|E)?(\+|\-)?{Digit}+
 FloatLiteral  = \-?{Digit}+\.{Digit}+{Exponent}?
 IntLiteral    = \-?{Digit}+
@@ -44,6 +46,7 @@ Rules.
 {Import}        : {token, {import, TokenLine}}.
 {Func}          : {token, {func, TokenLine}}.
 
+{BoolLiteral}   : {token, {bool_lit, TokenLine, list_to_atom(TokenChars)}}.
 {FloatLiteral}  : {token, {float_lit, TokenLine, list_to_float(TokenChars)}}.
 {IntLiteral}    : {token, {int_lit, TokenLine, list_to_integer(TokenChars)}}.
 {StringLiteral} : S = strip(TokenChars, TokenLen),

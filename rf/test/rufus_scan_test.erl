@@ -6,123 +6,141 @@
 
 string_with_empty_package_test() ->
     {ok, Tokens, _} = rufus_scan:string("package empty"),
-    [
+    ?assertEqual([
      {package, 1},
      {identifier, 1, "empty"}
-    ] = Tokens.
+    ], Tokens).
 
 string_with_import_test() ->
     {ok, Tokens, _} = rufus_scan:string("
      package foo
      import \"bar\"
     "),
-    [
+    ?assertEqual([
      {package, 2},
      {identifier, 2, "foo"},
      {import, 3},
      {string_lit, 3, "bar"}
-    ] = Tokens.
+    ], Tokens).
 
 %% Const
 
+string_with_false_bool_test() ->
+    {ok, Tokens, _} = rufus_scan:string("const Bool = false"),
+    ?assertEqual([
+     {const, 1},
+     {identifier, 1, "Bool"},
+     {'=', 1},
+     {bool_lit, 1, false}
+    ], Tokens).
+
+string_with_true_bool_test() ->
+    {ok, Tokens, _} = rufus_scan:string("const Bool = true"),
+    ?assertEqual([
+     {const, 1},
+     {identifier, 1, "Bool"},
+     {'=', 1},
+     {bool_lit, 1, true}
+    ], Tokens).
+
 string_with_float_test() ->
     {ok, Tokens, _} = rufus_scan:string("const Float = 3.1415"),
-    [
+    ?assertEqual([
      {const, 1},
      {identifier, 1, "Float"},
      {'=', 1},
      {float_lit, 1, 3.1415}
-    ] = Tokens.
+    ], Tokens).
 
 string_with_negative_float_test() ->
     {ok, Tokens, _} = rufus_scan:string("const NegativeFloat = -3.1415"),
-    [
+    ?assertEqual([
      {const, 1},
      {identifier, 1, "NegativeFloat"},
      {'=', 1},
      {float_lit, 1, -3.1415}
-    ] = Tokens.
+    ], Tokens).
 
 string_with_float_with_positive_exponent_test() ->
     {ok, Tokens, _} = rufus_scan:string("const FloatWithPositiveExponent = 4.0e+2"),
-    [
+    ?assertEqual([
      {const, 1},
      {identifier, 1, "FloatWithPositiveExponent"},
      {'=', 1},
      {float_lit, 1, 4.0e+2}
-    ] = Tokens.
+    ], Tokens).
 
 string_with_negative_float_with_positive_exponent_test() ->
     {ok, Tokens, _} = rufus_scan:string("const NegativeFloatWithPositiveExponent = -4.0e+2"),
-    [
+    ?assertEqual([
      {const, 1},
      {identifier, 1, "NegativeFloatWithPositiveExponent"},
      {'=', 1},
      {float_lit, 1, -4.0e+2}
-    ] = Tokens.
+    ], Tokens).
 
 string_with_float_with_negative_exponent_test() ->
     {ok, Tokens, _} = rufus_scan:string("const FloatWithNegativeExponent = 48.0e-2"),
-    [
+    ?assertEqual([
      {const, 1},
      {identifier, 1, "FloatWithNegativeExponent"},
      {'=', 1},
      {float_lit, 1, 48.0e-2}
-    ] = Tokens.
+    ], Tokens).
 
 string_with_negative_float_with_negative_exponent_test() ->
     {ok, Tokens, _} = rufus_scan:string("const NegativeFloatWithNegativeExponent = -48.0e-2"),
-    [
+    ?assertEqual([
      {const, 1},
      {identifier, 1, "NegativeFloatWithNegativeExponent"},
      {'=', 1},
      {float_lit, 1, -48.0e-2}
-    ] = Tokens.
+    ], Tokens).
 
 string_with_int_test() ->
     {ok, Tokens, _} = rufus_scan:string("const Int = 1"),
-    [
+    ?assertEqual([
      {const, 1},
      {identifier, 1, "Int"},
      {'=', 1},
      {int_lit, 1, 1}
-    ] = Tokens.
+    ], Tokens).
 
 string_with_negative_int_test() ->
     {ok, Tokens, _} = rufus_scan:string("const NegativeInt = -1"),
-    [
+    ?assertEqual([
      {const, 1},
      {identifier, 1, "NegativeInt"},
      {'=', 1},
      {int_lit, 1, -1}
-    ] = Tokens.
+    ], Tokens).
 
 string_with_string_test() ->
     {ok, Tokens, _} = rufus_scan:string("const Name = \"Rufus\""),
-    [
+    ?assertEqual([
      {const, 1},
      {identifier, 1, "Name"},
      {'=', 1},
      {string_lit, 1, "Rufus"}
-    ] = Tokens.
+    ], Tokens).
 
 string_with_string_containing_number_test() ->
     {ok, Tokens, _} = rufus_scan:string("const Number = \"42\""),
-    [
+    ?assertEqual([
      {const, 1},
      {identifier, 1, "Number"},
      {'=', 1},
      {string_lit, 1, "42"}
-    ] = Tokens.
+    ], Tokens).
 
 string_with_string_containing_whitespace_test() ->
     {ok, Tokens, _} = rufus_scan:string("const Whitespace = \"hello world\""),
-    [
+    ?assertEqual([
      {const, 1},
      {identifier, 1, "Whitespace"},
      {'=', 1},
      {string_lit, 1, "hello world"}
-    ] = Tokens.
+    ], Tokens).
 
 % string_with_string_containing_punctuation_test
 % string_with_string_containing_multibyte_utf8_character_test
@@ -131,7 +149,7 @@ string_with_string_containing_whitespace_test() ->
 
 string_with_function_returning_a_float_test() ->
     {ok, Tokens, _} = rufus_scan:string("func number42() float { 42.0 }"),
-    [
+    ?assertEqual([
      {func, 1},
      {identifier, 1, "number42"},
      {'(', 1},
@@ -140,11 +158,11 @@ string_with_function_returning_a_float_test() ->
      {'{', 1},
      {float_lit, 1, 42.0},
      {'}', 1}
-    ] = Tokens.
+    ], Tokens).
 
 string_with_function_returning_an_int_test() ->
     {ok, Tokens, _} = rufus_scan:string("func number42() int { 42 }"),
-    [
+    ?assertEqual([
      {func, 1},
      {identifier, 1, "number42"},
      {'(', 1},
@@ -153,11 +171,11 @@ string_with_function_returning_an_int_test() ->
      {'{', 1},
      {int_lit, 1, 42},
      {'}', 1}
-    ] = Tokens.
+    ], Tokens).
 
 string_with_function_returning_a_string_test() ->
     {ok, Tokens, _} = rufus_scan:string("func text42() string { \"42\" }"),
-    [
+    ?assertEqual([
      {func, 1},
      {identifier, 1, "text42"},
      {'(', 1},
@@ -166,7 +184,7 @@ string_with_function_returning_a_string_test() ->
      {'{', 1},
      {string_lit, 1, "42"},
      {'}', 1}
-    ] = Tokens.
+    ], Tokens).
 
 string_with_multiline_function_returning_a_string_test() ->
     {ok, Tokens, _} = rufus_scan:string("
@@ -174,7 +192,7 @@ func text42() string {
     \"42\"
 }
 "),
-    [
+    ?assertEqual([
      {func, 2},
      {identifier, 2, "text42"},
      {'(', 2},
@@ -183,11 +201,11 @@ func text42() string {
      {'{', 2},
      {string_lit, 3, "42"},
      {'}', 4}
-    ] = Tokens.
+    ], Tokens).
 
 string_with_function_takes_an_int_and_returning_an_int_test() ->
     {ok, Tokens, _} = rufus_scan:string("func echo(n int) int { n }"),
-    [
+    ?assertEqual([
      {func, 1},
      {identifier, 1, "echo"},
      {'(', 1},
@@ -198,11 +216,11 @@ string_with_function_takes_an_int_and_returning_an_int_test() ->
      {'{', 1},
      {identifier, 1, "n"},
      {'}', 1}
-    ] = Tokens.
+    ], Tokens).
 
 string_with_function_tokes_an_int_and_a_string_and_returning_a_float_test() ->
     {ok, Tokens, _} = rufus_scan:string("func float42(n int, s string) float { 42.0 }"),
-    [
+    ?assertEqual([
      {func, 1},
      {identifier, 1, "float42"},
      {'(', 1},
@@ -216,7 +234,7 @@ string_with_function_tokes_an_int_and_a_string_and_returning_a_float_test() ->
      {'{', 1},
      {float_lit, 1, 42.0},
      {'}', 1}
-    ] = Tokens.
+    ], Tokens).
 
 %% string_with_function_takes_an_unused_argument_test() ->
 %%     {ok, Tokens, _} = rufus_scan:string("func unused(_ int) int { 0 }")
