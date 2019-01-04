@@ -61,6 +61,15 @@ string_with_negative_float_literal_test() ->
      {float_lit, 1, -3.1415}
     ], Tokens).
 
+string_with_positive_float_literal_test() ->
+    {ok, Tokens, _} = rufus_scan:string("const PositiveFloat = +3.1415"),
+    ?assertEqual([
+     {const, 1},
+     {identifier, 1, "PositiveFloat"},
+     {'=', 1},
+     {float_lit, 1, 3.1415}
+    ], Tokens).
+
 string_with_float_with_positive_exponent_literal_test() ->
     {ok, Tokens, _} = rufus_scan:string("const FloatWithPositiveExponent = 4.0e+2"),
     ?assertEqual([
@@ -77,6 +86,15 @@ string_with_negative_float_with_positive_exponent_literal_test() ->
      {identifier, 1, "NegativeFloatWithPositiveExponent"},
      {'=', 1},
      {float_lit, 1, -4.0e+2}
+    ], Tokens).
+
+string_with_positive_float_with_positive_exponent_literal_test() ->
+    {ok, Tokens, _} = rufus_scan:string("const PositiveFloatWithPositiveExponent = +4.0e+2"),
+    ?assertEqual([
+     {const, 1},
+     {identifier, 1, "PositiveFloatWithPositiveExponent"},
+     {'=', 1},
+     {float_lit, 1, 4.0e+2}
     ], Tokens).
 
 string_with_float_with_negative_exponent_literal_test() ->
@@ -97,6 +115,15 @@ string_with_negative_float_with_negative_exponent_literal_test() ->
      {float_lit, 1, -48.0e-2}
     ], Tokens).
 
+string_with_positive_float_with_negative_exponent_literal_test() ->
+    {ok, Tokens, _} = rufus_scan:string("const PositiveFloatWithNegativeExponent = +48.0e-2"),
+    ?assertEqual([
+     {const, 1},
+     {identifier, 1, "PositiveFloatWithNegativeExponent"},
+     {'=', 1},
+     {float_lit, 1, 48.0e-2}
+    ], Tokens).
+
 string_with_int_literal_test() ->
     {ok, Tokens, _} = rufus_scan:string("const Int = 1"),
     ?assertEqual([
@@ -113,6 +140,15 @@ string_with_negative_int_literal_test() ->
      {identifier, 1, "NegativeInt"},
      {'=', 1},
      {int_lit, 1, -1}
+    ], Tokens).
+
+string_with_positive_int_literal_test() ->
+    {ok, Tokens, _} = rufus_scan:string("const PositiveInt = +1"),
+    ?assertEqual([
+     {const, 1},
+     {identifier, 1, "PositiveInt"},
+     {'=', 1},
+     {int_lit, 1, 1}
     ], Tokens).
 
 string_with_string_literal_test() ->

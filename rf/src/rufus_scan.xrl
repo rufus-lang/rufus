@@ -24,13 +24,14 @@ Func          = func
 
 BoolLiteral   = (true|false)
 Exponent      = (e|E)?(\+|\-)?{Digit}+
-FloatLiteral  = \-?{Digit}+\.{Digit}+{Exponent}?
-IntLiteral    = \-?{Digit}+
+FloatLiteral  = (\+|\-)?{Digit}+\.{Digit}+{Exponent}?
+IntLiteral    = (\+|\-)?{Digit}+
 StringLiteral = \"({Digit}|{UnicodeLetter}|{Whitespace})+\"
 
 Comma         = ,
 Match         = =
 Plus          = \+
+Minus         = \-
 
 Rules.
 
@@ -60,6 +61,7 @@ Rules.
 {Comma}         : {token, {',', TokenLine}}.
 {Match}         : {token, {'=', TokenLine}}.
 {Plus}          : {token, {'+', TokenLine}}.
+{Minus}         : {token, {'-', TokenLine}}.
 {Identifier}    : {token, {identifier, TokenLine, TokenChars}}.
 
 Erlang code.
