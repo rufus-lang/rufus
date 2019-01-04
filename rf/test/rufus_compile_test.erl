@@ -16,6 +16,8 @@ eval_chain_with_error_handler_test() ->
     %% it encounters a failure from Error.
     ?assertEqual({error, reason}, rufus_compile:eval_chain("haha", [Error, Explode])).
 
+%% Arity-0 functions returning literal values for primitive type.
+
 eval_with_function_returning_a_bool_test() ->
     RufusText = "
     package example
@@ -47,6 +49,8 @@ eval_with_function_returning_a_string_test() ->
     ",
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual({string, <<"Hello">>}, example:'Greeting'()).
+
+%% Type checking return values
 
 eval_with_function_having_unmatched_return_types_test() ->
     RufusText = "
