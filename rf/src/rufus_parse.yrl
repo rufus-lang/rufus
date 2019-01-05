@@ -1,4 +1,4 @@
-Nonterminals declaration expression function root type.
+Nonterminals declaration expression function root type argument arguments.
 
 Terminals '(' ')' '{' '}' func identifier import package bool bool_lit float float_lit int int_lit string string_lit.
 
@@ -11,12 +11,16 @@ declaration -> import string_lit : {import, token_line('$2'), token_chars('$2')}
 declaration -> package identifier : {package, token_line('$2'), token_chars('$2')}.
 declaration -> function : '$1'.
 
-function -> func identifier '(' ')' type '{' expression '}' : {func, token_line('$1'), token_chars('$2'), [], token_type('$5'), '$7'}.
+function -> func identifier '(' arguments ')' type '{' expression '}' : {func, token_line('$1'), token_chars('$2'), '$4', token_type('$6'), '$8'}.
 
 type -> bool : {bool, token_line('$1')}.
 type -> float : {float, token_line('$1')}.
 type -> int : {int, token_line('$1')}.
 type -> string : {string, token_line('$1')}.
+
+arguments -> argument arguments : ['$1'|'$2'].
+arguments -> '$empty' : [].
+argument -> identifier type : {arg, token_line('$1'), token_chars('$1'), token_type('$2')}.
 
 expression -> bool_lit : [{expr, token_line('$1'), {bool, token_chars('$1')}}].
 expression -> float_lit : [{expr, token_line('$1'), {float, token_chars('$1')}}].
