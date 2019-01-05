@@ -1,6 +1,6 @@
 {application, rf,
  [{description, "rf provides tools for working with Rufus"},
-  {vsn, "0.1.0"},
+  {vsn, "0.0.1"},
   {registered, []},
   {applications,
    [

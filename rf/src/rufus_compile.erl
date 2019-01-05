@@ -16,10 +16,6 @@
 %% - `{ok, Module}` if compilation completed and `Module` is loaded.
 %% - `error` or `{error, ...}` if an error occurs.
 eval(RufusText) ->
-    %% RufusText is the input for the first handler. Handlers are run in order
-    %% using the output from the previous function. Each function returns data
-    %% of the shape {ok, Output} or some form of error. Processing stops when a
-    %% handler returns an error.
     Handlers = [fun scan/1,
                 fun rufus_parse:parse/1,
                 fun rufus_check_types:forms/1,
@@ -30,6 +26,9 @@ eval(RufusText) ->
 
 %% Private API
 
+%% eval_chain runs each handler as H(Input) in order. Each handler result must
+%% match {ok, Output}. Any other response is treated as an error. Processing
+%% stops when a handler returns an error.
 eval_chain(Input, [H|T]) ->
     case H(Input) of
         {ok, Forms} ->

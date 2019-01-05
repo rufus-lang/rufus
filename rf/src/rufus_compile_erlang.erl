@@ -8,43 +8,50 @@
 
 %% API
 
+%% forms transforms RufusForms into Erlang forms that can be compiled with
+%% compile:forms/1 and then loaded with code:load_binary/3.
 forms(RufusForms) ->
     ErlangForms = lists:reverse(forms([], RufusForms)),
     {ok, ErlangForms}.
 
 %% Private API
 
-forms(Acc, [{expr, LineNumber, {bool, Value}}|T]) ->
-    Form = {clause, LineNumber, [], [], [box({bool, LineNumber, Value})]},
+forms(Acc, [{arg, Line, Name, Type}|T]) ->
+    Form = {tuple, Line, [{atom, Line, Type}, {var, Line, list_to_atom("_" ++ Name)}]},
     forms([Form|Acc], T);
-forms(Acc, [{expr, LineNumber, {float, Value}}|T]) ->
-    Form = {clause, LineNumber, [], [], [box({float, LineNumber, Value})]},
+forms(Acc, [{expr, Line, {bool, Value}}|T]) ->
+    Form = box({bool, Line, Value}),
     forms([Form|Acc], T);
-forms(Acc, [{expr, LineNumber, {int, Value}}|T]) ->
-    Form = {clause, LineNumber, [], [], [box({integer, LineNumber, Value})]},
+forms(Acc, [{expr, Line, {float, Value}}|T]) ->
+    Form = box({float, Line, Value}),
     forms([Form|Acc], T);
-forms(Acc, [{expr, LineNumber, {string, Value}}|T]) ->
-    StringExpr = {bin_element, LineNumber, {string, LineNumber, Value}, default, default},
-    Form = {clause, LineNumber, [], [], [box({bin, LineNumber, [StringExpr]})]},
+forms(Acc, [{expr, Line, {int, Value}}|T]) ->
+    Form = box({integer, Line, Value}),
     forms([Form|Acc], T);
-forms(Acc, [{func, LineNumber, Name, _Args, _ReturnType, Exprs}|T]) ->
+forms(Acc, [{expr, Line, {string, Value}}|T]) ->
+    StringExpr = {bin_element, Line, {string, Line, Value}, default, default},
+    Form = box({bin, Line, [StringExpr]}),
+    forms([Form|Acc], T);
+forms(Acc, [{func, Line, Name, Args, _ReturnType, Exprs}|T]) ->
+    ArgsForms = forms([], Args),
     ExprForms = lists:reverse(forms([], Exprs)),
-    ExportForms = {attribute, LineNumber, export, [{list_to_atom(Name), 0}]},
-    Forms = {function, LineNumber, list_to_atom(Name), 0, ExprForms},
+    FunctionForms = [{clause, Line, ArgsForms, [], ExprForms}],
+    ExportForms = {attribute, Line, export, [{list_to_atom(Name), length(Args)}]},
+    Forms = {function, Line, list_to_atom(Name), length(Args), FunctionForms},
     forms([Forms|[ExportForms|Acc]], T);
-forms(Acc, [{package, LineNumber, Name}|T]) ->
-    Form = {attribute, LineNumber, module, list_to_atom(Name)},
+forms(Acc, [{package, Line, Name}|T]) ->
+    Form = {attribute, Line, module, list_to_atom(Name)},
     forms([Form|Acc], T);
 forms(Acc, []) ->
     Acc.
 
 %% box converts Rufus types into Erlang `{<type>, <value>}` 2-tuples, such as
 %% turning `3.14159265359` into `{float, 3.14159265359}`, for example.
-box(Expr = {bin, LineNumber, _Value}) ->
-    {tuple, LineNumber, [{atom, LineNumber, string}, Expr]};
-box({bool, LineNumber, Value}) ->
-    {tuple, LineNumber, [{atom, LineNumber, bool}, {atom, LineNumber, Value}]};
-box(Expr = {float, LineNumber, _Value}) ->
-    {tuple, LineNumber, [{atom, LineNumber, float}, Expr]};
-box(Expr = {integer, LineNumber, _Value}) ->
-    {tuple, LineNumber, [{atom, LineNumber, int}, Expr]}.
+box(Expr = {bin, Line, _Value}) ->
+    {tuple, Line, [{atom, Line, string}, Expr]};
+box({bool, Line, Value}) ->
+    {tuple, Line, [{atom, Line, bool}, {atom, Line, Value}]};
+box(Expr = {float, Line, _Value}) ->
+    {tuple, Line, [{atom, Line, float}, Expr]};
+box(Expr = {integer, Line, _Value}) ->
+    {tuple, Line, [{atom, Line, int}, Expr]}.
