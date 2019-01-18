@@ -26,3 +26,13 @@ forms_with_function_having_unmatched_return_types_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {error, unmatched_return_type, Data} = rufus_check_types:forms(Forms),
     ?assertEqual(#{actual => float, expected => int}, Data).
+
+forms_with_function_returning_a_variable_test() ->
+    RufusText = "
+    package example
+    func Echo(s string) string { s }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    io:format("Forms => ~n~n~p~n", [Forms]),
+    ?assertEqual({ok, Forms}, rufus_check_types:forms(Forms)).

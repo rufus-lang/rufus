@@ -1,34 +1,40 @@
-Nonterminals declaration expression function root type argument arguments.
+Nonterminals
+  root decl expr function type arg args
+  .
 
-Terminals '(' ')' '{' '}' func identifier import package bool bool_lit float float_lit int int_lit string string_lit.
+Terminals '(' ')' '{' '}' ',' func identifier import package bool bool_lit float float_lit int int_lit string string_lit.
 
 Rootsymbol root.
 
-root -> declaration : ['$1'].
-root -> declaration root : ['$1'] ++ '$2'.
+root -> decl : ['$1'].
+root -> decl root : ['$1'] ++ '$2'.
 
-declaration -> import string_lit : {import, token_line('$2'), token_chars('$2')}.
-declaration -> package identifier : {package, token_line('$2'), token_chars('$2')}.
-declaration -> function : '$1'.
+decl -> import string_lit : {import, token_line('$2'), token_chars('$2')}.
+decl -> package identifier : {package, token_line('$2'), token_chars('$2')}.
+decl -> function : '$1'.
 
-function -> func identifier '(' arguments ')' type '{' expression '}' : {func, token_line('$1'), token_chars('$2'), '$4', token_type('$6'), '$8'}.
+function -> func identifier '(' args ')' type '{' expr '}' : {func, token_line('$1'), token_chars('$2'), '$4', token_type('$6'), '$8'}.
 
 type -> bool : {bool, token_line('$1')}.
 type -> float : {float, token_line('$1')}.
 type -> int : {int, token_line('$1')}.
 type -> string : {string, token_line('$1')}.
 
-arguments -> argument arguments : ['$1'|'$2'].
-arguments -> '$empty' : [].
-argument -> identifier type : {arg, token_line('$1'), token_chars('$1'), token_type('$2')}.
+args -> arg args : ['$1'|'$2'].
+args -> '$empty' : [].
+arg -> identifier type ',' : {arg, token_line('$1'), token_atom('$1'), token_type('$2')}.
+arg -> identifier type : {arg, token_line('$1'), token_atom('$1'), token_type('$2')}.
 
-expression -> bool_lit : [{expr, token_line('$1'), {bool, token_chars('$1')}}].
-expression -> float_lit : [{expr, token_line('$1'), {float, token_chars('$1')}}].
-expression -> int_lit : [{expr, token_line('$1'), {int, token_chars('$1')}}].
-expression -> string_lit : [{expr, token_line('$1'), {string, token_chars('$1')}}].
+expr -> bool_lit : [{expr, token_line('$1'), {bool, token_chars('$1')}}].
+expr -> float_lit : [{expr, token_line('$1'), {float, token_chars('$1')}}].
+expr -> int_lit : [{expr, token_line('$1'), {int, token_chars('$1')}}].
+expr -> string_lit : [{expr, token_line('$1'), {string, token_chars('$1')}}].
+expr -> identifier : [{expr, token_line('$1'), {identifier, token_atom('$1')}}].
 
 Erlang code.
 
+token_atom({_TokenType, _TokenLine, TokenChars}) ->
+    list_to_atom(TokenChars).
 token_chars({_TokenType, _TokenLine, TokenChars}) ->
     TokenChars.
 

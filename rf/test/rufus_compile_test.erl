@@ -18,7 +18,7 @@ eval_chain_with_error_handler_test() ->
 
 %% Arity-0 functions returning a literal value for primitive types
 
-eval_with_function_returning_a_bool_test() ->
+eval_with_function_returning_a_bool_literal_test() ->
     RufusText = "
     package example
     func True() bool { true }
@@ -26,7 +26,7 @@ eval_with_function_returning_a_bool_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual({bool, true}, example:'True'()).
 
-eval_with_function_returning_a_float_test() ->
+eval_with_function_returning_a_float_literal_test() ->
     RufusText = "
     package example
     func Pi() float { 3.14159265359 }
@@ -34,7 +34,7 @@ eval_with_function_returning_a_float_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual({float, 3.14159265359}, example:'Pi'()).
 
-eval_with_function_returning_an_int_test() ->
+eval_with_function_returning_an_int_literal_test() ->
     RufusText = "
     package example
     func Number() int { 42 }
@@ -42,7 +42,7 @@ eval_with_function_returning_an_int_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual({int, 42}, example:'Number'()).
 
-eval_with_function_returning_a_string_test() ->
+eval_with_function_returning_a_string_literal_test() ->
     RufusText = "
     package example
     func Greeting() string { \"Hello\" }
@@ -50,9 +50,9 @@ eval_with_function_returning_a_string_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual({string, <<"Hello">>}, example:'Greeting'()).
 
-%% Arity-1 functions using an argument
+%% Arity-1 functions taking an unused argument
 
-eval_with_function_taking_a_bool_and_returning_a_bool_test() ->
+eval_with_function_taking_a_bool_and_returning_a_bool_literal_test() ->
     RufusText = "
     package example
     func MaybeEcho(n bool) bool { true }
@@ -61,7 +61,7 @@ eval_with_function_taking_a_bool_and_returning_a_bool_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual({bool, true}, example:'MaybeEcho'({bool, false})).
 
-eval_with_function_taking_a_float_and_returning_a_float_test() ->
+eval_with_function_taking_a_float_and_returning_a_float_literal_test() ->
     RufusText = "
     package example
     func MaybeEcho(n float) float { 3.14159265359 }
@@ -70,7 +70,7 @@ eval_with_function_taking_a_float_and_returning_a_float_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual({float, 3.14159265359}, example:'MaybeEcho'({float, 3.14})).
 
-eval_with_function_taking_an_int_and_returning_an_int_test() ->
+eval_with_function_taking_an_int_and_returning_an_int_literal_test() ->
     RufusText = "
     package example
     func MaybeEcho(n int) int { 42 }
@@ -79,7 +79,7 @@ eval_with_function_taking_an_int_and_returning_an_int_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual({int, 42}, example:'MaybeEcho'({int, 42})).
 
-eval_with_function_taking_a_string_and_returning_a_string_test() ->
+eval_with_function_taking_a_string_and_returning_a_string_literal_test() ->
     RufusText = "
     package example
     func MaybeEcho(n string) string { \"Hello\" }
@@ -87,6 +87,17 @@ eval_with_function_taking_a_string_and_returning_a_string_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertEqual({string, <<"Hello">>}, example:'MaybeEcho'({string, <<"Good morning">>})).
+
+%% Arity-1 functions taking and using an argument
+
+eval_with_function_taking_a_bool_and_returning_a_bool_test() ->
+    RufusText = "
+    package example
+    func Echo(n bool) bool { n }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual({bool, true}, example:'Echo'({bool, false})).
 
 %% Type checking return values
 

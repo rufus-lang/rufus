@@ -17,7 +17,7 @@ forms(RufusForms) ->
 %% Private API
 
 forms(Acc, [{arg, Line, Name, Type}|T]) ->
-    Form = {tuple, Line, [{atom, Line, Type}, {var, Line, list_to_atom("_" ++ Name)}]},
+    Form = {tuple, Line, [{atom, Line, Type}, {var, Line, Name}]},
     forms([Form|Acc], T);
 forms(Acc, [{expr, Line, {bool, Value}}|T]) ->
     Form = box({bool, Line, Value}),
@@ -31,6 +31,9 @@ forms(Acc, [{expr, Line, {int, Value}}|T]) ->
 forms(Acc, [{expr, Line, {string, Value}}|T]) ->
     StringExpr = {bin_element, Line, {string, Line, Value}, default, default},
     Form = box({bin, Line, [StringExpr]}),
+    forms([Form|Acc], T);
+forms(Acc, [{expr, Line, {identifier, Name}}|T]) ->
+    Form = {var, Line, Name},
     forms([Form|Acc], T);
 forms(Acc, [{func, Line, Name, Args, _ReturnType, Exprs}|T]) ->
     ArgsForms = forms([], Args),
