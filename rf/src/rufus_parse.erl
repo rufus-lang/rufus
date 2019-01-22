@@ -262,7 +262,7 @@ yeccpars2_0(S, func, Ss, Stack, T, Ts, Tzr) ->
  yeccpars1(S, 4, Ss, Stack, T, Ts, Tzr);
 yeccpars2_0(S, import, Ss, Stack, T, Ts, Tzr) ->
  yeccpars1(S, 5, Ss, Stack, T, Ts, Tzr);
-yeccpars2_0(S, package, Ss, Stack, T, Ts, Tzr) ->
+yeccpars2_0(S, module, Ss, Stack, T, Ts, Tzr) ->
  yeccpars1(S, 6, Ss, Stack, T, Ts, Tzr);
 yeccpars2_0(_, _, _, _, T, _, _) ->
  yeccerror(T).
@@ -280,7 +280,7 @@ yeccpars2_3(S, func, Ss, Stack, T, Ts, Tzr) ->
  yeccpars1(S, 4, Ss, Stack, T, Ts, Tzr);
 yeccpars2_3(S, import, Ss, Stack, T, Ts, Tzr) ->
  yeccpars1(S, 5, Ss, Stack, T, Ts, Tzr);
-yeccpars2_3(S, package, Ss, Stack, T, Ts, Tzr) ->
+yeccpars2_3(S, module, Ss, Stack, T, Ts, Tzr) ->
  yeccpars1(S, 6, Ss, Stack, T, Ts, Tzr);
 yeccpars2_3(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  NewStack = yeccpars2_3_(Stack),
@@ -494,7 +494,7 @@ yeccpars2_3_(__Stack0) ->
 yeccpars2_7_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   { package , token_line ( __2 ) , token_chars ( __2 ) }
+   { module , token_line ( __2 ) , token_chars ( __2 ) }
   end | __Stack].
 
 -compile({inline,yeccpars2_8_/1}).

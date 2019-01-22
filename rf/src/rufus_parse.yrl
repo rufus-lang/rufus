@@ -2,7 +2,7 @@ Nonterminals
   root decl expr function type arg args
   .
 
-Terminals '(' ')' '{' '}' ',' func identifier import package bool bool_lit float float_lit int int_lit string string_lit.
+Terminals '(' ')' '{' '}' ',' func identifier import module bool bool_lit float float_lit int int_lit string string_lit.
 
 Rootsymbol root.
 
@@ -10,7 +10,7 @@ root -> decl : ['$1'].
 root -> decl root : ['$1'] ++ '$2'.
 
 decl -> import string_lit : {import, token_line('$2'), token_chars('$2')}.
-decl -> package identifier : {package, token_line('$2'), token_chars('$2')}.
+decl -> module identifier : {module, token_line('$2'), token_chars('$2')}.
 decl -> function : '$1'.
 
 function -> func identifier '(' args ')' type '{' expr '}' : {func, token_line('$1'), token_chars('$2'), '$4', token_type('$6'), '$8'}.

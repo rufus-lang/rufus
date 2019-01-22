@@ -20,7 +20,7 @@ eval_chain_with_error_handler_test() ->
 
 eval_with_function_returning_a_bool_literal_test() ->
     RufusText = "
-    package example
+    module example
     func True() bool { true }
     ",
     {ok, example} = rufus_compile:eval(RufusText),
@@ -28,7 +28,7 @@ eval_with_function_returning_a_bool_literal_test() ->
 
 eval_with_function_returning_a_float_literal_test() ->
     RufusText = "
-    package example
+    module example
     func Pi() float { 3.14159265359 }
     ",
     {ok, example} = rufus_compile:eval(RufusText),
@@ -36,7 +36,7 @@ eval_with_function_returning_a_float_literal_test() ->
 
 eval_with_function_returning_an_int_literal_test() ->
     RufusText = "
-    package example
+    module example
     func Number() int { 42 }
     ",
     {ok, example} = rufus_compile:eval(RufusText),
@@ -44,7 +44,7 @@ eval_with_function_returning_an_int_literal_test() ->
 
 eval_with_function_returning_a_string_literal_test() ->
     RufusText = "
-    package example
+    module example
     func Greeting() string { \"Hello\" }
     ",
     {ok, example} = rufus_compile:eval(RufusText),
@@ -54,7 +54,7 @@ eval_with_function_returning_a_string_literal_test() ->
 
 eval_with_function_taking_a_bool_and_returning_a_bool_literal_test() ->
     RufusText = "
-    package example
+    module example
     func MaybeEcho(n bool) bool { true }
     ",
     Result = rufus_compile:eval(RufusText),
@@ -63,7 +63,7 @@ eval_with_function_taking_a_bool_and_returning_a_bool_literal_test() ->
 
 eval_with_function_taking_a_float_and_returning_a_float_literal_test() ->
     RufusText = "
-    package example
+    module example
     func MaybeEcho(n float) float { 3.14159265359 }
     ",
     Result = rufus_compile:eval(RufusText),
@@ -72,7 +72,7 @@ eval_with_function_taking_a_float_and_returning_a_float_literal_test() ->
 
 eval_with_function_taking_an_int_and_returning_an_int_literal_test() ->
     RufusText = "
-    package example
+    module example
     func MaybeEcho(n int) int { 42 }
     ",
     Result = rufus_compile:eval(RufusText),
@@ -81,7 +81,7 @@ eval_with_function_taking_an_int_and_returning_an_int_literal_test() ->
 
 eval_with_function_taking_a_string_and_returning_a_string_literal_test() ->
     RufusText = "
-    package example
+    module example
     func MaybeEcho(n string) string { \"Hello\" }
     ",
     Result = rufus_compile:eval(RufusText),
@@ -92,7 +92,7 @@ eval_with_function_taking_a_string_and_returning_a_string_literal_test() ->
 
 eval_with_function_taking_a_bool_and_returning_a_bool_test() ->
     RufusText = "
-    package example
+    module example
     func Echo(n bool) bool { n }
     ",
     Result = rufus_compile:eval(RufusText),
@@ -103,7 +103,7 @@ eval_with_function_taking_a_bool_and_returning_a_bool_test() ->
 
 eval_with_function_having_unmatched_return_types_test() ->
     RufusText = "
-    package example
+    module example
     func Number() float { 42 }
     ",
     {error, unmatched_return_type, _Data} = rufus_compile:eval(RufusText).
