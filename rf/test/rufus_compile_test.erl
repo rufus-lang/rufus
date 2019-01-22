@@ -88,17 +88,6 @@ eval_with_function_taking_a_string_and_returning_a_string_literal_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual({string, <<"Hello">>}, example:'MaybeEcho'({string, <<"Good morning">>})).
 
-%% Arity-1 functions taking and using an argument
-
-eval_with_function_taking_a_bool_and_returning_a_bool_test() ->
-    RufusText = "
-    module example
-    func Echo(n bool) bool { n }
-    ",
-    Result = rufus_compile:eval(RufusText),
-    ?assertEqual({ok, example}, Result),
-    ?assertEqual({bool, true}, example:'Echo'({bool, false})).
-
 %% Type checking return values
 
 eval_with_function_having_unmatched_return_types_test() ->
