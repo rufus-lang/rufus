@@ -1,0 +1,7 @@
+module example
+
+import t "testing"
+
+func TestEcho(c t.C) {
+    t.AssertEqual(c, "Hello, world!", Echo("Hello, world!"))
+}
