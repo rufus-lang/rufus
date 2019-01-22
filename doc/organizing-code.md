@@ -40,22 +40,64 @@ layout:
 
 ```
 .git                  # Git repository metadata
-echo.rf               # Echo/1 function
-echo_test.rf          # Echo/1 function tests
+.gitignore            # Git ignore list
 rufus.config          # Rufus config file
 rufus.lock            # Rufus lock file
 bin/
-    example           # Command executable
+    example           # Built executable
 cmd/example/
-    main.rf           # example program source code
+pkg/                  # Package dependencies
+src/                  # Program source code
+    echo.rf
+    echo_test.rf
+src/bin/              # Executable source code
+    example.rf
 ```
+
+All source code goes in `src/`. Executable source code goes in `src/bin/`. Built
+executables are named based on the source filename and written to `bin/`.
+Package dependencies are downloaded and stored in `pkg/`.
 
 The `rufus.config` file contains important details about the package:
 
 ```
+[package]
+name = example
 version = 0.8.3
-package_root = github.com/rufus-lang/rufus
+package_root = github.com/rufus-lang/example
+authors = ["Jamu Kakar <jkakar@kakar.ca>"]
 ```
+
+## Dependencies
+
+Dependencies are declared in the `rufus.config` file.
+
+```
+[package]
+name = example
+version = 0.8.3
+package_root = github.com/rufus-lang/example
+authors = ["Jamu Kakar <jkakar@kakar.ca>"]
+
+[dependencies]
+"github.com/aws/aws-sdk-rufus" = 4.3
+```
+
+Running `rf build` will fetch new dependencies and all other transitive
+dependencies, compile them, and update `rufus.lock`. Dependencies are downloaded
+into the `pkg/` directory:
+
+```
+pkg/
+    github.com/aws/aws-sdk-rufus/
+    github.com/jkakar/logfmt/
+```
+
+Each of these directories contains the entire contents of the packages at those
+URLs. Rufus resolves imports by first trying to match the import path to the
+standard library. If that doesn't match it attempts to match the package root.
+If that doesn't match, the dependencies in `pkg/` will be traversed to find a
+match.
 
 ## Modules
 
