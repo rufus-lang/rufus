@@ -18,7 +18,7 @@ FloatType     = float
 IntType       = int
 StringType    = string
 
-Package       = package
+Module        = module
 Import        = import
 Func          = func
 
@@ -44,7 +44,7 @@ Rules.
 {IntType}       : {token, {int, TokenLine}}.
 {StringType}    : {token, {string, TokenLine}}.
 
-{Package}       : {token, {package, TokenLine}}.
+{Module}        : {token, {module, TokenLine}}.
 {Import}        : {token, {import, TokenLine}}.
 {Func}          : {token, {func, TokenLine}}.
 

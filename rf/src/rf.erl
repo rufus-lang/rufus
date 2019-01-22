@@ -75,7 +75,7 @@ version(_Args) ->
 
 compile(_Args) ->
     RufusText ="
-    package example
+    module example
 
     func Number() int {
         42
@@ -103,7 +103,7 @@ scan(_, Res) ->
 
 debug_parse(_Args) ->
     RufusText = "
-    package rand
+    module rand
 
     func Int() int {
         42
@@ -128,7 +128,7 @@ debug_parse(_Args) ->
 
 debug_scan(_Args) ->
     RufusText = "
-    package example
+    module example
 
     func Greet(name string) string {
         \"Hello \" + name

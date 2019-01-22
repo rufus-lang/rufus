@@ -17,7 +17,7 @@ forms(RufusForms) ->
 %% Private API
 
 forms(Acc, [{arg, Line, Name, Type}|T]) ->
-    Form = {tuple, Line, [{atom, Line, Type}, {var, Line, list_to_atom("_" ++ Name)}]},
+    Form = {tuple, Line, [{atom, Line, Type}, {var, Line, Name}]},
     forms([Form|Acc], T);
 forms(Acc, [{expr, Line, {bool, Value}}|T]) ->
     Form = box({bool, Line, Value}),
@@ -32,6 +32,9 @@ forms(Acc, [{expr, Line, {string, Value}}|T]) ->
     StringExpr = {bin_element, Line, {string, Line, Value}, default, default},
     Form = box({bin, Line, [StringExpr]}),
     forms([Form|Acc], T);
+forms(Acc, [{expr, Line, {identifier, Name}}|T]) ->
+    Form = {var, Line, Name},
+    forms([Form|Acc], T);
 forms(Acc, [{func, Line, Name, Args, _ReturnType, Exprs}|T]) ->
     ArgsForms = forms([], Args),
     ExprForms = lists:reverse(forms([], Exprs)),
@@ -39,7 +42,7 @@ forms(Acc, [{func, Line, Name, Args, _ReturnType, Exprs}|T]) ->
     ExportForms = {attribute, Line, export, [{list_to_atom(Name), length(Args)}]},
     Forms = {function, Line, list_to_atom(Name), length(Args), FunctionForms},
     forms([Forms|[ExportForms|Acc]], T);
-forms(Acc, [{package, Line, Name}|T]) ->
+forms(Acc, [{module, Line, Name}|T]) ->
     Form = {attribute, Line, module, list_to_atom(Name)},
     forms([Form|Acc], T);
 forms(Acc, []) ->

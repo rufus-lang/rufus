@@ -2,22 +2,22 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-%% Packages
+%% Modules
 
-string_with_empty_package_test() ->
-    {ok, Tokens, _} = rufus_scan:string("package empty"),
+string_with_empty_module_test() ->
+    {ok, Tokens, _} = rufus_scan:string("module empty"),
     ?assertEqual([
-     {package, 1},
+     {module, 1},
      {identifier, 1, "empty"}
     ], Tokens).
 
 string_with_import_test() ->
     {ok, Tokens, _} = rufus_scan:string("
-     package foo
+     module foo
      import \"bar\"
     "),
     ?assertEqual([
-     {package, 2},
+     {module, 2},
      {identifier, 2, "foo"},
      {import, 3},
      {string_lit, 3, "bar"}
