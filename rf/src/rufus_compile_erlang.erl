@@ -42,8 +42,8 @@ forms(Acc, [{func, Line, Name, Args, _ReturnType, Exprs}|T]) ->
     ExportForms = {attribute, Line, export, [{list_to_atom(Name), length(Args)}]},
     Forms = {function, Line, list_to_atom(Name), length(Args), FunctionForms},
     forms([Forms|[ExportForms|Acc]], T);
-forms(Acc, [{module, Line, Name}|T]) ->
-    Form = {attribute, Line, module, list_to_atom(Name)},
+forms(Acc, [{module, #{line := Line, spec := Name}}|T]) ->
+    Form = {attribute, Line, module, Name},
     forms([Form|Acc], T);
 forms(Acc, []) ->
     Acc.

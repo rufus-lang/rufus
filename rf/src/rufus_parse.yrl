@@ -9,8 +9,8 @@ Rootsymbol root.
 root -> decl : ['$1'].
 root -> decl root : ['$1'] ++ '$2'.
 
-decl -> import string_lit : {import, #{line => token_line('$2'), import_spec => token_chars('$2')}}.
-decl -> module identifier : {module, token_line('$2'), token_chars('$2')}.
+decl -> import string_lit : {import, #{line => token_line('$2'), spec => token_chars('$2')}}.
+decl -> module identifier : {module, #{line => token_line('$2'), spec => token_atom('$2')}}.
 decl -> function : '$1'.
 
 function -> func identifier '(' args ')' type '{' expr '}' : {func, token_line('$1'), token_chars('$2'), '$4', token_type('$6'), '$8'}.

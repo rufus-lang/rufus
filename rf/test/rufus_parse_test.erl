@@ -8,7 +8,7 @@ parse_empty_module_test() ->
     {ok, Tokens, _} = rufus_scan:string("module empty"),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, 1, "empty"}
+     {module, #{line => 1, spec => empty}}
     ], Forms).
 
 %% Import
@@ -21,8 +21,8 @@ parse_import_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, 2, "foo"},
-     {import, #{line => 3, import_spec => "bar"}}
+     {module, #{line => 2, spec => foo}},
+     {import, #{line => 3, spec => "bar"}}
     ], Forms).
 
 %% Arity-0 functions returning a literal value for primitive types
@@ -35,7 +35,7 @@ parse_function_returning_a_bool_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, 2, "example"},
+     {module, #{line => 2, spec => example}},
      {func, 3, "True", [], bool, [{expr, 3, {bool, true}}]}
     ], Forms).
 
@@ -47,7 +47,7 @@ parse_function_returning_a_float_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, 2, "math"},
+     {module, #{line => 2, spec => math}},
      {func, 3, "Pi", [], float, [{expr, 3, {float, 3.14159265359}}]}
     ], Forms).
 
@@ -59,7 +59,7 @@ parse_function_returning_an_int_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, 2, "rand"},
+     {module, #{line => 2, spec => rand}},
      {func, 3, "Number", [], int, [{expr, 3, {int, 42}}]}
     ], Forms).
 
@@ -71,7 +71,7 @@ parse_function_returning_a_string_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, 2, "example"},
+     {module, #{line => 2, spec => example}},
      {func, 3, "Greeting", [], string, [{expr, 3, {string, "Hello"}}]}
     ], Forms).
 
@@ -85,7 +85,7 @@ parse_function_taking_an_bool_and_returning_an_bool_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, 2, "example"},
+     {module, #{line => 2, spec => example}},
      {func, 3, "Echo", [{arg, 3, n, bool}], bool, [{expr, 3, {bool, true}}]}
     ], Forms).
 
@@ -97,7 +97,7 @@ parse_function_taking_an_float_and_returning_an_float_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, 2, "example"},
+     {module, #{line => 2, spec => example}},
      {func, 3, "Echo", [{arg, 3, n, float}], float, [{expr, 3, {float, 3.14159265359}}]}
     ], Forms).
 
@@ -109,7 +109,7 @@ parse_function_taking_an_int_and_returning_an_int_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, 2, "example"},
+     {module, #{line => 2, spec => example}},
      {func, 3, "Echo", [{arg, 3, n, int}], int, [{expr, 3, {int, 42}}]}
     ], Forms).
 
@@ -121,6 +121,6 @@ parse_function_taking_an_string_and_returning_an_string_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, 2, "example"},
+     {module, #{line => 2, spec => example}},
      {func, 3, "Echo", [{arg, 3, n, string}], string, [{expr, 3, {string, "Hello"}}]}
     ], Forms).
