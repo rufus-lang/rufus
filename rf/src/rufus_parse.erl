@@ -502,7 +502,7 @@ yeccpars2_7_(__Stack0) ->
 yeccpars2_8_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   { import , token_line ( __2 ) , token_chars ( __2 ) }
+   { import , # { line => token_line ( __2 ) , import_spec => token_chars ( __2 ) } }
   end | __Stack].
 
 -compile({inline,yeccpars2_10_/1}).

@@ -22,7 +22,7 @@ parse_import_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, 2, "foo"},
-     {import, 3, "bar"}
+     {import, #{line => 3, import_spec => "bar"}}
     ], Forms).
 
 %% Arity-0 functions returning a literal value for primitive types
