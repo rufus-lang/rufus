@@ -86,7 +86,7 @@ parse_function_taking_an_bool_and_returning_an_bool_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
-     {func, 3, "Echo", [{arg, 3, n, bool}], bool, [{expr, 3, {bool, true}}]}
+     {func, 3, "Echo", [{arg, #{line => 3, spec => n, type => bool}}], bool, [{expr, 3, {bool, true}}]}
     ], Forms).
 
 parse_function_taking_an_float_and_returning_an_float_test() ->
@@ -98,7 +98,7 @@ parse_function_taking_an_float_and_returning_an_float_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
-     {func, 3, "Echo", [{arg, 3, n, float}], float, [{expr, 3, {float, 3.14159265359}}]}
+     {func, 3, "Echo", [{arg, #{line => 3, spec => n, type => float}}], float, [{expr, 3, {float, 3.14159265359}}]}
     ], Forms).
 
 parse_function_taking_an_int_and_returning_an_int_test() ->
@@ -110,7 +110,7 @@ parse_function_taking_an_int_and_returning_an_int_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
-     {func, 3, "Echo", [{arg, 3, n, int}], int, [{expr, 3, {int, 42}}]}
+     {func, 3, "Echo", [{arg, #{line => 3, spec => n, type => int}}], int, [{expr, 3, {int, 42}}]}
     ], Forms).
 
 parse_function_taking_an_string_and_returning_an_string_test() ->
@@ -122,5 +122,5 @@ parse_function_taking_an_string_and_returning_an_string_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
-     {func, 3, "Echo", [{arg, 3, n, string}], string, [{expr, 3, {string, "Hello"}}]}
+     {func, 3, "Echo", [{arg, #{line => 3, spec => n, type => string}}], string, [{expr, 3, {string, "Hello"}}]}
     ], Forms).

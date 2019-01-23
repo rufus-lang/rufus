@@ -524,7 +524,7 @@ yeccpars2_12_(__Stack0) ->
 yeccpars2_14_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   { arg , token_line ( __1 ) , token_atom ( __1 ) , token_type ( __2 ) }
+   { arg , # { line => token_line ( __1 ) , spec => token_atom ( __1 ) , type => token_type ( __2 ) } }
   end | __Stack].
 
 -compile({inline,yeccpars2_15_/1}).
@@ -564,7 +564,7 @@ yeccpars2_18_(__Stack0) ->
 yeccpars2_19_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { arg , token_line ( __1 ) , token_atom ( __1 ) , token_type ( __2 ) }
+   { arg , # { line => token_line ( __1 ) , spec => token_atom ( __1 ) , type => token_type ( __2 ) } }
   end | __Stack].
 
 -compile({inline,yeccpars2_20_/1}).

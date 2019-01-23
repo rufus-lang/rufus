@@ -16,7 +16,7 @@ forms(RufusForms) ->
 
 %% Private API
 
-forms(Acc, [{arg, Line, Name, Type}|T]) ->
+forms(Acc, [{arg, #{line := Line, spec := Name, type := Type}}|T]) ->
     Form = {tuple, Line, [{atom, Line, Type}, {var, Line, Name}]},
     forms([Form|Acc], T);
 forms(Acc, [{expr, Line, {bool, Value}}|T]) ->

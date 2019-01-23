@@ -22,8 +22,8 @@ type -> string : {string, token_line('$1')}.
 
 args -> arg args : ['$1'|'$2'].
 args -> '$empty' : [].
-arg -> identifier type ',' : {arg, token_line('$1'), token_atom('$1'), token_type('$2')}.
-arg -> identifier type : {arg, token_line('$1'), token_atom('$1'), token_type('$2')}.
+arg -> identifier type ',' : {arg, #{line => token_line('$1'), spec => token_atom('$1'), type => token_type('$2')}}.
+arg -> identifier type : {arg, #{line => token_line('$1'), spec => token_atom('$1'), type => token_type('$2')}}.
 
 expr -> bool_lit : [{expr, token_line('$1'), {bool, token_chars('$1')}}].
 expr -> float_lit : [{expr, token_line('$1'), {float, token_chars('$1')}}].
