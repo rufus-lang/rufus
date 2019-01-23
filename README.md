@@ -32,9 +32,14 @@ const Pi = 3.14159265359
 Collection types:
 
 ```rufus
-tuple[string, int]
 list[int]
-map[atom]float
+numbers = list[int]{1, 2, 3, 4, 5}
+
+map[atom]string
+alice = map[atom]string{:name: "Alice", :age: "34"}
+
+tuple[string, int]
+alice = tuple[string, int]{"Alice", 34}
 ```
 
 Function types:
@@ -49,13 +54,13 @@ Higher order functions:
 
 ```rufus
 func Map(n list[int], f func(int) int) list[int] {
-    map(list[int]{}, n, f)
+    mapAccumulate(list[int]{}, n, f)
 }
 
-func map(acc list[int], [h|t] list[int], f func(int) int) list[int] {
+func mapAccumulate(acc list[int], [h|t] list[int], f func(int) int) list[int] {
     map([f(h)|acc], t, f)
 }
-func map(acc list[int], [] list[int], func(int) int) list[int] {
+func mapAccumulate(acc list[int], [] list[int], func(int) int) list[int] {
     lists.Reverse(acc)
 }
 ```
@@ -73,13 +78,13 @@ Union type:
 
 ```rufus
 // Inline method allows shorthand syntax to help reduce boilerplate
-func Teleport(Point{Y=5}) :ok | tuple[:error, Reason string] {
+func Teleport(point Point) :ok | tuple[:error, string] {
     // ...
 }
 
-type Result union[:ok | tuple[:error, Reason string]]
+type Outcome :ok | tuple[:error, string]
 
-func Teleport(Point{Y=5}) Result {
+func Teleport(point Point) Outcome {
     // ...
 }
 ```
