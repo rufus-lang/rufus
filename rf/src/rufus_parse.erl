@@ -1,6 +1,6 @@
 -module(rufus_parse).
 -export([parse/1, parse_and_scan/1, format_error/1]).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 89).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 97).
 
 token_chars({_TokenType, _Line, Chars}) ->
     Chars.
@@ -485,7 +485,7 @@ yeccpars2_3_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_7_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 15).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 13).
 yeccpars2_7_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -495,7 +495,7 @@ yeccpars2_7_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_8_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 11).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 17).
 yeccpars2_8_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -505,21 +505,21 @@ yeccpars2_8_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_10_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 48).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 53).
 yeccpars2_10_(__Stack0) ->
  [begin
    [ ]
   end | __Stack0].
 
 -compile({inline,yeccpars2_12_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 48).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 53).
 yeccpars2_12_(__Stack0) ->
  [begin
    [ ]
   end | __Stack0].
 
 -compile({inline,yeccpars2_14_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 55).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 60).
 yeccpars2_14_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -530,7 +530,7 @@ yeccpars2_14_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_15_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 30).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 26).
 yeccpars2_15_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -539,7 +539,7 @@ yeccpars2_15_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_16_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 33).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 29).
 yeccpars2_16_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -549,7 +549,7 @@ yeccpars2_16_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_17_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 37).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 33).
 yeccpars2_17_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -559,7 +559,7 @@ yeccpars2_17_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_18_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 41).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 37).
 yeccpars2_18_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -569,7 +569,7 @@ yeccpars2_18_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_19_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 50).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 55).
 yeccpars2_19_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -580,7 +580,7 @@ yeccpars2_19_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_20_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 46).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 51).
 yeccpars2_20_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -588,7 +588,7 @@ yeccpars2_20_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_25_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 61).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 68).
 yeccpars2_25_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -599,7 +599,7 @@ yeccpars2_25_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_26_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 66).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 73).
 yeccpars2_26_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -610,7 +610,7 @@ yeccpars2_26_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_27_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 81).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 89).
 yeccpars2_27_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -620,7 +620,7 @@ yeccpars2_27_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_28_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 71).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 78).
 yeccpars2_28_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -631,7 +631,7 @@ yeccpars2_28_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_29_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 76).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 83).
 yeccpars2_29_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -642,7 +642,7 @@ yeccpars2_29_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_30_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 22).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 44).
 yeccpars2_30_(__Stack0) ->
  [__9,__8,__7,__6,__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -663,4 +663,4 @@ yeccpars2_31_(__Stack0) ->
   end | __Stack].
 
 
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 98).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 106).

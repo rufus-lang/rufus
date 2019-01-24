@@ -11,24 +11,20 @@ root -> decl :
 root -> decl root :
     ['$1'] ++ '$2'.
 
-decl -> import string_lit :
-    {import, #{line => token_line('$2'),
-               spec => token_chars('$2')}
-    }.
+%% Declarations
+
 decl -> module identifier :
     {module, #{line => token_line('$2'),
                spec => list_to_atom(token_chars('$2'))}
     }.
+decl -> import string_lit :
+    {import, #{line => token_line('$2'),
+               spec => token_chars('$2')}
+    }.
 decl -> function :
     '$1'.
 
-function -> func identifier '(' args ')' type '{' expr '}' :
-    {func, #{line => token_line('$1'),
-             spec => list_to_atom(token_chars('$2')),
-             args => '$4',
-             return_type => '$6',
-             exprs => '$8'}
-    }.
+%% Primitive types
 
 type -> bool :
     {type, #{line => token_line('$1'),
@@ -46,6 +42,15 @@ type -> string :
              spec => string}
     }.
 
+%% Functions
+
+function -> func identifier '(' args ')' type '{' expr '}' :
+    {func, #{line => token_line('$1'),
+             spec => list_to_atom(token_chars('$2')),
+             args => '$4',
+             return_type => '$6',
+             exprs => '$8'}
+    }.
 args -> arg args :
     ['$1'|'$2'].
 args -> '$empty' :
@@ -60,6 +65,8 @@ arg -> identifier type :
             spec => list_to_atom(token_chars('$1')),
             type => '$2'}
     }.
+
+%% Literal values
 
 expr -> bool_lit :
     [{bool_lit, #{line => token_line('$1'),
@@ -81,6 +88,7 @@ expr -> string_lit :
                     spec => list_to_binary(token_chars('$1')),
                     type => {type, #{line => token_line('$1'), spec => string}}}
     }].
+
 expr -> identifier :
     [{identifier, #{line => token_line('$1'),
                     spec => list_to_atom(token_chars('$1'))}
