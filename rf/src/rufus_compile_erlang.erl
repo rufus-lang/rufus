@@ -16,45 +16,48 @@ forms(RufusForms) ->
 
 %% Private API
 
-forms(Acc, [{arg, #{line := Line, spec := Name, type := Type}}|T]) ->
-    Form = {tuple, Line, [{atom, Line, Type}, {var, Line, Name}]},
+forms(Acc, [{module, #{line := Line, spec := Name}}|T]) ->
+    Form = {attribute, Line, module, Name},
     forms([Form|Acc], T);
-forms(Acc, [{expr, Line, {bool, Value}}|T]) ->
-    Form = box({bool, Line, Value}),
+forms(Acc, [{bool_lit, _Context} = BoolLit|T]) ->
+    Form = box(BoolLit),
     forms([Form|Acc], T);
-forms(Acc, [{expr, Line, {float, Value}}|T]) ->
-    Form = box({float, Line, Value}),
+forms(Acc, [{float_lit, _Context} = FloatLit|T]) ->
+    Form = box(FloatLit),
     forms([Form|Acc], T);
-forms(Acc, [{expr, Line, {int, Value}}|T]) ->
-    Form = box({integer, Line, Value}),
+forms(Acc, [{int_lit, _Context} = IntLit|T]) ->
+    Form = box(IntLit),
     forms([Form|Acc], T);
-forms(Acc, [{expr, Line, {string, Value}}|T]) ->
-    StringExpr = {bin_element, Line, {string, Line, Value}, default, default},
-    Form = box({bin, Line, [StringExpr]}),
+forms(Acc, [{string_lit, _Context} = StringLit|T]) ->
+    Form = box(StringLit),
     forms([Form|Acc], T);
-forms(Acc, [{expr, Line, {identifier, Name}}|T]) ->
+forms(Acc, [{identifier, #{line := Line, spec := Name}}|T]) ->
     Form = {var, Line, Name},
     forms([Form|Acc], T);
-forms(Acc, [{func, Line, Name, Args, _ReturnType, Exprs}|T]) ->
+forms(Acc, [{func, #{line := Line, spec := Name, args := Args, exprs := Exprs}}|T]) ->
     ArgsForms = forms([], Args),
     ExprForms = lists:reverse(forms([], Exprs)),
     FunctionForms = [{clause, Line, ArgsForms, [], ExprForms}],
-    ExportForms = {attribute, Line, export, [{list_to_atom(Name), length(Args)}]},
-    Forms = {function, Line, list_to_atom(Name), length(Args), FunctionForms},
+    ExportForms = {attribute, Line, export, [{Name, length(Args)}]},
+    Forms = {function, Line, Name, length(Args), FunctionForms},
     forms([Forms|[ExportForms|Acc]], T);
-forms(Acc, [{module, #{line := Line, spec := Name}}|T]) ->
-    Form = {attribute, Line, module, Name},
+forms(Acc, [{arg, #{line := Line, spec := Name, type := Type}}|T]) ->
+    Form = {tuple, Line, [{atom, Line, type_spec(Type)}, {var, Line, Name}]},
     forms([Form|Acc], T);
 forms(Acc, []) ->
     Acc.
 
 %% box converts Rufus types into Erlang `{<type>, <value>}` 2-tuples, such as
 %% turning `3.14159265359` into `{float, 3.14159265359}`, for example.
-box(Expr = {bin, Line, _Value}) ->
-    {tuple, Line, [{atom, Line, string}, Expr]};
-box({bool, Line, Value}) ->
+box({bool_lit, #{line := Line, spec := Value}}) ->
     {tuple, Line, [{atom, Line, bool}, {atom, Line, Value}]};
-box(Expr = {float, Line, _Value}) ->
-    {tuple, Line, [{atom, Line, float}, Expr]};
-box(Expr = {integer, Line, _Value}) ->
-    {tuple, Line, [{atom, Line, int}, Expr]}.
+box({float_lit, #{line := Line, spec := Value}}) ->
+    {tuple, Line, [{atom, Line, float}, {float, Line, Value}]};
+box({int_lit, #{line := Line, spec := Value}}) ->
+    {tuple, Line, [{atom, Line, int}, {integer, Line, Value}]};
+box({string_lit, #{line := Line, spec := Value}}) ->
+    StringExpr = {bin_element, Line, {string, Line, binary_to_list(Value)}, default, default},
+    {tuple, Line, [{atom, Line, string}, {bin, Line, [StringExpr]}]}.
+
+type_spec({type, #{spec := Type}}) ->
+    Type.

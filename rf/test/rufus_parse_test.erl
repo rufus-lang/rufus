@@ -36,7 +36,13 @@ parse_function_returning_a_bool_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
-     {func, 3, "True", [], bool, [{expr, 3, {bool, true}}]}
+     {func, #{args => [],
+              exprs => [{bool_lit, #{line => 3,
+                                     spec => true,
+                                     type => {type, #{line => 3, spec => bool}}}}],
+              line => 3,
+              return_type => {type, #{line => 3, spec => bool}},
+              spec => 'True'}}
     ], Forms).
 
 parse_function_returning_a_float_test() ->
@@ -48,7 +54,13 @@ parse_function_returning_a_float_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => math}},
-     {func, 3, "Pi", [], float, [{expr, 3, {float, 3.14159265359}}]}
+     {func, #{args => [],
+              exprs => [{float_lit, #{line => 3,
+                                      spec => 3.14159265359,
+                                      type => {type, #{line => 3, spec => float}}}}],
+              line => 3,
+              return_type => {type, #{line => 3, spec => float}},
+              spec => 'Pi'}}
     ], Forms).
 
 parse_function_returning_an_int_test() ->
@@ -60,7 +72,13 @@ parse_function_returning_an_int_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => rand}},
-     {func, 3, "Number", [], int, [{expr, 3, {int, 42}}]}
+     {func, #{args => [],
+              exprs => [{int_lit, #{line => 3,
+                                    spec => 42,
+                                    type => {type, #{line => 3, spec => int}}}}],
+              line => 3,
+              return_type => {type, #{line => 3, spec => int}},
+              spec => 'Number'}}
     ], Forms).
 
 parse_function_returning_a_string_test() ->
@@ -72,12 +90,18 @@ parse_function_returning_a_string_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
-     {func, 3, "Greeting", [], string, [{expr, 3, {string, "Hello"}}]}
+     {func, #{args => [],
+              exprs => [{string_lit, #{line => 3,
+                                       spec => <<"Hello">>,
+                                       type => {type, #{line => 3, spec => string}}}}],
+              line => 3,
+              return_type => {type, #{line => 3, spec => string}},
+              spec => 'Greeting'}}
     ], Forms).
 
 %% Arity-1 functions using an argument
 
-parse_function_taking_an_bool_and_returning_an_bool_test() ->
+parse_function_taking_a_bool_and_returning_a_bool_test() ->
     RufusText = "
     module example
     func Echo(n bool) bool { true }
@@ -86,7 +110,15 @@ parse_function_taking_an_bool_and_returning_an_bool_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
-     {func, 3, "Echo", [{arg, #{line => 3, spec => n, type => bool}}], bool, [{expr, 3, {bool, true}}]}
+     {func, #{args => [{arg, #{line => 3,
+                               spec => n,
+                               type => {type, #{line => 3, spec => bool}}}}],
+              exprs => [{bool_lit, #{line => 3,
+                                     spec => true,
+                                     type => {type, #{line => 3, spec => bool}}}}],
+              line => 3,
+              return_type => {type, #{line => 3, spec => bool}},
+              spec => 'Echo'}}
     ], Forms).
 
 parse_function_taking_an_float_and_returning_an_float_test() ->
@@ -98,7 +130,15 @@ parse_function_taking_an_float_and_returning_an_float_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
-     {func, 3, "Echo", [{arg, #{line => 3, spec => n, type => float}}], float, [{expr, 3, {float, 3.14159265359}}]}
+     {func, #{args => [{arg, #{line => 3,
+                               spec => n,
+                               type => {type, #{line => 3, spec => float}}}}],
+              exprs => [{float_lit, #{line => 3,
+                                      spec => 3.14159265359,
+                                      type => {type, #{line => 3, spec => float}}}}],
+              line => 3,
+              return_type => {type, #{line => 3, spec => float}},
+              spec => 'Echo'}}
     ], Forms).
 
 parse_function_taking_an_int_and_returning_an_int_test() ->
@@ -110,7 +150,15 @@ parse_function_taking_an_int_and_returning_an_int_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
-     {func, 3, "Echo", [{arg, #{line => 3, spec => n, type => int}}], int, [{expr, 3, {int, 42}}]}
+     {func, #{args => [{arg, #{line => 3,
+                               spec => n,
+                               type => {type, #{line => 3, spec => int}}}}],
+              exprs => [{int_lit, #{line => 3,
+                                    spec => 42,
+                                    type => {type, #{line => 3, spec => int}}}}],
+              line => 3,
+              return_type => {type, #{line => 3, spec => int}},
+              spec => 'Echo'}}
     ], Forms).
 
 parse_function_taking_an_string_and_returning_an_string_test() ->
@@ -121,6 +169,14 @@ parse_function_taking_an_string_and_returning_an_string_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, #{line => 2, spec => example}},
-     {func, 3, "Echo", [{arg, #{line => 3, spec => n, type => string}}], string, [{expr, 3, {string, "Hello"}}]}
+     {module,#{line => 2, spec => example}},
+     {func, #{args => [{arg, #{line => 3,
+                               spec => n,
+                               type => {type, #{line => 3, spec => string}}}}],
+              exprs => [{string_lit, #{line => 3,
+                                       spec => <<"Hello">>,
+                                       type => {type, #{line => 3, spec => string}}}}],
+              line => 3,
+              return_type => {type, #{line => 3, spec => string}},
+              spec => 'Echo'}}
     ], Forms).
