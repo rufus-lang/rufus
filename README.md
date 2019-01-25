@@ -129,13 +129,13 @@ Generic types:
 
 ```rufus
 func Map(n list[T?], f func(T?) T?) list[T?] {
-    map(list[T?]{}, n, f)
+    mapAccumulate(list[T?]{}, n, f)
 }
 
-func map(acc list[T?], [h|t] list[T?], f func(T?) T?) list[T?] {
-    map([f(h)|acc], t, f)
+func mapAccumulate(acc list[T?], [h|t] list[T?], f func(T?) T?) list[T?] {
+    mapAccumulate([f(h)|acc], t, f)
 }
-func map(acc list[T?], [] list[T?], func(T?) T?) list[T?] {
+func mapAccumulate(acc list[T?], [] list[T?], func(T?) T?) list[T?] {
     lists.Reverse(acc)
 }
 ```
