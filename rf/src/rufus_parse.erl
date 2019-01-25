@@ -1,19 +1,14 @@
 -module(rufus_parse).
 -export([parse/1, parse_and_scan/1, format_error/1]).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 34).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 97).
 
-token_atom({_TokenType, _TokenLine, TokenChars}) ->
-    list_to_atom(TokenChars).
-token_chars({_TokenType, _TokenLine, TokenChars}) ->
-    TokenChars.
+token_chars({_TokenType, _Line, Chars}) ->
+    Chars.
 
-token_line({_TokenType, TokenLine}) ->
-    TokenLine;
-token_line({_TokenType, TokenLine, _TokenChars}) ->
-    TokenLine.
-
-token_type({TokenType, _TokenLine}) ->
-    TokenType.
+token_line({_TokenType, Line}) ->
+    Line;
+token_line({_TokenType, Line, _Chars}) ->
+    Line.
 
 -file("/usr/local/Cellar/erlang/21.2/lib/erlang/lib/parsetools-2.1.8/include/yeccpre.hrl", 0).
 %%
@@ -187,7 +182,7 @@ yecctoken2string(Other) ->
 
 
 
--file("/Users/jkakar/rufus/rf/src/rufus_parse.erl", 190).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.erl", 185).
 
 -dialyzer({nowarn_function, yeccpars2/7}).
 yeccpars2(0=S, Cat, Ss, Stack, T, Ts, Tzr) ->
@@ -482,7 +477,7 @@ yeccgoto_type(21, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_22(22, Cat, Ss, Stack, T, Ts, Tzr).
 
 -compile({inline,yeccpars2_3_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 5).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 6).
 yeccpars2_3_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -490,85 +485,102 @@ yeccpars2_3_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_7_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 9).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 13).
 yeccpars2_7_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   { module , token_line ( __2 ) , token_chars ( __2 ) }
+   { module , # { line => token_line ( __2 ) ,
+    spec => list_to_atom ( token_chars ( __2 ) ) }
+    }
   end | __Stack].
 
 -compile({inline,yeccpars2_8_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 8).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 17).
 yeccpars2_8_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   { import , token_line ( __2 ) , token_chars ( __2 ) }
+   { import , # { line => token_line ( __2 ) ,
+    spec => token_chars ( __2 ) }
+    }
   end | __Stack].
 
 -compile({inline,yeccpars2_10_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 20).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 53).
 yeccpars2_10_(__Stack0) ->
  [begin
    [ ]
   end | __Stack0].
 
 -compile({inline,yeccpars2_12_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 20).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 53).
 yeccpars2_12_(__Stack0) ->
  [begin
    [ ]
   end | __Stack0].
 
 -compile({inline,yeccpars2_14_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 22).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 60).
 yeccpars2_14_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   { arg , token_line ( __1 ) , token_atom ( __1 ) , token_type ( __2 ) }
+   { arg , # { line => token_line ( __1 ) ,
+    spec => list_to_atom ( token_chars ( __1 ) ) ,
+    type => __2 }
+    }
   end | __Stack].
 
 -compile({inline,yeccpars2_15_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 14).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 26).
 yeccpars2_15_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   { bool , token_line ( __1 ) }
+   { type , # { line => token_line ( __1 ) ,
+    spec => bool } }
   end | __Stack].
 
 -compile({inline,yeccpars2_16_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 15).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 29).
 yeccpars2_16_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   { float , token_line ( __1 ) }
+   { type , # { line => token_line ( __1 ) ,
+    spec => float }
+    }
   end | __Stack].
 
 -compile({inline,yeccpars2_17_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 16).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 33).
 yeccpars2_17_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   { int , token_line ( __1 ) }
+   { type , # { line => token_line ( __1 ) ,
+    spec => int }
+    }
   end | __Stack].
 
 -compile({inline,yeccpars2_18_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 17).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 37).
 yeccpars2_18_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   { string , token_line ( __1 ) }
+   { type , # { line => token_line ( __1 ) ,
+    spec => string }
+    }
   end | __Stack].
 
 -compile({inline,yeccpars2_19_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 21).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 55).
 yeccpars2_19_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { arg , token_line ( __1 ) , token_atom ( __1 ) , token_type ( __2 ) }
+   { arg , # { line => token_line ( __1 ) ,
+    spec => list_to_atom ( token_chars ( __1 ) ) ,
+    type => __2 }
+    }
   end | __Stack].
 
 -compile({inline,yeccpars2_20_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 19).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 51).
 yeccpars2_20_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -576,55 +588,74 @@ yeccpars2_20_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_25_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 24).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 68).
 yeccpars2_25_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   [ { expr , token_line ( __1 ) , { bool , token_chars ( __1 ) } } ]
+   [ { bool_lit , # { line => token_line ( __1 ) ,
+    spec => token_chars ( __1 ) ,
+    type => { type , # { line => token_line ( __1 ) , spec => bool } } }
+    } ]
   end | __Stack].
 
 -compile({inline,yeccpars2_26_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 25).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 73).
 yeccpars2_26_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   [ { expr , token_line ( __1 ) , { float , token_chars ( __1 ) } } ]
+   [ { float_lit , # { line => token_line ( __1 ) ,
+    spec => token_chars ( __1 ) ,
+    type => { type , # { line => token_line ( __1 ) , spec => float } } }
+    } ]
   end | __Stack].
 
 -compile({inline,yeccpars2_27_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 28).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 89).
 yeccpars2_27_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   [ { expr , token_line ( __1 ) , { identifier , token_atom ( __1 ) } } ]
+   [ { identifier , # { line => token_line ( __1 ) ,
+    spec => list_to_atom ( token_chars ( __1 ) ) }
+    } ]
   end | __Stack].
 
 -compile({inline,yeccpars2_28_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 26).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 78).
 yeccpars2_28_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   [ { expr , token_line ( __1 ) , { int , token_chars ( __1 ) } } ]
+   [ { int_lit , # { line => token_line ( __1 ) ,
+    spec => token_chars ( __1 ) ,
+    type => { type , # { line => token_line ( __1 ) , spec => int } } }
+    } ]
   end | __Stack].
 
 -compile({inline,yeccpars2_29_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 27).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 83).
 yeccpars2_29_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   [ { expr , token_line ( __1 ) , { string , token_chars ( __1 ) } } ]
+   [ { string_lit , # { line => token_line ( __1 ) ,
+    spec => list_to_binary ( token_chars ( __1 ) ) ,
+    type => { type , # { line => token_line ( __1 ) , spec => string } } }
+    } ]
   end | __Stack].
 
 -compile({inline,yeccpars2_30_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 12).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 44).
 yeccpars2_30_(__Stack0) ->
  [__9,__8,__7,__6,__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { func , token_line ( __1 ) , token_chars ( __2 ) , __4 , token_type ( __6 ) , __8 }
+   { func , # { line => token_line ( __1 ) ,
+    spec => list_to_atom ( token_chars ( __2 ) ) ,
+    args => __4 ,
+    return_type => __6 ,
+    exprs => __8 }
+    }
   end | __Stack].
 
 -compile({inline,yeccpars2_31_/1}).
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 6).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 8).
 yeccpars2_31_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -632,4 +663,4 @@ yeccpars2_31_(__Stack0) ->
   end | __Stack].
 
 
--file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 48).
+-file("/Users/jkakar/rufus/rf/src/rufus_parse.yrl", 106).

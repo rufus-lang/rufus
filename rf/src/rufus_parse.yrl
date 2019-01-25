@@ -6,42 +6,100 @@ Terminals '(' ')' '{' '}' ',' func identifier import module bool bool_lit float 
 
 Rootsymbol root.
 
-root -> decl : ['$1'].
-root -> decl root : ['$1'] ++ '$2'.
+root -> decl :
+    ['$1'].
+root -> decl root :
+    ['$1'] ++ '$2'.
 
-decl -> import string_lit : {import, token_line('$2'), token_chars('$2')}.
-decl -> module identifier : {module, token_line('$2'), token_chars('$2')}.
-decl -> function : '$1'.
+%% Declarations
 
-function -> func identifier '(' args ')' type '{' expr '}' : {func, token_line('$1'), token_chars('$2'), '$4', token_type('$6'), '$8'}.
+decl -> module identifier :
+    {module, #{line => token_line('$2'),
+               spec => list_to_atom(token_chars('$2'))}
+    }.
+decl -> import string_lit :
+    {import, #{line => token_line('$2'),
+               spec => token_chars('$2')}
+    }.
+decl -> function :
+    '$1'.
 
-type -> bool : {bool, token_line('$1')}.
-type -> float : {float, token_line('$1')}.
-type -> int : {int, token_line('$1')}.
-type -> string : {string, token_line('$1')}.
+%% Primitive types
 
-args -> arg args : ['$1'|'$2'].
-args -> '$empty' : [].
-arg -> identifier type ',' : {arg, token_line('$1'), token_atom('$1'), token_type('$2')}.
-arg -> identifier type : {arg, token_line('$1'), token_atom('$1'), token_type('$2')}.
+type -> bool :
+    {type, #{line => token_line('$1'),
+             spec => bool}}.
+type -> float :
+    {type, #{line => token_line('$1'),
+             spec => float}
+    }.
+type -> int :
+    {type, #{line => token_line('$1'),
+             spec => int}
+    }.
+type -> string :
+    {type, #{line => token_line('$1'),
+             spec => string}
+    }.
 
-expr -> bool_lit : [{expr, token_line('$1'), {bool, token_chars('$1')}}].
-expr -> float_lit : [{expr, token_line('$1'), {float, token_chars('$1')}}].
-expr -> int_lit : [{expr, token_line('$1'), {int, token_chars('$1')}}].
-expr -> string_lit : [{expr, token_line('$1'), {string, token_chars('$1')}}].
-expr -> identifier : [{expr, token_line('$1'), {identifier, token_atom('$1')}}].
+%% Functions
+
+function -> func identifier '(' args ')' type '{' expr '}' :
+    {func, #{line => token_line('$1'),
+             spec => list_to_atom(token_chars('$2')),
+             args => '$4',
+             return_type => '$6',
+             exprs => '$8'}
+    }.
+args -> arg args :
+    ['$1'|'$2'].
+args -> '$empty' :
+    [].
+arg -> identifier type ',' :
+    {arg, #{line => token_line('$1'),
+            spec => list_to_atom(token_chars('$1')),
+            type => '$2'}
+    }.
+arg -> identifier type :
+    {arg, #{line => token_line('$1'),
+            spec => list_to_atom(token_chars('$1')),
+            type => '$2'}
+    }.
+
+%% Literal values
+
+expr -> bool_lit :
+    [{bool_lit, #{line => token_line('$1'),
+                  spec => token_chars('$1'),
+                  type => {type, #{line => token_line('$1'), spec => bool}}}
+    }].
+expr -> float_lit :
+    [{float_lit, #{line => token_line('$1'),
+                   spec => token_chars('$1'),
+                   type => {type, #{line => token_line('$1'), spec => float}}}
+    }].
+expr -> int_lit :
+    [{int_lit, #{line => token_line('$1'),
+                 spec => token_chars('$1'),
+                 type => {type, #{line => token_line('$1'), spec => int}}}
+    }].
+expr -> string_lit :
+    [{string_lit, #{line => token_line('$1'),
+                    spec => list_to_binary(token_chars('$1')),
+                    type => {type, #{line => token_line('$1'), spec => string}}}
+    }].
+
+expr -> identifier :
+    [{identifier, #{line => token_line('$1'),
+                    spec => list_to_atom(token_chars('$1'))}
+    }].
 
 Erlang code.
 
-token_atom({_TokenType, _TokenLine, TokenChars}) ->
-    list_to_atom(TokenChars).
-token_chars({_TokenType, _TokenLine, TokenChars}) ->
-    TokenChars.
+token_chars({_TokenType, _Line, Chars}) ->
+    Chars.
 
-token_line({_TokenType, TokenLine}) ->
-    TokenLine;
-token_line({_TokenType, TokenLine, _TokenChars}) ->
-    TokenLine.
-
-token_type({TokenType, _TokenLine}) ->
-    TokenType.
+token_line({_TokenType, Line}) ->
+    Line;
+token_line({_TokenType, Line, _Chars}) ->
+    Line.

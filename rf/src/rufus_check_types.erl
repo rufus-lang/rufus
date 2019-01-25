@@ -30,13 +30,15 @@ forms(Forms, [H|T]) ->
 forms(Forms, []) ->
     {ok, Forms}.
 
-check_expr({func, _Line, _Name, _Arguments, ReturnType, Exprs}) ->
-    check_expr(ReturnType, lists:last(Exprs));
+check_expr({func, #{return_type := ReturnType, exprs := Exprs}}) ->
+    check_return_expr(ReturnType, lists:last(Exprs));
 check_expr(_) ->
     ok.
 
-check_expr(ReturnType, {expr, _Line, {ReturnType, _Literal}}) ->
+check_return_expr({type, #{spec := ReturnType}}, {FormType, #{type := {type, #{spec := ReturnType}}}}) ->
+    io:format("ReturnType => ~p  FormType => ~p~n", [ReturnType, FormType]),
     ok;
-check_expr(ReturnType, {expr, _Line, {ActualReturnType, _Literal}}) ->
+check_return_expr({type, #{spec := ReturnType}}, {FormType, #{type := {type, #{spec := ActualReturnType}}}}) ->
+    io:format("ReturnType => ~p  ActualReturnType => ~p  FormType => ~p~n", [ReturnType, ActualReturnType, FormType]),
     Data = #{expected => ReturnType, actual => ActualReturnType},
     {error, unmatched_return_type, Data}.
