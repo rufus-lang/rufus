@@ -50,7 +50,7 @@ eval_with_function_returning_a_string_literal_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual({string, <<"Hello">>}, example:'Greeting'()).
 
-%% Arity-1 functions taking an unused argument
+%% Arity-1 functions taking an unused parameter for primitive types
 
 eval_with_function_taking_a_bool_and_returning_a_bool_literal_test() ->
     RufusText = "
@@ -87,6 +87,17 @@ eval_with_function_taking_a_string_and_returning_a_string_literal_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertEqual({string, <<"Hello">>}, example:'MaybeEcho'({string, <<"Good morning">>})).
+
+%% Arity-1 functions taking an argument and returning it for primitive types
+
+eval_with_function_taking_a_bool_and_returning_it_test() ->
+    RufusText = "
+    module example
+    func MaybeEcho(n bool) bool { n }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual({bool, true}, example:'MaybeEcho'({bool, false})).
 
 %% Type checking return values
 
