@@ -20,14 +20,14 @@ forms(RufusForms) ->
 
 %% Private API
 
-forms(Forms, [H|T]) ->
+forms([H|T], Forms) ->
     case check_expr(H) of
         ok ->
-            forms(Forms, T);
+            forms(T, Forms);
         Error ->
             Error
     end;
-forms(Forms, []) ->
+forms([], Forms) ->
     {ok, Forms}.
 
 check_expr({func, #{return_type := ReturnType, exprs := Exprs}}) ->
