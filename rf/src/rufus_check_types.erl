@@ -35,6 +35,9 @@ check_expr({func, #{return_type := ReturnType, exprs := Exprs}}) ->
 check_expr(_) ->
     ok.
 
+check_return_expr({type, #{spec := ReturnType}}, {identifier, #{locals := Locals, spec := Spec}}) ->
+    io:format("Spec => ~p~nReturnType => ~p~nLocals => ~p~n", [Spec, ReturnType, Locals]),
+    ok;
 check_return_expr({type, #{spec := ReturnType}}, {FormType, #{type := {type, #{spec := ReturnType}}}}) ->
     io:format("ReturnType => ~p  FormType => ~p~n", [ReturnType, FormType]),
     ok;

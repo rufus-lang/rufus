@@ -90,14 +90,14 @@ eval_with_function_taking_a_string_and_returning_a_string_literal_test() ->
 
 %% Arity-1 functions taking an argument and returning it for primitive types
 
-%% eval_with_function_taking_a_bool_and_returning_it_test() ->
-%%     RufusText = "
-%%     module example
-%%     func MaybeEcho(n bool) bool { n }
-%%     ",
-%%     Result = rufus_compile:eval(RufusText),
-%%     ?assertEqual({ok, example}, Result),
-%%     ?assertEqual({bool, true}, example:'MaybeEcho'({bool, false})).
+eval_with_function_taking_a_bool_and_returning_it_test() ->
+    RufusText = "
+    module example
+    func MaybeEcho(n bool) bool { n }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual({bool, false}, example:'MaybeEcho'({bool, false})).
 
 %% Type checking return values
 
