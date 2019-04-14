@@ -162,3 +162,57 @@ forms_for_function_taking_a_bool_and_returning_a_bool_test() ->
                            [],
                            [{tuple, 3, [{atom, 3, bool}, {var, 3, b}]}]}]}],
     ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_taking_a_float_and_returning_a_float_test() ->
+    RufusText = "
+    module example
+    func Echo(n float) float { n }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_scope_locals:forms(Forms),
+    {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
+    Expected = [{attribute, 2, module, example},
+                  {attribute, 3, export, [{'Echo', 1}]},
+                  {function, 3, 'Echo', 1,
+                      [{clause, 3,
+                           [{tuple, 3, [{atom, 3, float}, {var, 3, n}]}],
+                           [],
+                           [{tuple, 3, [{atom, 3, float}, {var, 3, n}]}]}]}],
+    ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_taking_an_int_and_returning_an_int_test() ->
+    RufusText = "
+    module example
+    func Echo(n int) int { n }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_scope_locals:forms(Forms),
+    {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
+    Expected = [{attribute, 2, module, example},
+                  {attribute, 3, export, [{'Echo', 1}]},
+                  {function, 3, 'Echo', 1,
+                      [{clause, 3,
+                           [{tuple, 3, [{atom, 3, int}, {var, 3, n}]}],
+                           [],
+                           [{tuple, 3, [{atom, 3, int}, {var, 3, n}]}]}]}],
+    ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_taking_a_string_and_returning_a_string_test() ->
+    RufusText = "
+    module example
+    func Echo(s string) string { s }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_scope_locals:forms(Forms),
+    {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
+    Expected = [{attribute, 2, module, example},
+                  {attribute, 3, export, [{'Echo', 1}]},
+                  {function, 3, 'Echo', 1,
+                      [{clause, 3,
+                           [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}],
+                           [],
+                           [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}]}]}],
+    ?assertEqual(Expected, ErlangForms).
