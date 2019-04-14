@@ -134,7 +134,7 @@ forms_for_function_taking_a_string_and_returning_a_string_literal_test() ->
 forms_for_function_taking_a_bool_and_returning_it_test() ->
     RufusText = "
     module example
-    func MaybeEcho(b bool) bool { b }
+    func Echo(b bool) bool { b }
     ",
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
@@ -151,7 +151,82 @@ forms_for_function_taking_a_bool_and_returning_it_test() ->
                                     spec => b}}],
            line => 3,
            return_type => {type, #{line => 3, spec => bool}},
-           spec => 'MaybeEcho'}
+           spec => 'Echo'}
+        }
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
+forms_for_function_taking_a_float_and_returning_it_test() ->
+    RufusText = "
+    module example
+    func Echo(n float) float { n }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_scope_locals:forms(Forms),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func,
+         #{args => [{arg, #{line => 3,
+                            spec => n,
+                            type => {type, #{line => 3, spec => float}}}}],
+           exprs =>
+                    [{identifier, #{line => 3,
+                                    locals => #{n => {type, #{line => 3, spec => float}}},
+                                    spec => n}}],
+           line => 3,
+           return_type => {type, #{line => 3, spec => float}},
+           spec => 'Echo'}
+        }
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
+forms_for_function_taking_an_int_and_returning_it_test() ->
+    RufusText = "
+    module example
+    func Echo(n int) int { n }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_scope_locals:forms(Forms),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func,
+         #{args => [{arg, #{line => 3,
+                            spec => n,
+                            type => {type, #{line => 3, spec => int}}}}],
+           exprs =>
+                    [{identifier, #{line => 3,
+                                    locals => #{n => {type, #{line => 3, spec => int}}},
+                                    spec => n}}],
+           line => 3,
+           return_type => {type, #{line => 3, spec => int}},
+           spec => 'Echo'}
+        }
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
+forms_for_function_taking_a_string_and_returning_it_test() ->
+    RufusText = "
+    module example
+    func Echo(s string) string { s }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_scope_locals:forms(Forms),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func,
+         #{args => [{arg, #{line => 3,
+                            spec => s,
+                            type => {type, #{line => 3, spec => string}}}}],
+           exprs =>
+                    [{identifier, #{line => 3,
+                                    locals => #{s => {type, #{line => 3, spec => string}}},
+                                    spec => s}}],
+           line => 3,
+           return_type => {type, #{line => 3, spec => string}},
+           spec => 'Echo'}
         }
     ],
     ?assertEqual(Expected, AnnotatedForms).
