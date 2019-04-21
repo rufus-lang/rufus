@@ -30,7 +30,6 @@ annotate_form(Locals, {func, Metadata = #{args := Args, exprs := Exprs}}) ->
     {ok, NewLocals1, NewArgs} = annotate_func_args(Locals, Args),
     % walk over exprs and add locals to the context
     {ok, NewLocals2, NewExprs} = annotate_func_exprs(NewLocals1, Exprs),
-    io:format("Args => ~p~nLocals => ~p~nNewLocals1 => ~p~nNewLocals2 => ~p~nExprs => ~p~n", [Args, Locals, NewLocals1, NewLocals2, Exprs]),
     AnnotatedForm = {func, Metadata#{args => NewArgs, exprs => NewExprs}},
     {ok, NewLocals2, AnnotatedForm};
 annotate_form(Locals, Form) ->

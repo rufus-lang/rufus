@@ -36,12 +36,26 @@ check_expr(_) ->
     ok.
 
 check_return_expr({type, #{spec := ReturnType}}, {identifier, #{locals := Locals, spec := Spec}}) ->
-    io:format("Spec => ~p~nReturnType => ~p~nLocals => ~p~n", [Spec, ReturnType, Locals]),
-    ok;
+    case maps:is_key(Spec, Locals) of
+        true ->
+            {type, TypeData} = maps:get(Spec, Locals),
+            io:format("TypeData => ~p~n", [TypeData]),
+            IdentifierType = maps:get(spec, TypeData),
+            case IdentifierType of
+                ReturnType ->
+                    ok;
+                _ ->
+                    Data = #{expected => ReturnType, actual => IdentifierType},
+                    {error, unmatched_return_type, Data}
+            end;
+        false ->
+            Data = #{spec => Spec},
+            {error, unknown_variable, Data}
+    end;
 check_return_expr({type, #{spec := ReturnType}}, {FormType, #{type := {type, #{spec := ReturnType}}}}) ->
-    io:format("ReturnType => ~p  FormType => ~p~n", [ReturnType, FormType]),
+    io:format("2: ReturnType => ~p  FormType => ~p~n", [ReturnType, FormType]),
     ok;
 check_return_expr({type, #{spec := ReturnType}}, {FormType, #{type := {type, #{spec := ActualReturnType}}}}) ->
-    io:format("ReturnType => ~p  ActualReturnType => ~p  FormType => ~p~n", [ReturnType, ActualReturnType, FormType]),
+    io:format("3: ReturnType => ~p  ActualReturnType => ~p  FormType => ~p~n", [ReturnType, ActualReturnType, FormType]),
     Data = #{expected => ReturnType, actual => ActualReturnType},
     {error, unmatched_return_type, Data}.
