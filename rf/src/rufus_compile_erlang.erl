@@ -31,8 +31,9 @@ forms(Acc, [{int_lit, _Context} = IntLit|T]) ->
 forms(Acc, [{string_lit, _Context} = StringLit|T]) ->
     Form = box(StringLit),
     forms([Form|Acc], T);
-forms(Acc, [{identifier, #{line := Line, spec := Name}}|T]) ->
-    Form = {var, Line, Name},
+forms(Acc, [{identifier, #{line := Line, spec := Name, locals := Locals}}|T]) ->
+    Type = maps:get(Name, Locals),
+    Form = {tuple, Line, [{atom, Line, type_spec(Type)}, {var, Line, Name}]},
     forms([Form|Acc], T);
 forms(Acc, [{func, #{line := Line, spec := Name, args := Args, exprs := Exprs}}|T]) ->
     ArgsForms = forms([], Args),

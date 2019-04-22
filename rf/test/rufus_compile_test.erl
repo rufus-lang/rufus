@@ -50,7 +50,7 @@ eval_with_function_returning_a_string_literal_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual({string, <<"Hello">>}, example:'Greeting'()).
 
-%% Arity-1 functions taking an unused argument
+%% Arity-1 functions taking an unused parameter for primitive types
 
 eval_with_function_taking_a_bool_and_returning_a_bool_literal_test() ->
     RufusText = "
@@ -88,6 +88,44 @@ eval_with_function_taking_a_string_and_returning_a_string_literal_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual({string, <<"Hello">>}, example:'MaybeEcho'({string, <<"Good morning">>})).
 
+%% Arity-1 functions taking an argument and returning it for primitive types
+
+eval_with_function_taking_a_bool_and_returning_it_test() ->
+    RufusText = "
+    module example
+    func Echo(b bool) bool { b }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual({bool, false}, example:'Echo'({bool, false})).
+
+eval_with_function_taking_a_float_and_returning_it_test() ->
+    RufusText = "
+    module example
+    func Echo(n float) float { n }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual({float, 3.14159265359}, example:'Echo'({float, 3.14159265359})).
+
+eval_with_function_taking_an_int_and_returning_it_test() ->
+    RufusText = "
+    module example
+    func Echo(n int) int { n }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual({int, 42}, example:'Echo'({int, 42})).
+
+eval_with_function_taking_a_string_and_returning_it_test() ->
+    RufusText = "
+    module example
+    func Echo(s string) string { s }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual({string, <<"Hello">>}, example:'Echo'({string, <<"Hello">>})).
+
 %% Type checking return values
 
 eval_with_function_having_unmatched_return_types_test() ->
@@ -95,4 +133,16 @@ eval_with_function_having_unmatched_return_types_test() ->
     module example
     func Number() float { 42 }
     ",
-    {error, unmatched_return_type, _Data} = rufus_compile:eval(RufusText).
+    Expected = {error, unmatched_return_type, #{actual => int, expected => float}},
+    ?assertEqual(Expected, rufus_compile:eval(RufusText)).
+
+%% Arity-1 functions taking and returning an argument with a mismatched return
+%% type
+
+eval_with_function_taking_a_bool_and_returning_it_with_a_mismatched_return_type_test() ->
+    RufusText = "
+    module example
+    func MismatchedReturnType(b bool) int { b }
+    ",
+    Expected = {error, unmatched_return_type, #{actual => bool, expected => int}},
+    ?assertEqual(Expected, rufus_compile:eval(RufusText)).

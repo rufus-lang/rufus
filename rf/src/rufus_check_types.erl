@@ -20,14 +20,14 @@ forms(RufusForms) ->
 
 %% Private API
 
-forms(Forms, [H|T]) ->
+forms([H|T], Forms) ->
     case check_expr(H) of
         ok ->
-            forms(Forms, T);
+            forms(T, Forms);
         Error ->
             Error
     end;
-forms(Forms, []) ->
+forms([], Forms) ->
     {ok, Forms}.
 
 check_expr({func, #{return_type := ReturnType, exprs := Exprs}}) ->
@@ -35,10 +35,24 @@ check_expr({func, #{return_type := ReturnType, exprs := Exprs}}) ->
 check_expr(_) ->
     ok.
 
-check_return_expr({type, #{spec := ReturnType}}, {FormType, #{type := {type, #{spec := ReturnType}}}}) ->
-    io:format("ReturnType => ~p  FormType => ~p~n", [ReturnType, FormType]),
+check_return_expr({type, #{spec := ReturnType}}, {identifier, #{locals := Locals, spec := Spec}}) ->
+    case maps:is_key(Spec, Locals) of
+        true ->
+            {type, TypeData} = maps:get(Spec, Locals),
+            IdentifierType = maps:get(spec, TypeData),
+            case IdentifierType of
+                ReturnType ->
+                    ok;
+                _ ->
+                    Data = #{expected => ReturnType, actual => IdentifierType},
+                    {error, unmatched_return_type, Data}
+            end;
+        false ->
+            Data = #{spec => Spec},
+            {error, unknown_variable, Data}
+    end;
+check_return_expr({type, #{spec := _ReturnType}}, {_FormType, #{type := {type, #{spec := _ReturnType}}}}) ->
     ok;
-check_return_expr({type, #{spec := ReturnType}}, {FormType, #{type := {type, #{spec := ActualReturnType}}}}) ->
-    io:format("ReturnType => ~p  ActualReturnType => ~p  FormType => ~p~n", [ReturnType, ActualReturnType, FormType]),
+check_return_expr({type, #{spec := ReturnType}}, {_FormType, #{type := {type, #{spec := ActualReturnType}}}}) ->
     Data = #{expected => ReturnType, actual => ActualReturnType},
     {error, unmatched_return_type, Data}.
