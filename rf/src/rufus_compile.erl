@@ -18,6 +18,7 @@
 eval(RufusText) ->
     Handlers = [fun scan/1,
                 fun rufus_parse:parse/1,
+                fun rufus_scope_locals:forms/1,
                 fun rufus_check_types:forms/1,
                 fun rufus_compile_erlang:forms/1,
                 fun compile/1
