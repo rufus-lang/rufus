@@ -20,8 +20,8 @@ decisions, both as part of the design process and as documentation for users.
 The following formats have been considered:
 
 * [MADR](https://adr.github.io/madr/)
-* [Rust RFCs](https://github.com/rust-lang/rfcs/blob/master/0000-template.md)
 * [Python Enhancement Proposals](https://www.python.org/dev/peps/pep-0001/)
+* [Rust RFCs](https://github.com/rust-lang/rfcs/blob/master/0000-template.md)
 
 ## Decision outcome
 
