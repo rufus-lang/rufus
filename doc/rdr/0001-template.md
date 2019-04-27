@@ -1,7 +1,7 @@
 # Short title of solved problem and solution
 
 * Status: [Proposed | Rejected | Accepted | Deprecated | … | Superseded by [RDR-0005](0005-example.md)]
-* Deciders: [list everyone involved in the decision, like 'John Doe <johndoe@example.com>']
+* Deciders: [list everyone involved in the decision, like `John Doe <johndoe@example.com>`]
 * Date: [YYYY-MM-DD when the decision was last updated]
 
 ## Context and problem statement
