@@ -8,7 +8,7 @@
 
 A package should only export public modules, and a module should only export
 public types, constants and functions. It should not be possible for a user to
-access private name in a package they're using. What facilities should Rufus
+access private names in a package they're using. What facilities should Rufus
 provide for users to manage encapsulation?
 
 ## Decision drivers
