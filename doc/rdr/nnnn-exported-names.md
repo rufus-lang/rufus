@@ -68,7 +68,7 @@ const Pi float = 3.14159265359
 const quarter float = 0.25
 ```
 
-It would be used exterally like:
+It would be used externally like:
 
 ```
 module example
@@ -85,6 +85,10 @@ func Area(:square, side float) float {
     Math.Pow(side, 2)
 }
 ```
+
+An issue with this approach is that there can be problems with case-insensitive
+file systems. A private `math` module in `math.rf` could conflict with a public
+`Math` module in `Math.rf`, for example.
 
 ## Decision outcome
 
