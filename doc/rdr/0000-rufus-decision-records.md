@@ -1,7 +1,7 @@
 # Rufus decision records
 
 * Status: Accepted
-* Deciders: Jamu Kakar <jkakar@kakar.ca>
+* Deciders: Jamu Kakar <<jkakar@kakar.ca>>
 * Date: 2019-03-24
 
 ## Context and problem statement

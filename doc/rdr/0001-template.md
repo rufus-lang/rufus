@@ -1,3 +1,6 @@
+[Copy this template to a file called `nnnn-<title>.md`. A number will be
+assigned at the time the decision is accepted.]
+
 # Short title of solved problem and solution
 
 * Status: [Drafting | Proposed | Rejected | Accepted | Deprecated | Superseded by [RDR-0005](0005-example.md)]
