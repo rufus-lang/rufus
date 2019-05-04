@@ -8,12 +8,12 @@
 
 A package should only export public modules, and a module should only export
 public types, constants and functions. It should not be possible for a user to
-access private symbols in a package they're using. What facilities should Rufus
-provide for users to maintain encapsulation?
+access private name in a package they're using. What facilities should Rufus
+provide for users to manage encapsulation?
 
 ## Decision drivers
 
-* A user can tell whether a symbol is public or private at a glance.
+* A user can tell whether a name is public or private at a glance.
 * It's not possible to access private modules from outside their package.
 * It's not possible to access private types, constants, or functions from
   outside their module.
@@ -41,7 +41,7 @@ It would be used exterally like:
 ```
 module example
 
-import package/path/math
+import "package/path/math"
 
 func Area(radius tuple{:radius, int}) float {
     math.Pow(math.Pi * radius, 2)
@@ -73,7 +73,7 @@ It would be used exterally like:
 ```
 module example
 
-import package/path/Math
+import "package/path/Math"
 
 func Area(radius tuple{:radius, int}) float {
     Math.Pow(math.Pi * radius, 2)
