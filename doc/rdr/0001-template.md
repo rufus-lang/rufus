@@ -1,13 +1,13 @@
 # Short title of solved problem and solution
 
-* Status: [Proposed | Rejected | Accepted | Deprecated | … | Superseded by [RDR-0005](0005-example.md)]
+* Status: [Drafting | Proposed | Rejected | Accepted | Deprecated | Superseded by [RDR-0005](0005-example.md)]
 * Deciders: [List everyone involved in the decision, like "John Doe <<johndoe@example.com>>"]
 * Date: [YYYY-MM-DD when the decision was last updated]
 
 ## Context and problem statement
 
-[Describe the context and problem statement, e.g., in free form using two to
-three sentences. You may want to articulate the problem in form of a question.]
+[Describe the context and problem statement, e.g., in free form. You may want to
+articulate the problem in form of a question.]
 
 ## Decision drivers
 
