@@ -1,7 +1,7 @@
 # Exported names
 
-* Status: Accepted
-* Deciders: jkakar@kakar.ca <<jkakar@kakar.ca>>
+* Status: Drafting
+* Deciders: Jamu Kakar <<jkakar@kakar.ca>>
 * Date: 2019-05-03
 
 ## Context and problem statement
@@ -75,8 +75,14 @@ module example
 
 import "package/path/Math"
 
-func Area(radius tuple{:radius, int}) float {
-    Math.Pow(math.Pi * radius, 2)
+func Area(:radius, radius float) float {
+    Math.Pow(Math.Pi * radius, 2)
+}
+func Area(:rectangle, tuple{length, width float}) float {
+    length * width
+}
+func Area(:square, side float) float {
+    Math.Pow(side, 2)
 }
 ```
 
