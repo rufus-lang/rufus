@@ -2,7 +2,7 @@
 
 * Status: Drafting
 * Deciders: jkakar@kakar.ca <<jkakar@kakar.ca>>
-* Date: n/a
+* Date: 2019-05-03
 
 ## Context and problem statement
 
