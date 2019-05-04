@@ -82,7 +82,7 @@ func Area(radius tuple{:radius, int}) float {
 
 ## Decision outcome
 
-Chosen option: option 2, because it uses one unified pattern instead of both the
-case-sensitive approach and special-case handling of the `internal` directory.
-It also has the benefit of making private modules more obvious when reading
-code.
+Chosen option: option 2, because it uses one unified pattern instead of
+introducing two patterns with case-sensitive names, and special-case handling of
+the `internal` directory. It also has the benefit of making private modules more
+obvious when reading code.
