@@ -1,6 +1,6 @@
 # Exported names
 
-* Status: Drafting
+* Status: Accepted
 * Deciders: jkakar@kakar.ca <<jkakar@kakar.ca>>
 * Date: 2019-05-03
 
