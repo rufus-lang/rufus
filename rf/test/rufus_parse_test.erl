@@ -180,3 +180,59 @@ parse_function_taking_an_string_and_returning_an_string_test() ->
               return_type => {type, #{line => 3, spec => string}},
               spec => 'Echo'}}
     ], Forms).
+
+%% Binary operations
+
+parse_function_adding_two_ints_test() ->
+    RufusText = "
+    module math
+    func Three() int { 1 + 2 }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    ?assertEqual([
+     {module, #{line => 2, spec => math}},
+     {func, #{args => [],
+              exprs => [{binary_op, #{line => 3,
+                                      op => '+',
+                                      left => [{int_lit, #{line => 3,
+                                                           spec => 1,
+                                                           type => {type, #{line => 3, spec => int}}}}],
+                                      right => [{int_lit, #{line => 3,
+                                                            spec => 2,
+                                                            type => {type, #{line => 3, spec => int}}}}]}}],
+              line => 3,
+              return_type => {type, #{line => 3, spec => int}},
+              spec => 'Three'}}
+    ], Forms).
+
+parse_function_adding_three_ints_test() ->
+    RufusText = "
+    module math
+    func Six() int { 1 + 2 + 3 }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    ?assertEqual([
+      {module,#{line => 2,spec => math}},
+      {func, #{args => [],
+               exprs => [{binary_op, #{left => [{int_lit, #{line => 3,
+                                                            spec => 1,
+                                                            type => {type, #{line => 3,
+                                                                             spec => int}}}}],
+                                       line => 3,
+                                       op => '+',
+                                       right => [{binary_op, #{left => [{int_lit, #{line => 3,
+                                                                                    spec => 2,
+                                                                                    type => {type, #{line => 3,
+                                                                                                     spec => int}}}}],
+                                                               line => 3,
+                                                               op => '+',
+                                                               right => [{int_lit, #{line => 3,
+                                                                                     spec => 3,
+                                                                                     type => {type, #{line => 3,
+                                                                                                      spec => int}}}}]}}]}}],
+               line => 3,
+               return_type => {type, #{line => 3, spec => int}},
+               spec => 'Six'}}
+    ], Forms).
