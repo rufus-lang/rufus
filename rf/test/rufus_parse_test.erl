@@ -25,7 +25,7 @@ parse_import_test() ->
      {import, #{line => 3, spec => "bar"}}
     ], Forms).
 
-%% Arity-0 functions returning a literal value for primitive types
+%% Arity-0 functions returning a literal value for scalar types
 
 parse_function_returning_a_bool_test() ->
     RufusText = "

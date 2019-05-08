@@ -16,7 +16,7 @@ eval_chain_with_error_handler_test() ->
     %% it encounters a failure from Error.
     ?assertEqual({error, reason}, rufus_compile:eval_chain("haha", [Error, Explode])).
 
-%% Arity-0 functions returning a literal value for primitive types
+%% Arity-0 functions returning a literal value for scalar types
 
 eval_with_function_returning_a_bool_literal_test() ->
     RufusText = "
@@ -50,7 +50,7 @@ eval_with_function_returning_a_string_literal_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual({string, <<"Hello">>}, example:'Greeting'()).
 
-%% Arity-1 functions taking an unused parameter for primitive types
+%% Arity-1 functions taking an unused parameter for scalar types
 
 eval_with_function_taking_a_bool_and_returning_a_bool_literal_test() ->
     RufusText = "
@@ -88,7 +88,7 @@ eval_with_function_taking_a_string_and_returning_a_string_literal_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual({string, <<"Hello">>}, example:'MaybeEcho'({string, <<"Good morning">>})).
 
-%% Arity-1 functions taking an argument and returning it for primitive types
+%% Arity-1 functions taking an argument and returning it for scalar types
 
 eval_with_function_taking_a_bool_and_returning_it_test() ->
     RufusText = "
