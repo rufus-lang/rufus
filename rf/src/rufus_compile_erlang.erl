@@ -45,7 +45,15 @@ forms(Acc, [{func, #{line := Line, spec := Name, args := Args, exprs := Exprs}}|
 forms(Acc, [{arg, #{line := Line, spec := Name, type := Type}}|T]) ->
     Form = {tuple, Line, [{atom, Line, type_spec(Type)}, {var, Line, Name}]},
     forms([Form|Acc], T);
+forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}|T]) ->
+    [LeftExpr] = forms([], Left),
+    [RightExpr] = forms([], Right),
+    Form = {op, Line, Op, LeftExpr, RightExpr},
+    forms([Form|Acc], T);
 forms(Acc, []) ->
+    Acc;
+forms(Acc, _Unhandled) ->
+    io:format("unhandled form ->~n~p~n", [_Unhandled]),
     Acc.
 
 %% box converts Rufus types into Erlang `{<type>, <value>}` 2-tuples, such as

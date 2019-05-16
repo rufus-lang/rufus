@@ -2,7 +2,7 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-%% Arity-0 functions returning a literal value for primitive types
+%% Arity-0 functions returning a literal value for scalar types
 
 forms_for_function_returning_a_bool_literal_test() ->
     RufusText = "
@@ -215,4 +215,40 @@ forms_for_function_taking_a_string_and_returning_a_string_test() ->
                            [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}],
                            [],
                            [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}]}]}],
+    ?assertEqual(Expected, ErlangForms).
+
+%% Arity-0 functions returning a sum of literal values for scalar types
+
+forms_for_function_returning_a_sum_of_int_literals_test() ->
+    RufusText = "
+    module example
+    func FortyTwo() int { 19 + 23 }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
+    LeftExpr = {tuple, 3, [{atom, 3, int}, {integer, 3, 19}]},
+    RightExpr = {tuple, 3, [{atom, 3, int}, {integer, 3, 23}]},
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'FortyTwo', 0}]},
+        {function, 3, 'FortyTwo', 0, [{clause, 3, [], [], [{op, 3, '+', LeftExpr, RightExpr}]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_returning_a_sum_of_float_literals_test() ->
+    RufusText = "
+    module example
+    func Pi() float { 1.0 + 2.14159265359 }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
+    LeftExpr = {tuple, 3, [{atom, 3, float}, {float, 3, 1.0}]},
+    RightExpr = {tuple, 3, [{atom, 3, float}, {float, 3, 2.14159265359}]},
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Pi', 0}]},
+        {function, 3, 'Pi', 0, [{clause, 3, [], [], [{op, 3, '+', LeftExpr, RightExpr}]}]}
+    ],
     ?assertEqual(Expected, ErlangForms).
