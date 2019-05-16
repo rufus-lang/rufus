@@ -1,4 +1,4 @@
--module(rufus_scope_locals_test).
+-module(rufus_annotate_locals_test).
 
 -include_lib("eunit/include/eunit.hrl").
 
@@ -6,7 +6,7 @@ forms_with_empty_module_test() ->
     RufusText = "module empty",
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    ?assertEqual({ok, Forms}, rufus_scope_locals:forms(Forms)).
+    ?assertEqual({ok, Forms}, rufus_annotate_locals:forms(Forms)).
 
 forms_test() ->
     RufusText = "
@@ -15,7 +15,7 @@ forms_test() ->
     ",
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
         {func, #{args => [],
@@ -36,7 +36,7 @@ forms_for_function_taking_a_bool_and_returning_a_bool_literal_test() ->
     ",
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
         {func,
@@ -61,7 +61,7 @@ forms_for_function_taking_a_float_and_returning_a_float_literal_test() ->
     ",
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
         {func,
@@ -86,7 +86,7 @@ forms_for_function_taking_an_int_and_returning_an_int_literal_test() ->
     ",
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
         {func,
@@ -111,7 +111,7 @@ forms_for_function_taking_a_string_and_returning_a_string_literal_test() ->
     ",
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
         {func,
@@ -138,7 +138,7 @@ forms_for_function_taking_a_bool_and_returning_it_test() ->
     ",
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
         {func,
@@ -163,7 +163,7 @@ forms_for_function_taking_a_float_and_returning_it_test() ->
     ",
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
         {func,
@@ -188,7 +188,7 @@ forms_for_function_taking_an_int_and_returning_it_test() ->
     ",
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
         {func,
@@ -213,7 +213,7 @@ forms_for_function_taking_a_string_and_returning_it_test() ->
     ",
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
         {func,

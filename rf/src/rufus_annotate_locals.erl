@@ -1,6 +1,6 @@
-%% rufus_scope_locals annotates each Rufus form with a 'locals' map that links
+%% rufus_annotate_locals adds a 'locals' map to each Rufus form that links
 %% variable names to type information.
--module(rufus_scope_locals).
+-module(rufus_annotate_locals).
 
 %% API exports
 
