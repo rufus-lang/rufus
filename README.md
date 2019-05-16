@@ -1,256 +1,143 @@
-Rufus is a language syntax and type system for the language semantics provided
-by the BEAM.
+[![Build Status](https://travis-ci.com/rufus-lang/rufus.svg?branch=master)](https://travis-ci.com/rufus-lang/rufus)
+# Rufus
 
-## Design goals
+A programming language for the BEAM.
 
-- Approachable and teachable.
-- Encourage a consistent programming style.
-- Scale up to support many people working on very large software projects.
-- Scale down to support small experiments.
-- Provide a high-level concurrency model.
-- Good performance.
-- No surprises about where functions and data come from.
-- Type safe to prevent bugs and support refactoring.
-- Data over types.
-- Straight-forward tooling.
-- Next more than one step away from type information.
-
-## Comments
-
-Only single-line comments that start with `//`.
-
-## Primitive types
-
-- Symbols of type `atom`
-  - `:value`
-  - No zero value
-- Booleans of type `bool`
-  - `true`
-  - `false`
-  - Zero value is `false`
-- Numbers of type `float`
-  - `2.3`
-  - `2.3e2`
-  - `2.4e-2`
-  - Zero value is `0.0`
-- Numbers of type `int`
-  - `value` in base 10.
-  - `base#value` for integers with the base base, that must be an integer in the
-    range 2..36.
-  - Zero value is `0`.
-- Strings of type `unicode`
-  - Always encoded in UTF-8
-  - `"value"`
-  - Zero value is `""`
-- Bitstrings and binaries of type `binary`
-  - `<<10,20>>`
-  - `<<"ABC">>`
-  - `<<1:0,1:1>>`
-  - Zero value is `<<"">>`
-- Functions
-  - `type Func func (args) returnType`
-  - `type Func func (args) value` such as `func() :ok { :ok }` for a function
-    that takes no arguments always returns the value `:ok`.
-  - No zero value
-
-## Compound types
-
-- Tuples
-  - `tuple[unicode, int]`
-  - `score = tuple[unicode, int]{"red", 2}`
-- Lists
-  - `[]unicode`
-  - `colors := []unicode{"red", "green", "blue"}
-  - `list[unicode]`
-  - `colors := list[unicode]{"red", "green", "blue"}
-- Maps
-  - `map[unicode]int`
-  - `teams := map[unicode]int{"red": 2, "green": 1, "blue": 3}`
-- Structs
-  - `type Struct struct { fields }` such as `type Person struct { FirstName unicode, LastName unicode }`.
-  - Literals like `Person{firstName: "John", lastName: "Smith"}`.
-
-```
-type retval atom
-const ok = :ok
-const error = :error
-
-
-type PersonAge tuple {name string, age int}
-
-pa := PersonAge{"Alice", 37}
-```
-
-## Project layout
-
-A project contains code, dependencies and other artifacts and uses a standard
-layout:
-
-- `$projectroot/cmd/$name` - A directory containing a `main` package that will
-  be built as `$projectroot/_build/bin/$name`.
-- `$projectroot/src/` - A directory that contains `.rf` files with source text
-  for the `$projectroot` package.
-
-`rf new lib example` creates a new project skeleton for a library package:
-
-```
-example/
-  .gitignore
-  README.md
-  rf.toml
-  src/
-```
-
-`rf new app example` creates a new project skeleton for an app package:
-
-```
-example/
-  .gitignore
-  README.md
-  rf.toml
-  cmd/main.rf
-  src/
-```
-
-`main.rf`:
-
-```
-package main
+```rufus
+module main
 
 import "fmt"
 
 func main() {
-    fmt.Print("Hello, world!\n")
+    fmt.Println("Hello, world!")
 }
 ```
 
-`rf.toml`:
+Primitive types:
 
-```toml
-[package]
-name = "example"
-version = "0.1.0"
-authors = ["Jamu Kakar <jkakar@kakar.ca>"]
-
-[dependencies]
-"github.com/jkakar/healthcheck" = "0.2.1"
+```rufus
+transport atom = :bicycle
+truthy bool = true
+answer int = 42
+pi float = 3.14159265359
+greeting string = "Hello, world!"
 ```
 
-## Packages
+Constants:
 
-All code lives in a package. Packages have lowercase names and don't use
-underscores.
-
-```
-package list
+```rufus
+const Pi = 3.14159265359
 ```
 
-Identifiers that start with a capital letter are exported. Everything else is
-private.
+Collection types:
 
+```rufus
+list[int]
+numbers = list[int]{1, 2, 3, 4, 5}
+
+map[atom]string
+alice = map[atom]string{:name: "Alice", :age: "34"}
+
+tuple[string, int]
+alice = tuple[string, int]{"Alice", 34}
 ```
-package math
 
-const Pi float := 3.141519
+Function types:
+
+```rufus
+func Echo(text string) string {
+    text
+}
 ```
 
-A readonly `math.Pi` value that can be used by packages that import the `math`
-package.
+Higher order functions:
 
+```rufus
+func Map(n list[int], f func(int) int) list[int] {
+    mapAccumulate(list[int]{}, n, f)
+}
+
+func mapAccumulate(acc list[int], [h|t] list[int], f func(int) int) list[int] {
+    map([f(h)|acc], t, f)
+}
+func mapAccumulate(acc list[int], [] list[int], func(int) int) list[int] {
+    lists.Reverse(acc)
+}
 ```
-package thing
 
-func validate(name string) bool {
+Named tuple:
+
+```rufus
+type Point tuple[X int, Y int, Z int]
+
+point = Point{X: 2, Y: 5, Z: -1}
+point.X = 2
+```
+
+Union type:
+
+```rufus
+// Inline method allows shorthand syntax to help reduce boilerplate
+func Teleport(point Point) :ok | tuple[:error, string] {
+    // ...
+}
+
+type Outcome :ok | tuple[:error, string]
+
+func Teleport(point Point) Outcome {
     // ...
 }
 ```
 
-`validate` is a private function that may only be called by code within the
-`thing` package.
+Match expression:
 
-## Importing packages
-
+```rufus
+point = Point{X: 3, Y: -6, Z: 13}
+match Teleport(point) {
+case :ok =>
+    // ...
+case tuple[:error, Reason string] =>
+    // ...
+}
 ```
+
+Each `case` branch needs to return the same (inferred) type otherwise the match
+type must be declared.
+
+```rufus
+point = Point{X: 3, Y: -6, Z: 13}
+match Teleport(point) Result {
+case :ok =>
+    // ...
+case tuple[:error, Reason string] =>
+    // ...
+}
+```
+
+Modules and imports:
+
+```rufus
+module server
+
 import (
-    "encoding/json"                     // stdlib imports
-    "html"
-    "net/http"
-
-    "github.com/jkakar/healthcheck"     // third-party imports
-    "github.com/jkakar/middleware"
-
-    "github.com/jkakar/website/routes"  // local imports
+    "log"
+    "github.com/rufus-lang/echo"
 )
 ```
 
-The import path `[$(syspath)/lib, $(projectpath)/deps, $(rootpath)]` defines the
-location and precedence of packages available to the compiler. When resolving a
-package name to import:
+Generic types:
 
-1. the standard library path `$(syspath)/lib` is checked first;
-2. the third-party dependencies path in `$(projectpath)/deps` is checked next;
-3. finally, the local source path `$(rootpath)` is checked last. It's the
-   path of the first top-level `src` directory found when traversing up the
-   tree from `$(projectpath)`.
+```rufus
+func Map(n list[T?], f func(T?) T?) list[T?] {
+    mapAccumulate(list[T?]{}, n, f)
+}
 
-An import error occurs if the imported package can't be found in any of these
-locations.
-
-## Functions
-
-All functions must have a return type. Functions can be tail recursive:
-
-```
-func InfiniteLoop(n int) {
-    InfiniteLoop(n+1)
+func mapAccumulate(acc list[T?], [h|t] list[T?], f func(T?) T?) list[T?] {
+    mapAccumulate([f(h)|acc], t, f)
+}
+func mapAccumulate(acc list[T?], [] list[T?], func(T?) T?) list[T?] {
+    lists.Reverse(acc)
 }
 ```
 
-## Generics
-
-Types that end in a `?` are generic and are instantiated at compile time.
-
-```
-func All([h|t] list[T?], fn func(T) bool) bool {
-    case fn(h) {
-    true:
-        All(t, fn)
-    false:
-        false
-    }
-}
-
-func All([] list[T?], fn func(T) bool) bool {
-    true
-}
-```
-
-## Spawning a new process
-
-A function can be run in a new process with `spawn`:
-
-```
-pid = spawn mypackage.SomeFunction(some, args)
-```
-
-That function can be shutdown, too:
-
-```
-exit(pid, :example) // No return value!
-```
-
-## Software lifecycle
-
-Think through the lifecycle of a software project. It's created, it gets
-iterated on, people have to read the code to understand how things work,
-dependencies change, it must be deployed, it may be a fork, etc. The `rf` tool
-should support developers from this perspective.
-
-### 1// Inception
-
-We need a way to quickly create a project skeleton to start new projects.
-
-### Iteration
-### Release testing
-### Publication
-### Transfer
+The first type that binds to `T?` is substitued everywhere `T?` is mentioned.

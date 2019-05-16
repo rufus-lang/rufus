@@ -12,38 +12,43 @@ RightParen    = \)
 LeftBrace     = \{
 RightBrace    = \}
 
+BoolType      = bool
 ConstType     = const
 FloatType     = float
 IntType       = int
 StringType    = string
 
-Package       = package
+Module        = module
 Import        = import
 Func          = func
 
+BoolLiteral   = (true|false)
 Exponent      = (e|E)?(\+|\-)?{Digit}+
-FloatLiteral  = \-?{Digit}+\.{Digit}+{Exponent}?
-IntLiteral    = \-?{Digit}+
-StringLiteral = \"({UnicodeLetter}|{Whitespace})+\"
+FloatLiteral  = (\+|\-)?{Digit}+\.{Digit}+{Exponent}?
+IntLiteral    = (\+|\-)?{Digit}+
+StringLiteral = \"({Digit}|{UnicodeLetter}|{Whitespace})+\"
 
 Comma         = ,
 Match         = =
 Plus          = \+
+Minus         = \-
 
 Rules.
 
 {Whitespace}+   : skip_token.
 {Newline}+      : skip_token.
 
-{ConstType}     : {token, {const, TokenLine, TokenChars}}.
-{FloatType}     : {token, {float, TokenLine, TokenChars}}.
-{IntType}       : {token, {int, TokenLine, TokenChars}}.
-{StringType}    : {token, {string, TokenLine, TokenChars}}.
+{BoolType}      : {token, {bool, TokenLine}}.
+{ConstType}     : {token, {const, TokenLine}}.
+{FloatType}     : {token, {float, TokenLine}}.
+{IntType}       : {token, {int, TokenLine}}.
+{StringType}    : {token, {string, TokenLine}}.
 
-{Package}       : {token, {package, TokenLine, TokenChars}}.
-{Import}        : {token, {import, TokenLine, TokenChars}}.
-{Func}          : {token, {func, TokenLine, TokenChars}}.
+{Module}        : {token, {module, TokenLine}}.
+{Import}        : {token, {import, TokenLine}}.
+{Func}          : {token, {func, TokenLine}}.
 
+{BoolLiteral}   : {token, {bool_lit, TokenLine, list_to_atom(TokenChars)}}.
 {FloatLiteral}  : {token, {float_lit, TokenLine, list_to_float(TokenChars)}}.
 {IntLiteral}    : {token, {int_lit, TokenLine, list_to_integer(TokenChars)}}.
 {StringLiteral} : S = strip(TokenChars, TokenLen),
@@ -56,6 +61,7 @@ Rules.
 {Comma}         : {token, {',', TokenLine}}.
 {Match}         : {token, {'=', TokenLine}}.
 {Plus}          : {token, {'+', TokenLine}}.
+{Minus}         : {token, {'-', TokenLine}}.
 {Identifier}    : {token, {identifier, TokenLine, TokenChars}}.
 
 Erlang code.
