@@ -1,6 +1,6 @@
 %% rufus_typecheck_binary_op enforces the invariant that a binary operation may
 %% only be performed exclusively with ints or exclusively with floats, not both
-%% at the same time.
+%% at the same time. No other types are supported with binary operators.
 -module(rufus_typecheck_binary_op).
 
 %% API exports
