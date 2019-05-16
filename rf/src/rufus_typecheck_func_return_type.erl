@@ -1,6 +1,7 @@
-%% rufus_check_types enforces the invariant that the type of a function's return
-%% value matches the return type specified in the function signature.
--module(rufus_check_types).
+%% rufus_typecheck_func_return_type enforces the invariant that the type of a
+%% function's return value matches the return type specified in the function
+%% signature.
+-module(rufus_typecheck_func_return_type).
 
 %% API exports
 
