@@ -8,9 +8,9 @@ with teams building and operating large systems over long periods of time in
 mind.
 
 This specification is heavily influenced by [The Go Programming Language
-Specification](https://golang.org/ref/spec#Introduction). Many sections have been reproduced without changes and many
-other sections are modifications based on work created and shared by Google and
-used according to terms described in the [Creative Commons 3.0 Attribution
+Specification](https://golang.org/ref/spec#Introduction). Several sections have been reproduced without changes and
+many other sections are modifications based on work created and shared by Google
+and used according to terms described in the [Creative Commons 3.0 Attribution
 License](https://creativecommons.org/licenses/by/3.0/).
 
 This specification is licensed under the [Creative Commons 3.0 Attribution
@@ -45,11 +45,11 @@ License](https://creativecommons.org/licenses/by/3.0/).
   * [Qualified operators](#qualified-operators)
   * [Composite literals](#composite-literals)
   * [Function literals](#function-literals)
-* [Packages](#packages)
+* [Modules](#modules)
   * [Source file organization](#source-file-organization)
-  * [Package clause](#package-clause)
+  * [Module clause](#module-clause)
   * [Import declarations](#import-declarations)
-  * [An example package](#an-example-package)
+  * [An example module](#an-example-module)
 
 ## Notation
 
@@ -158,6 +158,7 @@ identifier = letter { letter | unicode_digit } .
 a
 _x9
 ThisVariableIsExported
+ぁIsExported
 αβ
 ```
 
@@ -169,15 +170,7 @@ The following keywords are reserved and may not be used as identifiers.
 
 ```
 func
-package
-
-
-maybe later:
-break        default      func         interface    select
-case         defer        go           map          struct
-chan         else         goto         package      switch
-const        fallthrough  if           range        type
-continue     for          import       return       var
+module
 ```
 
 ### Operators and punctuation
@@ -242,85 +235,6 @@ exponent  = ( "e" | "E" ) [ "+" | "-" ] decimals .
 .12345E+5
 ```
 
-### Rune literals
-
-A rune literal represents a rune constant, an integer value identifying a
-Unicode code point. A rune literal is expressed as one or more characters
-enclosed in single quotes, as in `'x'` or `'\n'`. Within the quotes, any
-character may appear except newline and unescaped single quote. A single quoted
-character represents the Unicode value of the character itself, while
-multi-character sequences beginning with a backslash encode values in various
-formats.
-
-The simplest form represents the single character within the quotes; since Rufus
-source text is Unicode characters encoded in UTF-8, multiple UTF-8-encoded bytes
-may represent a single integer value. For instance, the literal `'a'` holds a
-single byte representing a literal `a`, Unicode `U+0061`, value `0x61`, while
-`'ä'` holds two bytes (`0xc3` `0xa4`) representing a literal `a`-dieresis,
-`U+00E4`, value `0xe4`.
-
-Several backslash escapes allow arbitrary values to be encoded as ASCII text.
-There are four ways to represent the integer value as a numeric constant: `\x`
-followed by exactly two hexadecimal digits; `\u` followed by exactly four
-hexadecimal digits; `\U` followed by exactly eight hexadecimal digits, and a
-plain backslash `\` followed by exactly three octal digits. In each case the
-value of the literal is the value represented by the digits in the corresponding
-base.
-
-Although these representations all result in an integer, they have different
-valid ranges. Octal escapes must represent a value between `0` and `255`
-inclusive. Hexadecimal escapes satisfy this condition by construction. The
-escapes `\u` and `\U` represent Unicode code points so within them some values
-are illegal, in particular those above `0x10FFFF` and surrogate halves.
-
-After a backslash, certain single-character escapes represent special values:
-
-```
-\a   U+0007 alert or bell
-\b   U+0008 backspace
-\f   U+000C form feed
-\n   U+000A line feed or newline
-\r   U+000D carriage return
-\t   U+0009 horizontal tab
-\v   U+000b vertical tab
-\\   U+005c backslash
-\'   U+0027 single quote  (valid escape only within rune literals)
-\"   U+0022 double quote  (valid escape only within string literals)
-```
-
-All other sequences starting with a backslash are illegal inside rune literals.
-
-```
-rune_lit         = "'" ( unicode_value | byte_value ) "'" .
-unicode_value    = unicode_char | little_u_value | big_u_value | escaped_char .
-byte_value       = octal_byte_value | hex_byte_value .
-octal_byte_value = `\` octal_digit octal_digit octal_digit .
-hex_byte_value   = `\` "x" hex_digit hex_digit .
-little_u_value   = `\` "u" hex_digit hex_digit hex_digit hex_digit .
-big_u_value      = `\` "U" hex_digit hex_digit hex_digit hex_digit
-                           hex_digit hex_digit hex_digit hex_digit .
-escaped_char     = `\` ( "a" | "b" | "f" | "n" | "r" | "t" | "v" | `\` | "'" | `"` ) .
-```
-```
-'a'
-'ä'
-'本'
-'\t'
-'\000'
-'\007'
-'\377'
-'\x07'
-'\xff'
-'\u12e4'
-'\U00101234'
-'\''         // rune literal containing single quote character
-'aa'         // illegal: too many characters
-'\xa'        // illegal: too few hexadecimal digits
-'\0'         // illegal: too few octal digits
-'\uDFFF'     // illegal: surrogate half
-'\U00110000' // illegal: invalid Unicode code point
-```
-
 ### String literals
 
 A string literal represents a string constant obtained from concatenating a
@@ -368,11 +282,11 @@ type. A list is either an empty list or consists of a head element and tail
 (remainder of the list). The tail is also a list of the same type.
 
 ```
-ListType = "[" "]" ElementType .
+ListType = "list[" ElementType "]" .
 ```
 ```
-[]unicode
-[][]int
+list[string]
+list[list[int]]
 ```
 
 Lists are always one-dimensional but may be composed to construct
@@ -426,8 +340,8 @@ StatementList = { Statement ";" } .
 In addition to explicit blocks in the source code, there are implicit blocks:
 
 1. The universe block encompasses all Rufus source text.
-2. Each package has a *package block* containing all Rufus source text for that
-   package.
+2. Each module has a *module block* containing all Rufus source text for that
+   module.
 3. Each file has a *file block* containing all Rufus source text in that file.
 4. Each "if", "for", and "match" statement is considered to be in its own
    implicit block.
@@ -438,9 +352,9 @@ Blocks nest and influence scoping.
 ## Declarations and scope
 
 A *declaration* binds a non-blank identifier to a constant, type, variable,
-function, label, or package. Every identifier in a program must be declared. No
+function, label, or module. Every identifier in a program must be declared. No
 identifier may be declared twice in the same block, and no identifier may be
-declared in both the file and package block.
+declared in both the file and module block.
 
 The blank identifier may be used like any other identifier in a declaration, but
 it does not introduce a binding and thus is not declared.
@@ -451,15 +365,14 @@ TopLevelDecl  = Declaration | FunctionDecl .
 ```
 
 The scope of a declared identifier is the extent of source text in which the
-identifier denotes the specified constant, type, variable, function, label, or
-package.
+identifier denotes the specified constant, type, variable, function, or module.
 
 Rufus is lexically scoped using blocks:
 
 1. The scope of a predeclared identifier is the universe block.
 2. The scope of an identifier denoting a constant, type, variable, or function
-   declared at top level (outside any function) is the package block.
-3. The scope of the package name of an imported package is the file block of the
+   declared at top level (outside any function) is the module block.
+3. The scope of the module name of an imported module is the file block of the
    file containing the import declaration.
 4. The scope of an identifier denoting a function parameter, or result variable
    is the function body.
@@ -474,9 +387,9 @@ An identifier declared in a block may be redeclared in an inner block. While the
 identifier of the inner declaration is in scope, it denotes the entity declared
 by the inner declaration.
 
-The package clause is not a declaration; the package name does not appear in any
-scope. Its purpose is to identify the files belonging to the same package and to
-specify the default package name for import declarations.
+The module clause is not a declaration; the module name does not appear in any
+scope. Its purpose is to identify the files belonging to the same module and to
+specify the default module name for import declarations.
 
 ### Blank identifier
 
@@ -501,12 +414,12 @@ Functions:
 
 ### Exported identifiers
 
-An identifier may be *exported* to permit access to it from another package. An
+An identifier may be *exported* to permit access to it from another module. An
 identifier is exported if both:
 
 1. the first character of the identifier's name is a Unicode upper case letter
    (Unicode class "Lu");
-2. and the identifier is declared in the package block or it is a field name or
+2. and the identifier is declared in the module block or it is a field name or
    method name.
 
 All other identifiers are not exported.
@@ -534,19 +447,19 @@ OperandName = identifier | QualifiedIdent.
 
 ### Qualified operators
 
-A qualified identifier is an identifier qualified with a package name prefix.
-Both the package name and the identifier must not be blank.
+A qualified identifier is an identifier qualified with a module name prefix.
+Both the module name and the identifier must not be blank.
 
 ```
-QualifiedIdent = PackageName "." identifier .
+QualifiedIdent = ModuleName "." identifier .
 ```
 
-A qualified identifier accesses an identifier in a different package, which must
-be imported. The identifier must be exported and declared in the package block
-of that package.
+A qualified identifier accesses an identifier in a different module, which must
+be imported. The identifier must be exported and declared in the module block
+of that module.
 
 ```
-math.Sin // denotes the Sin function in package math
+math.Sin // denotes the Sin function in module math
 ```
 
 ### Composite literals
@@ -583,7 +496,7 @@ For struct literals the following rules apply:
 - A key must be a field name declared in the struct type.
 - An element list must contain a keys for each struct field.
 - It is an error to specify an element for a non-exported field of a struct
-  belonging to a different package.
+  belonging to a different module.
 
 Given the declarations
 
@@ -669,70 +582,70 @@ surrounding function. Those variables are then shared between the surrounding
 function and the function literal, and they survive as long as they are
 accessible.
 
-## Packages
+## Modules
 
-Rufus programs are constructed by linking together packages. A package in turn
+Rufus programs are constructed by linking together modules. A module in turn
 is constructed from one or more source files that together declare constants,
-types, and functions belonging to the package and which are accessible in all
-files of the same package. Those elements may be exported and used in another
-package.
+types, and functions belonging to the module and which are accessible in all
+files of the same module. Those elements may be exported and used in another
+module.
 
 ### Source file organization
 
-Each source file consists of a package clause defining the package to which it
+Each source file consists of a module clause defining the module to which it
 belongs, followed by a possibly empty set of import declarations that declare
-packages whose contents it wishes to use, followed by a possibly empty set of
+modules whose contents it wishes to use, followed by a possibly empty set of
 declarations of constants, types, and functions.
 
 ```
-SourceFile       = PackageClause ";" { ImportDecl ";" } { TopLevelDecl ";" } .
+SourceFile       = ModuleClause ";" { ImportDecl ";" } { TopLevelDecl ";" } .
 ```
 
-### Package clause
+### Module clause
 
-A package clause begins each source file and defines the package to which the
+A module clause begins each source file and defines the module to which the
 file belongs.
 
 ```
-PackageClause  = "package" PackageName .
-PackageName    = identifier .
+ModuleClause  = "module" ModuleName .
+ModuleName    = identifier .
 ```
 
-The PackageName must not be the [blank identifier](#blank-identifier).
+The ModuleName must not be the [blank identifier](#blank-identifier).
 
 ```
-package math
+module math
 ```
 
-A set of files sharing the same PackageName form the implementation of a
-package. An implementation may require that all source files for a package
+A set of files sharing the same ModuleName form the implementation of a
+module. An implementation may require that all source files for a module
 inhabit the same directory.
 
 ### Import declarations
 
 An import declaration states that the source file containing the declaration
-depends on functionality of the _imported_ package and enables access to
-exported identifiers of that package. The import names an identifier
-(PackageName) to be used for access and an ImportPath that specifies the package
+depends on functionality of the _imported_ module and enables access to
+exported identifiers of that module. The import names an identifier
+(ModuleName) to be used for access and an ImportPath that specifies the module
 to be imported.
 
 ```
 ImportDecl       = "import" ( ImportSpec | "(" { ImportSpec ";" } ")" ) .
-ImportSpec       = [ "." | PackageName ] ImportPath .
+ImportSpec       = [ "." | ModuleName ] ImportPath .
 ImportPath       = string_lit .
 ```
 
-The PackageName is used in qualified identifiers to access exported identifiers
-of the package within the importing source file. It is declared in the file
-block. If the PackageName is omitted, it defaults to the identifier specified in
-the package clause of the imported package. If an explicit period (`.`) appears
-instead of a name, all the package's exported identifiers declared in that
-package's package block will be declared in the importing source file's file
+The ModuleName is used in qualified identifiers to access exported identifiers
+of the module within the importing source file. It is declared in the file
+block. If the ModuleName is omitted, it defaults to the identifier specified in
+the module clause of the imported module. If an explicit period (`.`) appears
+instead of a name, all the module's exported identifiers declared in that
+module's module block will be declared in the importing source file's file
 block and must be accessed without a qualifier.
 
 The interpretation of the ImportPath is implementation-dependent but it is
-typically a substring of the full file name of the compiled package and may be
-relative to a repository of installed packages.
+typically a substring of the full file name of the compiled module and may be
+relative to a repository of installed modules.
 
 Implementation restriction: A compiler may restrict ImportPaths to non-empty
 strings using only characters belonging to Unicode's L, M, N, P, and S general
@@ -740,10 +653,10 @@ categories (the Graphic characters without spaces) and may also exclude the
 characters `!"#$%&'()*,:;<=>?[\]^`{|}` and the Unicode replacement character
 `U+FFFD`.
 
-Assume we have compiled a package containing the package clause package math,
-which exports function `Sin`, and installed the compiled package in the file
+Assume we have compiled a module containing the module clause module math,
+which exports function `Sin`, and installed the compiled module in the file
 identified by "`lib/math`". This table illustrates how `Sin` is accessed in
-files that import the package after the various types of import declaration.
+files that import the module after the various types of import declaration.
 
 ```
 Import declaration          Local name of Sin
@@ -753,28 +666,28 @@ import m "lib/math"         m.Sin
 ```
 
 An import declaration declares a dependency relation between the importing and
-imported package. It is illegal for a package to import itself, directly or
-indirectly, or to directly import a package without referring to any of its
+imported module. It is illegal for a module to import itself, directly or
+indirectly, or to directly import a module without referring to any of its
 exported identifiers.
 
-### An example package
+### An example module
 
-Here is a complete Rufus package that implements a prime sieve.
+Here is a complete Rufus module that implements a prime sieve.
 
 ```
-package main
+module main
 
-import "std/lists"
+import "std/List"
 
-sieve([] []int) []int {
+sieve([] list[int]) list[int] {
     []
 }
-sieve([h|t] []int) []int {
-    list = lists.Filter(func(n int) bool { n % h != 0 }, t)
-    [h|sieve(list)]
+sieve([h|t] list[int]) list[int] {
+    result = List.Filter(func(n int) bool { n % h != 0 }, t)
+    [h|sieve(result)]
 }
 
 main() {
-    sieve(lists.Seq(2, 30))
+    sieve(List.Seq(2, 30))
 }
 ```
