@@ -53,6 +53,6 @@ check_return_expr({type, #{spec := ReturnType}}, {identifier, #{locals := Locals
     end;
 check_return_expr({type, #{spec := _ReturnType}}, {_FormType, #{type := {type, #{spec := _ReturnType}}}}) ->
     ok;
-check_return_expr({type, #{spec := ReturnType}}, {_FormType, #{type := {type, #{spec := ActualReturnType}}}}) ->
-    Data = #{expected => ReturnType, actual => ActualReturnType},
+check_return_expr({type, #{spec := ExpectedReturnType}}, {_FormType, #{type := {type, #{spec := ActualReturnType}}}}) ->
+    Data = #{expected => ExpectedReturnType, actual => ActualReturnType},
     {error, unmatched_return_type, Data}.
