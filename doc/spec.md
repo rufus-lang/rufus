@@ -30,7 +30,6 @@ License](https://creativecommons.org/licenses/by/3.0/).
   * [Operators and punctuation](#operators-and-punctuation)
   * [Integer literals](#integer-literals)
   * [Floating-point literals](#floating-point-literals)
-  * [Rune literals](#rune-literals)
   * [String literals](#string-literals)
 * [Types](#types)
   * [List types](#list-types)
@@ -43,7 +42,6 @@ License](https://creativecommons.org/licenses/by/3.0/).
 * [Expressions](#expressions)
   * [Operands](#operands)
   * [Qualified operators](#qualified-operators)
-  * [Composite literals](#composite-literals)
   * [Function literals](#function-literals)
 * [Modules](#modules)
   * [Source file organization](#source-file-organization)
@@ -403,26 +401,22 @@ The following identifiers are implicitly declared in the universe block:
 
 ```
 Types:
-	atom bool binary float int rune unicode
+	bool float int string
 
 Constants:
 	true false
-
-Functions:
-    len
 ```
 
 ### Exported identifiers
 
 An identifier may be *exported* to permit access to it from another module. An
-identifier is exported if both:
+identifier is not exported if either:
 
-1. the first character of the identifier's name is a Unicode upper case letter
-   (Unicode class "Lu");
-2. and the identifier is declared in the module block or it is a field name or
-   method name.
+1. the first character of the identifier's name starts with an `_`;
+2. the first character of the identifier's name starts with a Unicode lower case
+   letter (Unicode class "Ll").
 
-All other identifiers are not exported.
+All other identifiers are exported.
 
 ## Expressions
 
@@ -455,108 +449,11 @@ QualifiedIdent = ModuleName "." identifier .
 ```
 
 A qualified identifier accesses an identifier in a different module, which must
-be imported. The identifier must be exported and declared in the module block
-of that module.
+be imported. The identifier must be exported and declared in the module block of
+that module.
 
 ```
 math.Sin // denotes the Sin function in module math
-```
-
-### Composite literals
-
-Composite literals construct values for lists, maps, structs, and tuples and
-create a new value each time they are evaluated. They consist of the type of the
-literal followed by a brace-bound list of elements. Each element may optionally
-be preceded by a corresponding key.
-
-```
-CompositeLit  = LiteralType LiteralValue .
-LiteralType   = ListType | "[" "..." "]" ElementType | MapType | StructType |
-                TupleType | TypeName .
-LiteralValue  = "{" [ ElementList [ "," ] ] "}" .
-ElementList   = KeyedElement { "," KeyedElement } .
-KeyedElement  = [ Key ":" ] Element .
-Key           = FieldName | Expression | LiteralValue .
-FieldName     = identifier .
-Element       = Expression | LiteralValue .
-```
-
-The LiteralType's underlying type must be a list, map, struct or tuple type (the
-grammar enforces this constraint except when the type is given as a TypeName).
-The types of the elements and keys must be assignable to the respective field,
-element, and key types of the literal type; there is no additional conversion.
-The key is interpreted as a field name for struct literals, an index for array
-and slice literals, and a key for map literals. For map literals, all elements
-must have a key. It is an error to specify multiple elements with the same field
-name or constant key value. For non-constant map keys, see the section on
-evaluation order.
-
-For struct literals the following rules apply:
-
-- A key must be a field name declared in the struct type.
-- An element list must contain a keys for each struct field.
-- It is an error to specify an element for a non-exported field of a struct
-  belonging to a different module.
-
-Given the declarations
-
-```
-type Point struct { x, y float }
-type Line struct { p, q Point }
-```
-
-one may write
-
-```
-origin := Point{x: 1.1, y: -4.2}
-line := Line{origin, Point{x: 5.6, y: -0.3}}
-```
-
-A list literal describes the entire underlying sequence. A list literal has the
-form
-
-```
-[]T{x1, x2, … xn}
-```
-
-Within a composite literal of list, map, or tuple type T, elements or map keys
-that are themselves composite literals may elide the respective literal type if
-it is identical to the element or key type of T.
-
-```
-[][]int{{1, 2, 3}, {4, 5}}           // same as [][]int{[]int{1, 2, 3}, []int{4, 5}}
-[][]Point{{{0, 1}, {1, 2}}}          // same as [][]Point{[]Point{Point{0, 1}, Point{1, 2}}}
-map[unicode]Point{"orig": {0, 0}}    // same as map[unicode]Point{"orig": Point{0, 0}}
-map[Point]unicode{{0, 0}: "orig"}    // same as map[Point]unicode{Point{0, 0}: "orig"}
-tuple[unicode, Point]{"orig", {0, 0} // same as tuple[unicode, Point]{"orig", Point{0,0}}
-```
-
-A parsing ambiguity arises when a composite literal using the TypeName form of
-the LiteralType appears as an operand between the keyword and the opening brace
-of the block of an "if", "for", or "switch" statement, and the composite literal
-is not enclosed in parentheses, square brackets, or curly braces. In this rare
-case, the opening brace of the literal is erroneously parsed as the one
-introducing the block of statements. To resolve the ambiguity, the composite
-literal must appear within parentheses.
-
-```
-if x == (T{a,b,c}[i]) { … }
-if (x == T{a,b,c}[i]) { … }
-```
-
-Examples of valid list, map, and tuple literals:
-
-```
-// list of prime numbers
-primes := []int{2, 3, 5, 7, 9, 2147483647}
-
-// frequencies in Hz for equal-tempered scale (A4 = 440Hz)
-noteFrequency := map[string]float{
-    "C0": 16.35,"D0": 18.35, "E0": 20.60, "F0": 21.83,
-    "G0": 24.50, "A0": 27.50, "B0": 30.87,
-
-// tuple of RGB color codes
-purple := tuple[int, int, int]{58, 21, 168}
 ```
 
 ### Function literals
@@ -584,8 +481,8 @@ accessible.
 
 ## Modules
 
-Rufus programs are constructed by linking together modules. A module in turn
-is constructed from one or more source files that together declare constants,
+Rufus programs are constructed by linking together modules. A module in turn is
+constructed from one or more source files that together declare constants,
 types, and functions belonging to the module and which are accessible in all
 files of the same module. Those elements may be exported and used in another
 module.
@@ -640,8 +537,8 @@ of the module within the importing source file. It is declared in the file
 block. If the ModuleName is omitted, it defaults to the identifier specified in
 the module clause of the imported module. If an explicit period (`.`) appears
 instead of a name, all the module's exported identifiers declared in that
-module's module block will be declared in the importing source file's file
-block and must be accessed without a qualifier.
+module's module block will be declared in the importing source file's file block
+and must be accessed without a qualifier.
 
 The interpretation of the ImportPath is implementation-dependent but it is
 typically a substring of the full file name of the compiled module and may be
@@ -653,10 +550,10 @@ categories (the Graphic characters without spaces) and may also exclude the
 characters `!"#$%&'()*,:;<=>?[\]^`{|}` and the Unicode replacement character
 `U+FFFD`.
 
-Assume we have compiled a module containing the module clause module math,
-which exports function `Sin`, and installed the compiled module in the file
-identified by "`lib/math`". This table illustrates how `Sin` is accessed in
-files that import the module after the various types of import declaration.
+Assume we have compiled a module containing the module clause module math, which
+exports function `Sin`, and installed the compiled module in the file identified
+by "`lib/math`". This table illustrates how `Sin` is accessed in files that
+import the module after the various types of import declaration.
 
 ```
 Import declaration          Local name of Sin
