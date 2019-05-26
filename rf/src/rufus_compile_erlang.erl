@@ -73,13 +73,13 @@ forms(Acc, _Unhandled) ->
     Acc.
 
 % guards generates function guards for floats and integers.
-guards(Acc, [{arg, #{line := Line, spec := Name, type := {float, _}}}|T]) ->
-    GuardExpr = {call, Line, {remote, Line, erlang, is_float, [{float, Line, Name}]}},
+guards(Acc, [{arg, #{line := Line, spec := Name, type := {type, #{spec := float}}}}|T]) ->
+    GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_float}}, [{var, Line, Name}]}],
     guards([GuardExpr|Acc], T);
-guards(Acc, [{arg, #{line := Line, spec := Name, type := {int, _}}}|T]) ->
-    GuardExpr = {call, Line, {remote, Line, erlang, is_integer, [{integer, Line, Name}]}},
+guards(Acc, [{arg, #{line := Line, spec := Name, type := {type, #{spec := int}}}}|T]) ->
+    GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_integer}}, [{var, Line, Name}]}],
     guards([GuardExpr|Acc], T);
-guards(Acc, [_|T]) ->
+guards(Acc, [F|T]) ->
     guards(Acc, T);
 guards(Acc, []) ->
     Acc.

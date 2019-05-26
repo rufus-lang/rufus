@@ -100,7 +100,7 @@ forms_for_function_taking_a_float_and_returning_a_float_literal_test() ->
                   {function, 3, 'MaybeEcho', 1,
                       [{clause, 3,
                            [{var, 3, n}],
-                           [],
+                           [[{call,3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_float}}, [{var, 3, n}]}]],
                            [{float, 3, 3.14159265359}]}]}],
     ?assertEqual(Expected, ErlangForms).
 
@@ -117,7 +117,7 @@ forms_for_function_taking_an_int_and_returning_an_int_literal_test() ->
                   {function, 3, 'MaybeEcho', 1,
                       [{clause, 3,
                            [{var, 3, n}],
-                           [],
+                           [[{call,3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_integer}}, [{var, 3, n}]}]],
                            [{integer, 3, 42}]}]}],
     ?assertEqual(Expected, ErlangForms).
 
@@ -173,7 +173,7 @@ forms_for_function_taking_a_float_and_returning_a_float_test() ->
                   {function, 3, 'Echo', 1,
                       [{clause, 3,
                            [{var, 3, n}],
-                           [],
+                           [[{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_float}}, [{var, 3, n}]}]],
                            [{var, 3, n}]}]}],
     ?assertEqual(Expected, ErlangForms).
 
@@ -191,7 +191,7 @@ forms_for_function_taking_an_int_and_returning_an_int_test() ->
                   {function, 3, 'Echo', 1,
                       [{clause, 3,
                            [{var, 3, n}],
-                           [],
+                           [[{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_integer}}, [{var, 3, n}]}]],
                            [{var, 3, n}]}]}],
     ?assertEqual(Expected, ErlangForms).
 
