@@ -33,17 +33,33 @@ forms(Acc, [{string_lit, _Context} = StringLit|T]) ->
     forms([Form|Acc], T);
 forms(Acc, [{identifier, #{line := Line, spec := Name, locals := Locals}}|T]) ->
     Type = maps:get(Name, Locals),
-    Form = {tuple, Line, [{atom, Line, type_spec(Type)}, {var, Line, Name}]},
+    Form = case type_spec(Type) of
+        float ->
+            {var, Line, Name};
+        int ->
+            {var, Line, Name};
+        _ ->
+            {tuple, Line, [{atom, Line, type_spec(Type)}, {var, Line, Name}]}
+    end,
     forms([Form|Acc], T);
 forms(Acc, [{func, #{line := Line, spec := Name, args := Args, exprs := Exprs}}|T]) ->
     ArgsForms = forms([], Args),
+    GuardForms = guards([], Args),
     ExprForms = lists:reverse(forms([], Exprs)),
-    FunctionForms = [{clause, Line, ArgsForms, [], ExprForms}],
+    FunctionForms = [{clause, Line, ArgsForms, GuardForms, ExprForms}],
     ExportForms = {attribute, Line, export, [{Name, length(Args)}]},
     Forms = {function, Line, Name, length(Args), FunctionForms},
     forms([Forms|[ExportForms|Acc]], T);
 forms(Acc, [{arg, #{line := Line, spec := Name, type := Type}}|T]) ->
-    Form = {tuple, Line, [{atom, Line, type_spec(Type)}, {var, Line, Name}]},
+    Form = case type_spec(Type) of
+        float ->
+            {var, Line, Name};
+        int ->
+            {var, Line, Name};
+        _ ->
+            {tuple, Line, [{atom, Line, type_spec(Type)}, {var, Line, Name}]}
+    end,
+    %% Form = {tuple, Line, [{atom, Line, type_spec(Type)}, {var, Line, Name}]},
     forms([Form|Acc], T);
 forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}|T]) ->
     [LeftExpr] = forms([], Left),
@@ -56,14 +72,25 @@ forms(Acc, _Unhandled) ->
     io:format("unhandled form ->~n~p~n", [_Unhandled]),
     Acc.
 
-%% box converts Rufus types into Erlang `{<type>, <value>}` 2-tuples, such as
-%% turning `3.14159265359` into `{float, 3.14159265359}`, for example.
+% guards generates function guards for floats and integers.
+guards(Acc, [{arg, #{line := Line, spec := Name, type := {type, #{spec := float}}}}|T]) ->
+    GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_float}}, [{var, Line, Name}]}],
+    guards([GuardExpr|Acc], T);
+guards(Acc, [{arg, #{line := Line, spec := Name, type := {type, #{spec := int}}}}|T]) ->
+    GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_integer}}, [{var, Line, Name}]}],
+    guards([GuardExpr|Acc], T);
+guards(Acc, [F|T]) ->
+    guards(Acc, T);
+guards(Acc, []) ->
+    Acc.
+
+%% box converts Rufus forms for primitive values into Erlang forms.
 box({bool_lit, #{line := Line, spec := Value}}) ->
     {tuple, Line, [{atom, Line, bool}, {atom, Line, Value}]};
 box({float_lit, #{line := Line, spec := Value}}) ->
-    {tuple, Line, [{atom, Line, float}, {float, Line, Value}]};
+    {float, Line, Value};
 box({int_lit, #{line := Line, spec := Value}}) ->
-    {tuple, Line, [{atom, Line, int}, {integer, Line, Value}]};
+    {integer, Line, Value};
 box({string_lit, #{line := Line, spec := Value}}) ->
     StringExpr = {bin_element, Line, {string, Line, binary_to_list(Value)}, default, default},
     {tuple, Line, [{atom, Line, string}, {bin, Line, [StringExpr]}]}.

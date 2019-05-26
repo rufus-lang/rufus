@@ -29,12 +29,10 @@ forms_for_function_returning_a_float_literal_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
-    FloatExpr = {float, 3, 3.14159265359},
-    BoxedFloatExpr = {tuple, 3, [{atom, 3, float}, FloatExpr]},
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Pi', 0}]},
-        {function, 3, 'Pi', 0, [{clause, 3, [], [], [BoxedFloatExpr]}]}
+        {function, 3, 'Pi', 0, [{clause, 3, [], [], [{float, 3, 3.14159265359}]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
 
@@ -46,12 +44,10 @@ forms_for_function_returning_an_int_literal_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
-    IntegerExpr = {integer, 3, 42},
-    BoxedIntegerExpr = {tuple, 3, [{atom, 3, int}, IntegerExpr]},
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Number', 0}]},
-        {function, 3, 'Number', 0, [{clause, 3, [], [], [BoxedIntegerExpr]}]}
+        {function, 3, 'Number', 0, [{clause, 3, [], [], [{integer, 3, 42}]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
 
@@ -103,9 +99,9 @@ forms_for_function_taking_a_float_and_returning_a_float_literal_test() ->
                   {attribute, 3, export, [{'MaybeEcho', 1}]},
                   {function, 3, 'MaybeEcho', 1,
                       [{clause, 3,
-                           [{tuple, 3, [{atom, 3, float}, {var, 3, n}]}],
-                           [],
-                           [{tuple, 3, [{atom, 3, float}, {float, 3, 3.14159265359}]}]}]}],
+                           [{var, 3, n}],
+                           [[{call,3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_float}}, [{var, 3, n}]}]],
+                           [{float, 3, 3.14159265359}]}]}],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_taking_an_int_and_returning_an_int_literal_test() ->
@@ -120,9 +116,9 @@ forms_for_function_taking_an_int_and_returning_an_int_literal_test() ->
                   {attribute, 3, export, [{'MaybeEcho', 1}]},
                   {function, 3, 'MaybeEcho', 1,
                       [{clause, 3,
-                           [{tuple, 3, [{atom, 3, int}, {var, 3, n}]}],
-                           [],
-                           [{tuple, 3, [{atom, 3, int}, {integer, 3, 42}]}]}]}],
+                           [{var, 3, n}],
+                           [[{call,3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_integer}}, [{var, 3, n}]}]],
+                           [{integer, 3, 42}]}]}],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_taking_a_string_and_returning_a_string_literal_test() ->
@@ -140,7 +136,7 @@ forms_for_function_taking_a_string_and_returning_a_string_literal_test() ->
                       [{clause, 3,
                            [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}],
                            [],
-                           [{tuple, 3, [{atom, 3, string}, {bin,3, [StringExpr]}]}]}]}],
+                           [{tuple, 3, [{atom, 3, string}, {bin, 3, [StringExpr]}]}]}]}],
     ?assertEqual(Expected, ErlangForms).
 
 %% Arity-1 functions taking and using an argument
@@ -176,9 +172,9 @@ forms_for_function_taking_a_float_and_returning_a_float_test() ->
                   {attribute, 3, export, [{'Echo', 1}]},
                   {function, 3, 'Echo', 1,
                       [{clause, 3,
-                           [{tuple, 3, [{atom, 3, float}, {var, 3, n}]}],
-                           [],
-                           [{tuple, 3, [{atom, 3, float}, {var, 3, n}]}]}]}],
+                           [{var, 3, n}],
+                           [[{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_float}}, [{var, 3, n}]}]],
+                           [{var, 3, n}]}]}],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_taking_an_int_and_returning_an_int_test() ->
@@ -194,9 +190,9 @@ forms_for_function_taking_an_int_and_returning_an_int_test() ->
                   {attribute, 3, export, [{'Echo', 1}]},
                   {function, 3, 'Echo', 1,
                       [{clause, 3,
-                           [{tuple, 3, [{atom, 3, int}, {var, 3, n}]}],
-                           [],
-                           [{tuple, 3, [{atom, 3, int}, {var, 3, n}]}]}]}],
+                           [{var, 3, n}],
+                           [[{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_integer}}, [{var, 3, n}]}]],
+                           [{var, 3, n}]}]}],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_taking_a_string_and_returning_a_string_test() ->
@@ -227,8 +223,8 @@ forms_for_function_returning_a_sum_of_int_literals_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
-    LeftExpr = {tuple, 3, [{atom, 3, int}, {integer, 3, 19}]},
-    RightExpr = {tuple, 3, [{atom, 3, int}, {integer, 3, 23}]},
+    LeftExpr = {integer, 3, 19},
+    RightExpr = {integer, 3, 23},
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'FortyTwo', 0}]},
@@ -244,8 +240,8 @@ forms_for_function_returning_a_sum_of_float_literals_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
-    LeftExpr = {tuple, 3, [{atom, 3, float}, {float, 3, 1.0}]},
-    RightExpr = {tuple, 3, [{atom, 3, float}, {float, 3, 2.14159265359}]},
+    LeftExpr = {float, 3, 1.0},
+    RightExpr = {float, 3, 2.14159265359},
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Pi', 0}]},
