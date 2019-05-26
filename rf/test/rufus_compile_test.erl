@@ -32,7 +32,7 @@ eval_with_function_returning_a_float_literal_test() ->
     func Pi() float { 3.14159265359 }
     ",
     {ok, example} = rufus_compile:eval(RufusText),
-    ?assertEqual({float, 3.14159265359}, example:'Pi'()).
+    ?assertEqual(3.14159265359, example:'Pi'()).
 
 eval_with_function_returning_an_int_literal_test() ->
     RufusText = "
@@ -40,7 +40,7 @@ eval_with_function_returning_an_int_literal_test() ->
     func Number() int { 42 }
     ",
     {ok, example} = rufus_compile:eval(RufusText),
-    ?assertEqual({int, 42}, example:'Number'()).
+    ?assertEqual(42, example:'Number'()).
 
 eval_with_function_returning_a_string_literal_test() ->
     RufusText = "
@@ -68,7 +68,7 @@ eval_with_function_taking_a_float_and_returning_a_float_literal_test() ->
     ",
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
-    ?assertEqual({float, 3.14159265359}, example:'MaybeEcho'({float, 3.14})).
+    ?assertEqual(3.14159265359, example:'MaybeEcho'(3.14)).
 
 eval_with_function_taking_an_int_and_returning_an_int_literal_test() ->
     RufusText = "
@@ -77,7 +77,7 @@ eval_with_function_taking_an_int_and_returning_an_int_literal_test() ->
     ",
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
-    ?assertEqual({int, 42}, example:'MaybeEcho'({int, 42})).
+    ?assertEqual(42, example:'MaybeEcho'(42)).
 
 eval_with_function_taking_a_string_and_returning_a_string_literal_test() ->
     RufusText = "
@@ -106,7 +106,7 @@ eval_with_function_taking_a_float_and_returning_it_test() ->
     ",
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
-    ?assertEqual({float, 3.14159265359}, example:'Echo'({float, 3.14159265359})).
+    ?assertEqual(3.14159265359, example:'Echo'(3.14159265359)).
 
 eval_with_function_taking_an_int_and_returning_it_test() ->
     RufusText = "
@@ -115,7 +115,7 @@ eval_with_function_taking_an_int_and_returning_it_test() ->
     ",
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
-    ?assertEqual({int, 42}, example:'Echo'({int, 42})).
+    ?assertEqual(42, example:'Echo'(42)).
 
 eval_with_function_taking_a_string_and_returning_it_test() ->
     RufusText = "
