@@ -79,7 +79,7 @@ guards(Acc, [{arg, #{line := Line, spec := Name, type := {type, #{spec := float}
 guards(Acc, [{arg, #{line := Line, spec := Name, type := {type, #{spec := int}}}}|T]) ->
     GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_integer}}, [{var, Line, Name}]}],
     guards([GuardExpr|Acc], T);
-guards(Acc, [F|T]) ->
+guards(Acc, [_|T]) ->
     guards(Acc, T);
 guards(Acc, []) ->
     Acc.
