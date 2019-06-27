@@ -16,12 +16,8 @@ forms(RufusForms) ->
 %% Private API
 
 forms(Acc, Locals, [H|T]) ->
-    case annotate_form(Locals, H) of
-        {ok, NewLocals, NewForm} ->
-            forms([NewForm|Acc], NewLocals, T);
-        Error ->
-            Error
-    end;
+    {ok, NewLocals, NewForm} = annotate_form(Locals, H),
+    forms([NewForm|Acc], NewLocals, T);
 forms(Acc, _Locals, []) ->
     {ok, lists:reverse(Acc)}.
 

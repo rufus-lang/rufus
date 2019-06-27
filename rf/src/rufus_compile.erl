@@ -1,6 +1,8 @@
 %% rufus_compile compiles and loads Rufus source code.
 -module(rufus_compile).
 
+-include_lib("rufus_types.hrl").
+
 %% API exports
 
 -export([eval/1]).
@@ -15,6 +17,7 @@
 %% values:
 %% - `{ok, Module}` if compilation completed and `Module` is loaded.
 %% - `error` or `{error, ...}` if an error occurs.
+-spec eval(rufus_text()) -> ok_tuple() | error_tuple() | {module, atom()}.
 eval(RufusText) ->
     Handlers = [fun scan/1,
                 fun rufus_parse:parse/1,
@@ -31,6 +34,7 @@ eval(RufusText) ->
 %% eval_chain runs each handler as H(Input) in order. Each handler result must
 %% match {ok, Output}. Any other response is treated as an error. Processing
 %% stops when a handler returns an error.
+-spec eval_chain(any(), list(fun((_) -> any()))) -> ok_tuple() | error_tuple().
 eval_chain(Input, [H|T]) ->
     case H(Input) of
         {ok, Forms} ->
@@ -52,11 +56,17 @@ scan(RufusText) ->
 compile(ErlangForms) ->
     case compile:forms(ErlangForms) of
         {ok, Module, BinaryOrCode, _Warnings} ->
-            code:load_binary(Module, "nofile", BinaryOrCode),
-            {ok, Module};
+            load(Module, BinaryOrCode);
         {ok, Module, BinaryOrCode} ->
-            code:load_binary(Module, "nofile", BinaryOrCode),
+            load(Module, BinaryOrCode);
+        {error, Reason} ->
+            {error, Reason}
+    end.
+
+load(Module, BinaryOrCode) ->
+    case code:load_binary(Module, "nofile", BinaryOrCode) of
+        {module, Module} ->
             {ok, Module};
-        Error ->
-            Error
+        {error, Reason} ->
+            {error, Reason}
     end.
