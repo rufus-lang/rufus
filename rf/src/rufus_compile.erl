@@ -17,7 +17,7 @@
 %% values:
 %% - `{ok, Module}` if compilation completed and `Module` is loaded.
 %% - `error` or `{error, ...}` if an error occurs.
--spec eval(rufus_text()) -> ok_tuple() | error_tuple() | {module, atom()}.
+-spec eval(rufus_text()) -> ok_tuple() | error_tuple().
 eval(RufusText) ->
     Handlers = [fun scan/1,
                 fun rufus_parse:parse/1,
@@ -45,6 +45,7 @@ eval_chain(Input, [H|T]) ->
 eval_chain(Input, []) ->
     {ok, Input}.
 
+-spec scan(rufus_text()) -> ok_tuple() | error_tuple().
 scan(RufusText) ->
     case rufus_scan:string(RufusText) of
         {ok, Tokens, _Lines} ->
@@ -53,6 +54,7 @@ scan(RufusText) ->
             Error
     end.
 
+-spec compile(list()) -> ok_tuple() | error_tuple().
 compile(ErlangForms) ->
     case compile:forms(ErlangForms) of
         {ok, Module, BinaryOrCode, _Warnings} ->
@@ -63,6 +65,7 @@ compile(ErlangForms) ->
             {error, Reason}
     end.
 
+-spec load(atom(), binary() | term()) -> ok_tuple() | error_tuple().
 load(Module, BinaryOrCode) ->
     case code:load_binary(Module, "nofile", BinaryOrCode) of
         {module, Module} ->

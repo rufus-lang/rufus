@@ -2,12 +2,15 @@
 %% strings.
 -module(rufus_error).
 
+-include_lib("rufus_types.hrl").
+
 %% API exports
 
 -export([message/2]).
 
 %% API
 
+-spec message(unmatched_return_type_error(), map()) -> binary().
 message(unmatched_return_type, Data) ->
     Actual = maps:get(actual, Data),
     Expected = maps:get(expected, Data),
