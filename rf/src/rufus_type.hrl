@@ -31,8 +31,8 @@
 
 -type func_form() :: {func, map()}.
 -type arg_form() :: {arg, map()}.
--type identifier_form() :: {func, map()}.
--type binary_op_form() :: {func, map()}.
+-type identifier_form() :: {identifier, map()}.
+-type binary_op_form() :: {binary_op, map()}.
 
 %% Rufus forms
 
