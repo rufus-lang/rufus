@@ -2,7 +2,7 @@
 %% form.
 -module(rufus_compile_erlang).
 
--include_lib("rufus_types.hrl").
+-include_lib("rufus_type.hrl").
 
 %% API exports
 

@@ -16,7 +16,7 @@
 -type type_spec() :: atom().
 -type type_form() :: {type, map()}.
 
-%% Module declarations
+%% Modules
 
 -type module_form() :: {module, map()}.
 
@@ -50,9 +50,15 @@
 
 %% Errors
 
+-type unknown_variable_error() :: unknown_variable.
 -type unmatched_return_type_error() :: unmatched_return_type.
+-type unmatched_operand_type_error() :: unmatched_operand_type.
+-type unsupported_operand_type_error() :: unsupported_operand_type.
 -type rufus_error() ::
-        unmatched_return_type_error().
+        unknown_variable_error()
+      | unmatched_return_type_error()
+      | unmatched_operand_type_error()
+      | unsupported_operand_type_error().
 
 %% Erlang forms
 

@@ -1,7 +1,7 @@
 %% rufus_compile compiles and loads Rufus source code.
 -module(rufus_compile).
 
--include_lib("rufus_types.hrl").
+-include_lib("rufus_type.hrl").
 
 %% API exports
 

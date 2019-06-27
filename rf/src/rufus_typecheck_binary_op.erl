@@ -3,6 +3,8 @@
 %% at the same time. No other types are supported with binary operators.
 -module(rufus_typecheck_binary_op).
 
+-include_lib("rufus_type.hrl").
+
 %% API exports
 
 -export([forms/1]).
@@ -19,11 +21,13 @@
 %% - `{error, unsupported_operand_type, Data}` if a type other than an int is
 %%   used as an operand. `Data` contains `left` and `right` atom keys pointing
 %%   to the illegal operands.
+-spec forms(list(rufus_form())) -> {ok, list(rufus_form())}.
 forms(RufusForms) ->
     forms(RufusForms, RufusForms).
 
 %% Private API
 
+-spec forms(list(rufus_form()), list(rufus_form())) -> {ok, list(rufus_form())}.
 forms([H|T], Forms) ->
     case check_expr(H) of
         ok ->
@@ -34,6 +38,7 @@ forms([H|T], Forms) ->
 forms([], Forms) ->
     {ok, Forms}.
 
+-spec check_expr(func_form()) -> ok | {error, rufus_error(), map()}.
 check_expr({func, #{exprs := Exprs}}) ->
     check_binary_op_exprs(Exprs);
 check_expr(_) ->

@@ -2,7 +2,7 @@
 %% variable names to type information.
 -module(rufus_annotate_locals).
 
--include_lib("rufus_types.hrl").
+-include_lib("rufus_type.hrl").
 
 %% API exports
 
