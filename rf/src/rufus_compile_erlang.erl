@@ -76,7 +76,7 @@ forms(Acc, _Unhandled) ->
     {ok, lists:reverse(Acc)}.
 
 % guards generates function guards for floats and integers.
--spec guards(list(erlang_form()), list(arg_form())) -> {ok, list(erlang_form())}.
+-spec guards(list(erlang_form()) | list(list()), list(arg_form())) -> {ok, list(erlang_form())}.
 guards(Acc, [{arg, #{line := Line, spec := Name, type := {type, #{spec := float}}}}|T]) ->
     GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_float}}, [{var, Line, Name}]}],
     guards([GuardExpr|Acc], T);
@@ -91,7 +91,7 @@ guards(Acc, []) ->
     {ok, Acc}.
 
 %% box converts Rufus forms for primitive values into Erlang forms.
--spec box(bool_lit_form() | float_lit_form() | int_lit_form() | string_lit_form()) -> erlang_form().
+-spec box(bool_lit_form() | float_lit_form() | int_lit_form() | string_lit_form()) -> erlang3_form().
 box({bool_lit, #{line := Line, spec := Value}}) ->
     {tuple, Line, [{atom, Line, bool}, {atom, Line, Value}]};
 box({float_lit, #{line := Line, spec := Value}}) ->

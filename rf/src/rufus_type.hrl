@@ -1,3 +1,7 @@
+%% Context container
+
+-type context() :: #{atom() := any()}.
+
 %% Result types
 
 -type ok_tuple() :: {ok, any()}.
@@ -9,11 +13,10 @@
 
 %% State storage
 
--type locals() :: map().
+-type locals() :: context().
 
 %% Types
 
--type context() :: #{atom() := any()}.
 -type type_spec() :: atom().
 -type type_form() :: {type, context()}.
 
@@ -63,4 +66,10 @@
 
 %% Erlang forms
 
--type erlang_form() :: tuple().
+-type erlang3_form() :: {_, _, _}.
+-type erlang4_form() :: {_, _, _, _}.
+-type erlang5_form() :: {_, _, _, _, _}.
+-type erlang_form() ::
+        erlang3_form()
+      | erlang4_form()
+      | erlang5_form().
