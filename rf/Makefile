@@ -1,10 +1,13 @@
-all: 	clean check build
+all: 	clean check dialyzer build
 
 clean:
 	@rebar3 clean
 
 check:
 	@rebar3 eunit
+
+dialyzer:
+	@rebar3 dialyzer
 
 build:
 	@rebar3 escriptize
