@@ -13,40 +13,41 @@
 
 %% Types
 
+-type context() :: #{atom() := any()}.
 -type type_spec() :: atom().
--type type_form() :: {type, map()}.
+-type type_form() :: {type, context()}.
 
 %% Modules
 
--type module_form() :: {module, map()}.
+-type module_form() :: {module, context()}.
 
 %% Scalar literals
 
--type bool_lit_form() :: {bool_lit, map()}.
--type float_lit_form() :: {float_lit, map()}.
--type int_lit_form() :: {int_lit, map()}.
--type string_lit_form() :: {string_lit, map()}.
+-type bool_lit_form() :: {bool_lit, context()}.
+-type float_lit_form() :: {float_lit, context()}.
+-type int_lit_form() :: {int_lit, context()}.
+-type string_lit_form() :: {string_lit, context()}.
 
 %% Expressions
 
--type func_form() :: {func, map()}.
--type arg_form() :: {arg, map()}.
--type identifier_form() :: {identifier, map()}.
--type binary_op_form() :: {binary_op, map()}.
+-type func_form() :: {func, context()}.
+-type arg_form() :: {arg, context()}.
+-type identifier_form() :: {identifier, context()}.
+-type binary_op_form() :: {binary_op, context()}.
 
 %% Rufus forms
 
 -type rufus_form() ::
-        type_form()
+        arg_form()
+      | binary_op_form()
       | bool_lit_form()
       | float_lit_form()
-      | int_lit_form()
-      | string_lit_form()
-      | module_form()
       | func_form()
-      | arg_form()
       | identifier_form()
-      | binary_op_form().
+      | int_lit_form()
+      | module_form()
+      | string_lit_form()
+      | type_form().
 
 %% Errors
 
@@ -62,4 +63,4 @@
 
 %% Erlang forms
 
--type erlang_form() :: any().
+-type erlang_form() :: tuple().

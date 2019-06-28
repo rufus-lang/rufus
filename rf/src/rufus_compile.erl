@@ -50,8 +50,8 @@ scan(RufusText) ->
     case rufus_scan:string(RufusText) of
         {ok, Tokens, _Lines} ->
             {ok, Tokens};
-        Error ->
-            Error
+        {error, Reason, _LineNumber} ->
+            {error, Reason}
     end.
 
 -spec compile(list()) -> ok_tuple() | error_tuple().
@@ -65,7 +65,7 @@ compile(ErlangForms) ->
             {error, Reason}
     end.
 
--spec load(atom(), binary() | term()) -> ok_tuple() | error_tuple().
+-spec load(atom(), binary()) -> {ok, atom()} | {error, badarg | badfile | nofile | not_purged | on_load_failure | sticky_directory}.
 load(Module, BinaryOrCode) ->
     case code:load_binary(Module, "nofile", BinaryOrCode) of
         {module, Module} ->
