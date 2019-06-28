@@ -3,6 +3,8 @@
 %% signature.
 -module(rufus_typecheck_func_return_type).
 
+-include_lib("rufus_type.hrl").
+
 %% API exports
 
 -export([forms/1]).
@@ -16,11 +18,13 @@
 %% - `{error, unmatched_return_type, Data}` with `Data` containing `actual` and
 %%   `expected` atom keys pointing to Rufus types if return value types are
 %%   unmatched.
+-spec forms(list(rufus_form())) -> {ok, list(rufus_form())}.
 forms(RufusForms) ->
     forms(RufusForms, RufusForms).
 
 %% Private API
 
+-spec forms(list(rufus_form()), list(rufus_form())) -> {ok, list(rufus_form())}.
 forms([H|T], Forms) ->
     case check_expr(H) of
         ok ->
@@ -31,11 +35,13 @@ forms([H|T], Forms) ->
 forms([], Forms) ->
     {ok, Forms}.
 
+-spec check_expr(rufus_form()) -> ok | {error, rufus_error(), map()}.
 check_expr({func, #{return_type := ReturnType, exprs := Exprs}}) ->
     check_return_expr(ReturnType, lists:last(Exprs));
 check_expr(_) ->
     ok.
 
+-spec check_return_expr(type_form(), identifier_form()) -> ok | {error, rufus_error(), map()}.
 check_return_expr({type, #{spec := ReturnType}}, {identifier, #{locals := Locals, spec := Spec}}) ->
     case maps:is_key(Spec, Locals) of
         true ->

@@ -2,6 +2,8 @@
 %% form.
 -module(rufus_compile_erlang).
 
+-include_lib("rufus_type.hrl").
+
 %% API exports
 
 -export([forms/1]).
@@ -10,12 +12,13 @@
 
 %% forms transforms RufusForms into Erlang forms that can be compiled with
 %% compile:forms/1 and then loaded with code:load_binary/3.
+-spec forms(list(rufus_form())) -> {ok, list(erlang_form())}.
 forms(RufusForms) ->
-    ErlangForms = lists:reverse(forms([], RufusForms)),
-    {ok, ErlangForms}.
+    forms([], RufusForms).
 
 %% Private API
 
+-spec forms(list(erlang_form()), list(rufus_form())) -> {ok, list(erlang_form())}.
 forms(Acc, [{module, #{line := Line, spec := Name}}|T]) ->
     Form = {attribute, Line, module, Name},
     forms([Form|Acc], T);
@@ -43,9 +46,9 @@ forms(Acc, [{identifier, #{line := Line, spec := Name, locals := Locals}}|T]) ->
     end,
     forms([Form|Acc], T);
 forms(Acc, [{func, #{line := Line, spec := Name, args := Args, exprs := Exprs}}|T]) ->
-    ArgsForms = forms([], Args),
-    GuardForms = guards([], Args),
-    ExprForms = lists:reverse(forms([], Exprs)),
+    {ok, ArgsForms} = forms([], Args),
+    {ok, GuardForms} = guards([], Args),
+    {ok, ExprForms} = forms([], Exprs),
     FunctionForms = [{clause, Line, ArgsForms, GuardForms, ExprForms}],
     ExportForms = {attribute, Line, export, [{Name, length(Args)}]},
     Forms = {function, Line, Name, length(Args), FunctionForms},
@@ -62,29 +65,33 @@ forms(Acc, [{arg, #{line := Line, spec := Name, type := Type}}|T]) ->
     %% Form = {tuple, Line, [{atom, Line, type_spec(Type)}, {var, Line, Name}]},
     forms([Form|Acc], T);
 forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}|T]) ->
-    [LeftExpr] = forms([], Left),
-    [RightExpr] = forms([], Right),
+    {ok, [LeftExpr]} = forms([], Left),
+    {ok, [RightExpr]} = forms([], Right),
     Form = {op, Line, Op, LeftExpr, RightExpr},
     forms([Form|Acc], T);
 forms(Acc, []) ->
-    Acc;
+    {ok, lists:reverse(Acc)};
 forms(Acc, _Unhandled) ->
     io:format("unhandled form ->~n~p~n", [_Unhandled]),
-    Acc.
+    {ok, lists:reverse(Acc)}.
 
 % guards generates function guards for floats and integers.
+-spec guards(list(erlang_form()) | list(list()), list(arg_form())) -> {ok, list(erlang_form())}.
 guards(Acc, [{arg, #{line := Line, spec := Name, type := {type, #{spec := float}}}}|T]) ->
     GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_float}}, [{var, Line, Name}]}],
     guards([GuardExpr|Acc], T);
 guards(Acc, [{arg, #{line := Line, spec := Name, type := {type, #{spec := int}}}}|T]) ->
     GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_integer}}, [{var, Line, Name}]}],
     guards([GuardExpr|Acc], T);
-guards(Acc, [F|T]) ->
+guards(Acc, [_|T]) ->
     guards(Acc, T);
 guards(Acc, []) ->
-    Acc.
+    %% TODO(jkakar): Should we be reversing Acc here? Does ordering affect guard
+    %% behavior?
+    {ok, Acc}.
 
 %% box converts Rufus forms for primitive values into Erlang forms.
+-spec box(bool_lit_form() | float_lit_form() | int_lit_form() | string_lit_form()) -> erlang3_form().
 box({bool_lit, #{line := Line, spec := Value}}) ->
     {tuple, Line, [{atom, Line, bool}, {atom, Line, Value}]};
 box({float_lit, #{line := Line, spec := Value}}) ->
@@ -95,5 +102,7 @@ box({string_lit, #{line := Line, spec := Value}}) ->
     StringExpr = {bin_element, Line, {string, Line, binary_to_list(Value)}, default, default},
     {tuple, Line, [{atom, Line, string}, {bin, Line, [StringExpr]}]}.
 
+%% type_spec unpacks the name of the type from a type form.
+-spec type_spec(type_form()) -> type_spec().
 type_spec({type, #{spec := Type}}) ->
     Type.

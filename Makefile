@@ -1,2 +1,2 @@
 test:
-	@cd rf && make && _build/default/bin/rf compile
+	@cd rf && make ci && _build/default/bin/rf compile

@@ -1,8 +1,10 @@
-Nonterminals root decl expr exprs function type arg args binary_op.
+Nonterminals root decl expr function type arg args binary_op.
 
 Terminals '(' ')' '{' '}' ',' '+' func identifier import module bool bool_lit float float_lit int int_lit string string_lit.
 
 Rootsymbol root.
+
+Left 100 '+'.
 
 root -> decl :
     ['$1'].
