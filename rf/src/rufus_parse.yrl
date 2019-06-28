@@ -76,7 +76,7 @@ expr -> binary_op :
 %% Binary operations
 
 binary_op -> expr '+' expr :
-    {binary_op, #{line => token_line('$1'),
+    {binary_op, #{line => token_line('$2'),
                   op => '+',
                   left => '$1',
                   right => '$3'}}.

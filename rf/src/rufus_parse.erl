@@ -694,7 +694,7 @@ yeccpars2_32_(__Stack0) ->
 yeccpars2_33_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { binary_op , # { line => token_line ( __1 ) ,
+   { binary_op , # { line => token_line ( __2 ) ,
     op => '+' ,
     left => __1 ,
     right => __3 } }
