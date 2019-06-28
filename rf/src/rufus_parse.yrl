@@ -4,6 +4,8 @@ Terminals '(' ')' '{' '}' ',' '+' func identifier import module bool bool_lit fl
 
 Rootsymbol root.
 
+Left 100 '+'.
+
 root -> decl :
     ['$1'].
 root -> decl root :
@@ -74,7 +76,7 @@ expr -> binary_op :
 %% Binary operations
 
 binary_op -> expr '+' expr :
-    {binary_op, #{line => token_line('$2'),
+    {binary_op, #{line => token_line('$1'),
                   op => '+',
                   left => '$1',
                   right => '$3'}}.
