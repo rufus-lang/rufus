@@ -22,6 +22,7 @@
 %% line returns the line number from the specified form. A line number is
 %% expected with every single form, so lack of one will result in a
 %% function_clause exception at runtime.
+-spec line({any(), #{line => integer()}}) -> integer().
 line({_, #{line := Line}}) ->
     Line.
 
