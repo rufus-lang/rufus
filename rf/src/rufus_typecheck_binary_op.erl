@@ -14,7 +14,8 @@
 %% forms iterates over RufusForms and typechecks binary operations to ensure
 %% that the operands are exclusively ints or exclusively floats. Iteration stops
 %% at the first error. Returns values:
-%% - `{ok, RufusForms}` if no issues are found.
+%% - `{ok, AnnotatedForms}` if no issues are found with all `binary_op` forms
+%%   have type annotations.
 %% - `{error, unmatched_operand_type, Data}` if an `int` operand is mixed with a
 %%   `float` operand. `Data` contains `left` and `right` atom keys pointing to
 %%   the illegal operands.
@@ -23,63 +24,54 @@
 %%   to the illegal operands.
 -spec forms(list(rufus_form())) -> {ok, list(rufus_form())}.
 forms(RufusForms) ->
-    forms(RufusForms, RufusForms).
+    forms([], RufusForms).
 
 %% Private API
 
--spec forms(list(rufus_form()), list(rufus_form())) -> {ok, list(rufus_form())}.
-forms([H|T], Forms) ->
-    case check_expr(H) of
-        ok ->
-            forms(T, Forms);
+forms(Acc, [{func, Context=#{exprs := Exprs}}|T]) ->
+    case forms([], Exprs) of
+        {ok, AnnotatedExprs} ->
+            Form = {func, Context#{exprs => AnnotatedExprs}},
+            forms([Form|Acc], T);
         Error ->
             Error
     end;
-forms([], Forms) ->
-    {ok, Forms}.
+forms(Acc, [Form={binary_op, _Context}|T]) ->
+    case typecheck(Form) of
+        {ok, AnnotatedForm} ->
+            forms([AnnotatedForm|Acc], T);
+        Error ->
+            Error
+    end;
+forms(Acc, [H|T]) ->
+    forms([H|Acc], T);
+forms(Acc, []) ->
+    {ok, lists:reverse(Acc)}.
 
--spec check_expr(func_form()) -> ok | {error, rufus_error(), map()}.
-check_expr({func, #{exprs := Exprs}}) ->
-    check_binary_op_exprs(Exprs);
-check_expr(_) ->
-    ok.
+typecheck({binary_op, Context = #{op := Op, left := [Left], right := [Right]}}) ->
+    {ok, LeftType} = typecheck(Left),
+    {ok, RightType} = typecheck(Right),
+    case infer_expr_type(Op, LeftType, RightType) of
+        ExprType={type, _Context} ->
+            AnnotatedLeft = rufus_form:maybe_annotate_type(Left, ExprType),
+            AnnotatedRight = rufus_form:maybe_annotate_type(Right, ExprType),
+            {ok, {binary_op, Context#{left => [AnnotatedLeft], right => [AnnotatedRight]}}};
+        Error ->
+            Error
+        end;
+typecheck(Form = {_, #{type := _Type}}) ->
+    {ok, Form}.
 
-check_binary_op_exprs([{binary_op, #{op := Op, left := [Left], right := [Right]}}|T]) ->
-    {_, #{type := {type, #{spec := LeftType}}}} = Left,
-    {_, #{type := {type, #{spec := RightType}}}} = Right,
-
-    LeftTypeSupported = check_operand_type_supported(LeftType),
-    RightTypeSupported = check_operand_type_supported(RightType),
-    OperandTypesMatch = check_operand_types_match(LeftType, RightType),
+infer_expr_type(_Op, {_, #{type := {type, #{spec := float, line := Line}}}}, {_, #{type := {type, #{spec := float}}}}) ->
+    rufus_form:make_inferred_type(float, Line);
+infer_expr_type(_Op, {_, #{type := {type, #{spec := int, line := Line}}}}, {_, #{type := {type, #{spec := int}}}}) ->
+    rufus_form:make_inferred_type(int, Line);
+infer_expr_type(Op, Left = {_, #{type := {type, #{spec := float}}}}, Right = {_, #{type := {type, #{spec := int}}}}) ->
     Data = #{op => Op, left => Left, right => Right},
-    case check_outcomes(Data, LeftTypeSupported, RightTypeSupported, OperandTypesMatch) of
-        ok ->
-            check_binary_op_exprs(T);
-        Error ->
-            Error
-    end;
-check_binary_op_exprs([_|T]) ->
-    check_binary_op_exprs(T);
-check_binary_op_exprs([]) ->
-    ok.
-
-check_operand_types_match(_Type, _Type) ->
-    ok;
-check_operand_types_match(_LeftType, _RightType) ->
-    error.
-
-check_operand_type_supported(float) ->
-    ok;
-check_operand_type_supported(int) ->
-    ok;
-check_operand_type_supported(_) ->
-    error.
-
-check_outcomes(Data, error, _RightTypeSupported, _OperandTypesMatch) ->
-    {error, unsupported_operand_type, Data};
-check_outcomes(Data, _LeftTypeSupported, error, _OperandTypesMatch) ->
-    {error, unsupported_operand_type, Data};
-check_outcomes(Data, _LeftTypeSupported, _RightTypeSupported, error) ->
     {error, unmatched_operand_type, Data};
-check_outcomes(_Data, _LeftTypeSupported, _RightTypeSupported, _OperandTypesMatch) ->
-    ok.
+infer_expr_type(Op, Left = {_, #{type := {type, #{spec := int}}}}, Right = {_, #{type := {type, #{spec := float}}}}) ->
+    Data = #{op => Op, left => Left, right => Right},
+    {error, unmatched_operand_type, Data};
+infer_expr_type(Op, Left, Right) ->
+    Data = #{op => Op, left => Left, right => Right},
+    {error, unsupported_operand_type, Data}.

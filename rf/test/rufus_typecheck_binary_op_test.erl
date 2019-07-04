@@ -70,5 +70,6 @@ forms_typecheck_for_binary_op_with_strings_test() ->
                  right => {string_lit, #{line => 3,
                                          spec => <<"manteau">>,
                                          type => {type, #{line => 3, spec => string, source => inferred}}}}},
-    {error, unsupported_operand_type, Data} = rufus_typecheck_binary_op:forms(Forms),
+    {error, Reason, Data} = rufus_typecheck_binary_op:forms(Forms),
+    ?assertEqual(unsupported_operand_type, Reason),
     ?assertEqual(Expected, Data).
