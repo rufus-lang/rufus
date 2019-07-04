@@ -4,11 +4,18 @@
 
 -export([
     line/1,
-    make_literal/3,
-    make_inferred_type/2,
-    make_user_specified_type/2,
     source/1,
-    spec/1
+    spec/1,
+
+    make_module/2,
+    make_import/2,
+    make_identifier/2,
+    make_literal/3,
+    make_binary_op/4,
+    make_func/5,
+    make_arg/3,
+    make_inferred_type/2,
+    make_type/2
 ]).
 
 %% Form API
@@ -29,27 +36,65 @@ source({_, #{source := Source}}) ->
 spec({_, #{spec := Spec}}) ->
     Spec.
 
+%% Module form builder API
+
+%% make_module returns a form value for a module declaration.
+-spec make_module(atom(), integer()) -> {module, #{spec => atom(), line => integer()}}.
+make_module(Spec, Line) ->
+    {module, #{spec => Spec, line => Line}}.
+
+-spec make_import(list(), integer()) -> {import, #{spec => list(), line => integer()}}.
+make_import(Spec, Line) ->
+    {import, #{spec => Spec, line => Line}}.
+
+%% Identifier form builder API
+
+-spec make_identifier(atom(), integer()) -> {identifier, #{spec => atom(), line => integer()}}.
+make_identifier(Spec, Line) ->
+    {identifier, #{spec => Spec, line => Line}}.
+
 %% Literal form builder API
 
 %% make_literal returns a form for a literal value.
 -spec make_literal(bool | float | int | string, atom(), term()) -> bool_lit_form() | float_lit_form() | int_lit_form() | string_lit_form().
 make_literal(TypeSpec, Spec, Line) ->
-    FormType = list_to_atom(unicode:characters_to_list([atom_to_list(TypeSpec), "_lit"])),
-    {FormType, #{line => Line,
-                 spec => Spec,
-                 type => {type, #{line => Line,
-                                  spec => TypeSpec}}}}.
+    FormSpec = list_to_atom(unicode:characters_to_list([atom_to_list(TypeSpec), "_lit"])),
+    {FormSpec, #{spec => Spec,
+                 type => make_inferred_type(TypeSpec, Line),
+                 line => Line}}.
+
+%% Binary operation form builder API
+
+%% make_binary_op returns a form for a binary operation.
+-spec make_binary_op(atom(), any(), any(), integer()) -> {binary_op, #{op => atom(), left => any(), right => any(), line => integer()}}.
+make_binary_op(Op, Left, Right, Line) ->
+    {binary_op, #{op => Op, left => Left, right => Right, line => Line}}.
+
+%% Function form builder API
+
+%% make_func returns a form for a function declaration.
+-spec make_func(atom(), list(arg_form()), type_form(), list(), integer()) -> {func, #{spec => atom(), args => list(arg_form), return_type => type_form(), exprs => list(), line => integer()}}.
+make_func(Spec, Args, ReturnType, Exprs, Line) ->
+    {func, #{spec => Spec, args => Args, return_type => ReturnType, exprs => Exprs, line => Line}}.
+
+-spec make_arg(atom(), type_form(), integer()) -> {arg, #{spec => atom(), type => type_form(), line => integer()}}.
+make_arg(Spec, Type, Line) ->
+    {arg, #{spec => Spec, type => Type, line => Line}}.
 
 %% Type form builder API
 
--spec make_user_specified_type(atom(), integer()) -> {type, #{line => integer(), spec => atom()}}.
-make_user_specified_type(Spec, Line) ->
-    make_type(Spec, Line, user_specified).
-
--spec make_inferred_type(type_spec(), integer()) -> {type, #{line => integer(), spec => atom()}}.
+%% make_inferred_type creates a type form with 'inferred' as the 'source' value,
+%% to indicate that the type has been inferred by the compiler.
+-spec make_inferred_type(type_spec(), integer()) -> {type, #{spec => atom(), line => integer()}}.
 make_inferred_type(Spec, Line) ->
     make_type(Spec, Line, inferred).
 
--spec make_type(type_spec(), integer(), inferred | user_specified) -> type_form().
+%% make_type returns a type form with 'rufus_text' as the 'source' value, to
+%% indicate that the type came from source code.
+-spec make_type(atom(), integer()) -> {type, #{spec => atom(), line => integer()}}.
+make_type(Spec, Line) ->
+    make_type(Spec, Line, rufus_text).
+
+-spec make_type(type_spec(), integer(), inferred | rufus_text) -> type_form().
 make_type(Spec, Line, _Source) ->
     {type, #{spec => Spec, line => Line}}.%, source => Source}}.
