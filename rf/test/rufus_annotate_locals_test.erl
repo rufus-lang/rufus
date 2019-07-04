@@ -20,9 +20,9 @@ forms_test() ->
         {module, #{line => 2, spec => example}},
         {func, #{args => [],
                  exprs => [{int_lit, #{line => 3, locals => #{}, spec => 42,
-                                       type => {type, #{line => 3, spec => int}}}}],
+                                       type => {type, #{line => 3, spec => int, source => inferred}}}}],
                  line => 3,
-                 return_type => {type, #{line => 3, spec => int}},
+                 return_type => {type, #{line => 3, spec => int, source => rufus_text}},
                  spec => 'Number'}
     }],
     ?assertEqual(Expected, AnnotatedForms).
@@ -42,13 +42,13 @@ forms_for_function_taking_a_bool_and_returning_a_bool_literal_test() ->
         {func,
          #{args => [{arg, #{line => 3,
                             spec => b,
-                            type => {type, #{line => 3, spec => bool}}}}],
+                            type => {type, #{line => 3, spec => bool, source => rufus_text}}}}],
            exprs => [{bool_lit, #{line => 3,
-                                   locals => #{b => {type, #{line => 3, spec => bool}}},
-                                   spec => true,
-                                   type => {type, #{line => 3, spec => bool}}}}],
+                                  locals => #{b => {type, #{line => 3, spec => bool, source => rufus_text}}},
+                                  spec => true,
+                                  type => {type, #{line => 3, spec => bool, source => inferred}}}}],
            line => 3,
-           return_type => {type, #{line => 3, spec => bool}},
+           return_type => {type, #{line => 3, spec => bool, source => rufus_text}},
            spec => 'MaybeEcho'}
         }
     ],
@@ -67,13 +67,13 @@ forms_for_function_taking_a_float_and_returning_a_float_literal_test() ->
         {func,
          #{args => [{arg, #{line => 3,
                             spec => n,
-                            type => {type, #{line => 3, spec => float}}}}],
+                            type => {type, #{line => 3, spec => float, source => rufus_text}}}}],
            exprs => [{float_lit, #{line => 3,
-                                   locals => #{n => {type, #{line => 3, spec => float}}},
+                                   locals => #{n => {type, #{line => 3, spec => float, source => rufus_text}}},
                                    spec => 3.14159265359,
-                                   type => {type, #{line => 3, spec => float}}}}],
+                                   type => {type, #{line => 3, spec => float, source => inferred}}}}],
            line => 3,
-           return_type => {type, #{line => 3, spec => float}},
+           return_type => {type, #{line => 3, spec => float, source => rufus_text}},
            spec => 'MaybeEcho'}
         }
     ],
@@ -92,13 +92,13 @@ forms_for_function_taking_an_int_and_returning_an_int_literal_test() ->
         {func,
          #{args => [{arg, #{line => 3,
                             spec => n,
-                            type => {type, #{line => 3, spec => int}}}}],
+                            type => {type, #{line => 3, spec => int, source => rufus_text}}}}],
            exprs => [{int_lit, #{line => 3,
-                                 locals => #{n => {type, #{line => 3, spec => int}}},
+                                 locals => #{n => {type, #{line => 3, spec => int, source => rufus_text}}},
                                  spec => 42,
-                                 type => {type, #{line => 3, spec => int}}}}],
+                                 type => {type, #{line => 3, spec => int, source => inferred}}}}],
            line => 3,
-           return_type => {type, #{line => 3, spec => int}},
+           return_type => {type, #{line => 3, spec => int, source => rufus_text}},
            spec => 'MaybeEcho'}
         }
     ],
@@ -117,13 +117,13 @@ forms_for_function_taking_a_string_and_returning_a_string_literal_test() ->
         {func,
          #{args => [{arg, #{line => 3,
                             spec => s,
-                            type => {type, #{line => 3, spec => string}}}}],
+                            type => {type, #{line => 3, spec => string, source => rufus_text}}}}],
            exprs => [{string_lit, #{line => 3,
-                                    locals => #{s => {type, #{line => 3, spec => string}}},
+                                    locals => #{s => {type, #{line => 3, spec => string, source => rufus_text}}},
                                     spec => <<"Hello">>,
-                                    type => {type, #{line => 3, spec => string}}}}],
+                                    type => {type, #{line => 3, spec => string, source => inferred}}}}],
            line => 3,
-           return_type => {type, #{line => 3, spec => string}},
+           return_type => {type, #{line => 3, spec => string, source => rufus_text}},
            spec => 'MaybeEcho'}
         }
     ],
@@ -144,13 +144,13 @@ forms_for_function_taking_a_bool_and_returning_it_test() ->
         {func,
          #{args => [{arg, #{line => 3,
                             spec => b,
-                            type => {type, #{line => 3, spec => bool}}}}],
+                            type => {type, #{line => 3, spec => bool, source => rufus_text}}}}],
            exprs =>
                     [{identifier, #{line => 3,
-                                    locals => #{b => {type, #{line => 3, spec => bool}}},
+                                    locals => #{b => {type, #{line => 3, spec => bool, source => rufus_text}}},
                                     spec => b}}],
            line => 3,
-           return_type => {type, #{line => 3, spec => bool}},
+           return_type => {type, #{line => 3, spec => bool, source => rufus_text}},
            spec => 'Echo'}
         }
     ],
@@ -169,13 +169,13 @@ forms_for_function_taking_a_float_and_returning_it_test() ->
         {func,
          #{args => [{arg, #{line => 3,
                             spec => n,
-                            type => {type, #{line => 3, spec => float}}}}],
+                            type => {type, #{line => 3, spec => float, source => rufus_text}}}}],
            exprs =>
                     [{identifier, #{line => 3,
-                                    locals => #{n => {type, #{line => 3, spec => float}}},
+                                    locals => #{n => {type, #{line => 3, spec => float, source => rufus_text}}},
                                     spec => n}}],
            line => 3,
-           return_type => {type, #{line => 3, spec => float}},
+           return_type => {type, #{line => 3, spec => float, source => rufus_text}},
            spec => 'Echo'}
         }
     ],
@@ -194,13 +194,13 @@ forms_for_function_taking_an_int_and_returning_it_test() ->
         {func,
          #{args => [{arg, #{line => 3,
                             spec => n,
-                            type => {type, #{line => 3, spec => int}}}}],
+                            type => {type, #{line => 3, spec => int, source => rufus_text}}}}],
            exprs =>
                     [{identifier, #{line => 3,
-                                    locals => #{n => {type, #{line => 3, spec => int}}},
+                                    locals => #{n => {type, #{line => 3, spec => int, source => rufus_text}}},
                                     spec => n}}],
            line => 3,
-           return_type => {type, #{line => 3, spec => int}},
+           return_type => {type, #{line => 3, spec => int, source => rufus_text}},
            spec => 'Echo'}
         }
     ],
@@ -219,13 +219,13 @@ forms_for_function_taking_a_string_and_returning_it_test() ->
         {func,
          #{args => [{arg, #{line => 3,
                             spec => s,
-                            type => {type, #{line => 3, spec => string}}}}],
+                            type => {type, #{line => 3, spec => string, source => rufus_text}}}}],
            exprs =>
                     [{identifier, #{line => 3,
-                                    locals => #{s => {type, #{line => 3, spec => string}}},
+                                    locals => #{s => {type, #{line => 3, spec => string, source => rufus_text}}},
                                     spec => s}}],
            line => 3,
-           return_type => {type, #{line => 3, spec => string}},
+           return_type => {type, #{line => 3, spec => string, source => rufus_text}},
            spec => 'Echo'}
         }
     ],

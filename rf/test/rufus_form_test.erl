@@ -36,7 +36,7 @@ make_arg_test() ->
     ?assertEqual({arg, #{spec => n, type => Type, line => 52}}, rufus_form:make_arg(n, Type, 52)).
 
 make_inferred_type_test() ->
-    ?assertEqual({type, #{spec => int, line => 4}}, rufus_form:make_inferred_type(int, 4)).
+    ?assertEqual({type, #{spec => int, source => inferred, line => 4}}, rufus_form:make_inferred_type(int, 4)).
 
 make_type_test() ->
-    ?assertEqual({type, #{spec => float, line => 37}}, rufus_form:make_type(float, 37)).
+    ?assertEqual({type, #{spec => float, source => rufus_text, line => 37}}, rufus_form:make_type(float, 37)).

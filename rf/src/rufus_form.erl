@@ -27,8 +27,8 @@ line({_, #{line := Line}}) ->
     Line.
 
 %% source returns information about where the type information is from.
--spec source({any(), #{source => inferred | rufus_text}}) -> inferred | rufus_text.
-source({_, #{source := Source}}) ->
+-spec source({type, #{source => inferred | rufus_text}}) -> inferred | rufus_text.
+source({type, #{source := Source}}) ->
     Source.
 
 %% spec returns the human-readable name for the form.
@@ -87,16 +87,16 @@ make_arg(Spec, Type, Line) ->
 
 %% make_inferred_type creates a type form with 'inferred' as the 'source' value,
 %% to indicate that the type has been inferred by the compiler.
--spec make_inferred_type(type_spec(), integer()) -> {type, #{spec => atom(), line => integer()}}.
+-spec make_inferred_type(type_spec(), integer()) -> {type, #{spec => atom(), source => inferred | rufus_text, line => integer()}}.
 make_inferred_type(Spec, Line) ->
-    make_type(Spec, Line, inferred).
+    make_type(Spec, inferred, Line).
 
 %% make_type returns a type form with 'rufus_text' as the 'source' value, to
 %% indicate that the type came from source code.
--spec make_type(atom(), integer()) -> {type, #{spec => atom(), line => integer()}}.
+-spec make_type(atom(), integer()) -> {type, #{spec => atom(), source => inferred | rufus_text, line => integer()}}.
 make_type(Spec, Line) ->
-    make_type(Spec, Line, rufus_text).
+    make_type(Spec, rufus_text, Line).
 
--spec make_type(type_spec(), integer(), inferred | rufus_text) -> type_form().
-make_type(Spec, Line, _Source) ->
-    {type, #{spec => Spec, line => Line}}.%, source => Source}}.
+-spec make_type(type_spec(), inferred | rufus_text, integer()) -> type_form().
+make_type(Spec, Source, Line) ->
+    {type, #{spec => Spec, source => Source, line => Line}}.
