@@ -26,44 +26,17 @@ decl -> function :
 
 %% Scalar types
 
-type -> bool :
-    {type, #{line => token_line('$1'),
-             spec => bool}}.
-type -> float :
-    {type, #{line => token_line('$1'),
-             spec => float}
-    }.
-type -> int :
-    {type, #{line => token_line('$1'),
-             spec => int}
-    }.
-type -> string :
-    {type, #{line => token_line('$1'),
-             spec => string}
-    }.
+type -> bool : rufus_form:make_user_specified_type(bool, token_line('$1')).
+type -> float : rufus_form:make_user_specified_type(float, token_line('$1')).
+type -> int : rufus_form:make_user_specified_type(int, token_line('$1')).
+type -> string : rufus_form:make_user_specified_type(string, token_line('$1')).
 
 %% Type literals
 
-expr -> bool_lit :
-    [{bool_lit, #{line => token_line('$1'),
-                  spec => token_chars('$1'),
-                  type => {type, #{line => token_line('$1'), spec => bool}}}
-    }].
-expr -> float_lit :
-    [{float_lit, #{line => token_line('$1'),
-                   spec => token_chars('$1'),
-                   type => {type, #{line => token_line('$1'), spec => float}}}
-    }].
-expr -> int_lit :
-    [{int_lit, #{line => token_line('$1'),
-                 spec => token_chars('$1'),
-                 type => {type, #{line => token_line('$1'), spec => int}}}
-    }].
-expr -> string_lit :
-    [{string_lit, #{line => token_line('$1'),
-                    spec => list_to_binary(token_chars('$1')),
-                    type => {type, #{line => token_line('$1'), spec => string}}}
-    }].
+expr -> bool_lit : [rufus_form:make_literal(bool, token_chars('$1'), token_line('$1'))].
+expr -> float_lit : [rufus_form:make_literal(float, token_chars('$1'), token_line('$1'))].
+expr -> int_lit : [rufus_form:make_literal(int, token_chars('$1'), token_line('$1'))].
+expr -> string_lit : [rufus_form:make_literal(string, list_to_binary(token_chars('$1')), token_line('$1'))].
 
 expr -> identifier :
     [{identifier, #{line => token_line('$1'),
