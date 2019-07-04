@@ -39,9 +39,9 @@ parse_function_returning_a_bool_test() ->
      {func, #{args => [],
               exprs => [{bool_lit, #{line => 3,
                                      spec => true,
-                                     type => {type, #{line => 3, spec => bool}}}}],
+                                     type => {type, #{line => 3, spec => bool, source => inferred}}}}],
               line => 3,
-              return_type => {type, #{line => 3, spec => bool}},
+              return_type => {type, #{line => 3, spec => bool, source => rufus_text}},
               spec => 'True'}}
     ], Forms).
 
@@ -57,9 +57,9 @@ parse_function_returning_a_float_test() ->
      {func, #{args => [],
               exprs => [{float_lit, #{line => 3,
                                       spec => 3.14159265359,
-                                      type => {type, #{line => 3, spec => float}}}}],
+                                      type => {type, #{line => 3, spec => float, source => inferred}}}}],
               line => 3,
-              return_type => {type, #{line => 3, spec => float}},
+              return_type => {type, #{line => 3, spec => float, source => rufus_text}},
               spec => 'Pi'}}
     ], Forms).
 
@@ -75,9 +75,9 @@ parse_function_returning_an_int_test() ->
      {func, #{args => [],
               exprs => [{int_lit, #{line => 3,
                                     spec => 42,
-                                    type => {type, #{line => 3, spec => int}}}}],
+                                    type => {type, #{line => 3, spec => int, source => inferred}}}}],
               line => 3,
-              return_type => {type, #{line => 3, spec => int}},
+              return_type => {type, #{line => 3, spec => int, source => rufus_text}},
               spec => 'Number'}}
     ], Forms).
 
@@ -93,9 +93,9 @@ parse_function_returning_a_string_test() ->
      {func, #{args => [],
               exprs => [{string_lit, #{line => 3,
                                        spec => <<"Hello">>,
-                                       type => {type, #{line => 3, spec => string}}}}],
+                                       type => {type, #{line => 3, spec => string, source => inferred}}}}],
               line => 3,
-              return_type => {type, #{line => 3, spec => string}},
+              return_type => {type, #{line => 3, spec => string, source => rufus_text}},
               spec => 'Greeting'}}
     ], Forms).
 
@@ -112,12 +112,12 @@ parse_function_taking_a_bool_and_returning_a_bool_test() ->
      {module, #{line => 2, spec => example}},
      {func, #{args => [{arg, #{line => 3,
                                spec => n,
-                               type => {type, #{line => 3, spec => bool}}}}],
+                               type => {type, #{line => 3, spec => bool, source => rufus_text}}}}],
               exprs => [{bool_lit, #{line => 3,
                                      spec => true,
-                                     type => {type, #{line => 3, spec => bool}}}}],
+                                     type => {type, #{line => 3, spec => bool, source => inferred}}}}],
               line => 3,
-              return_type => {type, #{line => 3, spec => bool}},
+              return_type => {type, #{line => 3, spec => bool, source => rufus_text}},
               spec => 'Echo'}}
     ], Forms).
 
@@ -132,12 +132,12 @@ parse_function_taking_an_float_and_returning_an_float_test() ->
      {module, #{line => 2, spec => example}},
      {func, #{args => [{arg, #{line => 3,
                                spec => n,
-                               type => {type, #{line => 3, spec => float}}}}],
+                               type => {type, #{line => 3, spec => float, source => rufus_text}}}}],
               exprs => [{float_lit, #{line => 3,
                                       spec => 3.14159265359,
-                                      type => {type, #{line => 3, spec => float}}}}],
+                                      type => {type, #{line => 3, spec => float, source => inferred}}}}],
               line => 3,
-              return_type => {type, #{line => 3, spec => float}},
+              return_type => {type, #{line => 3, spec => float, source => rufus_text}},
               spec => 'Echo'}}
     ], Forms).
 
@@ -152,12 +152,12 @@ parse_function_taking_an_int_and_returning_an_int_test() ->
      {module, #{line => 2, spec => example}},
      {func, #{args => [{arg, #{line => 3,
                                spec => n,
-                               type => {type, #{line => 3, spec => int}}}}],
+                               type => {type, #{line => 3, spec => int, source => rufus_text}}}}],
               exprs => [{int_lit, #{line => 3,
                                     spec => 42,
-                                    type => {type, #{line => 3, spec => int}}}}],
+                                    type => {type, #{line => 3, spec => int, source => inferred}}}}],
               line => 3,
-              return_type => {type, #{line => 3, spec => int}},
+              return_type => {type, #{line => 3, spec => int, source => rufus_text}},
               spec => 'Echo'}}
     ], Forms).
 
@@ -172,12 +172,12 @@ parse_function_taking_an_string_and_returning_an_string_test() ->
      {module,#{line => 2, spec => example}},
      {func, #{args => [{arg, #{line => 3,
                                spec => n,
-                               type => {type, #{line => 3, spec => string}}}}],
+                               type => {type, #{line => 3, spec => string, source => rufus_text}}}}],
               exprs => [{string_lit, #{line => 3,
                                        spec => <<"Hello">>,
-                                       type => {type, #{line => 3, spec => string}}}}],
+                                       type => {type, #{line => 3, spec => string, source => inferred}}}}],
               line => 3,
-              return_type => {type, #{line => 3, spec => string}},
+              return_type => {type, #{line => 3, spec => string, source => rufus_text}},
               spec => 'Echo'}}
     ], Forms).
 
@@ -197,12 +197,12 @@ parse_function_adding_two_ints_test() ->
                                       op => '+',
                                       left => [{int_lit, #{line => 3,
                                                            spec => 1,
-                                                           type => {type, #{line => 3, spec => int}}}}],
+                                                           type => {type, #{line => 3, spec => int, source => inferred}}}}],
                                       right => [{int_lit, #{line => 3,
                                                             spec => 2,
-                                                            type => {type, #{line => 3, spec => int}}}}]}}],
+                                                            type => {type, #{line => 3, spec => int, source => inferred}}}}]}}],
               line => 3,
-              return_type => {type, #{line => 3, spec => int}},
+              return_type => {type, #{line => 3, spec => int, source => rufus_text}},
               spec => 'Three'}}
     ], Forms).
 
@@ -220,20 +220,24 @@ parse_function_adding_three_ints_test() ->
                                                               left => [{int_lit, #{line => 3,
                                                                                    spec => 1,
                                                                                    type => {type, #{line => 3,
-                                                                                                    spec => int}}}}],
+                                                                                                    spec => int,
+                                                                                                    source => inferred}}}}],
                                                               right => [{int_lit, #{line => 3,
                                                                                     spec => 2,
                                                                                     type => {type, #{line => 3,
-                                                                                                     spec => int}}}}],
+                                                                                                     spec => int,
+                                                                                                     source => inferred}}}}],
                                                               line => 3}}],
                                        line => 3,
                                        op => '+',
                                        right => [{int_lit, #{line => 3,
                                                              spec => 3,
                                                              type => {type, #{line => 3,
-                                                                              spec => int}}}}]}}],
+                                                                              spec => int,
+                                                                              source => inferred}}}}]}}],
                line => 3,
                return_type => {type, #{line => 3,
-                                       spec => int}},
+                                       spec => int,
+                                       source => rufus_text}},
                spec => 'Six'}}
     ], Forms).
