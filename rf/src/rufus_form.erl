@@ -4,18 +4,17 @@
 
 -export([
     line/1,
-    source/1,
-    spec/1,
-
-    make_module/2,
-    make_import/2,
-    make_identifier/2,
-    make_literal/3,
+    make_arg/3,
     make_binary_op/4,
     make_func/5,
-    make_arg/3,
+    make_identifier/2,
+    make_import/2,
     make_inferred_type/2,
-    make_type/2
+    make_literal/3,
+    make_module/2,
+    make_type/2,
+    source/1,
+    spec/1
 ]).
 
 %% Form API
@@ -26,8 +25,8 @@
 line({_, #{line := Line}}) ->
     Line.
 
-%% source user_specified, inferred stored for the form.
--spec source({any(), #{source => inferred | speculation | user_specified}}) -> inferred | speculation | user_specified.
+%% source returns information about where the type information is from.
+-spec source({any(), #{source => inferred | rufus_text}}) -> inferred | rufus_text.
 source({_, #{source := Source}}) ->
     Source.
 
@@ -38,17 +37,19 @@ spec({_, #{spec := Spec}}) ->
 
 %% Module form builder API
 
-%% make_module returns a form value for a module declaration.
+%% make_module returns a form for a module declaration.
 -spec make_module(atom(), integer()) -> {module, #{spec => atom(), line => integer()}}.
 make_module(Spec, Line) ->
     {module, #{spec => Spec, line => Line}}.
 
+%% make_import returns a form for an import statement.
 -spec make_import(list(), integer()) -> {import, #{spec => list(), line => integer()}}.
 make_import(Spec, Line) ->
     {import, #{spec => Spec, line => Line}}.
 
 %% Identifier form builder API
 
+%% make_identifier returns a form for an identifier.
 -spec make_identifier(atom(), integer()) -> {identifier, #{spec => atom(), line => integer()}}.
 make_identifier(Spec, Line) ->
     {identifier, #{spec => Spec, line => Line}}.
