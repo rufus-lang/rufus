@@ -43,20 +43,6 @@ spec({_, #{spec := Spec}}) ->
 type({_, #{type := Type}}) ->
     Type.
 
-%% maybe_annotate_type returns a copy of Form with an inferred type based on
-%% Type, but only if Form doesn't already have type information. If type
-%% information is already present, Form is returned unchanged.
-maybe_annotate_type(Form = {FormSpec, Context}, Type) ->
-    case maps:is_key(type, Context) of
-        true ->
-            Form;
-        false ->
-            io:format("Type => ~p~n", [Type]),
-            InferredType = make_inferred_type(spec(Type), line(Type)),
-            io:format("InferredType => ~p~n", [InferredType]),
-            {FormSpec, Context#{type => InferredType}}
-    end.
-
 %% Module form builder API
 
 %% make_module returns a form for a module declaration.

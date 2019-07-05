@@ -40,12 +40,3 @@ make_inferred_type_test() ->
 
 make_type_test() ->
     ?assertEqual({type, #{spec => float, source => rufus_text, line => 37}}, rufus_form:make_type(float, 37)).
-
-maybe_annotate_type_test() ->
-    Type = int,
-    Line = 12,
-    Two = rufus_form:make_literal(Type, 5, Line),
-    Form = rufus_form:make_binary_op('+', Two, Two, Line),
-    InferredType = rufus_form:make_inferred_type(Type, Line),
-    {binary_op, Context} = rufus_form:maybe_annotate_type(Form, InferredType),
-    ?assertEqual(InferredType, maps:get(type, Context)).
