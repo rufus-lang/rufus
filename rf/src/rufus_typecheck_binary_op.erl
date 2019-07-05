@@ -31,13 +31,13 @@ forms(RufusForms) ->
 forms(Acc, [{func, Context=#{exprs := Exprs}}|T]) ->
     case forms([], Exprs) of
         {ok, AnnotatedExprs} ->
-            Form = {func, Context#{exprs => AnnotatedExprs}},
-            forms([Form|Acc], T);
+            AnnotatedForm = {func, Context#{exprs => AnnotatedExprs}},
+            forms([AnnotatedForm|Acc], T);
         Error ->
             Error
     end;
 forms(Acc, [Form={binary_op, _Context}|T]) ->
-    case typecheck(Form) of
+    case typecheck_and_annotate(Form) of
         {ok, AnnotatedForm} ->
             forms([AnnotatedForm|Acc], T);
         Error ->
@@ -48,30 +48,41 @@ forms(Acc, [H|T]) ->
 forms(Acc, []) ->
     {ok, lists:reverse(Acc)}.
 
-typecheck({binary_op, Context = #{op := Op, left := [Left], right := [Right]}}) ->
-    {ok, LeftType} = typecheck(Left),
-    {ok, RightType} = typecheck(Right),
-    case infer_expr_type(Op, LeftType, RightType) of
-        ExprType={type, _Context} ->
-            AnnotatedLeft = rufus_form:maybe_annotate_type(Left, ExprType),
-            AnnotatedRight = rufus_form:maybe_annotate_type(Right, ExprType),
-            {ok, {binary_op, Context#{left => [AnnotatedLeft], right => [AnnotatedRight]}}};
+typecheck_and_annotate({binary_op, Context = #{left := [Left], right := [Right]}}) ->
+    {ok, AnnotatedLeft} = typecheck_and_annotate(Left),
+    {ok, AnnotatedRight} = typecheck_and_annotate(Right),
+    case infer_binary_op_type({binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight}}) of
+        {ok, AnnotatedForm = {binary_op, _}} ->
+            {ok, AnnotatedForm};
         Error ->
             Error
-        end;
-typecheck(Form = {_, #{type := _Type}}) ->
-    {ok, Form}.
+    end;
+typecheck_and_annotate(Form = {_, #{type := _}}) ->
+    {ok, Form};
+typecheck_and_annotate(Form) ->
+    erlang:error({unhandled_form, Form}).
 
-infer_expr_type(_Op, {_, #{type := {type, #{spec := float, line := Line}}}}, {_, #{type := {type, #{spec := float}}}}) ->
-    rufus_form:make_inferred_type(float, Line);
-infer_expr_type(_Op, {_, #{type := {type, #{spec := int, line := Line}}}}, {_, #{type := {type, #{spec := int}}}}) ->
-    rufus_form:make_inferred_type(int, Line);
-infer_expr_type(Op, Left = {_, #{type := {type, #{spec := float}}}}, Right = {_, #{type := {type, #{spec := int}}}}) ->
-    Data = #{op => Op, left => Left, right => Right},
-    {error, unmatched_operand_type, Data};
-infer_expr_type(Op, Left = {_, #{type := {type, #{spec := int}}}}, Right = {_, #{type := {type, #{spec := float}}}}) ->
-    Data = #{op => Op, left => Left, right => Right},
-    {error, unmatched_operand_type, Data};
-infer_expr_type(Op, Left, Right) ->
-    Data = #{op => Op, left => Left, right => Right},
-    {error, unsupported_operand_type, Data}.
+infer_binary_op_type(Form = {binary_op, Context = #{left := Left, right := Right}}) ->
+    LeftType = rufus_form:type(Left),
+    LeftTypeSpec = rufus_form:spec(LeftType),
+    RightType = rufus_form:type(Right),
+    RightTypeSpec = rufus_form:spec(RightType),
+    case supported_type(LeftTypeSpec) and supported_type(RightTypeSpec) of
+        true ->
+            case supported_type_pair(LeftTypeSpec, RightTypeSpec) of
+                true ->
+                    {ok, {binary_op, Context#{type => LeftType}}};
+                false ->
+                    {error, unmatched_operand_type, Form}
+            end;
+        false ->
+            {error, unsupported_operand_type, Form}
+    end.
+
+supported_type(float) -> true;
+supported_type(int) -> true;
+supported_type(_) -> false.
+
+supported_type_pair(float, float) -> true;
+supported_type_pair(int, int) -> true;
+supported_type_pair(_, _) -> false.

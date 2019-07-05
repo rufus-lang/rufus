@@ -15,7 +15,8 @@
     make_type/2,
     maybe_annotate_type/2,
     source/1,
-    spec/1
+    spec/1,
+    type/1
 ]).
 
 %% Form API
@@ -36,6 +37,11 @@ source({type, #{source := Source}}) ->
 -spec spec({any(), #{spec => atom()}}) -> atom().
 spec({_, #{spec := Spec}}) ->
     Spec.
+
+%% type returns type information for the form.
+-spec type({any(), #{type => context()}}) -> context().
+type({_, #{type := Type}}) ->
+    Type.
 
 %% maybe_annotate_type returns a copy of Form with an inferred type based on
 %% Type, but only if Form doesn't already have type information. If type
