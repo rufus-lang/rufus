@@ -33,7 +33,7 @@ source({type, #{source := Source}}) ->
     Source.
 
 %% spec returns the human-readable name for the form.
--spec spec({any(), #{spec => atom()}}) -> atom().
+-spec spec({any(), context()}) -> atom().
 spec({_, #{spec := Spec}}) ->
     Spec.
 

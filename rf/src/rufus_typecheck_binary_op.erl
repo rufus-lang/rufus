@@ -28,7 +28,8 @@ forms(RufusForms) ->
 
 %% Private API
 
-forms(Acc, [{func, Context=#{exprs := Exprs}}|T]) ->
+-spec forms(list(rufus_form()), list(rufus_form())) -> {ok, list(rufus_form())}.
+forms(Acc, [{func, Context = #{exprs := Exprs}}|T]) ->
     case forms([], Exprs) of
         {ok, AnnotatedExprs} ->
             AnnotatedForm = {func, Context#{exprs => AnnotatedExprs}},
@@ -36,7 +37,7 @@ forms(Acc, [{func, Context=#{exprs := Exprs}}|T]) ->
         Error ->
             Error
     end;
-forms(Acc, [Form={binary_op, _Context}|T]) ->
+forms(Acc, [Form = {binary_op, _Context}|T]) ->
     case typecheck_and_annotate(Form) of
         {ok, AnnotatedForm} ->
             forms([AnnotatedForm|Acc], T);
@@ -48,6 +49,7 @@ forms(Acc, [H|T]) ->
 forms(Acc, []) ->
     {ok, lists:reverse(Acc)}.
 
+-spec typecheck_and_annotate(binary_op_form() | rufus_form()) -> {ok, binary_op_form() | rufus_form()} | {error, atom(), binary_op_form()} | no_return().
 typecheck_and_annotate({binary_op, Context = #{left := [Left], right := [Right]}}) ->
     {ok, AnnotatedLeft} = typecheck_and_annotate(Left),
     {ok, AnnotatedRight} = typecheck_and_annotate(Right),
@@ -62,6 +64,7 @@ typecheck_and_annotate(Form = {_, #{type := _}}) ->
 typecheck_and_annotate(Form) ->
     erlang:error({unhandled_form, Form}).
 
+-spec infer_binary_op_type(binary_op_form()) -> {ok, binary_op_form()} | {error, unmatched_operand_type, binary_op_form()} | {error, unsupported_operand_type, binary_op_form()}.
 infer_binary_op_type(Form = {binary_op, Context = #{left := Left, right := Right}}) ->
     LeftType = rufus_form:type(Left),
     LeftTypeSpec = rufus_form:spec(LeftType),
@@ -79,10 +82,12 @@ infer_binary_op_type(Form = {binary_op, Context = #{left := Left, right := Right
             {error, unsupported_operand_type, Form}
     end.
 
+-spec supported_type(float | int | atom()) -> boolean().
 supported_type(float) -> true;
 supported_type(int) -> true;
 supported_type(_) -> false.
 
+-spec supported_type_pair(float | int | atom(), float | int | atom()) -> boolean().
 supported_type_pair(float, float) -> true;
 supported_type_pair(int, int) -> true;
 supported_type_pair(_, _) -> false.

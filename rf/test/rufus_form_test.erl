@@ -2,6 +2,25 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
+line_test() ->
+    Form = {identifier, #{spec => n, line => 13}},
+    ?assertEqual(13, rufus_form:line(Form)).
+
+source_test() ->
+    Type = rufus_form:make_type(int, 19),
+    ?assertEqual(rufus_text, rufus_form:source(Type)),
+    InferredType = rufus_form:make_inferred_type(int, 27),
+    ?assertEqual(inferred, rufus_form:source(InferredType)).
+
+spec_test() ->
+    Form = {identifier, #{spec => n, line => 13}},
+    ?assertEqual(n, rufus_form:spec(Form)).
+
+type_test() ->
+    Type = rufus_form:make_inferred_type(int, 27),
+    Form = {int_lit, #{spec => 42, type => Type, line => 7}},
+    ?assertEqual(Type, rufus_form:type(Form)).
+
 make_module_test() ->
     ?assertEqual({module, #{spec => example, line => 1}}, rufus_form:make_module(example, 1)).
 
