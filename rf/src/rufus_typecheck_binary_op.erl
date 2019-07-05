@@ -52,7 +52,7 @@ typecheck_and_annotate({binary_op, Context = #{left := [Left], right := [Right]}
     {ok, AnnotatedLeft} = typecheck_and_annotate(Left),
     {ok, AnnotatedRight} = typecheck_and_annotate(Right),
     case infer_binary_op_type({binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight}}) of
-        {ok, AnnotatedForm = {binary_op, _}} ->
+        {ok, AnnotatedForm} ->
             {ok, AnnotatedForm};
         Error ->
             Error
