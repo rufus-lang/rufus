@@ -23,12 +23,12 @@
 %% line returns the line number from the specified form. A line number is
 %% expected with every single form, so lack of one will result in a
 %% function_clause exception at runtime.
--spec line({any(), #{line => integer()}}) -> integer().
+-spec line({any(), context()}) -> integer().
 line({_, #{line := Line}}) ->
     Line.
 
 %% source returns information about where the type information is from.
--spec source({type, #{source => inferred | rufus_text}}) -> inferred | rufus_text.
+-spec source({type, context()}) -> inferred | rufus_text.
 source({type, #{source := Source}}) ->
     Source.
 
@@ -38,7 +38,7 @@ spec({_, #{spec := Spec}}) ->
     Spec.
 
 %% type returns type information for the form.
--spec type({any(), #{type => context()}}) -> context().
+-spec type({any(), context()}) -> context().
 type({_, #{type := Type}}) ->
     Type.
 
