@@ -1,4 +1,4 @@
-%% rufus_typecheck_binary_op enforces the invariant that a binary operation may
+%% rufus_typecheck_binary_op enforces the invariants that a binary operation may
 %% only be performed exclusively with ints or exclusively with floats, not both
 %% at the same time. No other types are supported with binary operators.
 -module(rufus_typecheck_binary_op).
@@ -14,8 +14,8 @@
 %% forms iterates over RufusForms and typechecks binary operations to ensure
 %% that the operands are exclusively ints or exclusively floats. Iteration stops
 %% at the first error. Returns values:
-%% - `{ok, AnnotatedForms}` if no issues are found with all `binary_op` forms
-%%   have type annotations.
+%% - `{ok, AnnotatedForms}` if no issues are found with every `binary_op` form
+%%   having an inferred type annotation.
 %% - `{error, unmatched_operand_type, Data}` if an `int` operand is mixed with a
 %%   `float` operand. `Data` contains `left` and `right` atom keys pointing to
 %%   the illegal operands.

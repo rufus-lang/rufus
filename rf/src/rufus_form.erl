@@ -13,7 +13,6 @@
     make_literal/3,
     make_module/2,
     make_type/2,
-    maybe_annotate_type/2,
     source/1,
     spec/1,
     type/1
