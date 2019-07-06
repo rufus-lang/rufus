@@ -300,3 +300,62 @@ parse_function_subtracting_three_ints_test() ->
                                        source => rufus_text}},
                spec => 'MinusNine'}}
     ], Forms).
+
+parse_function_multiplying_two_ints_test() ->
+    RufusText = "
+    module math
+    func FortyTwo() int { 2 * 21 }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    ?assertEqual([
+     {module, #{line => 2, spec => math}},
+     {func, #{args => [],
+              exprs => [{binary_op, #{line => 3,
+                                      op => '*',
+                                      left => {int_lit, #{line => 3,
+                                                          spec => 2,
+                                                          type => {type, #{line => 3, spec => int, source => inferred}}}},
+                                      right => {int_lit, #{line => 3,
+                                                           spec => 21,
+                                                           type => {type, #{line => 3, spec => int, source => inferred}}}}}}],
+              line => 3,
+              return_type => {type, #{line => 3, spec => int, source => rufus_text}},
+              spec => 'FortyTwo'}}
+    ], Forms).
+
+parse_function_multiplying_three_ints_test() ->
+    RufusText = "
+    module math
+    func OneTwenty() int { 4 * 5 * 6 }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    ?assertEqual([
+      {module,#{line => 2,spec => math}},
+      {func, #{args => [],
+               exprs => [{binary_op, #{left => {binary_op, #{op => '*',
+                                                             left => {int_lit, #{line => 3,
+                                                                                 spec => 4,
+                                                                                 type => {type, #{line => 3,
+                                                                                                  spec => int,
+                                                                                                  source => inferred}}}},
+                                                             right => {int_lit, #{line => 3,
+                                                                                  spec => 5,
+                                                                                  type => {type, #{line => 3,
+                                                                                                   spec => int,
+                                                                                                   source => inferred}}}},
+                                                             line => 3}},
+                                       line => 3,
+                                       op => '*',
+                                       right => {int_lit, #{line => 3,
+                                                            spec => 6,
+                                                            type => {type, #{line => 3,
+                                                                             spec => int,
+                                                                             source => inferred}}}}}}],
+               line => 3,
+               return_type => {type, #{line => 3,
+                                       spec => int,
+                                       source => rufus_text}},
+               spec => 'OneTwenty'}}
+    ], Forms).
