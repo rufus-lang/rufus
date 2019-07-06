@@ -166,6 +166,7 @@ forms_typecheck_for_binary_op_with_strings_test() ->
     ",
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    io:format("{ok, Forms} => ~p~n", [Forms]),
     Expected = {binary_op,
                 #{left =>
                    {string_lit,

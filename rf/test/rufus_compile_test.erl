@@ -146,3 +146,32 @@ eval_with_function_taking_a_bool_and_returning_it_with_a_mismatched_return_type_
     ",
     Expected = {error, unmatched_return_type, #{actual => bool, expected => int}},
     ?assertEqual(Expected, rufus_compile:eval(RufusText)).
+
+%% Arity-0 functions returning a sum of literal values for scalar types
+
+eval_with_function_returning_a_sum_of_int_literals_test() ->
+    RufusText = "
+    module example
+    func FortyTwo() int { 19 + 23 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(42, example:'FortyTwo'()).
+
+eval_with_function_returning_a_sum_of_three_int_literals_test() ->
+    RufusText = "
+    module example
+    func FiftyNine() int { 19 + 23 + 17 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(59, example:'FiftyNine'()).
+
+eval_with_function_returning_a_sum_of_float_literals_test() ->
+    RufusText = "
+    module example
+    func Pi() float { 1.0 + 2.14159265359 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(3.14159265359, example:'Pi'()).

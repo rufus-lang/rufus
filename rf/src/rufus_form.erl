@@ -74,7 +74,10 @@ make_literal(TypeSpec, Spec, Line) ->
 %% Binary operation form builder API
 
 %% make_binary_op returns a form for a binary operation.
--spec make_binary_op(atom(), rufus_form(), rufus_form(), integer()) -> {binary_op, #{op => atom(), left => rufus_form(), right => rufus_form(), line => integer()}}.
+-spec make_binary_op(atom(), rufus_form() | list(rufus_form()), rufus_form() | list(rufus_form()), integer()) -> {binary_op, #{op => atom(), left => rufus_form(), right => rufus_form(), line => integer()}}.
+make_binary_op(Op, [Left], [Right], Line) ->
+    io:format("make_binary_op with Left and Right lists"),
+    make_binary_op(Op, Left, Right, Line);
 make_binary_op(Op, Left, Right, Line) ->
     {binary_op, #{op => Op, left => Left, right => Right, line => Line}}.
 

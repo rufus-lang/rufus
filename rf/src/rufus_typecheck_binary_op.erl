@@ -50,7 +50,7 @@ forms(Acc, []) ->
     {ok, lists:reverse(Acc)}.
 
 -spec typecheck_and_annotate(binary_op_form() | rufus_form()) -> {ok, binary_op_form() | rufus_form()} | {error, atom(), binary_op_form()} | no_return().
-typecheck_and_annotate({binary_op, Context = #{left := [Left], right := [Right]}}) ->
+typecheck_and_annotate({binary_op, Context = #{left := Left, right := Right}}) ->
     {ok, AnnotatedLeft} = typecheck_and_annotate(Left),
     {ok, AnnotatedRight} = typecheck_and_annotate(Right),
     case infer_binary_op_type({binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight}}) of
