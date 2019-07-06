@@ -14,7 +14,9 @@
     make_module/2,
     make_type/2,
     source/1,
-    spec/1
+    spec/1,
+    type/1,
+    type_spec/1
 ]).
 
 %% Form API
@@ -22,19 +24,29 @@
 %% line returns the line number from the specified form. A line number is
 %% expected with every single form, so lack of one will result in a
 %% function_clause exception at runtime.
--spec line({any(), #{line => integer()}}) -> integer().
+-spec line({any(), context()}) -> integer().
 line({_, #{line := Line}}) ->
     Line.
 
 %% source returns information about where the type information is from.
--spec source({type, #{source => inferred | rufus_text}}) -> inferred | rufus_text.
+-spec source({type, context()}) -> inferred | rufus_text.
 source({type, #{source := Source}}) ->
     Source.
 
 %% spec returns the human-readable name for the form.
--spec spec({any(), #{spec => atom()}}) -> atom().
+-spec spec({any(), context()}) -> atom().
 spec({_, #{spec := Spec}}) ->
     Spec.
+
+%% type returns type information for the form.
+-spec type({any(), context()}) -> context().
+type({_, #{type := Type}}) ->
+    Type.
+
+%% type_spec returns the spec for the type of the form.
+-spec type_spec({any(), context()}) -> atom().
+type_spec({_, #{type := {type, #{spec := TypeSpec}}}}) ->
+    TypeSpec.
 
 %% Module form builder API
 
@@ -68,7 +80,7 @@ make_literal(TypeSpec, Spec, Line) ->
 %% Binary operation form builder API
 
 %% make_binary_op returns a form for a binary operation.
--spec make_binary_op(atom(), any(), any(), integer()) -> {binary_op, #{op => atom(), left => any(), right => any(), line => integer()}}.
+-spec make_binary_op(atom(), rufus_form(), rufus_form(), integer()) -> {binary_op, #{op => atom(), left => rufus_form(), right => rufus_form(), line => integer()}}.
 make_binary_op(Op, Left, Right, Line) ->
     {binary_op, #{op => Op, left => Left, right => Right, line => Line}}.
 

@@ -62,11 +62,10 @@ forms(Acc, [{arg, #{line := Line, spec := Name, type := Type}}|T]) ->
         _ ->
             {tuple, Line, [{atom, Line, type_spec(Type)}, {var, Line, Name}]}
     end,
-    %% Form = {tuple, Line, [{atom, Line, type_spec(Type)}, {var, Line, Name}]},
     forms([Form|Acc], T);
 forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}|T]) ->
-    {ok, [LeftExpr]} = forms([], Left),
-    {ok, [RightExpr]} = forms([], Right),
+    {ok, [LeftExpr]} = forms([], [Left]),
+    {ok, [RightExpr]} = forms([], [Right]),
     Form = {op, Line, Op, LeftExpr, RightExpr},
     forms([Form|Acc], T);
 forms(Acc, []) ->

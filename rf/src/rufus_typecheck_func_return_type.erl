@@ -26,7 +26,7 @@ forms(RufusForms) ->
 
 -spec forms(list(rufus_form()), list(rufus_form())) -> {ok, list(rufus_form())}.
 forms([H|T], Forms) ->
-    case check_expr(H) of
+    case typecheck(H) of
         ok ->
             forms(T, Forms);
         Error ->
@@ -35,14 +35,14 @@ forms([H|T], Forms) ->
 forms([], Forms) ->
     {ok, Forms}.
 
--spec check_expr(rufus_form()) -> ok | {error, rufus_error(), map()}.
-check_expr({func, #{return_type := ReturnType, exprs := Exprs}}) ->
-    check_return_expr(ReturnType, lists:last(Exprs));
-check_expr(_) ->
+-spec typecheck(rufus_form()) -> ok | {error, rufus_error(), map()}.
+typecheck({func, #{return_type := ReturnType, exprs := Exprs}}) ->
+    typecheck_return_value(ReturnType, lists:last(Exprs));
+typecheck(_) ->
     ok.
 
--spec check_return_expr(type_form(), identifier_form()) -> ok | {error, rufus_error(), map()}.
-check_return_expr({type, #{spec := ReturnType}}, {identifier, #{locals := Locals, spec := Spec}}) ->
+-spec typecheck_return_value(type_form(), identifier_form()) -> ok | {error, rufus_error(), map()}.
+typecheck_return_value({type, #{spec := ReturnType}}, {identifier, #{locals := Locals, spec := Spec}}) ->
     case maps:is_key(Spec, Locals) of
         true ->
             {type, TypeData} = maps:get(Spec, Locals),
@@ -58,8 +58,8 @@ check_return_expr({type, #{spec := ReturnType}}, {identifier, #{locals := Locals
             Data = #{spec => Spec},
             {error, unknown_variable, Data}
     end;
-check_return_expr({type, #{spec := _ReturnType}}, {_FormType, #{type := {type, #{spec := _ReturnType}}}}) ->
+typecheck_return_value({type, #{spec := _ReturnType}}, {_FormType, #{type := {type, #{spec := _ReturnType}}}}) ->
     ok;
-check_return_expr({type, #{spec := ExpectedReturnType}}, {_FormType, #{type := {type, #{spec := ActualReturnType}}}}) ->
+typecheck_return_value({type, #{spec := ExpectedReturnType}}, {_FormType, #{type := {type, #{spec := ActualReturnType}}}}) ->
     Data = #{expected => ExpectedReturnType, actual => ActualReturnType},
     {error, unmatched_return_type, Data}.

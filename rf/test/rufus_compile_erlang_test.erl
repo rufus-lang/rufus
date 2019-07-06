@@ -223,12 +223,28 @@ forms_for_function_returning_a_sum_of_int_literals_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
-    LeftExpr = {integer, 3, 19},
-    RightExpr = {integer, 3, 23},
+    BinaryOpExpr = {op, 3, '+', {integer, 3, 19}, {integer, 3, 23}},
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'FortyTwo', 0}]},
-        {function, 3, 'FortyTwo', 0, [{clause, 3, [], [], [{op, 3, '+', LeftExpr, RightExpr}]}]}
+        {function, 3, 'FortyTwo', 0, [{clause, 3, [], [], [BinaryOpExpr]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_returning_a_sum_of_three_int_literals_test() ->
+    RufusText = "
+    module example
+    func FiftyNine() int { 19 + 23 + 17 }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
+    LeftExpr = {op, 3, '+', {integer, 3, 19}, {integer, 3, 23}},
+    BinaryOpExpr = {op, 3, '+', LeftExpr, {integer, 3, 17}},
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'FiftyNine', 0}]},
+        {function, 3, 'FiftyNine', 0, [{clause, 3, [], [], [BinaryOpExpr]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
 
@@ -240,11 +256,10 @@ forms_for_function_returning_a_sum_of_float_literals_test() ->
     {ok, Tokens, _} = rufus_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
-    LeftExpr = {float, 3, 1.0},
-    RightExpr = {float, 3, 2.14159265359},
+    BinaryOpExpr = {op, 3, '+', {float, 3, 1.0}, {float, 3, 2.14159265359}},
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Pi', 0}]},
-        {function, 3, 'Pi', 0, [{clause, 3, [], [], [{op, 3, '+', LeftExpr, RightExpr}]}]}
+        {function, 3, 'Pi', 0, [{clause, 3, [], [], [BinaryOpExpr]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
