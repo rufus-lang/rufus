@@ -36,13 +36,14 @@ forms(Acc, [{string_lit, _Context} = StringLit|T]) ->
     forms([Form|Acc], T);
 forms(Acc, [{identifier, #{line := Line, spec := Name, locals := Locals}}|T]) ->
     Type = maps:get(Name, Locals),
-    Form = case type_spec(Type) of
+    TypeSpec = rufus_form:spec(Type),
+    Form = case TypeSpec of
         float ->
             {var, Line, Name};
         int ->
             {var, Line, Name};
         _ ->
-            {tuple, Line, [{atom, Line, type_spec(Type)}, {var, Line, Name}]}
+            {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Name}]}
     end,
     forms([Form|Acc], T);
 forms(Acc, [{func, #{line := Line, spec := Name, args := Args, exprs := Exprs}}|T]) ->
@@ -53,26 +54,31 @@ forms(Acc, [{func, #{line := Line, spec := Name, args := Args, exprs := Exprs}}|
     ExportForms = {attribute, Line, export, [{Name, length(Args)}]},
     Forms = {function, Line, Name, length(Args), FunctionForms},
     forms([Forms|[ExportForms|Acc]], T);
-forms(Acc, [{arg, #{line := Line, spec := Name, type := Type}}|T]) ->
-    Form = case type_spec(Type) of
+forms(Acc, [Form = {arg, #{line := Line, spec := Name}}|T]) ->
+    TypeSpec = rufus_form:type_spec(Form),
+    ErlangForm = case TypeSpec of
         float ->
             {var, Line, Name};
         int ->
             {var, Line, Name};
         _ ->
-            {tuple, Line, [{atom, Line, type_spec(Type)}, {var, Line, Name}]}
+            {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Name}]}
     end,
-    forms([Form|Acc], T);
+    forms([ErlangForm|Acc], T);
 forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}|T]) ->
     {ok, [LeftExpr]} = forms([], [Left]),
     {ok, [RightExpr]} = forms([], [Right]),
-    Form = {op, Line, Op, LeftExpr, RightExpr},
+    ErlangOp = erlang_operator(Op, rufus_form:type_spec(Left)),
+    Form = {op, Line, ErlangOp, LeftExpr, RightExpr},
     forms([Form|Acc], T);
 forms(Acc, []) ->
     {ok, lists:reverse(Acc)};
-forms(Acc, _Unhandled) ->
-    io:format("unhandled form ->~n~p~n", [_Unhandled]),
-    {ok, lists:reverse(Acc)}.
+forms(_Acc, Form) ->
+    erlang:error(unhandled_form, Form).
+
+erlang_operator('/', float) -> '/';
+erlang_operator('/', int) -> 'div';
+erlang_operator(Op, _) -> Op.
 
 % guards generates function guards for floats and integers.
 -spec guards(list(erlang_form()) | list(list()), list(arg_form())) -> {ok, list(erlang_form())}.
@@ -89,7 +95,6 @@ guards(Acc, []) ->
     %% behavior?
     {ok, Acc}.
 
-%% box converts Rufus forms for primitive values into Erlang forms.
 -spec box(bool_lit_form() | float_lit_form() | int_lit_form() | string_lit_form()) -> erlang3_form().
 box({bool_lit, #{line := Line, spec := Value}}) ->
     {tuple, Line, [{atom, Line, bool}, {atom, Line, Value}]};
@@ -100,8 +105,3 @@ box({int_lit, #{line := Line, spec := Value}}) ->
 box({string_lit, #{line := Line, spec := Value}}) ->
     StringExpr = {bin_element, Line, {string, Line, binary_to_list(Value)}, default, default},
     {tuple, Line, [{atom, Line, string}, {bin, Line, [StringExpr]}]}.
-
-%% type_spec unpacks the name of the type from a type form.
--spec type_spec(type_form()) -> type_spec().
-type_spec({type, #{spec := Type}}) ->
-    Type.
