@@ -1,11 +1,12 @@
 Nonterminals root decl expr exprs function type arg args binary_op.
 
-Terminals '(' ')' '{' '}' ',' '+' '-' func identifier import module bool bool_lit float float_lit int int_lit string string_lit.
+Terminals '(' ')' '{' '}' ',' '+' '-' '*' func identifier import module bool bool_lit float float_lit int int_lit string string_lit.
 
 Rootsymbol root.
 
 Left 100 '+'.
 Left 100 '-'.
+Left 100 '*'.
 
 root -> decl :
     ['$1'].
@@ -40,6 +41,7 @@ expr  -> binary_op  : '$1'.
 
 binary_op -> expr '+' expr : rufus_form:make_binary_op('+', '$1', '$3', token_line('$2')).
 binary_op -> expr '-' expr : rufus_form:make_binary_op('-', '$1', '$3', token_line('$2')).
+binary_op -> expr '*' expr : rufus_form:make_binary_op('*', '$1', '$3', token_line('$2')).
 
 %% Function declarations
 

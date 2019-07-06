@@ -32,6 +32,7 @@ Comma         = ,
 Match         = =
 Plus          = \+
 Minus         = \-
+Multiply      = \*
 
 Rules.
 
@@ -62,6 +63,7 @@ Rules.
 {Match}         : {token, {'=', TokenLine}}.
 {Plus}          : {token, {'+', TokenLine}}.
 {Minus}         : {token, {'-', TokenLine}}.
+{Multiply}      : {token, {'*', TokenLine}}.
 {Identifier}    : {token, {identifier, TokenLine, TokenChars}}.
 
 Erlang code.

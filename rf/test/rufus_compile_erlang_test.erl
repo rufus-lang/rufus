@@ -314,3 +314,54 @@ forms_for_function_returning_a_difference_of_float_literals_test() ->
         {function, 3, 'Pi', 0, [{clause, 3, [], [], [BinaryOpExpr]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
+
+%% Arity-0 functions returning a product of literal values for scalar types
+
+forms_for_function_returning_a_product_of_int_literals_test() ->
+    RufusText = "
+    module example
+    func FortyTwo() int { 3 * 14 }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
+    BinaryOpExpr = {op, 3, '*', {integer, 3, 3}, {integer, 3, 14}},
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'FortyTwo', 0}]},
+        {function, 3, 'FortyTwo', 0, [{clause, 3, [], [], [BinaryOpExpr]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_returning_a_product_of_three_int_literals_test() ->
+    RufusText = "
+    module example
+    func ThirteenThirtyFive() int { 3 * 5 * 89 }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
+    LeftExpr = {op, 3, '*', {integer, 3, 3}, {integer, 3, 5}},
+    BinaryOpExpr = {op, 3, '*', LeftExpr, {integer, 3, 89}},
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'ThirteenThirtyFive', 0}]},
+        {function, 3, 'ThirteenThirtyFive', 0, [{clause, 3, [], [], [BinaryOpExpr]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_returning_a_product_of_float_literals_test() ->
+    RufusText = "
+    module example
+    func Pi() float { 1.0 * 3.14159265359 }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
+    BinaryOpExpr = {op, 3, '*', {float, 3, 1.0}, {float, 3, 3.14159265359}},
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Pi', 0}]},
+        {function, 3, 'Pi', 0, [{clause, 3, [], [], [BinaryOpExpr]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).

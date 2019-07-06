@@ -204,3 +204,32 @@ eval_with_function_returning_a_difference_of_float_literals_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertEqual(3.14159265359, example:'Pi'()).
+
+%% Arity-0 functions returning a product of literal values for scalar types
+
+eval_with_function_returning_a_product_of_int_literals_test() ->
+    RufusText = "
+    module example
+    func FortyTwo() int { 3 * 14 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(42, example:'FortyTwo'()).
+
+eval_with_function_returning_a_product_of_three_int_literals_test() ->
+    RufusText = "
+    module example
+    func ThirteenThirtyFive() int { 3 * 5 * 89 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(1335, example:'ThirteenThirtyFive'()).
+
+eval_with_function_returning_a_product_of_float_literals_test() ->
+    RufusText = "
+    module example
+    func Pi() float { 1.0 * 3.14159265359 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(3.14159265359, example:'Pi'()).
