@@ -16,12 +16,10 @@
 %% at the first error. Returns values:
 %% - `{ok, AnnotatedForms}` if no issues are found with every `binary_op` form
 %%   having an inferred type annotation.
-%% - `{error, unmatched_operand_type, Data}` if an `int` operand is mixed with a
-%%   `float` operand. `Data` contains `left` and `right` atom keys pointing to
-%%   the illegal operands.
-%% - `{error, unsupported_operand_type, Data}` if a type other than an int is
-%%   used as an operand. `Data` contains `left` and `right` atom keys pointing
-%%   to the illegal operands.
+%% - `{error, unmatched_operand_type, Form}` if an `int` operand is mixed with a
+%%   `float` operand. `Form` contains the illegal operands.
+%% - `{error, unsupported_operand_type, Form}` if a type other than an int is
+%%   used as an operand. `Form` contains the illegal operands.
 -spec forms(list(rufus_form())) -> {ok, list(rufus_form())}.
 forms(RufusForms) ->
     forms([], RufusForms).
