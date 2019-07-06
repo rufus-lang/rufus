@@ -175,3 +175,32 @@ eval_with_function_returning_a_sum_of_float_literals_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertEqual(3.14159265359, example:'Pi'()).
+
+%% Arity-0 functions returning a difference of literal values for scalar types
+
+eval_with_function_returning_a_difference_of_int_literals_test() ->
+    RufusText = "
+    module example
+    func FortyTwo() int { 55 - 13 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(42, example:'FortyTwo'()).
+
+eval_with_function_returning_a_difference_of_three_int_literals_test() ->
+    RufusText = "
+    module example
+    func ThirteenThirtyFive() int { 1500 - 150 - 15 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(1335, example:'ThirteenThirtyFive'()).
+
+eval_with_function_returning_a_difference_of_float_literals_test() ->
+    RufusText = "
+    module example
+    func Pi() float { 4.14159265359 - 1.0 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(3.14159265359, example:'Pi'()).
