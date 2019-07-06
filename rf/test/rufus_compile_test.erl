@@ -233,3 +233,32 @@ eval_with_function_returning_a_product_of_float_literals_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertEqual(3.14159265359, example:'Pi'()).
+
+%% Arity-0 functions returning a division of literal values for scalar types
+
+eval_with_function_returning_a_division_of_int_literals_test() ->
+    RufusText = "
+    module example
+    func FortyTwo() int { 84 / 2 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(42, example:'FortyTwo'()).
+
+eval_with_function_returning_a_division_of_three_int_literals_test() ->
+    RufusText = "
+    module example
+    func Five() int { 100 / 10 / 2 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(5, example:'Five'()).
+
+eval_with_function_returning_a_division_of_float_literals_test() ->
+    RufusText = "
+    module example
+    func TwoPointSevenFive() float { 5.5 / 2.0 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(2.75, example:'TwoPointSevenFive'()).

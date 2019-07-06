@@ -33,6 +33,7 @@ Match         = =
 Plus          = \+
 Minus         = \-
 Multiply      = \*
+Divide        = \/
 
 Rules.
 
@@ -64,6 +65,7 @@ Rules.
 {Plus}          : {token, {'+', TokenLine}}.
 {Minus}         : {token, {'-', TokenLine}}.
 {Multiply}      : {token, {'*', TokenLine}}.
+{Divide}        : {token, {'/', TokenLine}}.
 {Identifier}    : {token, {identifier, TokenLine, TokenChars}}.
 
 Erlang code.
