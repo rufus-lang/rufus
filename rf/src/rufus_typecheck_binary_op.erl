@@ -49,7 +49,7 @@ forms(Acc, [H|T]) ->
 forms(Acc, []) ->
     {ok, lists:reverse(Acc)}.
 
--spec typecheck_and_annotate(binary_op_form() | rufus_form()) -> {ok, binary_op_form() | rufus_form()} | {error, atom(), binary_op_form()} | no_return().
+-spec typecheck_and_annotate(binary_op_form() | rufus_form()) -> {ok, binary_op_form() | rufus_form()}. % | {error, atom(), binary_op_form()} | no_return().
 typecheck_and_annotate({binary_op, Context = #{left := Left, right := Right}}) ->
     {ok, AnnotatedLeft} = typecheck_and_annotate(Left),
     {ok, AnnotatedRight} = typecheck_and_annotate(Right),
@@ -66,15 +66,13 @@ typecheck_and_annotate(Form) ->
 
 -spec infer_binary_op_type(binary_op_form()) -> {ok, binary_op_form()} | {error, unmatched_operand_type, binary_op_form()} | {error, unsupported_operand_type, binary_op_form()}.
 infer_binary_op_type(Form = {binary_op, Context = #{left := Left, right := Right}}) ->
-    LeftType = rufus_form:type(Left),
-    LeftTypeSpec = rufus_form:spec(LeftType),
-    RightType = rufus_form:type(Right),
-    RightTypeSpec = rufus_form:spec(RightType),
+    LeftTypeSpec = rufus_form:type_spec(Left),
+    RightTypeSpec = rufus_form:type_spec(Right),
     case supported_type(LeftTypeSpec) and supported_type(RightTypeSpec) of
         true ->
             case supported_type_pair(LeftTypeSpec, RightTypeSpec) of
                 true ->
-                    {ok, {binary_op, Context#{type => LeftType}}};
+                    {ok, {binary_op, Context#{type => rufus_form:type(Left)}}};
                 false ->
                     {error, unmatched_operand_type, Form}
             end;

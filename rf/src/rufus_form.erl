@@ -15,7 +15,8 @@
     make_type/2,
     source/1,
     spec/1,
-    type/1
+    type/1,
+    type_spec/1
 ]).
 
 %% Form API
@@ -41,6 +42,11 @@ spec({_, #{spec := Spec}}) ->
 -spec type({any(), context()}) -> context().
 type({_, #{type := Type}}) ->
     Type.
+
+%% type_spec returns the spec for the type of the form.
+-spec type_spec({any(), context()}) -> atom().
+type_spec({_, #{type := {type, #{spec := TypeSpec}}}}) ->
+    TypeSpec.
 
 %% Module form builder API
 
