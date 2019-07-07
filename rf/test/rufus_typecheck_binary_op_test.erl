@@ -184,3 +184,52 @@ forms_typecheck_for_binary_op_with_strings_test() ->
     {error, Reason, Data} = rufus_typecheck_binary_op:forms(Forms),
     ?assertEqual(unsupported_operand_type, Reason),
     ?assertEqual(Expected, Data).
+
+forms_typecheck_for_remainder_op_with_ints_test() ->
+    RufusText = "
+    module example
+    func Six() int { 27 % 7 }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [{module,#{line => 2,spec => example}},
+                {func,
+                 #{args => [],
+                   exprs =>
+                    [{binary_op,
+                      #{left =>
+                         {int_lit,
+                          #{line => 3,spec => 27,
+                            type =>
+                             {type,
+                              #{line => 3,source => inferred,spec => int}}}},
+                        line => 3,op => '%',
+                        right =>
+                         {int_lit,
+                          #{line => 3,spec => 7,
+                            type =>
+                             {type,
+                              #{line => 3,source => inferred,spec => int}}}},
+                        type =>
+                         {type,
+                          #{line => 3,source => inferred,spec => int}}}}],
+                   line => 3,
+                   return_type =>
+                    {type,#{line => 3,source => rufus_text,spec => int}},
+                   spec => 'Six'}}],
+    {ok, TypecheckedForms} = rufus_typecheck_binary_op:forms(Forms),
+    ?assertEqual(Expected, TypecheckedForms).
+
+forms_typecheck_for_remainder_op_with_floats_test() ->
+    RufusText = "
+    module example
+    func Six() int { 27.0 % 7.0 }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Float27 = rufus_form:make_literal(float, 27.0, 3),
+    Float7 = rufus_form:make_literal(float, 7.0, 3),
+    Expected = {binary_op, #{left => Float27, op => '%', right => Float7, line => 3}},
+    {error, Reason, Data} = rufus_typecheck_binary_op:forms(Forms),
+    ?assertEqual(unsupported_operand_type, Reason),
+    ?assertEqual(Expected, Data).
