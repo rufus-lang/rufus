@@ -2,12 +2,14 @@
 -export([parse/1, parse_and_scan/1, format_error/1]).
 -file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_parse.yrl", 60).
 
-token_chars({_TokenType, _Line, Chars}) ->
+%% chars returns the content from the token.
+chars({_TokenType, _Line, Chars}) ->
     Chars.
 
-token_line({_TokenType, Line}) ->
+%% line returns the line number from the token.
+line({_TokenType, Line}) ->
     Line;
-token_line({_TokenType, Line, _Chars}) ->
+line({_TokenType, Line, _Chars}) ->
     Line.
 
 -file("/usr/local/Cellar/erlang/22.0.1/lib/erlang/lib/parsetools-2.1.8/include/yeccpre.hrl", 0).
@@ -182,7 +184,7 @@ yecctoken2string(Other) ->
 
 
 
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_parse.erl", 185).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_parse.erl", 187).
 
 -dialyzer({nowarn_function, yeccpars2/7}).
 yeccpars2(0=S, Cat, Ss, Stack, T, Ts, Tzr) ->
@@ -628,7 +630,7 @@ yeccpars2_3_(__Stack0) ->
 yeccpars2_7_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_module ( list_to_atom ( token_chars ( __2 ) ) , token_line ( __2 ) )
+   rufus_form : make_module ( list_to_atom ( chars ( __2 ) ) , line ( __2 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_8_/1}).
@@ -636,7 +638,7 @@ yeccpars2_7_(__Stack0) ->
 yeccpars2_8_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_import ( token_chars ( __2 ) , token_line ( __2 ) )
+   rufus_form : make_import ( chars ( __2 ) , line ( __2 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_10_/1}).
@@ -658,7 +660,7 @@ yeccpars2_12_(__Stack0) ->
 yeccpars2_14_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_arg ( list_to_atom ( token_chars ( __1 ) ) , __2 , token_line ( __1 ) )
+   rufus_form : make_arg ( list_to_atom ( chars ( __1 ) ) , __2 , line ( __1 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_15_/1}).
@@ -666,7 +668,7 @@ yeccpars2_14_(__Stack0) ->
 yeccpars2_15_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_type ( bool , token_line ( __1 ) )
+   rufus_form : make_type ( bool , line ( __1 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_16_/1}).
@@ -674,7 +676,7 @@ yeccpars2_15_(__Stack0) ->
 yeccpars2_16_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_type ( float , token_line ( __1 ) )
+   rufus_form : make_type ( float , line ( __1 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_17_/1}).
@@ -682,7 +684,7 @@ yeccpars2_16_(__Stack0) ->
 yeccpars2_17_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_type ( int , token_line ( __1 ) )
+   rufus_form : make_type ( int , line ( __1 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_18_/1}).
@@ -690,7 +692,7 @@ yeccpars2_17_(__Stack0) ->
 yeccpars2_18_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_type ( string , token_line ( __1 ) )
+   rufus_form : make_type ( string , line ( __1 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_19_/1}).
@@ -698,7 +700,7 @@ yeccpars2_18_(__Stack0) ->
 yeccpars2_19_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_arg ( list_to_atom ( token_chars ( __1 ) ) , __2 , token_line ( __1 ) )
+   rufus_form : make_arg ( list_to_atom ( chars ( __1 ) ) , __2 , line ( __1 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_20_/1}).
@@ -728,7 +730,7 @@ yeccpars2_25_(__Stack0) ->
 yeccpars2_27_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_literal ( bool , token_chars ( __1 ) , token_line ( __1 ) )
+   rufus_form : make_literal ( bool , chars ( __1 ) , line ( __1 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_28_/1}).
@@ -736,7 +738,7 @@ yeccpars2_27_(__Stack0) ->
 yeccpars2_28_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_literal ( float , token_chars ( __1 ) , token_line ( __1 ) )
+   rufus_form : make_literal ( float , chars ( __1 ) , line ( __1 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_29_/1}).
@@ -744,7 +746,7 @@ yeccpars2_28_(__Stack0) ->
 yeccpars2_29_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_identifier ( list_to_atom ( token_chars ( __1 ) ) , token_line ( __1 ) )
+   rufus_form : make_identifier ( list_to_atom ( chars ( __1 ) ) , line ( __1 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_30_/1}).
@@ -752,7 +754,7 @@ yeccpars2_29_(__Stack0) ->
 yeccpars2_30_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_literal ( int , token_chars ( __1 ) , token_line ( __1 ) )
+   rufus_form : make_literal ( int , chars ( __1 ) , line ( __1 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_31_/1}).
@@ -760,7 +762,7 @@ yeccpars2_30_(__Stack0) ->
 yeccpars2_31_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_literal ( string , list_to_binary ( token_chars ( __1 ) ) , token_line ( __1 ) )
+   rufus_form : make_literal ( string , list_to_binary ( chars ( __1 ) ) , line ( __1 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_32_/1}).
@@ -776,7 +778,7 @@ yeccpars2_32_(__Stack0) ->
 yeccpars2_38_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_binary_op ( '/' , __1 , __3 , token_line ( __2 ) )
+   rufus_form : make_binary_op ( '/' , __1 , __3 , line ( __2 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_39_/1}).
@@ -784,7 +786,7 @@ yeccpars2_38_(__Stack0) ->
 yeccpars2_39_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_binary_op ( '-' , __1 , __3 , token_line ( __2 ) )
+   rufus_form : make_binary_op ( '-' , __1 , __3 , line ( __2 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_40_/1}).
@@ -792,7 +794,7 @@ yeccpars2_39_(__Stack0) ->
 yeccpars2_40_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_binary_op ( '+' , __1 , __3 , token_line ( __2 ) )
+   rufus_form : make_binary_op ( '+' , __1 , __3 , line ( __2 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_41_/1}).
@@ -800,7 +802,7 @@ yeccpars2_40_(__Stack0) ->
 yeccpars2_41_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_binary_op ( '*' , __1 , __3 , token_line ( __2 ) )
+   rufus_form : make_binary_op ( '*' , __1 , __3 , line ( __2 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_42_/1}).
@@ -808,7 +810,7 @@ yeccpars2_41_(__Stack0) ->
 yeccpars2_42_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_binary_op ( '%' , __1 , __3 , token_line ( __2 ) )
+   rufus_form : make_binary_op ( '%' , __1 , __3 , line ( __2 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_43_/1}).
@@ -816,7 +818,7 @@ yeccpars2_42_(__Stack0) ->
 yeccpars2_43_(__Stack0) ->
  [__9,__8,__7,__6,__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   rufus_form : make_func ( list_to_atom ( token_chars ( __2 ) ) , __4 , __6 , __8 , token_line ( __1 ) )
+   rufus_form : make_func ( list_to_atom ( chars ( __2 ) ) , __4 , __6 , __8 , line ( __1 ) )
   end | __Stack].
 
 -compile({inline,yeccpars2_44_/1}).
@@ -828,4 +830,4 @@ yeccpars2_44_(__Stack0) ->
   end | __Stack].
 
 
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_parse.yrl", 69).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_parse.yrl", 71).

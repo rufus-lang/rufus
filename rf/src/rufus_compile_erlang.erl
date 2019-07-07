@@ -78,6 +78,7 @@ forms(_Acc, Form) ->
 
 erlang_operator('/', float) -> '/';
 erlang_operator('/', int) -> 'div';
+erlang_operator('%', int) -> 'rem';
 erlang_operator(Op, _) -> Op.
 
 % guards generates function guards for floats and integers.
