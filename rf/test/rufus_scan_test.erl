@@ -317,6 +317,14 @@ string_with_binary_op_expression_using_division_operator_test() ->
      {int_lit, 1, 5}
     ], Tokens).
 
+string_with_binary_op_expression_using_remainder_operator_test() ->
+    {ok, Tokens, _} = rufus_scan:string("3 % 5"),
+    ?assertEqual([
+     {int_lit, 1, 3},
+     {'%', 1},
+     {int_lit, 1, 5}
+    ], Tokens).
+
 %% string_with_function_takes_an_unused_argument_test() ->
 %%     {ok, Tokens, _} = rufus_scan:string("func unused(_ int) int { 0 }")
 

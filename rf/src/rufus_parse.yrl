@@ -1,6 +1,6 @@
 Nonterminals root decl expr exprs function type arg args binary_op.
 
-Terminals '(' ')' '{' '}' ',' '+' '-' '*' '/' func identifier import module bool bool_lit float float_lit int int_lit string string_lit.
+Terminals '(' ')' '{' '}' ',' '+' '-' '*' '/' '%' func identifier import module bool bool_lit float float_lit int int_lit string string_lit.
 
 Rootsymbol root.
 
@@ -8,6 +8,7 @@ Left 100 '+'.
 Left 100 '-'.
 Left 100 '*'.
 Left 100 '/'.
+Left 100 '%'.
 
 root -> decl :
     ['$1'].
@@ -44,10 +45,12 @@ binary_op -> expr '+' expr : rufus_form:make_binary_op('+', '$1', '$3', token_li
 binary_op -> expr '-' expr : rufus_form:make_binary_op('-', '$1', '$3', token_line('$2')).
 binary_op -> expr '*' expr : rufus_form:make_binary_op('*', '$1', '$3', token_line('$2')).
 binary_op -> expr '/' expr : rufus_form:make_binary_op('/', '$1', '$3', token_line('$2')).
+binary_op -> expr '%' expr : rufus_form:make_binary_op('%', '$1', '$3', token_line('$2')).
 
 %% Function declarations
 
-function -> func identifier '(' args ')' type '{' exprs '}' : rufus_form:make_func(list_to_atom(token_chars('$2')), '$4', '$6', '$8', token_line('$1')).
+function -> func identifier '(' args ')' type '{' exprs '}' :
+    rufus_form:make_func(list_to_atom(token_chars('$2')), '$4', '$6', '$8', token_line('$1')).
 
 args -> arg args            : ['$1'|'$2'].
 args -> '$empty'            : [].

@@ -34,6 +34,7 @@ Plus          = \+
 Minus         = \-
 Multiply      = \*
 Divide        = \/
+Remainder     = \%
 
 Rules.
 
@@ -66,6 +67,7 @@ Rules.
 {Minus}         : {token, {'-', TokenLine}}.
 {Multiply}      : {token, {'*', TokenLine}}.
 {Divide}        : {token, {'/', TokenLine}}.
+{Remainder}     : {token, {'%', TokenLine}}.
 {Identifier}    : {token, {identifier, TokenLine, TokenChars}}.
 
 Erlang code.
