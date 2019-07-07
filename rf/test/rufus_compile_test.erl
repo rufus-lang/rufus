@@ -262,3 +262,23 @@ eval_with_function_returning_a_division_of_float_literals_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertEqual(2.75, example:'TwoPointSevenFive'()).
+
+%% Arity-0 functions returning a division of literal values for int types
+
+eval_with_function_returning_a_remainder_of_int_literals_test() ->
+    RufusText = "
+    module example
+    func Six() int { 27 % 7 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(6, example:'Six'()).
+
+eval_with_function_returning_a_remainder_of_three_int_literals_test() ->
+    RufusText = "
+    module example
+    func Four() int { 100 % 13 % 5 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(4, example:'Four'()).
