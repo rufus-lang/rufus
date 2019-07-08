@@ -63,10 +63,10 @@ typecheck_and_annotate(Form) ->
     erlang:error({unhandled_form, Form}).
 
 -spec infer_binary_op_type(binary_op_form()) -> {ok, binary_op_form()} | {error, unmatched_operand_type, binary_op_form()} | {error, unsupported_operand_type, binary_op_form()}.
-infer_binary_op_type(Form = {binary_op, Context = #{left := Left, right := Right}}) ->
+infer_binary_op_type(Form = {binary_op, Context = #{op := Op, left := Left, right := Right}}) ->
     LeftTypeSpec = rufus_form:type_spec(Left),
     RightTypeSpec = rufus_form:type_spec(Right),
-    case supported_type(LeftTypeSpec) and supported_type(RightTypeSpec) of
+    case supported_type(Op, LeftTypeSpec) and supported_type(Op, RightTypeSpec) of
         true ->
             case supported_type_pair(LeftTypeSpec, RightTypeSpec) of
                 true ->
@@ -78,10 +78,11 @@ infer_binary_op_type(Form = {binary_op, Context = #{left := Left, right := Right
             {error, unsupported_operand_type, Form}
     end.
 
--spec supported_type(float | int | atom()) -> boolean().
-supported_type(float) -> true;
-supported_type(int) -> true;
-supported_type(_) -> false.
+-spec supported_type(atom(), float | int | atom()) -> boolean().
+supported_type('%', float) -> false;
+supported_type(_, float) -> true;
+supported_type(_, int) -> true;
+supported_type(_, _) -> false.
 
 -spec supported_type_pair(float | int | atom(), float | int | atom()) -> boolean().
 supported_type_pair(float, float) -> true;
