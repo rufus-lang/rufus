@@ -25,6 +25,24 @@ string_with_import_test() ->
 
 %% Const
 
+string_with_atom_literal_test() ->
+    {ok, Tokens, _} = rufus_scan:string("const Name = :rufus"),
+    ?assertEqual([
+     {const, 1},
+     {identifier, 1, "Name"},
+     {'=', 1},
+     {atom_lit, 1, rufus}
+    ], Tokens).
+
+string_with_quoted_atom_literal_test() ->
+    {ok, Tokens, _} = rufus_scan:string("const Name = :'rufus programming language'"),
+    ?assertEqual([
+     {const, 1},
+     {identifier, 1, "Name"},
+     {'=', 1},
+     {atom_lit, 1, 'rufus programming language'}
+    ], Tokens).
+
 string_with_false_bool_literal_test() ->
     {ok, Tokens, _} = rufus_scan:string("const Bool = false"),
     ?assertEqual([

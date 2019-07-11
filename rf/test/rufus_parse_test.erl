@@ -27,6 +27,24 @@ parse_import_test() ->
 
 %% Arity-0 functions returning a literal value for scalar types
 
+parse_function_returning_an_atom_test() ->
+    RufusText = "
+    module example
+    func Color() atom { :indigo }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    ?assertEqual([
+     {module, #{line => 2, spec => example}},
+     {func, #{args => [],
+              exprs => [{atom_lit, #{line => 3,
+                                     spec => indigo,
+                                     type => {type, #{line => 3, spec => atom, source => inferred}}}}],
+              line => 3,
+              return_type => {type, #{line => 3, spec => atom, source => rufus_text}},
+              spec => 'Color'}}
+    ], Forms).
+
 parse_function_returning_a_bool_test() ->
     RufusText = "
     module example
@@ -100,6 +118,26 @@ parse_function_returning_a_string_test() ->
     ], Forms).
 
 %% Arity-1 functions using an argument
+
+parse_function_taking_an_atom_and_returning_an_atom_test() ->
+    RufusText = "
+    module example
+    func Color(c atom) atom { :indigo }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    ?assertEqual([
+     {module, #{line => 2, spec => example}},
+     {func, #{args => [{arg, #{line => 3,
+                               spec => c,
+                               type => {type, #{line => 3, spec => atom, source => rufus_text}}}}],
+              exprs => [{atom_lit, #{line => 3,
+                                     spec => indigo,
+                                     type => {type, #{line => 3, spec => atom, source => inferred}}}}],
+              line => 3,
+              return_type => {type, #{line => 3, spec => atom, source => rufus_text}},
+              spec => 'Color'}}
+    ], Forms).
 
 parse_function_taking_a_bool_and_returning_a_bool_test() ->
     RufusText = "

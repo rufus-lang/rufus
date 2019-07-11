@@ -1,6 +1,6 @@
 Nonterminals root decl expr exprs function type arg args binary_op.
 
-Terminals '(' ')' '{' '}' ',' '+' '-' '*' '/' '%' func identifier import module bool bool_lit float float_lit int int_lit string string_lit.
+Terminals '(' ')' '{' '}' ',' '+' '-' '*' '/' '%' func identifier import module atom atom_lit bool bool_lit float float_lit int int_lit string string_lit.
 
 Rootsymbol root.
 
@@ -23,6 +23,7 @@ decl -> function          : '$1'.
 
 %% Scalar types
 
+type -> atom   : rufus_form:make_type(atom, line('$1')).
 type -> bool   : rufus_form:make_type(bool, line('$1')).
 type -> float  : rufus_form:make_type(float, line('$1')).
 type -> int    : rufus_form:make_type(int, line('$1')).
@@ -32,6 +33,7 @@ type -> string : rufus_form:make_type(string, line('$1')).
 
 exprs -> expr exprs : ['$1'|'$2'].
 exprs -> '$empty'   : [].
+expr  -> atom_lit   : rufus_form:make_literal(atom, chars('$1'), line('$1')).
 expr  -> bool_lit   : rufus_form:make_literal(bool, chars('$1'), line('$1')).
 expr  -> float_lit  : rufus_form:make_literal(float, chars('$1'), line('$1')).
 expr  -> int_lit    : rufus_form:make_literal(int, chars('$1'), line('$1')).
