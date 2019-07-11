@@ -18,6 +18,14 @@ eval_chain_with_error_handler_test() ->
 
 %% Arity-0 functions returning a literal value for scalar types
 
+eval_with_function_returning_an_atom_literal_test() ->
+    RufusText = "
+    module example
+    func Ping() atom { :pong }
+    ",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual(pong, example:'Ping'()).
+
 eval_with_function_returning_a_bool_literal_test() ->
     RufusText = "
     module example
@@ -51,6 +59,15 @@ eval_with_function_returning_a_string_literal_test() ->
     ?assertEqual({string, <<"Hello">>}, example:'Greeting'()).
 
 %% Arity-1 functions taking an unused parameter for scalar types
+
+eval_with_function_taking_an_atom_and_returning_an_atom_literal_test() ->
+    RufusText = "
+    module example
+    func Ping(m atom) atom { :pong }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(pong, example:'Ping'(hello)).
 
 eval_with_function_taking_a_bool_and_returning_a_bool_literal_test() ->
     RufusText = "
@@ -89,6 +106,15 @@ eval_with_function_taking_a_string_and_returning_a_string_literal_test() ->
     ?assertEqual({string, <<"Hello">>}, example:'MaybeEcho'({string, <<"Good morning">>})).
 
 %% Arity-1 functions taking an argument and returning it for scalar types
+
+eval_with_function_taking_an_atom_and_returning_it_test() ->
+    RufusText = "
+    module example
+    func Echo(m atom) atom { m }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(hello, example:'Echo'(hello)).
 
 eval_with_function_taking_a_bool_and_returning_it_test() ->
     RufusText = "

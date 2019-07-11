@@ -29,6 +29,31 @@ forms_test() ->
 
 %% Arity-1 functions taking an argument and returning a literal
 
+forms_for_function_taking_an_atom_and_returning_an_atom_literal_test() ->
+    RufusText = "
+    module example
+    func Ping(m atom) atom { :pong }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func,
+         #{args => [{arg, #{line => 3,
+                            spec => m,
+                            type => {type, #{line => 3, spec => atom, source => rufus_text}}}}],
+           exprs => [{atom_lit, #{line => 3,
+                                  locals => #{m => {type, #{line => 3, spec => atom, source => rufus_text}}},
+                                  spec => pong,
+                                  type => {type, #{line => 3, spec => atom, source => inferred}}}}],
+           line => 3,
+           return_type => {type, #{line => 3, spec => atom, source => rufus_text}},
+           spec => 'Ping'}
+        }
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
 forms_for_function_taking_a_bool_and_returning_a_bool_literal_test() ->
     RufusText = "
     module example
@@ -130,6 +155,31 @@ forms_for_function_taking_a_string_and_returning_a_string_literal_test() ->
     ?assertEqual(Expected, AnnotatedForms).
 
 %% Arity-1 functions taking and returning an argument
+
+forms_for_function_taking_an_atom_and_returning_it_test() ->
+    RufusText = "
+    module example
+    func Echo(b atom) atom { b }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func,
+         #{args => [{arg, #{line => 3,
+                            spec => b,
+                            type => {type, #{line => 3, spec => atom, source => rufus_text}}}}],
+           exprs =>
+                    [{identifier, #{line => 3,
+                                    locals => #{b => {type, #{line => 3, spec => atom, source => rufus_text}}},
+                                    spec => b}}],
+           line => 3,
+           return_type => {type, #{line => 3, spec => atom, source => rufus_text}},
+           spec => 'Echo'}
+        }
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
 
 forms_for_function_taking_a_bool_and_returning_it_test() ->
     RufusText = "

@@ -27,7 +27,7 @@ parse_import_test() ->
 
 %% Arity-0 functions returning a literal value for scalar types
 
-parse_function_returning_a_atom_test() ->
+parse_function_returning_an_atom_test() ->
     RufusText = "
     module example
     func Color() atom { :indigo }
@@ -119,7 +119,7 @@ parse_function_returning_a_string_test() ->
 
 %% Arity-1 functions using an argument
 
-parse_function_taking_a_atom_and_returning_a_atom_test() ->
+parse_function_taking_an_atom_and_returning_an_atom_test() ->
     RufusText = "
     module example
     func Color(c atom) atom { :indigo }

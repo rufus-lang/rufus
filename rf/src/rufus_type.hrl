@@ -26,6 +26,7 @@
 
 %% Scalar literals
 
+-type atom_lit_form() :: {atom_lit, context()}.
 -type bool_lit_form() :: {bool_lit, context()}.
 -type float_lit_form() :: {float_lit, context()}.
 -type int_lit_form() :: {int_lit, context()}.
@@ -43,6 +44,7 @@
 -type rufus_form() ::
         arg_form()
       | binary_op_form()
+      | atom_lit_form()
       | bool_lit_form()
       | float_lit_form()
       | func_form()

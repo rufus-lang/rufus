@@ -22,6 +22,9 @@ forms(RufusForms) ->
 forms(Acc, [{module, #{line := Line, spec := Name}}|T]) ->
     Form = {attribute, Line, module, Name},
     forms([Form|Acc], T);
+forms(Acc, [{atom_lit, _Context} = AtomLit|T]) ->
+    Form = box(AtomLit),
+    forms([Form|Acc], T);
 forms(Acc, [{bool_lit, _Context} = BoolLit|T]) ->
     Form = box(BoolLit),
     forms([Form|Acc], T);
@@ -38,6 +41,8 @@ forms(Acc, [{identifier, #{line := Line, spec := Name, locals := Locals}}|T]) ->
     Type = maps:get(Name, Locals),
     TypeSpec = rufus_form:spec(Type),
     Form = case TypeSpec of
+        atom ->
+            {var, Line, Name};
         float ->
             {var, Line, Name};
         int ->
@@ -57,6 +62,8 @@ forms(Acc, [{func, #{line := Line, spec := Name, args := Args, exprs := Exprs}}|
 forms(Acc, [Form = {arg, #{line := Line, spec := Name}}|T]) ->
     TypeSpec = rufus_form:type_spec(Form),
     ErlangForm = case TypeSpec of
+        atom ->
+            {var, Line, Name};
         float ->
             {var, Line, Name};
         int ->
@@ -84,6 +91,9 @@ erlang_operator(Op, _) -> Op.
 
 % guards generates function guards for floats and integers.
 -spec guards(list(erlang_form()) | list(list()), list(arg_form())) -> {ok, list(erlang_form())}.
+guards(Acc, [{arg, #{line := Line, spec := Name, type := {type, #{spec := atom}}}}|T]) ->
+    GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_atom}}, [{var, Line, Name}]}],
+    guards([GuardExpr|Acc], T);
 guards(Acc, [{arg, #{line := Line, spec := Name, type := {type, #{spec := float}}}}|T]) ->
     GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_float}}, [{var, Line, Name}]}],
     guards([GuardExpr|Acc], T);
@@ -97,7 +107,9 @@ guards(Acc, []) ->
     %% behavior?
     {ok, Acc}.
 
--spec box(bool_lit_form() | float_lit_form() | int_lit_form() | string_lit_form()) -> erlang3_form().
+-spec box(atom_lit_form() | bool_lit_form() | float_lit_form() | int_lit_form() | string_lit_form()) -> erlang3_form().
+box({atom_lit, #{line := Line, spec := Value}}) ->
+    {atom, Line, Value};
 box({bool_lit, #{line := Line, spec := Value}}) ->
     {tuple, Line, [{atom, Line, bool}, {atom, Line, Value}]};
 box({float_lit, #{line := Line, spec := Value}}) ->
