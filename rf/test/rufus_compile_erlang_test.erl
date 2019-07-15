@@ -84,6 +84,25 @@ forms_for_function_returning_a_string_literal_test() ->
     ],
     ?assertEqual(Expected, ErlangForms).
 
+%% Arity-0 functions with multiple function expressions
+
+forms_for_function_with_multiple_expressions_test() ->
+    RufusText = "
+    module example
+    func Multiple() atom {
+        42
+        :fortytwo
+    }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
+    Exprs = [{integer, 4, 42}, {atom, 5, fortytwo}],
+    Expected = [{attribute, 2, module, example},
+                {attribute, 3, export, [{'Multiple', 0}]},
+                {function, 3, 'Multiple', 0, [{clause, 3, [], [], Exprs}]}],
+    ?assertEqual(Expected, ErlangForms).
+
 %% Arity-1 functions taking an unused argument
 
 forms_for_function_taking_an_atom_and_returning_an_atom_literal_test() ->
