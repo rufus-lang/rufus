@@ -117,6 +117,71 @@ parse_function_returning_a_string_test() ->
               spec => 'Greeting'}}
     ], Forms).
 
+%% Arity-0 functions with multiple function expressions
+
+forms_for_function_with_multiple_expressions_test() ->
+    RufusText = "
+    module example
+    func Multiple() atom {
+        42
+        :fortytwo
+    }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{args => [],
+                 exprs => [{int_lit, #{line => 4,
+                                       spec => 42,
+                                       type => {type, #{line => 4,
+                                                        source => inferred,
+                                                        spec => int}}}},
+                           {atom_lit, #{line => 5,
+                                        spec => fortytwo,
+                                        type => {type, #{line => 5,
+                                                         source => inferred,
+                                                         spec => atom}}}}],
+                 line => 3,
+                 return_type => {type, #{line => 3,
+                                         source => rufus_text,
+                                         spec => atom}},
+                 spec => 'Multiple'}}
+    ],
+    ?assertEqual(Expected, Forms).
+
+forms_for_function_with_multiple_expressions_with_blank_lines_test() ->
+    RufusText = "
+    module example
+    func Multiple() atom {
+        42
+
+        :fortytwo
+    }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{args => [],
+                 exprs => [{int_lit, #{line => 4,
+                                       spec => 42,
+                                       type => {type, #{line => 4,
+                                                        source => inferred,
+                                                        spec => int}}}},
+                           {atom_lit, #{line => 6,
+                                        spec => fortytwo,
+                                        type => {type, #{line => 6,
+                                                         source => inferred,
+                                                         spec => atom}}}}],
+                 line => 3,
+                 return_type => {type, #{line => 3,
+                                         source => rufus_text,
+                                         spec => atom}},
+                 spec => 'Multiple'}}
+    ],
+    ?assertEqual(Expected, Forms).
+
 %% Arity-1 functions using an argument
 
 parse_function_taking_an_atom_and_returning_an_atom_test() ->
