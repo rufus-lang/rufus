@@ -105,7 +105,7 @@ forms_for_function_with_multiple_expressions_test() ->
 
 %% Arity-1 functions taking an unused argument
 
-forms_for_function_taking_an_atom_and_returning_an_atom_literal_test() ->
+forms_for_function_taking_an_unused_atom_and_returning_an_atom_literal_test() ->
     RufusText = "
     module example
     func Ping(m atom) atom { :pong }
@@ -122,7 +122,7 @@ forms_for_function_taking_an_atom_and_returning_an_atom_literal_test() ->
                    [{atom, 3, pong}]}]}],
     ?assertEqual(Expected, ErlangForms).
 
-forms_for_function_taking_a_bool_and_returning_a_bool_literal_test() ->
+forms_for_function_taking_an_unused_bool_and_returning_a_bool_literal_test() ->
     RufusText = "
     module example
     func MaybeEcho(b bool) bool { true }
@@ -139,7 +139,7 @@ forms_for_function_taking_a_bool_and_returning_a_bool_literal_test() ->
                            [{tuple, 3, [{atom, 3, bool}, {atom, 3, true}]}]}]}],
     ?assertEqual(Expected, ErlangForms).
 
-forms_for_function_taking_a_float_and_returning_a_float_literal_test() ->
+forms_for_function_taking_an_unused_float_and_returning_a_float_literal_test() ->
     RufusText = "
     module example
     func MaybeEcho(n float) float { 3.14159265359 }
@@ -156,7 +156,7 @@ forms_for_function_taking_a_float_and_returning_a_float_literal_test() ->
                            [{float, 3, 3.14159265359}]}]}],
     ?assertEqual(Expected, ErlangForms).
 
-forms_for_function_taking_an_int_and_returning_an_int_literal_test() ->
+forms_for_function_taking_an_unused_int_and_returning_an_int_literal_test() ->
     RufusText = "
     module example
     func MaybeEcho(n int) int { 42 }
@@ -173,7 +173,7 @@ forms_for_function_taking_an_int_and_returning_an_int_literal_test() ->
                            [{integer, 3, 42}]}]}],
     ?assertEqual(Expected, ErlangForms).
 
-forms_for_function_taking_a_string_and_returning_a_string_literal_test() ->
+forms_for_function_taking_an_unused_string_and_returning_a_string_literal_test() ->
     RufusText = "
     module example
     func MaybeEcho(s string) string { \"Hello\" }
