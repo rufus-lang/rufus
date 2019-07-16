@@ -210,6 +210,15 @@ forms_for_function_with_multiple_expressions_separated_by_semicolons_test() ->
     ],
     ?assertEqual(Expected, Forms).
 
+forms_for_function_with_multiple_expressions_without_end_of_expression_separator_test() ->
+    RufusText = "
+    module example
+    func Multiple() atom { 42 :fortytwo }
+    ",
+    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    Error = rufus_parse:parse(Tokens),
+    ?assertEqual(error, Error).
+
 %% Arity-1 functions using an argument
 
 parse_function_taking_an_atom_and_returning_an_atom_test() ->

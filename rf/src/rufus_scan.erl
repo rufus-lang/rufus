@@ -14,7 +14,9 @@
 %% User code. This is placed here to allow extra attributes.
 -file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 81).
 
-trim_atom(TokenChars, TokenLen) ->
+%% trim_atom_markup trims the leading colon from an atom. It also trims single
+%% quotes when they're present.
+trim_atom_markup(TokenChars, TokenLen) ->
     {TokenChars1, TokenLen1} = trim_leading_colon(TokenChars, TokenLen),
     case is_single_quoted(TokenChars1) of
         true ->
@@ -23,14 +25,18 @@ trim_atom(TokenChars, TokenLen) ->
             list_to_atom(TokenChars1)
     end.
 
+%% trim_leading_colon trims the leading colon from an atom.
 trim_leading_colon(TokenChars, TokenLen) ->
     TrimmedTokenLen = TokenLen - 1,
     TrimmedTokenChars = lists:sublist(TokenChars, 2, TrimmedTokenLen),
     {TrimmedTokenChars, TrimmedTokenLen}.
 
+%% trim_quotes trims the quotes around the token.
 trim_quotes(TokenChars, TokenLen) ->
     lists:sublist(TokenChars, 2, TokenLen - 2).
 
+%% is_single_quoted returns true if the token is wrapped in single quotes,
+%% otherwise false.
 is_single_quoted(TokenChars) ->
     (hd(TokenChars) == $') and (lists:last(TokenChars) == $').
 
@@ -325,7 +331,7 @@ adjust_line(T, A, [_|Cs], L) ->
 %% return signal either an unrecognised character or end of current
 %% input.
 
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.erl", 327).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.erl", 333).
 yystate() -> 71.
 
 yystate(78, [34|Ics], Line, Tlen, _, _) ->
@@ -1334,7 +1340,7 @@ yyaction_11(TokenLine) ->
 -compile({inline,yyaction_12/3}).
 -file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 57).
 yyaction_12(TokenChars, TokenLen, TokenLine) ->
-     A = trim_atom (TokenChars, TokenLen),
+     A = trim_atom_markup (TokenChars, TokenLen),
      { token, { atom_lit, TokenLine, A } } .
 
 -compile({inline,yyaction_13/2}).
