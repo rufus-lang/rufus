@@ -1,6 +1,7 @@
 Definitions.
 
 Newline       = \n
+Semicolon     = \;
 UnicodeLetter = [A-Za-z]
 Digit         = [0-9]
 Letter        = ({UnicodeLetter}|"_")
@@ -42,6 +43,7 @@ Rules.
 
 {Whitespace}+   : skip_token.
 {Newline}+      : skip_token.
+{Semicolon}+    : skip_token.
 
 {Module}        : {token, {module, TokenLine}}.
 {Import}        : {token, {import, TokenLine}}.

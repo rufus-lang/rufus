@@ -270,6 +270,39 @@ func text() string {
      {'}', 4}
     ], Tokens).
 
+string_with_multiline_multiple_expression_function_returning_an_atom_test() ->
+    {ok, Tokens, _} = rufus_scan:string("
+func number() atom {
+    \"42\"
+    :fortytwo
+}
+"),
+    ?assertEqual([
+     {func, 2},
+     {identifier, 2, "number"},
+     {'(', 2},
+     {')', 2},
+     {atom, 2},
+     {'{', 2},
+     {string_lit, 3, "42"},
+     {atom_lit, 4, fortytwo},
+     {'}', 5}
+    ], Tokens).
+
+string_with_semicolon_multiple_expression_function_returning_an_atom_test() ->
+    {ok, Tokens, _} = rufus_scan:string("func number() atom { \"42\"; :fortytwo }"),
+    ?assertEqual([
+     {func, 1},
+     {identifier, 1, "number"},
+     {'(', 1},
+     {')', 1},
+     {atom, 1},
+     {'{', 1},
+     {string_lit, 1, "42"},
+     {atom_lit, 1, fortytwo},
+     {'}', 1}
+    ], Tokens).
+
 string_with_function_takes_an_int_and_returning_an_int_test() ->
     {ok, Tokens, _} = rufus_scan:string("func echo(n int) int { n }"),
     ?assertEqual([
