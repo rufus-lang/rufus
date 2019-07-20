@@ -18,8 +18,7 @@ Terminals
     bool bool_lit
     float float_lit
     int int_lit
-    string string_lit
-    eol.
+    string string_lit.
 
 %%
 %% Root symbol
