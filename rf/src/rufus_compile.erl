@@ -47,7 +47,7 @@ eval_chain(Input, []) ->
 
 -spec scan(rufus_text()) -> ok_tuple() | error_tuple().
 scan(RufusText) ->
-    case rufus_scan:string(RufusText) of
+    case rufus_raw_scan:string(RufusText) of
         {ok, Tokens, _Lines} ->
             {ok, Tokens};
         {error, Reason, _LineNumber} ->

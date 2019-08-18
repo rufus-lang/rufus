@@ -6,13 +6,13 @@
 %% property of the creator of the scanner and is not covered by that
 %% Copyright.
 
--module(rufus_scan).
+-module(rufus_raw_scan).
 
 -export([string/1,string/2,token/2,token/3,tokens/2,tokens/3]).
 -export([format_error/1]).
 
 %% User code. This is placed here to allow extra attributes.
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 81).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 81).
 
 %% trim_atom_markup trims the leading colon from an atom. It also trims single
 %% quotes when they're present.
@@ -331,7 +331,7 @@ adjust_line(T, A, [_|Cs], L) ->
 %% return signal either an unrecognised character or end of current
 %% input.
 
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.erl", 333).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.erl", 333).
 yystate() -> 71.
 
 yystate(78, [34|Ics], Line, Tlen, _, _) ->
@@ -1278,149 +1278,149 @@ yyaction(28, TokenLen, YYtcs, TokenLine) ->
 yyaction(_, _, _, _) -> error.
 
 -compile({inline,yyaction_0/0}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 42).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 42).
 yyaction_0() ->
      skip_token .
 
 -compile({inline,yyaction_1/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 43).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 43).
 yyaction_1(TokenLine) ->
      { token, { eol, TokenLine } } .
 
 -compile({inline,yyaction_2/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 44).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 44).
 yyaction_2(TokenLine) ->
      { token, { ';', TokenLine } } .
 
 -compile({inline,yyaction_3/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 46).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 46).
 yyaction_3(TokenLine) ->
      { token, { module, TokenLine } } .
 
 -compile({inline,yyaction_4/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 47).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 47).
 yyaction_4(TokenLine) ->
      { token, { import, TokenLine } } .
 
 -compile({inline,yyaction_5/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 48).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 48).
 yyaction_5(TokenLine) ->
      { token, { const, TokenLine } } .
 
 -compile({inline,yyaction_6/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 49).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 49).
 yyaction_6(TokenLine) ->
      { token, { func, TokenLine } } .
 
 -compile({inline,yyaction_7/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 51).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 51).
 yyaction_7(TokenLine) ->
      { token, { atom, TokenLine } } .
 
 -compile({inline,yyaction_8/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 52).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 52).
 yyaction_8(TokenLine) ->
      { token, { bool, TokenLine } } .
 
 -compile({inline,yyaction_9/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 53).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 53).
 yyaction_9(TokenLine) ->
      { token, { float, TokenLine } } .
 
 -compile({inline,yyaction_10/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 54).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 54).
 yyaction_10(TokenLine) ->
      { token, { int, TokenLine } } .
 
 -compile({inline,yyaction_11/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 55).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 55).
 yyaction_11(TokenLine) ->
      { token, { string, TokenLine } } .
 
 -compile({inline,yyaction_12/3}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 57).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 57).
 yyaction_12(TokenChars, TokenLen, TokenLine) ->
      A = trim_atom_markup (TokenChars, TokenLen),
      { token, { atom_lit, TokenLine, A } } .
 
 -compile({inline,yyaction_13/2}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 59).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 59).
 yyaction_13(TokenChars, TokenLine) ->
      { token, { bool_lit, TokenLine, list_to_atom (TokenChars) } } .
 
 -compile({inline,yyaction_14/2}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 60).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 60).
 yyaction_14(TokenChars, TokenLine) ->
      { token, { float_lit, TokenLine, list_to_float (TokenChars) } } .
 
 -compile({inline,yyaction_15/2}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 61).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 61).
 yyaction_15(TokenChars, TokenLine) ->
      { token, { int_lit, TokenLine, list_to_integer (TokenChars) } } .
 
 -compile({inline,yyaction_16/3}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 62).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 62).
 yyaction_16(TokenChars, TokenLen, TokenLine) ->
      S = trim_quotes (TokenChars, TokenLen),
      { token, { string_lit, TokenLine, S } } .
 
 -compile({inline,yyaction_17/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 65).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 65).
 yyaction_17(TokenLine) ->
      { token, { '(', TokenLine } } .
 
 -compile({inline,yyaction_18/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 66).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 66).
 yyaction_18(TokenLine) ->
      { token, { ')', TokenLine } } .
 
 -compile({inline,yyaction_19/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 67).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 67).
 yyaction_19(TokenLine) ->
      { token, { '{', TokenLine } } .
 
 -compile({inline,yyaction_20/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 68).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 68).
 yyaction_20(TokenLine) ->
      { token, { '}', TokenLine } } .
 
 -compile({inline,yyaction_21/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 69).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 69).
 yyaction_21(TokenLine) ->
      { token, { ',', TokenLine } } .
 
 -compile({inline,yyaction_22/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 70).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 70).
 yyaction_22(TokenLine) ->
      { token, { '=', TokenLine } } .
 
 -compile({inline,yyaction_23/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 71).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 71).
 yyaction_23(TokenLine) ->
      { token, { '+', TokenLine } } .
 
 -compile({inline,yyaction_24/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 72).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 72).
 yyaction_24(TokenLine) ->
      { token, { '-', TokenLine } } .
 
 -compile({inline,yyaction_25/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 73).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 73).
 yyaction_25(TokenLine) ->
      { token, { '*', TokenLine } } .
 
 -compile({inline,yyaction_26/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 74).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 74).
 yyaction_26(TokenLine) ->
      { token, { '/', TokenLine } } .
 
 -compile({inline,yyaction_27/1}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 75).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 75).
 yyaction_27(TokenLine) ->
      { token, { '%', TokenLine } } .
 
 -compile({inline,yyaction_28/2}).
--file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 77).
+-file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_raw_scan.xrl", 77).
 yyaction_28(TokenChars, TokenLine) ->
      { token, { identifier, TokenLine, TokenChars } } .
 

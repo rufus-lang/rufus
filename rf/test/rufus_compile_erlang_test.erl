@@ -9,7 +9,7 @@ forms_for_function_returning_an_atom_literal_test() ->
     module example
     func Ping() atom { :pong }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     AtomExpr = {atom, 3, pong},
@@ -25,7 +25,7 @@ forms_for_function_returning_a_bool_literal_test() ->
     module example
     func False() bool { false }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     BoolExpr = {atom, 3, false},
@@ -42,7 +42,7 @@ forms_for_function_returning_a_float_literal_test() ->
     module example
     func Pi() float { 3.14159265359 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     Expected = [
@@ -57,7 +57,7 @@ forms_for_function_returning_an_int_literal_test() ->
     module example
     func Number() int { 42 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     Expected = [
@@ -72,7 +72,7 @@ forms_for_function_returning_a_string_literal_test() ->
     module example
     func Greeting() string { \"Hello\" }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     StringExpr = {bin, 3, [{bin_element, 3, {string, 3, "Hello"}, default, default}]},
@@ -94,7 +94,7 @@ forms_for_function_with_multiple_expressions_test() ->
         :fortytwo;
     }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     Exprs = [{integer, 4, 42}, {atom, 5, fortytwo}],
@@ -112,7 +112,7 @@ forms_for_function_with_multiple_expressions_with_blank_lines_test() ->
         :fortytwo;
     }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     Exprs = [{integer, 4, 42}, {atom, 6, fortytwo}],
@@ -128,7 +128,7 @@ forms_for_function_taking_an_unused_atom_and_returning_an_atom_literal_test() ->
     module example
     func Ping(m atom) atom { :pong }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     Expected = [{attribute, 2, module, example},
@@ -145,7 +145,7 @@ forms_for_function_taking_an_unused_bool_and_returning_a_bool_literal_test() ->
     module example
     func MaybeEcho(b bool) bool { true }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     Expected = [{attribute, 2, module, example},
@@ -162,7 +162,7 @@ forms_for_function_taking_an_unused_float_and_returning_a_float_literal_test() -
     module example
     func MaybeEcho(n float) float { 3.14159265359 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     Expected = [{attribute, 2, module, example},
@@ -179,7 +179,7 @@ forms_for_function_taking_an_unused_int_and_returning_an_int_literal_test() ->
     module example
     func MaybeEcho(n int) int { 42 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     Expected = [{attribute, 2, module, example},
@@ -196,7 +196,7 @@ forms_for_function_taking_an_unused_string_and_returning_a_string_literal_test()
     module example
     func MaybeEcho(s string) string { \"Hello\" }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     StringExpr = {bin_element, 3, {string, 3, "Hello"}, default, default},
@@ -216,7 +216,7 @@ forms_for_function_taking_an_atom_and_returning_an_atom_test() ->
     module example
     func Echo(m atom) atom { m }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
@@ -234,7 +234,7 @@ forms_for_function_taking_a_bool_and_returning_a_bool_test() ->
     module example
     func Echo(b bool) bool { b }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
@@ -252,7 +252,7 @@ forms_for_function_taking_a_float_and_returning_a_float_test() ->
     module example
     func Echo(n float) float { n }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
@@ -270,7 +270,7 @@ forms_for_function_taking_an_int_and_returning_an_int_test() ->
     module example
     func Echo(n int) int { n }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
@@ -288,7 +288,7 @@ forms_for_function_taking_a_string_and_returning_a_string_test() ->
     module example
     func Echo(s string) string { s }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
@@ -308,7 +308,7 @@ forms_for_function_returning_a_sum_of_int_literals_test() ->
     module example
     func FortyTwo() int { 19 + 23 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     BinaryOpExpr = {op, 3, '+', {integer, 3, 19}, {integer, 3, 23}},
@@ -324,7 +324,7 @@ forms_for_function_returning_a_sum_of_three_int_literals_test() ->
     module example
     func FiftyNine() int { 19 + 23 + 17 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_typecheck_binary_op:forms(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
@@ -342,7 +342,7 @@ forms_for_function_returning_a_sum_of_float_literals_test() ->
     module example
     func Pi() float { 1.0 + 2.14159265359 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     BinaryOpExpr = {op, 3, '+', {float, 3, 1.0}, {float, 3, 2.14159265359}},
@@ -360,7 +360,7 @@ forms_for_function_returning_a_difference_of_int_literals_test() ->
     module example
     func FortyTwo() int { 55 - 13 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     BinaryOpExpr = {op, 3, '-', {integer, 3, 55}, {integer, 3, 13}},
@@ -376,7 +376,7 @@ forms_for_function_returning_a_difference_of_three_int_literals_test() ->
     module example
     func ThirteenThirtyFive() int { 1500 - 150 - 15 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_typecheck_binary_op:forms(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
@@ -394,7 +394,7 @@ forms_for_function_returning_a_difference_of_float_literals_test() ->
     module example
     func Pi() float { 4.14159265359 - 1.0 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     BinaryOpExpr = {op, 3, '-', {float, 3, 4.14159265359}, {float, 3, 1.0}},
@@ -412,7 +412,7 @@ forms_for_function_returning_a_product_of_int_literals_test() ->
     module example
     func FortyTwo() int { 3 * 14 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     BinaryOpExpr = {op, 3, '*', {integer, 3, 3}, {integer, 3, 14}},
@@ -428,7 +428,7 @@ forms_for_function_returning_a_product_of_three_int_literals_test() ->
     module example
     func ThirteenThirtyFive() int { 3 * 5 * 89 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_typecheck_binary_op:forms(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
@@ -446,7 +446,7 @@ forms_for_function_returning_a_product_of_float_literals_test() ->
     module example
     func Pi() float { 1.0 * 3.14159265359 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     BinaryOpExpr = {op, 3, '*', {float, 3, 1.0}, {float, 3, 3.14159265359}},
@@ -464,7 +464,7 @@ forms_for_function_returning_a_division_of_int_literals_test() ->
     module example
     func FortyTwo() int { 84 / 2 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     BinaryOpExpr = {op, 3, 'div', {integer, 3, 84}, {integer, 3, 2}},
@@ -480,7 +480,7 @@ forms_for_function_returning_a_division_of_three_int_literals_test() ->
     module example
     func Five() int { 100 / 10 / 2 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_typecheck_binary_op:forms(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
@@ -498,7 +498,7 @@ forms_for_function_returning_a_division_of_float_literals_test() ->
     module example
     func TwoPointSevenFive() float { 5.5 / 2.0 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     BinaryOpExpr = {op, 3, '/', {float, 3, 5.5}, {float, 3, 2.0}},
@@ -514,7 +514,7 @@ forms_for_function_returning_a_remainder_of_int_literals_test() ->
     module example
     func Six() int { 27 % 7 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     BinaryOpExpr = {op, 3, 'rem', {integer, 3, 27}, {integer, 3, 7}},
@@ -530,7 +530,7 @@ forms_for_function_returning_a_remainder_of_three_int_literals_test() ->
     module example
     func Four() int { 100 % 13 % 5 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens, _} = rufus_raw_scan:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_typecheck_binary_op:forms(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),

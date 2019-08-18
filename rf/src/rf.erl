@@ -60,7 +60,7 @@ run("debug:parse", _Args) ->
     }
 ",
     io:format("RufusText =>~n    ~s~n", [RufusText]),
-    {ok, Tokens, _Lines} = rufus_scan:string(RufusText),
+    {ok, Tokens, _Lines} = rufus_raw_scan:string(RufusText),
     io:format("Tokens =>~n~n    ~p~n~n", [Tokens]),
     case rufus_parse:parse(Tokens) of
         {ok, Forms} ->
@@ -84,7 +84,7 @@ run("debug:scan", _Args) ->
     }
 ",
     io:format("RufusText =>~n    ~s~n", [RufusText]),
-    {ok, Tokens, _Lines} = rufus_scan:string(RufusText),
+    {ok, Tokens, _Lines} = rufus_raw_scan:string(RufusText),
     io:format("Tokens =>~n~n    ~p~n", [Tokens]),
     0;
 run("version", _Args) ->

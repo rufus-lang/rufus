@@ -1,5 +1,5 @@
 %% rufus_tokenize scans Rufus source code and generates tokens for the
-%% rufus_parse module to consume. The rufus_scan module is used as a low-level
+%% rufus_parse module to consume. The rufus_raw_scan module is used as a low-level
 %% scanner. The tokenizer processes scanned tokens and inserts expression
 %% terminators based on a set of rules:
 %%
@@ -25,7 +25,7 @@
 %%   successful.
 %% - `{error, Reason}` if an error occurs.
 string(RufusText) ->
-    case rufus_scan:string(RufusText) of
+    case rufus_raw_scan:string(RufusText) of
         {ok, Tokens, _Lines} ->
             insert_semicolons(Tokens);
         {error, Reason, _LineNumber} ->
