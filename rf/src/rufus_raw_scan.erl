@@ -1213,10 +1213,10 @@ yystate(S, Ics, Line, Tlen, Action, Alen) ->
 
 yyaction(0, _, _, _) ->
     yyaction_0();
-yyaction(1, _, _, _) ->
-    yyaction_1();
-yyaction(2, _, _, _) ->
-    yyaction_2();
+yyaction(1, _, _, TokenLine) ->
+    yyaction_1(TokenLine);
+yyaction(2, _, _, TokenLine) ->
+    yyaction_2(TokenLine);
 yyaction(3, _, _, TokenLine) ->
     yyaction_3(TokenLine);
 yyaction(4, _, _, TokenLine) ->
@@ -1282,15 +1282,15 @@ yyaction(_, _, _, _) -> error.
 yyaction_0() ->
      skip_token .
 
--compile({inline,yyaction_1/0}).
+-compile({inline,yyaction_1/1}).
 -file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 43).
-yyaction_1() ->
-     skip_token .
+yyaction_1(TokenLine) ->
+     { token, { eol, TokenLine } } .
 
--compile({inline,yyaction_2/0}).
+-compile({inline,yyaction_2/1}).
 -file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 44).
-yyaction_2() ->
-     skip_token .
+yyaction_2(TokenLine) ->
+     { token, { ';', TokenLine } } .
 
 -compile({inline,yyaction_3/1}).
 -file("/Users/jkakar/src/github.com/rufus-lang/rufus/rf/src/rufus_scan.xrl", 46).

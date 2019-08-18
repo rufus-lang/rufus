@@ -42,8 +42,8 @@ Identifier    = {Letter}({Letter}|{Digit})*
 Rules.
 
 {Whitespace}+   : skip_token.
-{Newline}+      : skip_token.
-{Semicolon}+    : skip_token.
+{Newline}+      : {token, {eol, TokenLine}}.
+{Semicolon}+    : {token, {';', TokenLine}}.
 
 {Module}        : {token, {module, TokenLine}}.
 {Import}        : {token, {import, TokenLine}}.

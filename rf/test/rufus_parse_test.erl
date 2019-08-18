@@ -216,8 +216,8 @@ forms_for_function_with_multiple_expressions_without_end_of_expression_separator
     func Multiple() atom { 42 :fortytwo }
     ",
     {ok, Tokens, _} = rufus_scan:string(RufusText),
-    Error = rufus_parse:parse(Tokens),
-    ?assertEqual(error, Error).
+    {error, Reason} = rufus_parse:parse(Tokens),
+    ?assertEqual({3, rufus_parse, ["syntax error before: ", ["fortytwo"]]}, Reason).
 
 %% Arity-1 functions using an argument
 

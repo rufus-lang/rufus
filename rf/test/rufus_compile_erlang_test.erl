@@ -90,8 +90,8 @@ forms_for_function_with_multiple_expressions_test() ->
     RufusText = "
     module example
     func Multiple() atom {
-        42
-        :fortytwo
+        42;
+        :fortytwo;
     }
     ",
     {ok, Tokens, _} = rufus_scan:string(RufusText),
@@ -107,9 +107,9 @@ forms_for_function_with_multiple_expressions_with_blank_lines_test() ->
     RufusText = "
     module example
     func Multiple() atom {
-        42
+        42;
 
-        :fortytwo
+        :fortytwo;
     }
     ",
     {ok, Tokens, _} = rufus_scan:string(RufusText),
