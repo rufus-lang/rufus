@@ -17,11 +17,14 @@ string_with_import_test() ->
      import \"bar\"
     "),
     ?assertEqual([
+     {eol, 1},
      {module, 2},
      {identifier, 2, "foo"},
+     {eol, 2},
      {import, 3},
-     {string_lit, 3, "bar"}
-    ], Tokens).
+     {string_lit, 3, "bar"},
+     {eol, 3}
+], Tokens).
 
 %% Const
 
@@ -260,14 +263,18 @@ func text() string {
 }
 "),
     ?assertEqual([
+     {eol, 1},
      {func, 2},
      {identifier, 2, "text"},
      {'(', 2},
      {')', 2},
      {string, 2},
      {'{', 2},
+     {eol, 2},
      {string_lit, 3, "42"},
-     {'}', 4}
+     {eol, 3},
+     {'}', 4},
+     {eol, 4}
     ], Tokens).
 
 string_with_multiline_multiple_expression_function_returning_an_atom_test() ->
@@ -278,15 +285,20 @@ func number() atom {
 }
 "),
     ?assertEqual([
+     {eol, 1},
      {func, 2},
      {identifier, 2, "number"},
      {'(', 2},
      {')', 2},
      {atom, 2},
      {'{', 2},
+     {eol, 2},
      {string_lit, 3, "42"},
+     {eol, 3},
      {atom_lit, 4, fortytwo},
-     {'}', 5}
+     {eol, 4},
+     {'}', 5},
+     {eol, 5}
     ], Tokens).
 
 string_with_semicolon_multiple_expression_function_returning_an_atom_test() ->
@@ -299,6 +311,7 @@ string_with_semicolon_multiple_expression_function_returning_an_atom_test() ->
      {atom, 1},
      {'{', 1},
      {string_lit, 1, "42"},
+     {';', 1},
      {atom_lit, 1, fortytwo},
      {'}', 1}
     ], Tokens).

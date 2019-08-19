@@ -1,15 +1,16 @@
 %% rufus_tokenize scans Rufus source code and generates tokens for the
-%% rufus_parse module to consume. The rufus_raw_scan module is used as a low-level
-%% scanner. The tokenizer processes scanned tokens and inserts expression
-%% terminators based on a set of rules:
+%% rufus_parse module to consume. The rufus_raw_scan module is used as a
+%% low-level scanner. The tokenizer processes scanned tokens and inserts
+%% expression terminators based the set of rules defined in the _Semicolons_
+%% section of the language spec:
 %%
 %% 1. When the input is broken into tokens, a semicolon is automatically
 %%    inserted into the token stream immediately after a line's final token if
 %%    that token is:
 %%    - An identifier.
-%%    - A `bool`, `float`, `int` or `string` literal.
-%%    - One of the punctuation `)`, `]`, or `}`.
-%% 2. To allow complex expressionss to occupy a single line, a semicolon may be
+%%    - An `atom`, `bool`, `float`, `int` or `string` literal.
+%%    - One of the punctuation `)` or `}`.
+%% 2. To allow complex expressions to occupy a single line, a semicolon may be
 %%    omitted before a closing `)` or `}`.
 -module(rufus_tokenize).
 
@@ -37,35 +38,76 @@ string(RufusText) ->
 %% insert_semicolons inserts `;` tokens after some `eol` tokens to terminate
 %% expressions. All `eol` tokens are discarded in the resulting list of tokens.
 insert_semicolons(Tokens) ->
-    case insert_semicolons([], undefined, Tokens) of
+    LastToken = undefined,
+    case insert_semicolons([], LastToken, Tokens) of
         {error, Reason} ->
             {error, Reason};
         ExprTerminatedTokens ->
             {ok, ExprTerminatedTokens}
     end.
 
-insert_semicolons(Acc, PrevToken={identifier, _TokenLine, _TokenChars}, [Token={eol, _TokenLine}|T]) ->
-    insert_semicolons(insert_semicolon(Acc, PrevToken, Token), Token, T);
-insert_semicolons(Acc, PrevToken={bool_lit, _TokenLine, _TokenChars}, [Token={eol, _TokenLine}|T]) ->
-    insert_semicolons(insert_semicolon(Acc, PrevToken, Token), Token, T);
-insert_semicolons(Acc, PrevToken={float_lit, _TokenLine, _TokenChars}, [Token={eol, _TokenLine}|T]) ->
-    insert_semicolons(insert_semicolon(Acc, PrevToken, Token), Token, T);
-insert_semicolons(Acc, PrevToken={int_lit, _TokenLine, _TokenChars}, [Token={eol, _TokenLine}|T]) ->
-    insert_semicolons(insert_semicolon(Acc, PrevToken, Token), Token, T);
-insert_semicolons(Acc, PrevToken={string_lit, _TokenLine, _TokenChars}, [Token={eol, _TokenLine}|T]) ->
-    insert_semicolons(insert_semicolon(Acc, PrevToken, Token), Token, T);
-insert_semicolons(Acc, PrevToken={')', _TokenLine, _TokenChars}, [Token={eol, _TokenLine}|T]) ->
-    insert_semicolons(insert_semicolon(Acc, PrevToken, Token), Token, T);
-insert_semicolons(Acc, PrevToken={'}', _TokenLine, _TokenChars}, [Token={eol, _TokenLine}|T]) ->
-    insert_semicolons(insert_semicolon(Acc, PrevToken, Token), Token, T);
-insert_semicolons(Acc, _PrevToken, [Token|T]) ->
+%% insert_semicolons inserts a semicolon when the following tokens are the last
+%% on a line. The `eol` token is always discarded.
+insert_semicolons(Acc, {identifier, TokenLine, _TokenChars}, [Token={eol, _TokenLine}|T]) ->
+    insert_semicolons(insert_semicolon(Acc, TokenLine), Token, T);
+insert_semicolons(Acc, {atom_lit, TokenLine, _TokenChars}, [Token={eol, _TokenLine}|T]) ->
+    insert_semicolons(insert_semicolon(Acc, TokenLine), Token, T);
+insert_semicolons(Acc, {bool_lit, TokenLine, _TokenChars}, [Token={eol, _TokenLine}|T]) ->
+    insert_semicolons(insert_semicolon(Acc, TokenLine), Token, T);
+insert_semicolons(Acc, {float_lit, TokenLine, _TokenChars}, [Token={eol, _TokenLine}|T]) ->
+    insert_semicolons(insert_semicolon(Acc, TokenLine), Token, T);
+insert_semicolons(Acc, {int_lit, TokenLine, _TokenChars}, [Token={eol, _TokenLine}|T]) ->
+    insert_semicolons(insert_semicolon(Acc, TokenLine), Token, T);
+insert_semicolons(Acc, {string_lit, TokenLine, _TokenChars}, [Token={eol, _TokenLine}|T]) ->
+    insert_semicolons(insert_semicolon(Acc, TokenLine), Token, T);
+insert_semicolons(Acc, {')', TokenLine}, [Token={eol, _TokenLine}|T]) ->
+    insert_semicolons(insert_semicolon(Acc, TokenLine), Token, T);
+insert_semicolons(Acc, {_TokenType, TokenLine}, [Token={'}', _TokenLine}|T]) ->
+    Acc1 = insert_semicolon(Acc, TokenLine),
+    insert_semicolons([Token|Acc1], Token, T);
+insert_semicolons(Acc, {_TokenType, TokenLine, _TokenChars}, [Token={'}', _TokenLine}|T]) ->
+    Acc1 = insert_semicolon(Acc, TokenLine),
+    insert_semicolons([Token|Acc1], Token, T);
+%% insert_semicolons(Acc, {'}', TokenLine}, [Token={eol, _TokenLine}|T]) ->
+%%     insert_semicolons(insert_semicolon(Acc, TokenLine), Token, T);
+%% insert_semicolons discards `eol` tokens.
+insert_semicolons(Acc, _LastToken, [Token={eol, _TokenLine}|T]) ->
+    insert_semicolons(Acc, Token, T);
+%% insert_semicolons keeps all other tokens.
+insert_semicolons(Acc, _LastToken, [Token|T]) ->
     insert_semicolons([Token|Acc], Token, T);
-insert_semicolons(Acc, _PrevToken, []) ->
+%% insert_semicolons inserts a semicolon when the following tokens are the last
+%% in the source text.
+insert_semicolons(Acc, {identifier, TokenLine, _TokenChars}, []) ->
+    insert_semicolons(insert_semicolon(Acc, TokenLine), undefined, []);
+insert_semicolons(Acc, {atom_lit, TokenLine, _TokenChars}, []) ->
+    insert_semicolons(insert_semicolon(Acc, TokenLine), undefined, []);
+insert_semicolons(Acc, {bool_lit, TokenLine, _TokenChars}, []) ->
+    insert_semicolons(insert_semicolon(Acc, TokenLine), undefined, []);
+insert_semicolons(Acc, {float_lit, TokenLine, _TokenChars}, []) ->
+    insert_semicolons(insert_semicolon(Acc, TokenLine), undefined, []);
+insert_semicolons(Acc, {int_lit, TokenLine, _TokenChars}, []) ->
+    insert_semicolons(insert_semicolon(Acc, TokenLine), undefined, []);
+insert_semicolons(Acc, {string_lit, TokenLine, _TokenChars}, []) ->
+    insert_semicolons(insert_semicolon(Acc, TokenLine), undefined, []);
+insert_semicolons(Acc, {')', TokenLine}, []) ->
+    insert_semicolons(insert_semicolon(Acc, TokenLine), undefined, []);
+%% insert_semicolons terminates when all tokens have been processed.
+insert_semicolons(Acc, _LastToken, []) ->
     lists:reverse(Acc).
 
 make_semicolon_token(TokenLine) ->
     {';', TokenLine}.
 
-insert_semicolon(Acc, _PrevToken={_Type, TokenLine, _TokenChars1}, Token) ->
-    Acc1 = [make_semicolon_token(TokenLine)|Acc],
-    [Token|Acc1].
+insert_semicolon(Acc=[{';', _TokenLine1}|_T], _TokenLine2) ->
+    Acc;
+insert_semicolon(Acc, TokenLine) ->
+    [make_semicolon_token(TokenLine)|Acc].
+
+%% insert_semicolon(Acc=[LastToken|_T], TokenLine) ->
+%%     case LastToken of
+%%         {';', _TokenLine} ->
+%%             Acc;
+%%         _ ->
+%%             [make_semicolon_token(TokenLine)|Acc]
+%%     end.
