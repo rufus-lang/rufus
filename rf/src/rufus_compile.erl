@@ -19,7 +19,7 @@
 %% - `error` or `{error, ...}` if an error occurs.
 -spec eval(rufus_text()) -> ok_tuple() | error_tuple().
 eval(RufusText) ->
-    Handlers = [fun scan/1,
+    Handlers = [fun rufus_tokenize:string/1,
                 fun rufus_parse:parse/1,
                 fun rufus_annotate_locals:forms/1,
                 fun rufus_typecheck_binary_op:forms/1,
@@ -44,15 +44,6 @@ eval_chain(Input, [H|T]) ->
     end;
 eval_chain(Input, []) ->
     {ok, Input}.
-
--spec scan(rufus_text()) -> ok_tuple() | error_tuple().
-scan(RufusText) ->
-    case rufus_raw_scan:string(RufusText) of
-        {ok, Tokens, _Lines} ->
-            {ok, Tokens};
-        {error, Reason, _LineNumber} ->
-            {error, Reason}
-    end.
 
 -spec compile(list()) -> ok_tuple() | error_tuple().
 compile(ErlangForms) ->

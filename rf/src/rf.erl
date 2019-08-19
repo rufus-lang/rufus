@@ -75,7 +75,7 @@ run("debug:parse", _Args) ->
             io:format("Error =>~n~n    ~p~n", [Error]),
             -1
     end;
-run("debug:scan", _Args) ->
+run("debug:tokenize", _Args) ->
     RufusText = "
     module example
 
@@ -84,7 +84,7 @@ run("debug:scan", _Args) ->
     }
 ",
     io:format("RufusText =>~n    ~s~n", [RufusText]),
-    {ok, Tokens, _Lines} = rufus_raw_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     io:format("Tokens =>~n~n    ~p~n", [Tokens]),
     0;
 run("version", _Args) ->
@@ -123,7 +123,7 @@ help(_Args) ->
     io:format("    compile             Compile source code and then run it and print its output~n"),
     io:format("    debug:erlang-forms  Print Erlang source code from a file as abstract forms~n"),
     io:format("    debug:parse         Parse source code and print parse forms~n"),
-    io:format("    debug:scan          Scan source code and print parse tokens~n"),
+    io:format("    debug:tokenize      Scan source code and print parse tokens~n"),
     io:format("    version             Print Rufus version~n"),
     io:format("~n"),
     io:format("Use \"rf help [command]\" for more information about that command~n"),
