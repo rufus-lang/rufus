@@ -42,17 +42,17 @@
 %% Rufus forms
 
 -type rufus_form() ::
-        arg_form()
-      | binary_op_form()
-      | atom_lit_form()
+        atom_lit_form()
       | bool_lit_form()
       | float_lit_form()
-      | func_form()
-      | identifier_form()
       | int_lit_form()
-      | module_form()
       | string_lit_form()
-      | type_form().
+      | module_form()
+      | func_form()
+      | arg_form()
+      | identifier_form()
+      | type_form()
+      | binary_op_form().
 
 %% Errors
 

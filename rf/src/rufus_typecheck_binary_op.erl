@@ -26,7 +26,7 @@ forms(RufusForms) ->
 
 %% Private API
 
--spec forms(list(rufus_form()), list(rufus_form())) -> {ok, list(rufus_form())}.
+-spec forms(list(rufus_form()), list(rufus_form())) -> {ok, list(rufus_form())} | {error, atom(), binary_op_form()}.
 forms(Acc, [{func, Context = #{exprs := Exprs}}|T]) ->
     case forms([], Exprs) of
         {ok, AnnotatedExprs} ->
@@ -47,7 +47,7 @@ forms(Acc, [H|T]) ->
 forms(Acc, []) ->
     {ok, lists:reverse(Acc)}.
 
--spec typecheck_and_annotate(binary_op_form() | rufus_form()) -> {ok, binary_op_form() | rufus_form()}. % | {error, atom(), binary_op_form()} | no_return().
+-spec typecheck_and_annotate(binary_op_form() | rufus_form()) -> {ok, binary_op_form() | rufus_form()} | {error, atom(), binary_op_form()}.
 typecheck_and_annotate({binary_op, Context = #{left := Left, right := Right}}) ->
     {ok, AnnotatedLeft} = typecheck_and_annotate(Left),
     {ok, AnnotatedRight} = typecheck_and_annotate(Right),

@@ -14,6 +14,8 @@
 %%    omitted before a closing `)` or `}`.
 -module(rufus_tokenize).
 
+-include_lib("rufus_type.hrl").
+
 %% API exports
 
 -export([string/1]).
@@ -25,6 +27,7 @@
 %% - `{ok, Tokens}` with `Tokens` as a list of tokens, if tokenization is
 %%   successful.
 %% - `{error, Reason}` if an error occurs.
+-spec string(rufus_text()) -> ok_tuple() | error_tuple().
 string(RufusText) ->
     case rufus_raw_scan:string(RufusText) of
         {ok, Tokens, _Lines} ->
@@ -37,14 +40,11 @@ string(RufusText) ->
 
 %% insert_semicolons inserts `;` tokens after some `eol` tokens to terminate
 %% expressions. All `eol` tokens are discarded in the resulting list of tokens.
+-spec insert_semicolons(list(tuple())) -> {ok, list(tuple())}.
 insert_semicolons(Tokens) ->
     LastToken = undefined,
-    case insert_semicolons([], LastToken, Tokens) of
-        {error, Reason} ->
-            {error, Reason};
-        ExprTerminatedTokens ->
-            {ok, ExprTerminatedTokens}
-    end.
+    ExprTerminatedTokens = insert_semicolons([], LastToken, Tokens),
+    {ok, ExprTerminatedTokens}.
 
 %% insert_semicolons inserts a semicolon when the following tokens are the last
 %% on a line. The `eol` token is always discarded.
@@ -103,11 +103,3 @@ insert_semicolon(Acc=[{';', _TokenLine1}|_T], _TokenLine2) ->
     Acc;
 insert_semicolon(Acc, TokenLine) ->
     [make_semicolon_token(TokenLine)|Acc].
-
-%% insert_semicolon(Acc=[LastToken|_T], TokenLine) ->
-%%     case LastToken of
-%%         {';', _TokenLine} ->
-%%             Acc;
-%%         _ ->
-%%             [make_semicolon_token(TokenLine)|Acc]
-%%     end.
