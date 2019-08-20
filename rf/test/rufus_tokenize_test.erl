@@ -166,7 +166,7 @@ string_inserts_semicolon_before_last_closing_brace_in_line_test() ->
      {'}', 1}
     ], Tokens).
 
-string_inserts_semicolon_before_last_closing_brace_never_emits_duplicate_semicolons_test() ->
+string_does_not_insert_a_duplicate_semicolon_for_the_closing_brace_when_the_previous_expression_is_automatically_terminated_test() ->
     {ok, Tokens} = rufus_tokenize:string("
     func Name() string {
         \"Rufus\"
@@ -182,6 +182,20 @@ string_inserts_semicolon_before_last_closing_brace_never_emits_duplicate_semicol
      {string_lit, 3, "Rufus"},
      {';', 3},
      {'}', 4}
+    ], Tokens).
+
+string_does_not_insert_a_duplicate_semicolon_for_the_closing_brace_when_the_last_expression_is_explicitly_terminated_test() ->
+    {ok, Tokens} = rufus_tokenize:string("func Name() string { \"Rufus\"; }\n"),
+    ?assertEqual([
+     {func, 1},
+     {identifier, 1, "Name"},
+     {'(', 1},
+     {')', 1},
+     {string, 1},
+     {'{', 1},
+     {string_lit, 1, "Rufus"},
+     {';', 1},
+     {'}', 1}
     ], Tokens).
 
 %% Arbitrary whitespace.

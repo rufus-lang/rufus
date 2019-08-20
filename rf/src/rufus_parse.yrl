@@ -43,7 +43,7 @@ Left 100 '%'.
 %%
 
 root -> decl                  : ['$1'].
-root -> decl root             : ['$1'] ++ '$2'. %% TODO(jkakar): Optimize this to avoid concatenation.
+root -> decl root             : ['$1'] ++ '$2'.
 
 decl -> module identifier ';' : rufus_form:make_module(list_to_atom(chars('$2')), line('$2')).
 decl -> import string_lit ';' : rufus_form:make_import(chars('$2'), line('$2')).
@@ -56,7 +56,7 @@ type -> int                   : rufus_form:make_type(int, line('$1')).
 type -> string                : rufus_form:make_type(string, line('$1')).
 
 function -> func identifier '(' args ')' type block :
-                               rufus_form:make_func(list_to_atom(chars('$2')), '$4', '$6', '$7', line('$1')).
+                                rufus_form:make_func(list_to_atom(chars('$2')), '$4', '$6', '$7', line('$1')).
 
 args -> arg args              : ['$1'|'$2'].
 args -> '$empty'              : [].
