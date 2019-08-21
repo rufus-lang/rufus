@@ -70,7 +70,7 @@ make_identifier(Spec, Line) ->
 %% Literal form builder API
 
 %% make_literal returns a form for a literal value.
--spec make_literal(atom | bool | float | int | string, atom(), term()) -> atom_lit_form() | bool_lit_form() | float_lit_form() | int_lit_form() | string_lit_form().
+-spec make_literal(literal_name(), atom(), term()) -> literal_form().
 make_literal(TypeSpec, Spec, Line) ->
     FormSpec = list_to_atom(unicode:characters_to_list([atom_to_list(TypeSpec), "_lit"])),
     {FormSpec, #{spec => Spec,
