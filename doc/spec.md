@@ -25,6 +25,7 @@ License](https://creativecommons.org/licenses/by/3.0/).
 * [Lexical elements](#lexical-elements)
   * [Comments](#comments)
   * [Tokens](#tokens)
+  * [Semicolons](#semicolons)
   * [Identifiers](#identifiers)
   * [Keywords](#keywords)
   * [Operators and punctuation](#operators-and-punctuation)
@@ -139,9 +140,28 @@ Comments start with the character sequence `//` and stop at the end of the line.
 Tokens form the vocabulary of the Rufus language. There are four classes:
 identifiers, keywords, operators and punctuation, and literals. White space,
 formed from spaces (`U+0020`) and horizontal tabs (`U+0009`) is ignored except
-as it separates tokens that would otherwise combine into a single token. While
+as it separates tokens that would otherwise combine into a single token. Also, a
+newline or end of file may trigger the insertion of a [semicolon](#semicolon). While
 breaking the input into tokens, the next token is the longest sequence of
 characters that form a valid token.
+
+### Semicolons
+
+The formal grammar uses semicolons `;` as terminators in a number of
+productions. Rufus programs may omit most of these semicolons using the
+following two rules:
+
+1. When the input is broken into tokens, a semicolon is automatically inserted
+   into the token stream immediately after a line's final token if that token
+   is:
+   - An identifier.
+   - A `bool`, `int`, `float` or `string` literal.
+   - One of the punctuation `)` or `}`.
+2. To allow complex statements to occupy a single line, a semicolon may be
+   omitted before a closing `)` or `}`.
+
+To reflect idiomatic use, code examples in this document elide semicolons using
+these rules.
 
 ### Identifiers
 

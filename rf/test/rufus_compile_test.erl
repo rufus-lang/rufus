@@ -58,6 +58,20 @@ eval_with_function_returning_a_string_literal_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual({string, <<"Hello">>}, example:'Greeting'()).
 
+%% Arity-0 functions with multiple function expressions
+
+forms_for_function_with_multiple_expressions_test() ->
+    RufusText = "
+    module example
+    func Multiple() atom {
+        42
+        :fortytwo
+    }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(fortytwo, example:'Multiple'()).
+
 %% Arity-1 functions taking an unused parameter for scalar types
 
 eval_with_function_taking_an_atom_and_returning_an_atom_literal_test() ->

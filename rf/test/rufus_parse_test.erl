@@ -5,20 +5,20 @@
 %% Modules
 
 parse_empty_module_test() ->
-    {ok, Tokens, _} = rufus_scan:string("module empty"),
+    {ok, Tokens} = rufus_tokenize:string("module empty"),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 1, spec => empty}}
     ], Forms).
 
-%% Import
+%% %% Import
 
 parse_import_test() ->
     RufusText = "
     module foo
     import \"bar\"
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => foo}},
@@ -32,7 +32,7 @@ parse_function_returning_an_atom_test() ->
     module example
     func Color() atom { :indigo }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
@@ -50,7 +50,7 @@ parse_function_returning_a_bool_test() ->
     module example
     func True() bool { true }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
@@ -68,7 +68,7 @@ parse_function_returning_a_float_test() ->
     module math
     func Pi() float { 3.14159265359 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => math}},
@@ -86,7 +86,7 @@ parse_function_returning_an_int_test() ->
     module rand
     func Number() int { 42 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => rand}},
@@ -104,7 +104,7 @@ parse_function_returning_a_string_test() ->
     module example
     func Greeting() string { \"Hello\" }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
@@ -117,6 +117,109 @@ parse_function_returning_a_string_test() ->
               spec => 'Greeting'}}
     ], Forms).
 
+%% Arity-0 functions with multiple function expressions
+
+forms_for_function_with_multiple_expressions_test() ->
+    RufusText = "
+    module example
+    func Multiple() atom {
+        42
+        :fortytwo
+    }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    io:format("Tokens => ~p~n", [Tokens]),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{args => [],
+                 exprs => [{int_lit, #{line => 4,
+                                       spec => 42,
+                                       type => {type, #{line => 4,
+                                                        source => inferred,
+                                                        spec => int}}}},
+                           {atom_lit, #{line => 5,
+                                        spec => fortytwo,
+                                        type => {type, #{line => 5,
+                                                         source => inferred,
+                                                         spec => atom}}}}],
+                 line => 3,
+                 return_type => {type, #{line => 3,
+                                         source => rufus_text,
+                                         spec => atom}},
+                 spec => 'Multiple'}}
+    ],
+    ?assertEqual(Expected, Forms).
+
+forms_for_function_with_multiple_expressions_with_blank_lines_test() ->
+    RufusText = "
+    module example
+    func Multiple() atom {
+        42
+
+        :fortytwo
+    }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{args => [],
+                 exprs => [{int_lit, #{line => 4,
+                                       spec => 42,
+                                       type => {type, #{line => 4,
+                                                        source => inferred,
+                                                        spec => int}}}},
+                           {atom_lit, #{line => 6,
+                                        spec => fortytwo,
+                                        type => {type, #{line => 6,
+                                                         source => inferred,
+                                                         spec => atom}}}}],
+                 line => 3,
+                 return_type => {type, #{line => 3,
+                                         source => rufus_text,
+                                         spec => atom}},
+                 spec => 'Multiple'}}
+    ],
+    ?assertEqual(Expected, Forms).
+
+forms_for_function_with_multiple_expressions_separated_by_semicolons_test() ->
+    RufusText = "
+    module example
+    func Multiple() atom { 42; :fortytwo }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{args => [],
+                 exprs => [{int_lit, #{line => 3,
+                                       spec => 42,
+                                       type => {type, #{line => 3,
+                                                        source => inferred,
+                                                        spec => int}}}},
+                           {atom_lit, #{line => 3,
+                                        spec => fortytwo,
+                                        type => {type, #{line => 3,
+                                                         source => inferred,
+                                                         spec => atom}}}}],
+                 line => 3,
+                 return_type => {type, #{line => 3,
+                                         source => rufus_text,
+                                         spec => atom}},
+                 spec => 'Multiple'}}
+    ],
+    ?assertEqual(Expected, Forms).
+
+forms_for_function_with_multiple_expressions_without_end_of_expression_separator_test() ->
+    RufusText = "
+    module example
+    func Multiple() atom { 42 :fortytwo }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {error, Reason} = rufus_parse:parse(Tokens),
+    ?assertEqual({3, rufus_parse, ["syntax error before: ", ["fortytwo"]]}, Reason).
+
 %% Arity-1 functions using an argument
 
 parse_function_taking_an_atom_and_returning_an_atom_test() ->
@@ -124,7 +227,7 @@ parse_function_taking_an_atom_and_returning_an_atom_test() ->
     module example
     func Color(c atom) atom { :indigo }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
@@ -144,7 +247,7 @@ parse_function_taking_a_bool_and_returning_a_bool_test() ->
     module example
     func Echo(n bool) bool { true }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
@@ -164,7 +267,7 @@ parse_function_taking_an_float_and_returning_an_float_test() ->
     module example
     func Echo(n float) float { 3.14159265359 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
@@ -184,7 +287,7 @@ parse_function_taking_an_int_and_returning_an_int_test() ->
     module example
     func Echo(n int) int { 42 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
@@ -204,7 +307,7 @@ parse_function_taking_an_string_and_returning_an_string_test() ->
     module example
     func Echo(n string) string { \"Hello\" }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module,#{line => 2, spec => example}},
@@ -226,7 +329,7 @@ parse_function_adding_two_ints_test() ->
     module math
     func Three() int { 1 + 2 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => math}},
@@ -249,7 +352,7 @@ parse_function_adding_three_ints_test() ->
     module math
     func Six() int { 1 + 2 + 3 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
       {module,#{line => 2,spec => math}},
@@ -285,7 +388,7 @@ parse_function_subtracting_two_ints_test() ->
     module math
     func One() int { 2 - 1 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => math}},
@@ -308,7 +411,7 @@ parse_function_subtracting_three_ints_test() ->
     module math
     func MinusNine() int { 3 - 5 - 7 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
       {module,#{line => 2,spec => math}},
@@ -344,7 +447,7 @@ parse_function_multiplying_two_ints_test() ->
     module math
     func FortyTwo() int { 2 * 21 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => math}},
@@ -367,7 +470,7 @@ parse_function_multiplying_three_ints_test() ->
     module math
     func OneTwenty() int { 4 * 5 * 6 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
       {module,#{line => 2,spec => math}},
@@ -403,7 +506,7 @@ parse_function_dividing_two_ints_test() ->
     module math
     func FortyTwo() int { 84 / 2 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => math}},
@@ -426,7 +529,7 @@ parse_function_dividing_three_ints_test() ->
     module math
     func Five() int { 100 / 10 / 2 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
       {module,#{line => 2,spec => math}},
@@ -462,7 +565,7 @@ parse_function_remaindering_two_ints_test() ->
     module math
     func Six() int { 27 % 7 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => math}},
@@ -485,7 +588,7 @@ parse_function_remaindering_three_ints_test() ->
     module math
     func Four() int { 100 % 13 % 5 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
       {module,#{line => 2,spec => math}},

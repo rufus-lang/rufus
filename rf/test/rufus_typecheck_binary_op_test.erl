@@ -7,7 +7,7 @@ forms_typecheck_for_binary_op_with_ints_test() ->
     module example
     func FortyTwo() int { 19 + 23 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [{module,#{line => 2,spec => example}},
                 {func,
@@ -42,7 +42,7 @@ forms_typecheck_for_binary_op_with_floats_test() ->
     module example
     func Pi() float { 1.0 + 2.14159265359 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [{module,#{line => 2,spec => example}},
                 {func,
@@ -79,7 +79,7 @@ forms_typecheck_for_binary_op_with_float_and_int_test() ->
     module example
     func FortyTwo() int { 19.0 + 23 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = {binary_op,
                 #{left =>
@@ -103,7 +103,7 @@ forms_typecheck_for_binary_op_with_float_and_float_and_int_test() ->
     module example
     func FortyTwo() int { 13.0 + 6.0 + 23 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = {binary_op,
                   #{left =>
@@ -141,7 +141,7 @@ forms_typecheck_for_binary_op_with_bools_test() ->
     module example
     func Concat() bool { true + false }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = {binary_op,
                 #{left =>
@@ -164,7 +164,7 @@ forms_typecheck_for_binary_op_with_strings_test() ->
     module example
     func Concat() string { \"port\" + \"manteau\" }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     io:format("{ok, Forms} => ~p~n", [Forms]),
     Expected = {binary_op,
@@ -190,7 +190,7 @@ forms_typecheck_for_remainder_op_with_ints_test() ->
     module example
     func Six() int { 27 % 7 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [{module,#{line => 2,spec => example}},
                 {func,
@@ -225,7 +225,7 @@ forms_typecheck_for_remainder_op_with_floats_test() ->
     module example
     func Six() int { 27.0 % 7.0 }
     ",
-    {ok, Tokens, _} = rufus_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = {binary_op, #{left => {float_lit, #{line => 3,
                                                    spec => 27.0,
