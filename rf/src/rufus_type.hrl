@@ -39,7 +39,7 @@
       | int_lit_form()
       | string_lit_form().
 
-- type literal_name() ::
+- type literal() ::
          atom
        | bool
        | float
