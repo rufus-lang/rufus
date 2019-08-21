@@ -17,4 +17,4 @@ _build
 rebar3.crashdump
 rf
 src/rufus_parse.erl
-src/rufus_raw_scan.erl
+src/rufus_raw_tokenize.erl
