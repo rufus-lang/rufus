@@ -200,6 +200,30 @@ string_does_not_insert_a_duplicate_semicolon_for_the_closing_brace_when_the_last
 
 %% Arbitrary whitespace.
 
+string_with_newlines_test() ->
+    RufusText = "
+    module rand
+
+    func Int() int {
+        42
+    }
+",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    ?assertEqual([
+     {module, 2},
+     {identifier, 2, "rand"},
+     {';', 2},
+     {func, 4},
+     {identifier, 4, "Int"},
+     {'(', 4},
+     {')', 4},
+     {int, 4},
+     {'{', 4},
+     {int_lit, 5, 42},
+     {';', 5},
+     {'}', 6}
+    ], Tokens).
+
 string_with_extra_newlines_test() ->
     {ok, Tokens} = rufus_tokenize:string("\n\n\nconst Name = :rufus\n\n\n"),
     ?assertEqual([

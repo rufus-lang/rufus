@@ -60,7 +60,7 @@ run("debug:parse", _Args) ->
     }
 ",
     io:format("RufusText =>~n    ~s~n", [RufusText]),
-    {ok, Tokens, _Lines} = rufus_raw_scan:string(RufusText),
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
     io:format("Tokens =>~n~n    ~p~n~n", [Tokens]),
     case rufus_parse:parse(Tokens) of
         {ok, Forms} ->
