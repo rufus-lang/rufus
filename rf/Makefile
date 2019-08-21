@@ -1,6 +1,6 @@
 all: 	clean check dialyzer build
 
-ci:		all
+ci:		clean check build
 
 clean:
 	@rebar3 clean
