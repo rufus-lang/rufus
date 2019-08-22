@@ -66,8 +66,7 @@
       | arg_form()
       | identifier_form()
       | type_form()
-      | binary_op_form()
-      | string().
+      | binary_op_form().
 
 %% Errors
 
