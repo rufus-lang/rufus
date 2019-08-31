@@ -13,6 +13,7 @@
 
 %% State storage
 
+-type globals() :: context().
 -type locals() :: context().
 
 %% Types
