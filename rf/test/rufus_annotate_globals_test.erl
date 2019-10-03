@@ -32,7 +32,7 @@
 %%     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
 %%     Expected = [
 %%         {module, #{line => 2, spec => example}},
-%%         {func,
+%%         {func_decl,
 %%          #{args => [{arg, #{line => 3,
 %%                             spec => m,
 %%                             type => {type, #{line => 3, spec => atom, source => rufus_text}}}}],
@@ -57,7 +57,7 @@
 %%     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
 %%     Expected = [
 %%         {module, #{line => 2, spec => example}},
-%%         {func,
+%%         {func_decl,
 %%          #{args => [{arg, #{line => 3,
 %%                             spec => b,
 %%                             type => {type, #{line => 3, spec => bool, source => rufus_text}}}}],
@@ -82,7 +82,7 @@
 %%     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
 %%     Expected = [
 %%         {module, #{line => 2, spec => example}},
-%%         {func,
+%%         {func_decl,
 %%          #{args => [{arg, #{line => 3,
 %%                             spec => n,
 %%                             type => {type, #{line => 3, spec => float, source => rufus_text}}}}],
@@ -107,7 +107,7 @@
 %%     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
 %%     Expected = [
 %%         {module, #{line => 2, spec => example}},
-%%         {func,
+%%         {func_decl,
 %%          #{args => [{arg, #{line => 3,
 %%                             spec => n,
 %%                             type => {type, #{line => 3, spec => int, source => rufus_text}}}}],
@@ -132,7 +132,7 @@
 %%     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
 %%     Expected = [
 %%         {module, #{line => 2, spec => example}},
-%%         {func,
+%%         {func_decl,
 %%          #{args => [{arg, #{line => 3,
 %%                             spec => s,
 %%                             type => {type, #{line => 3, spec => string, source => rufus_text}}}}],
@@ -159,7 +159,7 @@
 %%     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
 %%     Expected = [
 %%         {module, #{line => 2, spec => example}},
-%%         {func,
+%%         {func_decl,
 %%          #{args => [{arg, #{line => 3,
 %%                             spec => b,
 %%                             type => {type, #{line => 3, spec => atom, source => rufus_text}}}}],
@@ -184,7 +184,7 @@
 %%     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
 %%     Expected = [
 %%         {module, #{line => 2, spec => example}},
-%%         {func,
+%%         {func_decl,
 %%          #{args => [{arg, #{line => 3,
 %%                             spec => b,
 %%                             type => {type, #{line => 3, spec => bool, source => rufus_text}}}}],
@@ -209,7 +209,7 @@
 %%     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
 %%     Expected = [
 %%         {module, #{line => 2, spec => example}},
-%%         {func,
+%%         {func_decl,
 %%          #{args => [{arg, #{line => 3,
 %%                             spec => n,
 %%                             type => {type, #{line => 3, spec => float, source => rufus_text}}}}],
@@ -234,7 +234,7 @@
 %%     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
 %%     Expected = [
 %%         {module, #{line => 2, spec => example}},
-%%         {func,
+%%         {func_decl,
 %%          #{args => [{arg, #{line => 3,
 %%                             spec => n,
 %%                             type => {type, #{line => 3, spec => int, source => rufus_text}}}}],
@@ -259,7 +259,7 @@
 %%     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
 %%     Expected = [
 %%         {module, #{line => 2, spec => example}},
-%%         {func,
+%%         {func_decl,
 %%          #{args => [{arg, #{line => 3,
 %%                             spec => s,
 %%                             type => {type, #{line => 3, spec => string, source => rufus_text}}}}],

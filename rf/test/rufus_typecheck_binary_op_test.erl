@@ -10,7 +10,7 @@ forms_typecheck_for_binary_op_with_ints_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [{module,#{line => 2,spec => example}},
-                {func,
+                {func_decl,
                  #{args => [],
                    exprs =>
                     [{binary_op,
@@ -45,7 +45,7 @@ forms_typecheck_for_binary_op_with_floats_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [{module,#{line => 2,spec => example}},
-                {func,
+                {func_decl,
                  #{args => [],
                    exprs =>
                     [{binary_op,
@@ -193,7 +193,7 @@ forms_typecheck_for_remainder_op_with_ints_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [{module,#{line => 2,spec => example}},
-                {func,
+                {func_decl,
                  #{args => [],
                    exprs =>
                     [{binary_op,

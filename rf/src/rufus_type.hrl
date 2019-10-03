@@ -49,7 +49,7 @@
 
 %% Expressions
 
--type func_form() :: {func, context()}.
+-type func_form() :: {func_decl, context()}.
 -type arg_form() :: {arg, context()}.
 -type identifier_form() :: {identifier, context()}.
 -type binary_op_form() :: {binary_op, context()}.

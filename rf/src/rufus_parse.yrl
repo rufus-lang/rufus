@@ -7,7 +7,7 @@ Nonterminals
     decl
     type
     block
-    function arg args expr exprs
+    func_decl arg args expr exprs
     binary_op.
 
 Terminals
@@ -47,7 +47,7 @@ root -> decl root             : ['$1'] ++ '$2'.
 
 decl -> module identifier ';' : rufus_form:make_module(list_to_atom(text('$2')), line('$2')).
 decl -> import string_lit ';' : rufus_form:make_import(text('$2'), line('$2')).
-decl -> function              : '$1'.
+decl -> func_decl             : '$1'.
 
 type -> atom                  : rufus_form:make_type(atom, line('$1')).
 type -> bool                  : rufus_form:make_type(bool, line('$1')).
@@ -55,8 +55,8 @@ type -> float                 : rufus_form:make_type(float, line('$1')).
 type -> int                   : rufus_form:make_type(int, line('$1')).
 type -> string                : rufus_form:make_type(string, line('$1')).
 
-function -> func identifier '(' args ')' type block :
-                                rufus_form:make_func(list_to_atom(text('$2')), '$4', '$6', '$7', line('$1')).
+func_decl -> func identifier '(' args ')' type block :
+                                rufus_form:make_func_decl(list_to_atom(text('$2')), '$4', '$6', '$7', line('$1')).
 
 args -> arg args              : ['$1'|'$2'].
 args -> '$empty'              : [].
@@ -74,6 +74,7 @@ expr  -> int_lit              : rufus_form:make_literal(int, text('$1'), line('$
 expr  -> string_lit           : rufus_form:make_literal(string, list_to_binary(text('$1')), line('$1')).
 expr  -> identifier           : rufus_form:make_identifier(list_to_atom(text('$1')), line('$1')).
 expr  -> binary_op            : '$1'.
+%% expr  -> identifier '(' arg_list ')'.
 
 binary_op -> expr '+' expr    : rufus_form:make_binary_op('+', '$1', '$3', line('$2')).
 binary_op -> expr '-' expr    : rufus_form:make_binary_op('-', '$1', '$3', line('$2')).

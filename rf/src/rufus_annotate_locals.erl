@@ -26,12 +26,12 @@ forms(Acc, _Locals, []) ->
     {ok, lists:reverse(Acc)}.
 
 -spec annotate_form(map(), func_form()) -> {ok, map(), func_form()}.
-annotate_form(Locals, {func, Metadata = #{args := Args, exprs := Exprs}}) ->
+annotate_form(Locals, {func_decl, Metadata = #{args := Args, exprs := Exprs}}) ->
     % walk over functions args and add locals to the context
     {ok, NewLocals1, NewArgs} = annotate_func_args(Locals, Args),
     % walk over exprs and add locals to the context
     {ok, NewLocals2, NewExprs} = annotate_func_exprs(NewLocals1, Exprs),
-    AnnotatedForm = {func, Metadata#{args => NewArgs, exprs => NewExprs}},
+    AnnotatedForm = {func_decl, Metadata#{args => NewArgs, exprs => NewExprs}},
     {ok, NewLocals2, AnnotatedForm};
 annotate_form(Locals, Form) ->
     {ok, Locals, Form}.

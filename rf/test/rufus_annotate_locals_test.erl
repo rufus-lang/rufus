@@ -18,7 +18,7 @@ forms_test() ->
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
-        {func, #{args => [],
+        {func_decl, #{args => [],
                  exprs => [{int_lit, #{line => 3, locals => #{}, spec => 42,
                                        type => {type, #{line => 3, spec => int, source => inferred}}}}],
                  line => 3,
@@ -39,7 +39,7 @@ forms_for_function_taking_an_atom_and_returning_an_atom_literal_test() ->
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
-        {func,
+        {func_decl,
          #{args => [{arg, #{line => 3,
                             spec => m,
                             type => {type, #{line => 3, spec => atom, source => rufus_text}}}}],
@@ -64,7 +64,7 @@ forms_for_function_taking_a_bool_and_returning_a_bool_literal_test() ->
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
-        {func,
+        {func_decl,
          #{args => [{arg, #{line => 3,
                             spec => b,
                             type => {type, #{line => 3, spec => bool, source => rufus_text}}}}],
@@ -89,7 +89,7 @@ forms_for_function_taking_a_float_and_returning_a_float_literal_test() ->
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
-        {func,
+        {func_decl,
          #{args => [{arg, #{line => 3,
                             spec => n,
                             type => {type, #{line => 3, spec => float, source => rufus_text}}}}],
@@ -114,7 +114,7 @@ forms_for_function_taking_an_int_and_returning_an_int_literal_test() ->
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
-        {func,
+        {func_decl,
          #{args => [{arg, #{line => 3,
                             spec => n,
                             type => {type, #{line => 3, spec => int, source => rufus_text}}}}],
@@ -139,7 +139,7 @@ forms_for_function_taking_a_string_and_returning_a_string_literal_test() ->
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
-        {func,
+        {func_decl,
          #{args => [{arg, #{line => 3,
                             spec => s,
                             type => {type, #{line => 3, spec => string, source => rufus_text}}}}],
@@ -166,7 +166,7 @@ forms_for_function_taking_an_atom_and_returning_it_test() ->
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
-        {func,
+        {func_decl,
          #{args => [{arg, #{line => 3,
                             spec => b,
                             type => {type, #{line => 3, spec => atom, source => rufus_text}}}}],
@@ -191,7 +191,7 @@ forms_for_function_taking_a_bool_and_returning_it_test() ->
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
-        {func,
+        {func_decl,
          #{args => [{arg, #{line => 3,
                             spec => b,
                             type => {type, #{line => 3, spec => bool, source => rufus_text}}}}],
@@ -216,7 +216,7 @@ forms_for_function_taking_a_float_and_returning_it_test() ->
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
-        {func,
+        {func_decl,
          #{args => [{arg, #{line => 3,
                             spec => n,
                             type => {type, #{line => 3, spec => float, source => rufus_text}}}}],
@@ -241,7 +241,7 @@ forms_for_function_taking_an_int_and_returning_it_test() ->
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
-        {func,
+        {func_decl,
          #{args => [{arg, #{line => 3,
                             spec => n,
                             type => {type, #{line => 3, spec => int, source => rufus_text}}}}],
@@ -266,7 +266,7 @@ forms_for_function_taking_a_string_and_returning_it_test() ->
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
-        {func,
+        {func_decl,
          #{args => [{arg, #{line => 3,
                             spec => s,
                             type => {type, #{line => 3, spec => string, source => rufus_text}}}}],

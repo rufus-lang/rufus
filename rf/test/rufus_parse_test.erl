@@ -36,7 +36,7 @@ parse_function_returning_an_atom_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
-     {func, #{args => [],
+     {func_decl, #{args => [],
               exprs => [{atom_lit, #{line => 3,
                                      spec => indigo,
                                      type => {type, #{line => 3, spec => atom, source => inferred}}}}],
@@ -54,7 +54,7 @@ parse_function_returning_a_bool_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
-     {func, #{args => [],
+     {func_decl, #{args => [],
               exprs => [{bool_lit, #{line => 3,
                                      spec => true,
                                      type => {type, #{line => 3, spec => bool, source => inferred}}}}],
@@ -72,7 +72,7 @@ parse_function_returning_a_float_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => math}},
-     {func, #{args => [],
+     {func_decl, #{args => [],
               exprs => [{float_lit, #{line => 3,
                                       spec => 3.14159265359,
                                       type => {type, #{line => 3, spec => float, source => inferred}}}}],
@@ -90,7 +90,7 @@ parse_function_returning_an_int_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => rand}},
-     {func, #{args => [],
+     {func_decl, #{args => [],
               exprs => [{int_lit, #{line => 3,
                                     spec => 42,
                                     type => {type, #{line => 3, spec => int, source => inferred}}}}],
@@ -108,7 +108,7 @@ parse_function_returning_a_string_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
-     {func, #{args => [],
+     {func_decl, #{args => [],
               exprs => [{string_lit, #{line => 3,
                                        spec => <<"Hello">>,
                                        type => {type, #{line => 3, spec => string, source => inferred}}}}],
@@ -132,7 +132,7 @@ forms_for_function_with_multiple_expressions_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
         {module, #{line => 2, spec => example}},
-        {func, #{args => [],
+        {func_decl, #{args => [],
                  exprs => [{int_lit, #{line => 4,
                                        spec => 42,
                                        type => {type, #{line => 4,
@@ -164,7 +164,7 @@ forms_for_function_with_multiple_expressions_with_blank_lines_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
         {module, #{line => 2, spec => example}},
-        {func, #{args => [],
+        {func_decl, #{args => [],
                  exprs => [{int_lit, #{line => 4,
                                        spec => 42,
                                        type => {type, #{line => 4,
@@ -192,7 +192,7 @@ forms_for_function_with_multiple_expressions_separated_by_semicolons_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
         {module, #{line => 2, spec => example}},
-        {func, #{args => [],
+        {func_decl, #{args => [],
                  exprs => [{int_lit, #{line => 3,
                                        spec => 42,
                                        type => {type, #{line => 3,
@@ -231,7 +231,7 @@ parse_function_taking_an_atom_and_returning_an_atom_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
-     {func, #{args => [{arg, #{line => 3,
+     {func_decl, #{args => [{arg, #{line => 3,
                                spec => c,
                                type => {type, #{line => 3, spec => atom, source => rufus_text}}}}],
               exprs => [{atom_lit, #{line => 3,
@@ -251,7 +251,7 @@ parse_function_taking_a_bool_and_returning_a_bool_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
-     {func, #{args => [{arg, #{line => 3,
+     {func_decl, #{args => [{arg, #{line => 3,
                                spec => n,
                                type => {type, #{line => 3, spec => bool, source => rufus_text}}}}],
               exprs => [{bool_lit, #{line => 3,
@@ -271,7 +271,7 @@ parse_function_taking_an_float_and_returning_an_float_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
-     {func, #{args => [{arg, #{line => 3,
+     {func_decl, #{args => [{arg, #{line => 3,
                                spec => n,
                                type => {type, #{line => 3, spec => float, source => rufus_text}}}}],
               exprs => [{float_lit, #{line => 3,
@@ -291,7 +291,7 @@ parse_function_taking_an_int_and_returning_an_int_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => example}},
-     {func, #{args => [{arg, #{line => 3,
+     {func_decl, #{args => [{arg, #{line => 3,
                                spec => n,
                                type => {type, #{line => 3, spec => int, source => rufus_text}}}}],
               exprs => [{int_lit, #{line => 3,
@@ -311,7 +311,7 @@ parse_function_taking_an_string_and_returning_an_string_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module,#{line => 2, spec => example}},
-     {func, #{args => [{arg, #{line => 3,
+     {func_decl, #{args => [{arg, #{line => 3,
                                spec => n,
                                type => {type, #{line => 3, spec => string, source => rufus_text}}}}],
               exprs => [{string_lit, #{line => 3,
@@ -333,7 +333,7 @@ parse_function_adding_two_ints_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => math}},
-     {func, #{args => [],
+     {func_decl, #{args => [],
               exprs => [{binary_op, #{line => 3,
                                       op => '+',
                                       left => {int_lit, #{line => 3,
@@ -356,7 +356,7 @@ parse_function_adding_three_ints_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
       {module,#{line => 2,spec => math}},
-      {func, #{args => [],
+      {func_decl, #{args => [],
                exprs => [{binary_op, #{left => {binary_op, #{op => '+',
                                                              left => {int_lit, #{line => 3,
                                                                                  spec => 1,
@@ -392,7 +392,7 @@ parse_function_subtracting_two_ints_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => math}},
-     {func, #{args => [],
+     {func_decl, #{args => [],
               exprs => [{binary_op, #{line => 3,
                                       op => '-',
                                       left => {int_lit, #{line => 3,
@@ -415,7 +415,7 @@ parse_function_subtracting_three_ints_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
       {module,#{line => 2,spec => math}},
-      {func, #{args => [],
+      {func_decl, #{args => [],
                exprs => [{binary_op, #{left => {binary_op, #{op => '-',
                                                              left => {int_lit, #{line => 3,
                                                                                  spec => 3,
@@ -451,7 +451,7 @@ parse_function_multiplying_two_ints_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => math}},
-     {func, #{args => [],
+     {func_decl, #{args => [],
               exprs => [{binary_op, #{line => 3,
                                       op => '*',
                                       left => {int_lit, #{line => 3,
@@ -474,7 +474,7 @@ parse_function_multiplying_three_ints_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
       {module,#{line => 2,spec => math}},
-      {func, #{args => [],
+      {func_decl, #{args => [],
                exprs => [{binary_op, #{left => {binary_op, #{op => '*',
                                                              left => {int_lit, #{line => 3,
                                                                                  spec => 4,
@@ -510,7 +510,7 @@ parse_function_dividing_two_ints_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => math}},
-     {func, #{args => [],
+     {func_decl, #{args => [],
               exprs => [{binary_op, #{line => 3,
                                       op => '/',
                                       left => {int_lit, #{line => 3,
@@ -533,7 +533,7 @@ parse_function_dividing_three_ints_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
       {module,#{line => 2,spec => math}},
-      {func, #{args => [],
+      {func_decl, #{args => [],
                exprs => [{binary_op, #{left => {binary_op, #{op => '/',
                                                              left => {int_lit, #{line => 3,
                                                                                  spec => 100,
@@ -569,7 +569,7 @@ parse_function_remaindering_two_ints_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
      {module, #{line => 2, spec => math}},
-     {func, #{args => [],
+     {func_decl, #{args => [],
               exprs => [{binary_op, #{line => 3,
                                       op => '%',
                                       left => {int_lit, #{line => 3,
@@ -592,7 +592,7 @@ parse_function_remaindering_three_ints_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
       {module,#{line => 2,spec => math}},
-      {func, #{args => [],
+      {func_decl, #{args => [],
                exprs => [{binary_op, #{left => {binary_op, #{op => '%',
                                                              left => {int_lit, #{line => 3,
                                                                                  spec => 100,

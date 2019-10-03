@@ -27,12 +27,12 @@ globals(Globals, []) ->
     {ok, Globals}.
 
 -spec annotate_form(map(), func_form()) -> {ok, map(), func_form()}.
-annotate_form(Globals, {func, Metadata = #{args := Args, exprs := Exprs}}) ->
+annotate_form(Globals, {func_decl, Metadata = #{args := Args, exprs := Exprs}}) ->
     % walk over functions args and add locals to the context
     {ok, NewGlobals1, NewArgs} = annotate_func_args(Globals, Args),
     % walk over exprs and add locals to the context
     {ok, NewGlobals2, NewExprs} = annotate_func_exprs(NewGlobals1, Exprs),
-    AnnotatedForm = {func, Metadata#{args => NewArgs, exprs => NewExprs}},
+    AnnotatedForm = {func_decl, Metadata#{args => NewArgs, exprs => NewExprs}},
     {ok, NewGlobals2, AnnotatedForm};
 annotate_form(Globals, Form) ->
     {ok, Globals, Form}.

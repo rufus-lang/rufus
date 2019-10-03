@@ -50,10 +50,10 @@ make_binary_op_test() ->
     ?assertEqual({binary_op, #{op => '+', left => Arg, right => Arg, line => 4}},
                  rufus_form:make_binary_op('+', Arg, Arg, 4)).
 
-make_func_test() ->
+make_func_decl_test() ->
     Type = rufus_form:make_type(bool, 81),
-    ?assertEqual({func, #{spec => 'True', args => [], return_type => Type, exprs => [], line => 81}},
-                 rufus_form:make_func('True', [], Type, [], 81)).
+    ?assertEqual({func_decl, #{spec => 'True', args => [], return_type => Type, exprs => [], line => 81}},
+                 rufus_form:make_func_decl('True', [], Type, [], 81)).
 
 make_arg_test() ->
     Type = rufus_form:make_type(int, 52),

@@ -41,7 +41,7 @@ forms(RufusForms) ->
 globals(RufusForms) ->
     globals(#{}, RufusForms).
 
-globals(Acc, [Form = {func, #{spec := Spec}}|T]) ->
+globals(Acc, [Form = {func_decl, #{spec := Spec}}|T]) ->
     Forms = maps:get(Spec, Acc, []),
     globals(Acc#{Spec => Forms ++ [Form]}, T);
 globals(Acc, [_H|T]) ->
