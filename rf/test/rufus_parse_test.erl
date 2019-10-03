@@ -8,7 +8,7 @@ parse_empty_module_test() ->
     {ok, Tokens} = rufus_tokenize:string("module empty"),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, #{line => 1, spec => empty}}
+        {module, #{line => 1, spec => empty}}
     ], Forms).
 
 %% %% Import
@@ -21,8 +21,8 @@ parse_import_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, #{line => 2, spec => foo}},
-     {import, #{line => 3, spec => "bar"}}
+        {module, #{line => 2, spec => foo}},
+        {import, #{line => 3, spec => "bar"}}
     ], Forms).
 
 %% Arity-0 functions returning a literal value for scalar types
@@ -35,14 +35,18 @@ parse_function_returning_an_atom_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, #{line => 2, spec => example}},
-     {func_decl, #{args => [],
-              exprs => [{atom_lit, #{line => 3,
-                                     spec => indigo,
-                                     type => {type, #{line => 3, spec => atom, source => inferred}}}}],
-              line => 3,
-              return_type => {type, #{line => 3, spec => atom, source => rufus_text}},
-              spec => 'Color'}}
+        {module, #{line => 2, spec => example}},
+        {func_decl, #{args => [],
+                      exprs => [{atom_lit, #{line => 3,
+                                             spec => indigo,
+                                             type => {type, #{line => 3,
+                                                              spec => atom,
+                                                              source => inferred}}}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              spec => atom,
+                                              source => rufus_text}},
+                      spec => 'Color'}}
     ], Forms).
 
 parse_function_returning_a_bool_test() ->
@@ -53,14 +57,19 @@ parse_function_returning_a_bool_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, #{line => 2, spec => example}},
-     {func_decl, #{args => [],
-              exprs => [{bool_lit, #{line => 3,
-                                     spec => true,
-                                     type => {type, #{line => 3, spec => bool, source => inferred}}}}],
-              line => 3,
-              return_type => {type, #{line => 3, spec => bool, source => rufus_text}},
-              spec => 'True'}}
+        {module, #{line => 2,
+                   spec => example}},
+        {func_decl, #{args => [],
+                      exprs => [{bool_lit, #{line => 3,
+                                             spec => true,
+                                             type => {type, #{line => 3,
+                                                              spec => bool,
+                                                              source => inferred}}}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              spec => bool,
+                                              source => rufus_text}},
+                      spec => 'True'}}
     ], Forms).
 
 parse_function_returning_a_float_test() ->
@@ -71,14 +80,19 @@ parse_function_returning_a_float_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, #{line => 2, spec => math}},
-     {func_decl, #{args => [],
-              exprs => [{float_lit, #{line => 3,
-                                      spec => 3.14159265359,
-                                      type => {type, #{line => 3, spec => float, source => inferred}}}}],
-              line => 3,
-              return_type => {type, #{line => 3, spec => float, source => rufus_text}},
-              spec => 'Pi'}}
+        {module, #{line => 2,
+                   spec => math}},
+        {func_decl, #{args => [],
+                      exprs => [{float_lit, #{line => 3,
+                                              spec => 3.14159265359,
+                                              type => {type, #{line => 3,
+                                                               spec => float,
+                                                               source => inferred}}}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              spec => float,
+                                              source => rufus_text}},
+                      spec => 'Pi'}}
     ], Forms).
 
 parse_function_returning_an_int_test() ->
@@ -89,14 +103,18 @@ parse_function_returning_an_int_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, #{line => 2, spec => rand}},
-     {func_decl, #{args => [],
-              exprs => [{int_lit, #{line => 3,
-                                    spec => 42,
-                                    type => {type, #{line => 3, spec => int, source => inferred}}}}],
-              line => 3,
-              return_type => {type, #{line => 3, spec => int, source => rufus_text}},
-              spec => 'Number'}}
+        {module, #{line => 2, spec => rand}},
+        {func_decl, #{args => [],
+                      exprs => [{int_lit, #{line => 3,
+                                            spec => 42,
+                                            type => {type, #{line => 3,
+                                                             spec => int,
+                                                             source => inferred}}}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              spec => int,
+                                              source => rufus_text}},
+                      spec => 'Number'}}
     ], Forms).
 
 parse_function_returning_a_string_test() ->
@@ -107,14 +125,19 @@ parse_function_returning_a_string_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, #{line => 2, spec => example}},
-     {func_decl, #{args => [],
-              exprs => [{string_lit, #{line => 3,
-                                       spec => <<"Hello">>,
-                                       type => {type, #{line => 3, spec => string, source => inferred}}}}],
-              line => 3,
-              return_type => {type, #{line => 3, spec => string, source => rufus_text}},
-              spec => 'Greeting'}}
+        {module, #{line => 2,
+                   spec => example}},
+        {func_decl, #{args => [],
+                      exprs => [{string_lit, #{line => 3,
+                                               spec => <<"Hello">>,
+                                               type => {type, #{line => 3,
+                                                                spec => string,
+                                                                source => inferred}}}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              spec => string,
+                                              source => rufus_text}},
+                      spec => 'Greeting'}}
     ], Forms).
 
 %% Arity-0 functions with multiple function expressions
@@ -131,23 +154,24 @@ forms_for_function_with_multiple_expressions_test() ->
     io:format("Tokens => ~p~n", [Tokens]),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
-        {module, #{line => 2, spec => example}},
+        {module, #{line => 2,
+                   spec => example}},
         {func_decl, #{args => [],
-                 exprs => [{int_lit, #{line => 4,
-                                       spec => 42,
-                                       type => {type, #{line => 4,
-                                                        source => inferred,
-                                                        spec => int}}}},
-                           {atom_lit, #{line => 5,
-                                        spec => fortytwo,
-                                        type => {type, #{line => 5,
-                                                         source => inferred,
-                                                         spec => atom}}}}],
-                 line => 3,
-                 return_type => {type, #{line => 3,
-                                         source => rufus_text,
-                                         spec => atom}},
-                 spec => 'Multiple'}}
+                      exprs => [{int_lit, #{line => 4,
+                                            spec => 42,
+                                            type => {type, #{line => 4,
+                                                             source => inferred,
+                                                             spec => int}}}},
+                                {atom_lit, #{line => 5,
+                                             spec => fortytwo,
+                                             type => {type, #{line => 5,
+                                                              source => inferred,
+                                                              spec => atom}}}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              source => rufus_text,
+                                              spec => atom}},
+                      spec => 'Multiple'}}
     ],
     ?assertEqual(Expected, Forms).
 
@@ -163,23 +187,24 @@ forms_for_function_with_multiple_expressions_with_blank_lines_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
-        {module, #{line => 2, spec => example}},
+        {module, #{line => 2,
+                   spec => example}},
         {func_decl, #{args => [],
-                 exprs => [{int_lit, #{line => 4,
-                                       spec => 42,
-                                       type => {type, #{line => 4,
-                                                        source => inferred,
-                                                        spec => int}}}},
-                           {atom_lit, #{line => 6,
-                                        spec => fortytwo,
-                                        type => {type, #{line => 6,
-                                                         source => inferred,
-                                                         spec => atom}}}}],
-                 line => 3,
-                 return_type => {type, #{line => 3,
-                                         source => rufus_text,
-                                         spec => atom}},
-                 spec => 'Multiple'}}
+                      exprs => [{int_lit, #{line => 4,
+                                            spec => 42,
+                                            type => {type, #{line => 4,
+                                                             source => inferred,
+                                                             spec => int}}}},
+                                {atom_lit, #{line => 6,
+                                             spec => fortytwo,
+                                             type => {type, #{line => 6,
+                                                              source => inferred,
+                                                              spec => atom}}}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              source => rufus_text,
+                                              spec => atom}},
+                      spec => 'Multiple'}}
     ],
     ?assertEqual(Expected, Forms).
 
@@ -191,23 +216,24 @@ forms_for_function_with_multiple_expressions_separated_by_semicolons_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
-        {module, #{line => 2, spec => example}},
+        {module, #{line => 2,
+                   spec => example}},
         {func_decl, #{args => [],
-                 exprs => [{int_lit, #{line => 3,
-                                       spec => 42,
-                                       type => {type, #{line => 3,
-                                                        source => inferred,
-                                                        spec => int}}}},
-                           {atom_lit, #{line => 3,
-                                        spec => fortytwo,
-                                        type => {type, #{line => 3,
-                                                         source => inferred,
-                                                         spec => atom}}}}],
-                 line => 3,
-                 return_type => {type, #{line => 3,
-                                         source => rufus_text,
-                                         spec => atom}},
-                 spec => 'Multiple'}}
+                      exprs => [{int_lit, #{line => 3,
+                                            spec => 42,
+                                            type => {type, #{line => 3,
+                                                             source => inferred,
+                                                             spec => int}}}},
+                                {atom_lit, #{line => 3,
+                                             spec => fortytwo,
+                                             type => {type, #{line => 3,
+                                                              source => inferred,
+                                                              spec => atom}}}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              source => rufus_text,
+                                              spec => atom}},
+                      spec => 'Multiple'}}
     ],
     ?assertEqual(Expected, Forms).
 
@@ -230,16 +256,23 @@ parse_function_taking_an_atom_and_returning_an_atom_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, #{line => 2, spec => example}},
-     {func_decl, #{args => [{arg, #{line => 3,
-                               spec => c,
-                               type => {type, #{line => 3, spec => atom, source => rufus_text}}}}],
-              exprs => [{atom_lit, #{line => 3,
-                                     spec => indigo,
-                                     type => {type, #{line => 3, spec => atom, source => inferred}}}}],
-              line => 3,
-              return_type => {type, #{line => 3, spec => atom, source => rufus_text}},
-              spec => 'Color'}}
+        {module, #{line => 2,
+                   spec => example}},
+        {func_decl, #{args => [{arg_decl, #{line => 3,
+                                            spec => c,
+                                            type => {type, #{line => 3,
+                                                             spec => atom,
+                                                             source => rufus_text}}}}],
+                      exprs => [{atom_lit, #{line => 3,
+                                             spec => indigo,
+                                             type => {type, #{line => 3,
+                                                              spec => atom,
+                                                              source => inferred}}}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              spec => atom,
+                                              source => rufus_text}},
+                      spec => 'Color'}}
     ], Forms).
 
 parse_function_taking_a_bool_and_returning_a_bool_test() ->
@@ -250,16 +283,23 @@ parse_function_taking_a_bool_and_returning_a_bool_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, #{line => 2, spec => example}},
-     {func_decl, #{args => [{arg, #{line => 3,
-                               spec => n,
-                               type => {type, #{line => 3, spec => bool, source => rufus_text}}}}],
-              exprs => [{bool_lit, #{line => 3,
-                                     spec => true,
-                                     type => {type, #{line => 3, spec => bool, source => inferred}}}}],
-              line => 3,
-              return_type => {type, #{line => 3, spec => bool, source => rufus_text}},
-              spec => 'Echo'}}
+        {module, #{line => 2,
+                   spec => example}},
+        {func_decl, #{args => [{arg_decl, #{line => 3,
+                                            spec => n,
+                                            type => {type, #{line => 3,
+                                                             spec => bool,
+                                                             source => rufus_text}}}}],
+                      exprs => [{bool_lit, #{line => 3,
+                                             spec => true,
+                                             type => {type, #{line => 3,
+                                                              spec => bool,
+                                                              source => inferred}}}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              spec => bool,
+                                              source => rufus_text}},
+                      spec => 'Echo'}}
     ], Forms).
 
 parse_function_taking_an_float_and_returning_an_float_test() ->
@@ -270,16 +310,23 @@ parse_function_taking_an_float_and_returning_an_float_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, #{line => 2, spec => example}},
-     {func_decl, #{args => [{arg, #{line => 3,
-                               spec => n,
-                               type => {type, #{line => 3, spec => float, source => rufus_text}}}}],
-              exprs => [{float_lit, #{line => 3,
-                                      spec => 3.14159265359,
-                                      type => {type, #{line => 3, spec => float, source => inferred}}}}],
-              line => 3,
-              return_type => {type, #{line => 3, spec => float, source => rufus_text}},
-              spec => 'Echo'}}
+        {module, #{line => 2,
+                   spec => example}},
+        {func_decl, #{args => [{arg_decl, #{line => 3,
+                                            spec => n,
+                                            type => {type, #{line => 3,
+                                                             spec => float,
+                                                             source => rufus_text}}}}],
+                      exprs => [{float_lit, #{line => 3,
+                                              spec => 3.14159265359,
+                                              type => {type, #{line => 3,
+                                                               spec => float,
+                                                               source => inferred}}}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              spec => float,
+                                              source => rufus_text}},
+                      spec => 'Echo'}}
     ], Forms).
 
 parse_function_taking_an_int_and_returning_an_int_test() ->
@@ -290,16 +337,23 @@ parse_function_taking_an_int_and_returning_an_int_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module, #{line => 2, spec => example}},
-     {func_decl, #{args => [{arg, #{line => 3,
-                               spec => n,
-                               type => {type, #{line => 3, spec => int, source => rufus_text}}}}],
-              exprs => [{int_lit, #{line => 3,
-                                    spec => 42,
-                                    type => {type, #{line => 3, spec => int, source => inferred}}}}],
-              line => 3,
-              return_type => {type, #{line => 3, spec => int, source => rufus_text}},
-              spec => 'Echo'}}
+        {module, #{line => 2,
+                   spec => example}},
+        {func_decl, #{args => [{arg_decl, #{line => 3,
+                                            spec => n,
+                                            type => {type, #{line => 3,
+                                                             spec => int,
+                                                             source => rufus_text}}}}],
+                      exprs => [{int_lit, #{line => 3,
+                                            spec => 42,
+                                            type => {type, #{line => 3,
+                                                             spec => int,
+                                                             source => inferred}}}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              spec => int,
+                                              source => rufus_text}},
+                      spec => 'Echo'}}
     ], Forms).
 
 parse_function_taking_an_string_and_returning_an_string_test() ->
@@ -310,16 +364,23 @@ parse_function_taking_an_string_and_returning_an_string_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual([
-     {module,#{line => 2, spec => example}},
-     {func_decl, #{args => [{arg, #{line => 3,
-                               spec => n,
-                               type => {type, #{line => 3, spec => string, source => rufus_text}}}}],
-              exprs => [{string_lit, #{line => 3,
-                                       spec => <<"Hello">>,
-                                       type => {type, #{line => 3, spec => string, source => inferred}}}}],
-              line => 3,
-              return_type => {type, #{line => 3, spec => string, source => rufus_text}},
-              spec => 'Echo'}}
+     {module,#{line => 2,
+               spec => example}},
+     {func_decl, #{args => [{arg_decl, #{line => 3,
+                                         spec => n,
+                                         type => {type, #{line => 3,
+                                                          spec => string,
+                                                          source => rufus_text}}}}],
+                   exprs => [{string_lit, #{line => 3,
+                                            spec => <<"Hello">>,
+                                            type => {type, #{line => 3,
+                                                             spec => string,
+                                                             source => inferred}}}}],
+                   line => 3,
+                   return_type => {type, #{line => 3,
+                                           spec => string,
+                                           source => rufus_text}},
+                   spec => 'Echo'}}
     ], Forms).
 
 %% Binary operations

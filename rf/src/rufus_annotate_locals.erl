@@ -25,13 +25,13 @@ forms(Acc, Locals, [H|T]) ->
 forms(Acc, _Locals, []) ->
     {ok, lists:reverse(Acc)}.
 
--spec annotate_form(map(), func_form()) -> {ok, map(), func_form()}.
-annotate_form(Locals, {func_decl, Metadata = #{args := Args, exprs := Exprs}}) ->
+-spec annotate_form(map(), func_decl_form()) -> {ok, map(), func_decl_form()}.
+annotate_form(Locals, {func_decl, Context = #{args := Args, exprs := Exprs}}) ->
     % walk over functions args and add locals to the context
     {ok, NewLocals1, NewArgs} = annotate_func_args(Locals, Args),
     % walk over exprs and add locals to the context
     {ok, NewLocals2, NewExprs} = annotate_func_exprs(NewLocals1, Exprs),
-    AnnotatedForm = {func_decl, Metadata#{args => NewArgs, exprs => NewExprs}},
+    AnnotatedForm = {func_decl, Context#{args => NewArgs, exprs => NewExprs}},
     {ok, NewLocals2, AnnotatedForm};
 annotate_form(Locals, Form) ->
     {ok, Locals, Form}.
@@ -40,10 +40,10 @@ annotate_form(Locals, Form) ->
 annotate_func_args(Locals, Args) ->
     annotate_func_args(Locals, [], Args).
 
--spec annotate_func_args(locals(), list(arg_form()), list(arg_form())) -> {ok, locals(), list(rufus_form())}.
-annotate_func_args(Locals, Acc, [{arg, Metadata = #{spec := Spec, type := Type}}|T]) ->
+-spec annotate_func_args(locals(), list(arg_decl_form()), list(arg_decl_form())) -> {ok, locals(), list(rufus_form())}.
+annotate_func_args(Locals, Acc, [{arg_decl, Context = #{spec := Spec, type := Type}}|T]) ->
     NewLocals = Locals#{Spec => Type},
-    NewArg = {arg, Metadata},
+    NewArg = {arg_decl, Context},
     annotate_func_args(NewLocals, [NewArg|Acc], T);
 annotate_func_args(Locals, Acc, []) ->
     {ok, Locals, lists:reverse(Acc)}.
@@ -53,8 +53,8 @@ annotate_func_exprs(Locals, Exprs) ->
     annotate_func_exprs(Locals, [], Exprs).
 
 -spec annotate_func_exprs(locals(), list(rufus_form()), list(rufus_form())) -> {ok, locals(), list(rufus_form())}.
-annotate_func_exprs(Locals, Acc, [{FormType, Metadata}|T]) ->
-    NewMetadata = Metadata#{locals => Locals},
-    annotate_func_exprs(Locals, [{FormType, NewMetadata}|Acc], T);
+annotate_func_exprs(Locals, Acc, [{FormType, Context}|T]) ->
+    NewContext = Context#{locals => Locals},
+    annotate_func_exprs(Locals, [{FormType, NewContext}|Acc], T);
 annotate_func_exprs(Locals, Acc, []) ->
     {ok, Locals, lists:reverse(Acc)}.
