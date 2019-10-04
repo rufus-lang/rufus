@@ -92,6 +92,7 @@ make_binary_op(Op, Left, Right, Line) ->
 make_func_decl(Spec, Args, ReturnType, Exprs, Line) ->
     {func_decl, #{spec => Spec, args => Args, return_type => ReturnType, exprs => Exprs, line => Line}}.
 
+%% make_arg_decl returns a form for a function argument declaration.
 -spec make_arg_decl(atom(), type_form(), integer()) -> {arg_decl, #{spec => atom(), type => type_form(), line => integer()}}.
 make_arg_decl(Spec, Type, Line) ->
     {arg_decl, #{spec => Spec, type => Type, line => Line}}.
