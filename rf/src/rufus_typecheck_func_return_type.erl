@@ -36,7 +36,7 @@ forms([], Forms) ->
     {ok, Forms}.
 
 -spec typecheck(rufus_form()) -> ok | {error, rufus_error(), map()}.
-typecheck({func, #{return_type := ReturnType, exprs := Exprs}}) ->
+typecheck({func_decl, #{return_type := ReturnType, exprs := Exprs}}) ->
     typecheck_return_value(ReturnType, lists:last(Exprs));
 typecheck(_) ->
     ok.

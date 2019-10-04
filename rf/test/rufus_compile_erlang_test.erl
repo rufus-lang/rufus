@@ -98,9 +98,11 @@ forms_for_function_with_multiple_expressions_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     Exprs = [{integer, 4, 42}, {atom, 5, fortytwo}],
-    Expected = [{attribute, 2, module, example},
-                {attribute, 3, export, [{'Multiple', 0}]},
-                {function, 3, 'Multiple', 0, [{clause, 3, [], [], Exprs}]}],
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Multiple', 0}]},
+        {function, 3, 'Multiple', 0, [{clause, 3, [], [], Exprs}]}
+    ],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_with_multiple_expressions_with_blank_lines_test() ->
@@ -116,9 +118,11 @@ forms_for_function_with_multiple_expressions_with_blank_lines_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     Exprs = [{integer, 4, 42}, {atom, 6, fortytwo}],
-    Expected = [{attribute, 2, module, example},
-                {attribute, 3, export, [{'Multiple', 0}]},
-                {function, 3, 'Multiple', 0, [{clause, 3, [], [], Exprs}]}],
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Multiple', 0}]},
+        {function, 3, 'Multiple', 0, [{clause, 3, [], [], Exprs}]}
+    ],
     ?assertEqual(Expected, ErlangForms).
 
 %% Arity-1 functions taking an unused argument
@@ -131,13 +135,14 @@ forms_for_function_taking_an_unused_atom_and_returning_an_atom_literal_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
-    Expected = [{attribute, 2, module, example},
-                {attribute, 3, export, [{'Ping', 1}]},
-                {function, 3, 'Ping', 1,
-                 [{clause, 3,
-                   [{var, 3, m}],
-                   [[{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_atom}}, [{var, 3, m}]}]],
-                   [{atom, 3, pong}]}]}],
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Ping', 1}]},
+        {function, 3, 'Ping', 1, [
+            {clause, 3, [{var, 3, m}],
+                        [[{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_atom}}, [{var, 3, m}]}]],
+                        [{atom, 3, pong}]}]}
+    ],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_taking_an_unused_bool_and_returning_a_bool_literal_test() ->
@@ -148,13 +153,14 @@ forms_for_function_taking_an_unused_bool_and_returning_a_bool_literal_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
-    Expected = [{attribute, 2, module, example},
-                  {attribute, 3, export, [{'MaybeEcho', 1}]},
-                  {function, 3, 'MaybeEcho', 1,
-                      [{clause, 3,
-                           [{tuple, 3, [{atom, 3, bool}, {var, 3, b}]}],
-                           [],
-                           [{tuple, 3, [{atom, 3, bool}, {atom, 3, true}]}]}]}],
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'MaybeEcho', 1}]},
+        {function, 3, 'MaybeEcho', 1, [
+            {clause, 3, [{tuple, 3, [{atom, 3, bool}, {var, 3, b}]}],
+                        [],
+                        [{tuple, 3, [{atom, 3, bool}, {atom, 3, true}]}]}]}
+    ],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_taking_an_unused_float_and_returning_a_float_literal_test() ->
@@ -165,13 +171,14 @@ forms_for_function_taking_an_unused_float_and_returning_a_float_literal_test() -
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
-    Expected = [{attribute, 2, module, example},
-                  {attribute, 3, export, [{'MaybeEcho', 1}]},
-                  {function, 3, 'MaybeEcho', 1,
-                      [{clause, 3,
-                           [{var, 3, n}],
-                           [[{call,3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_float}}, [{var, 3, n}]}]],
-                           [{float, 3, 3.14159265359}]}]}],
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'MaybeEcho', 1}]},
+        {function, 3, 'MaybeEcho', 1, [
+            {clause, 3, [{var, 3, n}],
+                        [[{call,3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_float}}, [{var, 3, n}]}]],
+                        [{float, 3, 3.14159265359}]}]}
+    ],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_taking_an_unused_int_and_returning_an_int_literal_test() ->
@@ -182,13 +189,14 @@ forms_for_function_taking_an_unused_int_and_returning_an_int_literal_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
-    Expected = [{attribute, 2, module, example},
-                  {attribute, 3, export, [{'MaybeEcho', 1}]},
-                  {function, 3, 'MaybeEcho', 1,
-                      [{clause, 3,
-                           [{var, 3, n}],
-                           [[{call,3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_integer}}, [{var, 3, n}]}]],
-                           [{integer, 3, 42}]}]}],
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'MaybeEcho', 1}]},
+        {function, 3, 'MaybeEcho', 1,
+            [{clause, 3, [{var, 3, n}],
+                         [[{call,3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_integer}}, [{var, 3, n}]}]],
+                         [{integer, 3, 42}]}]}
+    ],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_taking_an_unused_string_and_returning_a_string_literal_test() ->
@@ -200,13 +208,14 @@ forms_for_function_taking_an_unused_string_and_returning_a_string_literal_test()
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_compile_erlang:forms(Forms),
     StringExpr = {bin_element, 3, {string, 3, "Hello"}, default, default},
-    Expected = [{attribute, 2, module, example},
-                  {attribute, 3, export, [{'MaybeEcho', 1}]},
-                  {function, 3, 'MaybeEcho', 1,
-                      [{clause, 3,
-                           [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}],
-                           [],
-                           [{tuple, 3, [{atom, 3, string}, {bin, 3, [StringExpr]}]}]}]}],
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'MaybeEcho', 1}]},
+        {function, 3, 'MaybeEcho', 1,
+            [{clause, 3, [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}],
+                         [],
+                         [{tuple, 3, [{atom, 3, string}, {bin, 3, [StringExpr]}]}]}]}
+    ],
     ?assertEqual(Expected, ErlangForms).
 
 %% Arity-1 functions taking and using an argument
@@ -220,13 +229,14 @@ forms_for_function_taking_an_atom_and_returning_an_atom_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
-    Expected = [{attribute, 2, module, example},
-                {attribute, 3, export, [{'Echo', 1}]},
-                {function, 3, 'Echo', 1,
-                 [{clause, 3,
-                   [{var, 3, m}],
-                   [[{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_atom}}, [{var, 3, m}]}]],
-                   [{var, 3, m}]}]}],
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Echo', 1}]},
+        {function, 3, 'Echo', 1,
+            [{clause, 3, [{var, 3, m}],
+                         [[{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_atom}}, [{var, 3, m}]}]],
+                         [{var, 3, m}]}]}
+    ],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_taking_a_bool_and_returning_a_bool_test() ->
@@ -238,13 +248,14 @@ forms_for_function_taking_a_bool_and_returning_a_bool_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
-    Expected = [{attribute, 2, module, example},
-                  {attribute, 3, export, [{'Echo', 1}]},
-                  {function, 3, 'Echo', 1,
-                      [{clause, 3,
-                           [{tuple, 3, [{atom, 3, bool}, {var, 3, b}]}],
-                           [],
-                           [{tuple, 3, [{atom, 3, bool}, {var, 3, b}]}]}]}],
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Echo', 1}]},
+        {function, 3, 'Echo', 1,
+            [{clause, 3, [{tuple, 3, [{atom, 3, bool}, {var, 3, b}]}],
+                         [],
+                         [{tuple, 3, [{atom, 3, bool}, {var, 3, b}]}]}]}
+    ],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_taking_a_float_and_returning_a_float_test() ->
@@ -256,13 +267,14 @@ forms_for_function_taking_a_float_and_returning_a_float_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
-    Expected = [{attribute, 2, module, example},
-                  {attribute, 3, export, [{'Echo', 1}]},
-                  {function, 3, 'Echo', 1,
-                      [{clause, 3,
-                           [{var, 3, n}],
-                           [[{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_float}}, [{var, 3, n}]}]],
-                           [{var, 3, n}]}]}],
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Echo', 1}]},
+        {function, 3, 'Echo', 1,
+            [{clause, 3, [{var, 3, n}],
+                         [[{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_float}}, [{var, 3, n}]}]],
+                         [{var, 3, n}]}]}
+    ],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_taking_an_int_and_returning_an_int_test() ->
@@ -274,13 +286,14 @@ forms_for_function_taking_an_int_and_returning_an_int_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
-    Expected = [{attribute, 2, module, example},
-                  {attribute, 3, export, [{'Echo', 1}]},
-                  {function, 3, 'Echo', 1,
-                      [{clause, 3,
-                           [{var, 3, n}],
-                           [[{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_integer}}, [{var, 3, n}]}]],
-                           [{var, 3, n}]}]}],
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Echo', 1}]},
+        {function, 3, 'Echo', 1,
+            [{clause, 3, [{var, 3, n}],
+                         [[{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_integer}}, [{var, 3, n}]}]],
+                         [{var, 3, n}]}]}
+    ],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_taking_a_string_and_returning_a_string_test() ->
@@ -292,13 +305,14 @@ forms_for_function_taking_a_string_and_returning_a_string_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
-    Expected = [{attribute, 2, module, example},
-                  {attribute, 3, export, [{'Echo', 1}]},
-                  {function, 3, 'Echo', 1,
-                      [{clause, 3,
-                           [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}],
-                           [],
-                           [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}]}]}],
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Echo', 1}]},
+        {function, 3, 'Echo', 1,
+            [{clause, 3, [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}],
+                         [],
+                         [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}]}]}
+    ],
     ?assertEqual(Expected, ErlangForms).
 
 %% Arity-0 functions returning a sum of literal values for scalar types

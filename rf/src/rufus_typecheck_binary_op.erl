@@ -27,10 +27,10 @@ forms(RufusForms) ->
 %% Private API
 
 -spec forms(list(rufus_form()), list(rufus_form())) -> {ok, list(rufus_form())} | {error, atom(), binary_op_form()}.
-forms(Acc, [{func, Context = #{exprs := Exprs}}|T]) ->
+forms(Acc, [{func_decl, Context = #{exprs := Exprs}}|T]) ->
     case forms([], Exprs) of
         {ok, AnnotatedExprs} ->
-            AnnotatedForm = {func, Context#{exprs => AnnotatedExprs}},
+            AnnotatedForm = {func_decl, Context#{exprs => AnnotatedExprs}},
             forms([AnnotatedForm|Acc], T);
         Error ->
             Error
