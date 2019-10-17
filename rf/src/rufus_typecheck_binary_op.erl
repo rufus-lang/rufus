@@ -12,8 +12,9 @@
 %% API
 
 %% forms iterates over RufusForms and typechecks binary operations to ensure
-%% that the operands are exclusively ints or exclusively floats. Iteration stops
-%% at the first error. Returns values:
+%% that the operands are exclusively ints or exclusively floats. Inferred type
+%% information is added to every `binary_op` form. Iteration stops at the first
+%% error. Returns values:
 %% - `{ok, AnnotatedForms}` if no issues are found with every `binary_op` form
 %%   having an inferred type annotation.
 %% - `{error, unmatched_operand_type, Form}` if an `int` operand is mixed with a

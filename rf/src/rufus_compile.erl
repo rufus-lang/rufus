@@ -31,7 +31,7 @@ eval(RufusText) ->
 
 %% Private API
 
-%% eval_chain runs each handler as H(Input) in order. Each handler result must
+%% eval_chain runs each handler H as H(Input) in order. Each handler result must
 %% match {ok, Output}. Any other response is treated as an error. Processing
 %% stops when a handler returns an error.
 -spec eval_chain(any(), list(fun((_) -> any()))) -> ok_tuple() | error_tuple().
