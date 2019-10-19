@@ -14,3 +14,11 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
+
+a, a:visited {
+  color: #008cdd;
+}
+
+a:hover {
+  color: #111111;
+}

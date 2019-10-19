@@ -1,20 +1,12 @@
-.Navigation-header {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  position: relative;
+.Navigation {
   margin: 0 auto;
-  z-index: 500;
-  height: 50px;
-  -webkit-perspective: 2000px;
-  perspective: 2000px;
 }
 
-.Navigation-container {
-  padding: 20px 0 0 0;
-  max-width: 1040px;
+.Navigation-header {
+  margin: 20px 0;
 }
 
-.Navigation-logo {
+a.Navigation-logo {
   font-size: 18pt;
   text-align: left;
   text-decoration: none;
