@@ -4,9 +4,10 @@
 
 -export([
     line/1,
-    make_arg/3,
+    make_apply/3,
+    make_arg_decl/3,
     make_binary_op/4,
-    make_func/5,
+    make_func_decl/5,
     make_identifier/2,
     make_import/2,
     make_inferred_type/2,
@@ -86,14 +87,20 @@ make_binary_op(Op, Left, Right, Line) ->
 
 %% Function form builder API
 
-%% make_func returns a form for a function declaration.
--spec make_func(atom(), list(arg_form()), type_form(), list(), integer()) -> {func, #{spec => atom(), args => list(arg_form), return_type => type_form(), exprs => list(), line => integer()}}.
-make_func(Spec, Args, ReturnType, Exprs, Line) ->
-    {func, #{spec => Spec, args => Args, return_type => ReturnType, exprs => Exprs, line => Line}}.
+%% make_func_decl returns a form for a function declaration.
+-spec make_func_decl(atom(), list(arg_decl_form()), type_form(), list(), integer()) -> {func_decl, #{spec => atom(), args => list(arg_decl_form), return_type => type_form(), exprs => list(), line => integer()}}.
+make_func_decl(Spec, Args, ReturnType, Exprs, Line) ->
+    {func_decl, #{spec => Spec, args => Args, return_type => ReturnType, exprs => Exprs, line => Line}}.
 
--spec make_arg(atom(), type_form(), integer()) -> {arg, #{spec => atom(), type => type_form(), line => integer()}}.
-make_arg(Spec, Type, Line) ->
-    {arg, #{spec => Spec, type => Type, line => Line}}.
+%% make_arg_decl returns a form for a function argument declaration.
+-spec make_arg_decl(atom(), type_form(), integer()) -> {arg_decl, #{spec => atom(), type => type_form(), line => integer()}}.
+make_arg_decl(Spec, Type, Line) ->
+    {arg_decl, #{spec => Spec, type => Type, line => Line}}.
+
+%% make_apply returns a form a function call.
+-spec make_apply(atom(), list(), integer()) -> {apply, #{spec => atom(), args => list(), line => integer()}}.
+make_apply(Spec, Args, Line) ->
+    {apply, #{spec => Spec, args => Args, line => Line}}.
 
 %% Type form builder API
 

@@ -18,13 +18,13 @@ forms_test() ->
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
-        {func, #{args => [],
+        {func_decl, #{args => [],
                  exprs => [{int_lit, #{line => 3, locals => #{}, spec => 42,
                                        type => {type, #{line => 3, spec => int, source => inferred}}}}],
                  line => 3,
                  return_type => {type, #{line => 3, spec => int, source => rufus_text}},
-                 spec => 'Number'}
-    }],
+                 spec => 'Number'}}
+    ],
     ?assertEqual(Expected, AnnotatedForms).
 
 %% Arity-1 functions taking an argument and returning a literal
@@ -38,19 +38,26 @@ forms_for_function_taking_an_atom_and_returning_an_atom_literal_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
-        {module, #{line => 2, spec => example}},
-        {func,
-         #{args => [{arg, #{line => 3,
-                            spec => m,
-                            type => {type, #{line => 3, spec => atom, source => rufus_text}}}}],
-           exprs => [{atom_lit, #{line => 3,
-                                  locals => #{m => {type, #{line => 3, spec => atom, source => rufus_text}}},
-                                  spec => pong,
-                                  type => {type, #{line => 3, spec => atom, source => inferred}}}}],
-           line => 3,
-           return_type => {type, #{line => 3, spec => atom, source => rufus_text}},
-           spec => 'Ping'}
-        }
+        {module, #{line => 2,
+                   spec => example}},
+        {func_decl, #{args => [{arg_decl, #{line => 3,
+                                            spec => m,
+                                            type => {type, #{line => 3,
+                                                             spec => atom,
+                                                             source => rufus_text}}}}],
+                      exprs => [{atom_lit, #{line => 3,
+                                             locals => #{m => {type, #{line => 3,
+                                                                       spec => atom,
+                                                                       source => rufus_text}}},
+                                             spec => pong,
+                                             type => {type, #{line => 3,
+                                                              spec => atom,
+                                                              source => inferred}}}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              spec => atom,
+                                              source => rufus_text}},
+                      spec => 'Ping'}}
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
@@ -63,18 +70,26 @@ forms_for_function_taking_a_bool_and_returning_a_bool_literal_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
-        {module, #{line => 2, spec => example}},
-        {func,
-         #{args => [{arg, #{line => 3,
-                            spec => b,
-                            type => {type, #{line => 3, spec => bool, source => rufus_text}}}}],
-           exprs => [{bool_lit, #{line => 3,
-                                  locals => #{b => {type, #{line => 3, spec => bool, source => rufus_text}}},
-                                  spec => true,
-                                  type => {type, #{line => 3, spec => bool, source => inferred}}}}],
-           line => 3,
-           return_type => {type, #{line => 3, spec => bool, source => rufus_text}},
-           spec => 'MaybeEcho'}
+        {module, #{line => 2,
+                   spec => example}},
+        {func_decl, #{args => [{arg_decl, #{line => 3,
+                                            spec => b,
+                                            type => {type, #{line => 3,
+                                                             spec => bool,
+                                                             source => rufus_text}}}}],
+                      exprs => [{bool_lit, #{line => 3,
+                                             locals => #{b => {type, #{line => 3,
+                                                                       spec => bool,
+                                                                       source => rufus_text}}},
+                                             spec => true,
+                                             type => {type, #{line => 3,
+                                                              spec => bool,
+                                                              source => inferred}}}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              spec => bool,
+                                              source => rufus_text}},
+                      spec => 'MaybeEcho'}
         }
     ],
     ?assertEqual(Expected, AnnotatedForms).
@@ -88,19 +103,26 @@ forms_for_function_taking_a_float_and_returning_a_float_literal_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
-        {module, #{line => 2, spec => example}},
-        {func,
-         #{args => [{arg, #{line => 3,
-                            spec => n,
-                            type => {type, #{line => 3, spec => float, source => rufus_text}}}}],
-           exprs => [{float_lit, #{line => 3,
-                                   locals => #{n => {type, #{line => 3, spec => float, source => rufus_text}}},
-                                   spec => 3.14159265359,
-                                   type => {type, #{line => 3, spec => float, source => inferred}}}}],
-           line => 3,
-           return_type => {type, #{line => 3, spec => float, source => rufus_text}},
-           spec => 'MaybeEcho'}
-        }
+        {module, #{line => 2,
+                   spec => example}},
+        {func_decl, #{args => [{arg_decl, #{line => 3,
+                                            spec => n,
+                                            type => {type, #{line => 3,
+                                                             spec => float,
+                                                             source => rufus_text}}}}],
+                      exprs => [{float_lit, #{line => 3,
+                                              locals => #{n => {type, #{line => 3,
+                                                                        spec => float,
+                                                                        source => rufus_text}}},
+                                              spec => 3.14159265359,
+                                              type => {type, #{line => 3,
+                                                               spec => float,
+                                                               source => inferred}}}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              spec => float,
+                                              source => rufus_text}},
+                      spec => 'MaybeEcho'}}
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
@@ -113,19 +135,26 @@ forms_for_function_taking_an_int_and_returning_an_int_literal_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
-        {module, #{line => 2, spec => example}},
-        {func,
-         #{args => [{arg, #{line => 3,
-                            spec => n,
-                            type => {type, #{line => 3, spec => int, source => rufus_text}}}}],
-           exprs => [{int_lit, #{line => 3,
-                                 locals => #{n => {type, #{line => 3, spec => int, source => rufus_text}}},
-                                 spec => 42,
-                                 type => {type, #{line => 3, spec => int, source => inferred}}}}],
-           line => 3,
-           return_type => {type, #{line => 3, spec => int, source => rufus_text}},
-           spec => 'MaybeEcho'}
-        }
+        {module, #{line => 2,
+                   spec => example}},
+        {func_decl, #{args => [{arg_decl, #{line => 3,
+                                            spec => n,
+                                            type => {type, #{line => 3,
+                                                             spec => int,
+                                                             source => rufus_text}}}}],
+                      exprs => [{int_lit, #{line => 3,
+                                            locals => #{n => {type, #{line => 3,
+                                                                      spec => int,
+                                                                      source => rufus_text}}},
+                                            spec => 42,
+                                            type => {type, #{line => 3,
+                                                             spec => int,
+                                                             source => inferred}}}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              spec => int,
+                                              source => rufus_text}},
+                      spec => 'MaybeEcho'}}
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
@@ -138,19 +167,26 @@ forms_for_function_taking_a_string_and_returning_a_string_literal_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
-        {module, #{line => 2, spec => example}},
-        {func,
-         #{args => [{arg, #{line => 3,
-                            spec => s,
-                            type => {type, #{line => 3, spec => string, source => rufus_text}}}}],
-           exprs => [{string_lit, #{line => 3,
-                                    locals => #{s => {type, #{line => 3, spec => string, source => rufus_text}}},
-                                    spec => <<"Hello">>,
-                                    type => {type, #{line => 3, spec => string, source => inferred}}}}],
-           line => 3,
-           return_type => {type, #{line => 3, spec => string, source => rufus_text}},
-           spec => 'MaybeEcho'}
-        }
+        {module, #{line => 2,
+                   spec => example}},
+        {func_decl, #{args => [{arg_decl, #{line => 3,
+                                            spec => s,
+                                            type => {type, #{line => 3,
+                                                             spec => string,
+                                                             source => rufus_text}}}}],
+                      exprs => [{string_lit, #{line => 3,
+                                               locals => #{s => {type, #{line => 3,
+                                                                         spec => string,
+                                                                         source => rufus_text}}},
+                                               spec => <<"Hello">>,
+                                               type => {type, #{line => 3,
+                                                                spec => string,
+                                                                source => inferred}}}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              spec => string,
+                                              source => rufus_text}},
+                      spec => 'MaybeEcho'}}
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
@@ -165,19 +201,24 @@ forms_for_function_taking_an_atom_and_returning_it_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
-        {module, #{line => 2, spec => example}},
-        {func,
-         #{args => [{arg, #{line => 3,
-                            spec => b,
-                            type => {type, #{line => 3, spec => atom, source => rufus_text}}}}],
-           exprs =>
-                    [{identifier, #{line => 3,
-                                    locals => #{b => {type, #{line => 3, spec => atom, source => rufus_text}}},
+        {module, #{line => 2,
+                   spec => example}},
+        {func_decl,
+         #{args => [{arg_decl, #{line => 3,
+                                 spec => b,
+                                 type => {type, #{line => 3,
+                                                  spec => atom,
+                                                  source => rufus_text}}}}],
+           exprs => [{identifier, #{line => 3,
+                                    locals => #{b => {type, #{line => 3,
+                                                              spec => atom,
+                                                              source => rufus_text}}},
                                     spec => b}}],
            line => 3,
-           return_type => {type, #{line => 3, spec => atom, source => rufus_text}},
-           spec => 'Echo'}
-        }
+           return_type => {type, #{line => 3,
+                                   spec => atom,
+                                   source => rufus_text}},
+           spec => 'Echo'}}
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
@@ -190,19 +231,23 @@ forms_for_function_taking_a_bool_and_returning_it_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
-        {module, #{line => 2, spec => example}},
-        {func,
-         #{args => [{arg, #{line => 3,
-                            spec => b,
-                            type => {type, #{line => 3, spec => bool, source => rufus_text}}}}],
-           exprs =>
-                    [{identifier, #{line => 3,
-                                    locals => #{b => {type, #{line => 3, spec => bool, source => rufus_text}}},
-                                    spec => b}}],
-           line => 3,
-           return_type => {type, #{line => 3, spec => bool, source => rufus_text}},
-           spec => 'Echo'}
-        }
+        {module, #{line => 2,
+                   spec => example}},
+        {func_decl, #{args => [{arg_decl, #{line => 3,
+                                            spec => b,
+                                            type => {type, #{line => 3,
+                                                             spec => bool,
+                                                             source => rufus_text}}}}],
+                      exprs => [{identifier, #{line => 3,
+                                               locals => #{b => {type, #{line => 3,
+                                                                         spec => bool,
+                                                                         source => rufus_text}}},
+                                               spec => b}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              spec => bool,
+                                              source => rufus_text}},
+                      spec => 'Echo'}}
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
@@ -215,19 +260,24 @@ forms_for_function_taking_a_float_and_returning_it_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
-        {module, #{line => 2, spec => example}},
-        {func,
-         #{args => [{arg, #{line => 3,
-                            spec => n,
-                            type => {type, #{line => 3, spec => float, source => rufus_text}}}}],
-           exprs =>
-                    [{identifier, #{line => 3,
-                                    locals => #{n => {type, #{line => 3, spec => float, source => rufus_text}}},
+        {module, #{line => 2,
+                   spec => example}},
+        {func_decl,
+         #{args => [{arg_decl, #{line => 3,
+                                 spec => n,
+                                 type => {type, #{line => 3,
+                                                  spec => float,
+                                                  source => rufus_text}}}}],
+           exprs => [{identifier, #{line => 3,
+                                    locals => #{n => {type, #{line => 3,
+                                                              spec => float,
+                                                              source => rufus_text}}},
                                     spec => n}}],
            line => 3,
-           return_type => {type, #{line => 3, spec => float, source => rufus_text}},
-           spec => 'Echo'}
-        }
+           return_type => {type, #{line => 3,
+                                   spec => float,
+                                   source => rufus_text}},
+           spec => 'Echo'}}
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
@@ -240,19 +290,23 @@ forms_for_function_taking_an_int_and_returning_it_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
-        {module, #{line => 2, spec => example}},
-        {func,
-         #{args => [{arg, #{line => 3,
-                            spec => n,
-                            type => {type, #{line => 3, spec => int, source => rufus_text}}}}],
-           exprs =>
-                    [{identifier, #{line => 3,
-                                    locals => #{n => {type, #{line => 3, spec => int, source => rufus_text}}},
-                                    spec => n}}],
-           line => 3,
-           return_type => {type, #{line => 3, spec => int, source => rufus_text}},
-           spec => 'Echo'}
-        }
+        {module, #{line => 2,
+                   spec => example}},
+        {func_decl, #{args => [{arg_decl, #{line => 3,
+                                            spec => n,
+                                            type => {type, #{line => 3,
+                                                             spec => int,
+                                                             source => rufus_text}}}}],
+                      exprs => [{identifier, #{line => 3,
+                                               locals => #{n => {type, #{line => 3,
+                                                                         spec => int,
+                                                                         source => rufus_text}}},
+                                               spec => n}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              spec => int,
+                                              source => rufus_text}},
+                      spec => 'Echo'}}
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
@@ -266,17 +320,20 @@ forms_for_function_taking_a_string_and_returning_it_test() ->
     {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
-        {func,
-         #{args => [{arg, #{line => 3,
-                            spec => s,
-                            type => {type, #{line => 3, spec => string, source => rufus_text}}}}],
-           exprs =>
-                    [{identifier, #{line => 3,
-                                    locals => #{s => {type, #{line => 3, spec => string, source => rufus_text}}},
-                                    spec => s}}],
-           line => 3,
-           return_type => {type, #{line => 3, spec => string, source => rufus_text}},
-           spec => 'Echo'}
-        }
+        {func_decl, #{args => [{arg_decl, #{line => 3,
+                                            spec => s,
+                                            type => {type, #{line => 3,
+                                                             spec => string,
+                                                             source => rufus_text}}}}],
+                      exprs => [{identifier, #{line => 3,
+                                               locals => #{s => {type, #{line => 3,
+                                                                         spec => string,
+                                                                         source => rufus_text}}},
+                                               spec => s}}],
+                      line => 3,
+                      return_type => {type, #{line => 3,
+                                              spec => string,
+                                              source => rufus_text}},
+                      spec => 'Echo'}}
     ],
     ?assertEqual(Expected, AnnotatedForms).
