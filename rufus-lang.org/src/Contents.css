@@ -1,39 +1,39 @@
-.Page {
+.Contents {
   background: #ffffff;
   border: 1px solid #eaecee;
   width: 878px;
-  margin: 0 auto 125px;
+  margin: 0 auto 75px;
 }
 
-.Page-content {
-  margin: 65px auto 125px;
+.Contents-content {
+  margin: 75px auto 125px;
   width: 578px;
 }
 
-.Page-content h1 {
+.Contents-content h1 {
   text-align: left;
   text-decoration: none;
   font-weight: 400;
   color: #292e31;
 }
 
-.Page-content h2 {
+.Contents-content h2 {
   text-align: left;
   text-decoration: none;
   font-weight: 400;
   color: #292e31;
 }
 
-.Page p {
+.Contents p {
   color: #4c555a;
 }
 
-.Page ul li {
+.Contents ul li {
   color: #4c555a;
   list-style-type: disc;
   margin-left: -2.45em;
 }
 
-.Page ul li::before {
+.Contents ul li::before {
   color: #939da3;
 }

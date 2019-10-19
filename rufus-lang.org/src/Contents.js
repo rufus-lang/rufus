@@ -1,18 +1,18 @@
 import React from 'react';
 
-import './Page.css';
+import './Contents.css';
 
-function Page() {
+function Contents() {
     return (
-        <div className="Page">
-            <div className="Page-content">
+        <div className="Contents">
+            <div className="Contents-content">
                 <h1>Rufus decision records</h1>
 
                 <ul>
                     <li>ID: RDR-0000</li>
                     <li>Status: Accepted</li>
                     <li>Deciders: Jamu Kakar &lt;<a href="mailto:jkakar@kakar.ca">jkakar@kakar.ca</a>&gt;</li>
-                    <li>Date: 2019-03-24</li>
+                    <li>Date: March 24, 2019</li>
                 </ul>
 
                 <h2>Context and problem statement</h2>
@@ -48,4 +48,4 @@ function Page() {
     );
 }
 
-export default Page;
+export default Contents;

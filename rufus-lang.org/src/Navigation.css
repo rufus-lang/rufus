@@ -12,5 +12,21 @@ a.Navigation-logo {
   text-decoration: none;
   font-weight: 500;
   margin-left: 25px;
-  color: #111111;
+}
+
+.Navigation-links {
+  float: right;
+  padding-top: 5px;
+}
+
+.Navigation-links a {
+  padding: 0 25px;
+}
+
+.Navigation-header a, .Navigation-header a:visited {
+  color: #8898aa;
+}
+
+.Navigation-header a:hover {
+  color: #292e31;
 }
