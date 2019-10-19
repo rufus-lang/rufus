@@ -1,0 +1,39 @@
+.Contents {
+  background: #ffffff;
+  border: 1px solid #eaecee;
+  width: 878px;
+  margin: 0 auto 75px;
+}
+
+.Contents-content {
+  margin: 75px auto 125px;
+  width: 578px;
+}
+
+.Contents-content h1 {
+  text-align: left;
+  text-decoration: none;
+  font-weight: 400;
+  color: #292e31;
+}
+
+.Contents-content h2 {
+  text-align: left;
+  text-decoration: none;
+  font-weight: 400;
+  color: #292e31;
+}
+
+.Contents p {
+  color: #4c555a;
+}
+
+.Contents ul li {
+  color: #4c555a;
+  list-style-type: disc;
+  margin-left: -2.45em;
+}
+
+.Contents ul li::before {
+  color: #939da3;
+}
