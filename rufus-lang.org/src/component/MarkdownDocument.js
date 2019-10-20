@@ -1,15 +1,15 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
-import './Document.css';
+import './MarkdownDocument.css';
 
-class Document extends React.Component {
+class MarkdownDocument extends React.Component {
     constructor() {
         super();
         this.state = {input: ''};
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.getData();
     }
 
@@ -25,11 +25,11 @@ class Document extends React.Component {
 
     render() {
         return (
-            <div className="Document">
+            <div className="MarkdownDocument">
                 <ReactMarkdown source={this.state.input} />
             </div>
         );
     }
 }
 
-export default Document;
+export default MarkdownDocument;
