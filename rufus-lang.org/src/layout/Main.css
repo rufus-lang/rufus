@@ -24,8 +24,24 @@
   color: #292e31;
 }
 
+.Main-content h3 {
+  text-align: left;
+  text-decoration: none;
+  font-weight: 400;
+  color: #292e31;
+}
+
 .Main p {
   color: #4c555a;
+}
+
+.Main ol li {
+  color: #4c555a;
+  margin-left: -2.45em;
+}
+
+.Main ol li::before {
+  color: #939da3;
 }
 
 .Main ul li {

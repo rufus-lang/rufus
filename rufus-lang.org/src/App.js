@@ -6,14 +6,16 @@ import Main from './layout/Main';
 
 import './App.css';
 
-function App() {
-    return (
-        <div className="App">
-            <Header />
-            <Main />
-            <Footer />
-        </div>
-    );
+class App extends React.Component {
+    render() {
+        return (
+            <div className="App">
+                <Header />
+                <Main />
+                <Footer />
+            </div>
+        );
+    }
 }
 
 export default App;

@@ -2,10 +2,12 @@ import React from 'react';
 
 import './Footer.css';
 
-function Footer() {
-    return (
-        <footer className="Footer-footer">© Jamu Kakar</footer>
-    );
+class Footer extends React.Component {
+    render() {
+        return (
+            <footer className="Footer-footer">© Jamu Kakar</footer>
+        );
+    }
 }
 
 export default Footer;
