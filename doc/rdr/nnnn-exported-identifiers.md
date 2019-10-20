@@ -1,8 +1,9 @@
 # Exported identifiers
 
+* ID: RDR-_nnnn_
 * Status: Drafting
-* Deciders: Jamu Kakar <<jkakar@kakar.ca>>
-* Date: 2019-05-03
+* Deciders: Jamu Kakar <[jkakar@kakar.ca](mailto:jkakar@kakar.ca)>
+* Date: May 3, 2019
 
 ## Context and problem statement
 
@@ -41,7 +42,7 @@ It would be used exterally like:
 ```rufus
 module example
 
-import "rufus/math"
+import "math"
 
 func Area(radius tuple{:radius, int}) float {
     math.Pow(math.Pi * radius, 2)
@@ -73,7 +74,7 @@ It would be used externally like:
 ```rufus
 module example
 
-import "rufus/Math"
+import "Math"
 
 func Area(:radius, radius float) float {
     Math.Pow(Math.Pi * radius, 2)
@@ -94,6 +95,7 @@ filesystems. A private `math` module in `math.rf` could conflict with a public
 
 Chosen option: option 2, because it uses one unified pattern instead of two
 different patterns. It also has the benefit of making private modules more
-obvious when reading code. We will fail a build if two or more Rufus source
-files in the same directory have names that differ only by case. This will
-prevent collision issues on case-insensitive filesystems.
+obvious when reading code because they start with an `_` or a lowercase letter.
+We will fail a build if two or more Rufus source files in the same directory
+have names that differ only by case. This will prevent collision issues on
+case-insensitive filesystems.
