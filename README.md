@@ -36,7 +36,7 @@ list[int]
 numbers = list[int]{1, 2, 3, 4, 5}
 
 map[atom]string
-alice = map[atom]string{:name: "Alice", :age: "34"}
+alice = map[atom]string{:name -> "Alice", :age -> "34"}
 
 tuple[string, int]
 alice = tuple[string, int]{"Alice", 34}
@@ -74,14 +74,17 @@ point = Point{X: 2, Y: 5, Z: -1}
 point.X = 2
 ```
 
-Union type:
+Anonymous union type:
 
 ```rufus
-// Inline method allows shorthand syntax to help reduce boilerplate
 func Teleport(point Point) :ok | tuple[:error, string] {
     // ...
 }
+```
 
+Named union type:
+
+```rufus
 type Outcome :ok | tuple[:error, string]
 
 func Teleport(point Point) Outcome {
