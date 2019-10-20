@@ -1,12 +1,8 @@
-.Navigation {
-  margin: 0 auto;
-}
-
-.Navigation-header {
+.Header {
   margin: 20px 0;
 }
 
-a.Navigation-logo {
+a.Header-logo {
   font-size: 18pt;
   text-align: left;
   text-decoration: none;
@@ -14,19 +10,19 @@ a.Navigation-logo {
   margin-left: 25px;
 }
 
-.Navigation-links {
+.Header-links {
   float: right;
   padding-top: 5px;
 }
 
-.Navigation-links a {
+.Header-links a {
   padding: 0 25px;
 }
 
-.Navigation-header a, .Navigation-header a:visited {
+.Header a, .Header a:visited {
   color: #8898aa;
 }
 
-.Navigation-header a:hover {
+.Header a:hover {
   color: #292e31;
 }

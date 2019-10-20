@@ -1,11 +1,11 @@
 import React from 'react';
 
-import './Contents.css';
+import './Main.css';
 
-function Contents() {
+function Main() {
     return (
-        <div className="Contents">
-            <div className="Contents-content">
+        <main className="Main">
+            <div className="Main-content">
                 <h1>Rufus decision records</h1>
 
                 <ul>
@@ -44,8 +44,8 @@ function Contents() {
                 adaptable to our needs. Rufus decision records are assigned an RDR-<em>nnnn</em> ID
                 when they're accepted. See <a href="0001-template.md">RDR-0001</a> for a template.</p>
             </div>
-        </div>
+        </main>
     );
 }
 
-export default Contents;
+export default Main;
