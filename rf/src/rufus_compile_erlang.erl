@@ -78,7 +78,9 @@ forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}
     ErlangOp = rufus_operator_to_erlang_operator(Op, rufus_form:type_spec(Left)),
     Form = {op, Line, ErlangOp, LeftExpr, RightExpr},
     forms([Form|Acc], T);
-forms(Acc, [{type, #{line := _Line, spec := _Spec}}|T]) ->
+forms(Acc, [{type, _Context}|T]) ->
+    forms(Acc, T); %% no-op to satisfy Dialyzer
+forms(Acc, [{apply, _Context}|T]) ->
     forms(Acc, T); %% no-op to satisfy Dialyzer
 forms(Acc, []) ->
     {ok, lists:reverse(Acc)};

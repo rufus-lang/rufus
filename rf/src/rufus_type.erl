@@ -12,13 +12,13 @@
 
 %% resolve returns a type form for Form. If Form already has a type form
 %% associated with it, it will be returned. Otherwise, the type is inferred.
--spec resolve(#{atom() => list(rufus_form())}, rufus_form()) -> {ok, type_form()} | error_tuple().
+-spec resolve(#{atom() => list(rufus_form())}, rufus_form()) -> {ok, type_form()} | error_triple().
 resolve(Globals, Form) ->
     resolve_type(Globals, Form).
 
 %% Private API
 
--spec resolve_type(#{atom() => list(rufus_form())}, rufus_form()) -> {ok, type_form()} | error_tuple().
+-spec resolve_type(#{atom() => list(rufus_form())}, rufus_form()) -> {ok, type_form()} | error_triple().
 resolve_type(_Globals, {_Form, #{type := Type}}) ->
     {ok, Type};
 resolve_type(_Globals, {func_decl, #{return_type := Type}}) ->
