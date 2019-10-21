@@ -27,88 +27,39 @@
 -spec forms(list(rufus_form())) -> {ok, list(rufus_form())}.
 forms(RufusForms) ->
     {ok, Globals} = rufus_scope:globals(RufusForms),
-    case forms(Globals, RufusForms) of
-        ok ->
-            {ok, RufusForms};
+    io:format("forms:1~n"),
+    case forms([], Globals, RufusForms) of
+        {ok, AnnotatedForms} ->
+            {ok, AnnotatedForms};
         Error ->
             Error
     end.
 
 %% Private API
 
-forms(Globals, [{func_decl, #{exprs := Exprs}}|T]) ->
-    case forms(Globals, Exprs) of
-        {ok, Globals, _Forms} ->
-            forms(Globals, T);
+forms(Acc, Globals, [Form = {func_decl, #{exprs := Exprs}}|T]) ->
+    io:format("forms:2~n"),
+    case forms([], Globals, Exprs) of
+        {ok, AnnotatedExprs} ->
+            AnnotatedForm = rufus_form:annotate(Form, exprs, AnnotatedExprs),
+            io:format("AnnotatedForm 1 => ~p~n", [AnnotatedForm]),
+            forms([AnnotatedForm|Acc], Globals, T);
         Error ->
             Error
     end;
-forms(Globals, Form = [{apply, _Context}|T]) ->
-    io:format("YO DAWG!"),
-    Handlers = [fun validate_function_exists/2,
-                fun validate_matching_arity/2,
-                fun validate_matching_arg_types/2
-               ],
-    case chain_validators(Globals, Form, Handlers) of
-        {ok, Globals, Form} ->
-            forms(Globals, T);
+forms(Acc, Globals, [Form = {apply, _Context}|T]) ->
+    io:format("forms:3~n"),
+    case rufus_type:resolve(Globals, Form) of
+        {ok, TypeForm} ->
+            AnnotatedForm = rufus_form:annotate(Form, type, TypeForm),
+            io:format("AnnotatedForm 2 => ~p~n", [AnnotatedForm]),
+            forms([AnnotatedForm|Acc], Globals, T);
         Error ->
             Error
     end;
-forms(Globals, [_H|T]) ->
-    forms(Globals, T);
-forms(_Globals, []) ->
-    ok.
-
-%% chain_validators runs each handler H as H(Globals, Form) in order. Each
-%% handler result must match {ok, Globals, Form}. Any other response is treated
-%% as an error. Processing stops when a handler returns an error.
--spec chain_validators(map(), any(), list(fun((_, _) -> any()))) -> ok_tuple() | error_tuple().
-chain_validators(Globals, Form = {apply, _Context}, [H|T]) ->
-    io:format("H(Form) => ~p(~p)~n", [H, Form]),
-    case H(Globals, Form) of
-        {ok, Globals, Form} ->
-            chain_validators(Globals, Form, T);
-        Error ->
-            Error
-    end;
-chain_validators(Globals, Form, []) ->
-    {ok, Globals, Form}.
-
-validate_function_exists(Globals, Form = {apply, #{spec := Spec}}) ->
-    case map:is_key(Spec, Globals) of
-        true ->
-            {ok, Globals, Form};
-        false ->
-            {error, unknown_func, #{spec => Spec}}
-    end.
-
-validate_matching_arity(Globals, Form = {apply, #{spec := Spec, args := ArgExprs}}) ->
-    FormDecls = maps:get(Spec, Globals),
-    FormDeclHasMatchingArity = lists:any(fun({func_decl, #{args := ArgDecls}}) ->
-        length(ArgDecls) =:= length(ArgExprs)
-    end, FormDecls),
-    case FormDeclHasMatchingArity of
-        true ->
-            {ok, Globals, Form};
-        false ->
-            {error, incorrect_arg_count, #{actual => length(ArgExprs)}}
-    end.
-
-validate_matching_arg_types(Globals, Form = {apply, #{spec := Spec, args := ArgExprs}}) ->
-    FormDecls = maps:get(Spec, Globals),
-    FormDeclsWithMatchingArity = lists:filter(fun({func_decl, #{args := ArgDecls}}) ->
-        length(ArgDecls) =:= length(ArgExprs)
-    end, FormDecls),
-    FormDeclHasMatchingArgTypes = lists:any(fun({func_decl, #{args := ArgDecls}}) ->
-        ArgPairs = lists:zip(ArgDecls, ArgExprs),
-        lists:all(fun({arg_decl, #{type := {type, #{spec := Spec1}}}}, {_, #{type := {type, #{spec := Spec2}}}}) ->
-            Spec1 =:= Spec2
-        end, ArgPairs)
-    end, FormDeclsWithMatchingArity),
-    case FormDeclHasMatchingArgTypes of
-        true ->
-            {ok, Globals, Form};
-        false ->
-            {error, incorrect_arg_type, #{}}
-    end.
+forms(Acc, Globals, [H|T]) ->
+    io:format("forms:4~n"),
+    forms([H|Acc], Globals, T);
+forms(Acc, _Globals, []) ->
+    io:format("forms:5~n"),
+    {ok, lists:reverse(Acc)}.

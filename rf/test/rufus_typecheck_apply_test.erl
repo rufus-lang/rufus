@@ -12,7 +12,11 @@ forms_with_function_calling_a_function_without_arguments_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, Forms} = rufus_typecheck_apply:forms(Forms).
+    io:format("Forms => ~p~n", [Forms]),
+    io:format("Before"),
+    {ok, AnnotatedForms} = rufus_typecheck_apply:forms(Forms),
+    io:format("After"),
+    ?assertEqual(undefined, AnnotatedForms).
 
 forms_with_function_calling_a_function_with_a_missing_argument_test() ->
     RufusText = "
@@ -23,7 +27,23 @@ forms_with_function_calling_a_function_with_a_missing_argument_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Result = rufus_typecheck_apply:forms(Forms),
-    ?assertEqual({error, incorrect_arg_count, #{expected => 1, actual => 0}}, Result).
+    Data = #{arg_exprs => [],
+             form_decls => [{func_decl, #{args => [{arg_decl, #{line => 3,
+                                                                spec => n,
+                                                                type => {type, #{line => 3,
+                                                                                 source => rufus_text,
+                                                                                 spec => string}}}}],
+                                          exprs => [{string_lit, #{line => 3,
+                                                                   spec => <<"Hello">>,
+                                                                   type => {type, #{line => 3,
+                                                                                    source => inferred,
+                                                                                    spec => string}}}}],
+                                          line => 3,
+                                          return_type => {type, #{line => 3,
+                                                                  source => rufus_text,
+                                                                  spec => string}},
+                                          spec => 'Echo'}}]},
+    ?assertEqual({error, unknown_arity, Data}, Result).
 
 %% forms_with_function_calling_a_function_with_a_mismatched_argument_type_test() ->
 %%     RufusText = "

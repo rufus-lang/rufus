@@ -3,6 +3,7 @@
 -include_lib("rufus_type.hrl").
 
 -export([
+    annotate/3,
     line/1,
     make_apply/3,
     make_arg_decl/3,
@@ -21,6 +22,11 @@
 ]).
 
 %% Form API
+
+%% annotate updates a key/value pair in a form context.
+-spec annotate(rufus_form(), atom(), any()) -> rufus_form().
+annotate({FormType, Context}, Key, Value) ->
+    {FormType, Context#{Key => Value}}.
 
 %% line returns the line number from the specified form. A line number is
 %% expected with every single form, so lack of one will result in a
