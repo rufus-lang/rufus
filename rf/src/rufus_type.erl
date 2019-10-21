@@ -36,7 +36,7 @@ resolve_type(Globals, {apply, #{spec := Spec, args := ArgExprs}}) ->
                     {error, Reason, Data};
                 {ok, Result} when length(Result) > 1 ->
                     %% TODO(jkakar): We need to handle cases where more than one
-                    %% function matches a given set of arg types. For example,
+                    %% function matches a given set of parameters. For example,
                     %% consider two functions:
                     %%
                     %% func Echo(:hello) atom { :hello }
@@ -47,10 +47,10 @@ resolve_type(Globals, {apply, #{spec := Spec, args := ArgExprs}}) ->
                     %% account for all possible return types. When a callsite
                     %% specifies a literal value such as :hello or :goodbye we
                     %% should select the correct singular return type.
-                    [{_, #{type := Type}}|_] = FormDecls,
+                    [{_, #{return_type := Type}}|_] = FormDecls,
                     {ok, Type};
                 {ok, Result} when length(Result) =:= 1 ->
-                    [{_, #{type := Type}}] = FormDecls,
+                    [{_, #{return_type := Type}}] = FormDecls,
                     {ok, Type}
             end
     end.
