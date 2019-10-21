@@ -1,11 +1,12 @@
 [Copy this template to a file called `nnnn-<title>.md`. A number will be
 assigned at the time the decision is accepted.]
 
-# Short title of solved problem and solution
+# Short decision title
 
+* ID: RDR-_nnnn_
 * Status: [Drafting | Proposed | Rejected | Accepted | Deprecated | Superseded by [RDR-0005](0005-example.md)]
-* Deciders: [List everyone involved in the decision, like "John Doe <<johndoe@example.com>>"]
-* Date: [YYYY-MM-DD when the decision was last updated]
+* Deciders: [List the decision makers, like "John Doe <[johndoe@example.com](mailto:johndoe@example.com)>"]
+* Date: [Month DD, YYYY when the decision was last updated]
 
 ## Context and problem statement
 
@@ -27,5 +28,5 @@ articulate the problem in form of a question.]
 
 ## Decision outcome
 
-Chosen option: "[option 1]", because [justification. e.g., only option, which
-meets user experience drivers].
+Chosen option: "[option 1]", because [justification. e.g., is a more isolated
+design that can be implemented in a cleaner way than the other options].

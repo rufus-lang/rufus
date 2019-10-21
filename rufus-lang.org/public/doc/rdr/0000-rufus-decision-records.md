@@ -1,8 +1,9 @@
 # Rufus decision records
 
+* ID: RDR-0000
 * Status: Accepted
-* Deciders: Jamu Kakar <<jkakar@kakar.ca>>
-* Date: 2019-03-24
+* Deciders: Jamu Kakar <[jkakar@kakar.ca](mailto:jkakar@kakar.ca)>
+* Date: March 24, 2019
 
 ## Context and problem statement
 
@@ -26,4 +27,5 @@ The following formats have been considered:
 ## Decision outcome
 
 Chosen option: a subset of the MADR template, because it's the most easily
-adaptable to our needs. See [RDR-0001](0001-template.md) for a template.
+adaptable to our needs. Rufus decision records are assigned an RDR-_nnnn_ ID
+when they're accepted. See [RDR-0001](0001-template.md) for a template.
