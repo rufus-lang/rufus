@@ -27,7 +27,6 @@
 -spec forms(list(rufus_form())) -> {ok, list(rufus_form())}.
 forms(RufusForms) ->
     {ok, Globals} = rufus_scope:globals(RufusForms),
-    io:format("forms:1~n"),
     case forms([], Globals, RufusForms) of
         {ok, AnnotatedForms} ->
             {ok, AnnotatedForms};
@@ -38,28 +37,22 @@ forms(RufusForms) ->
 %% Private API
 
 forms(Acc, Globals, [Form = {func_decl, #{exprs := Exprs}}|T]) ->
-    io:format("forms:2~n"),
     case forms([], Globals, Exprs) of
         {ok, AnnotatedExprs} ->
             AnnotatedForm = rufus_form:annotate(Form, exprs, AnnotatedExprs),
-            io:format("AnnotatedForm 1 => ~p~n", [AnnotatedForm]),
             forms([AnnotatedForm|Acc], Globals, T);
         Error ->
             Error
     end;
 forms(Acc, Globals, [Form = {apply, _Context}|T]) ->
-    io:format("forms:3~n"),
     case rufus_type:resolve(Globals, Form) of
         {ok, TypeForm} ->
             AnnotatedForm = rufus_form:annotate(Form, type, TypeForm),
-            io:format("AnnotatedForm 2 => ~p~n", [AnnotatedForm]),
             forms([AnnotatedForm|Acc], Globals, T);
         Error ->
             Error
     end;
 forms(Acc, Globals, [H|T]) ->
-    io:format("forms:4~n"),
     forms([H|Acc], Globals, T);
 forms(Acc, _Globals, []) ->
-    io:format("forms:5~n"),
     {ok, lists:reverse(Acc)}.

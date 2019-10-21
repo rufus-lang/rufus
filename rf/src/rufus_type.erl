@@ -1,4 +1,4 @@
-%% rufus_type returns type information for Rufus forms. Type information is
+%% rufus_type exposes type information for Rufus forms. Type information is
 %% inferred in cases where it isn't already present.
 -module(rufus_type).
 
@@ -20,13 +20,10 @@ resolve(Globals, Form) ->
 
 -spec resolve_type(#{atom() => list(rufus_form())}, rufus_form()) -> {ok, type_form()} | error_tuple().
 resolve_type(_Globals, {_Form, #{type := Type}}) ->
-    io:format("resolve_type with type information~n"),
     {ok, Type};
 resolve_type(_Globals, {func_decl, #{return_type := Type}}) ->
-    io:format("resolve_type with func_decl~n"),
     {ok, Type};
 resolve_type(Globals, {apply, #{spec := Spec, args := ArgExprs}}) ->
-    io:format("resolve_type with apply~n  Globals => ~p~n  Spec => ~p~n  ArgsExprs => ~p~n", [Globals, Spec, ArgExprs]),
     case maps:get(Spec, Globals, undefined) of
         undefined ->
             {error, unknown_func, #{spec => Spec, args => ArgExprs}};

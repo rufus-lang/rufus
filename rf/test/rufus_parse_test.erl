@@ -156,7 +156,6 @@ forms_for_function_with_multiple_expressions_test() ->
     }
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
-    io:format("Tokens => ~p~n", [Tokens]),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
         {module, #{line => 2,
