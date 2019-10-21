@@ -151,7 +151,6 @@ forms_typecheck_for_binary_op_with_strings_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    io:format("{ok, Forms} => ~p~n", [Forms]),
     Expected = {binary_op, #{left => {string_lit, #{line => 3,
                                                     spec => <<"port">>,
                                                     type => {type, #{line => 3,

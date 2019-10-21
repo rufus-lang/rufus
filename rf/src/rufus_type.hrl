@@ -6,6 +6,7 @@
 
 -type ok_tuple() :: {ok, any()}.
 -type error_tuple() :: {error, any()}.
+-type error_triple() :: {error, any(), context()}.
 
 %% Rufus source text
 
@@ -20,6 +21,7 @@
 
 -type type_spec() :: atom().
 -type type_form() :: {type, context()}.
+-type type_source() :: inferred | rufus_text.
 
 %% Modules
 
@@ -53,6 +55,7 @@
 -type arg_decl_form() :: {arg_decl, context()}.
 -type identifier_form() :: {identifier, context()}.
 -type binary_op_form() :: {binary_op, context()}.
+-type apply_form() :: {apply, context()}.
 
 %% Rufus forms
 
@@ -67,7 +70,8 @@
       | arg_decl_form()
       | identifier_form()
       | type_form()
-      | binary_op_form().
+      | binary_op_form()
+      | apply_form().
 
 %% Errors
 

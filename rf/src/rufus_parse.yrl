@@ -66,6 +66,7 @@ arg_decl -> identifier type      : rufus_form:make_arg_decl(list_to_atom(text('$
 block -> '{' exprs '}'           : '$2'.
 
 args  -> expr ',' args           : ['$1'|'$3'].
+args  -> expr                    : ['$1'].
 args  -> '$empty'                : [].
 exprs -> expr ';' exprs          : ['$1'|'$3'].
 exprs -> '$empty'                : [].

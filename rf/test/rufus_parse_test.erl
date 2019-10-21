@@ -156,7 +156,6 @@ forms_for_function_with_multiple_expressions_test() ->
     }
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
-    io:format("Tokens => ~p~n", [Tokens]),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
         {module, #{line => 2,
@@ -740,4 +739,44 @@ parse_function_calling_a_function_without_arguments_test() ->
                                             source => rufus_text,
                                             spec => int}},
                     spec => 'Random'}}
+    ], Forms).
+
+%% Arity-0 functions calling an arity-1 function
+
+parse_function_calling_a_function_with_an_argument_test() ->
+    RufusText = "
+    module example
+    func Echo(n string) string { n }
+    func Echo() string { Echo(\"Hello\") }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    ?assertEqual([
+      {module, #{line => 2,
+                 spec => example}},
+      {func_decl, #{args => [{arg_decl, #{line => 3,
+                                          spec => n,
+                                          type => {type, #{line => 3,
+                                                           source => rufus_text,
+                                                           spec => string}}}}],
+                    exprs => [{identifier, #{line => 3,
+                                             spec => n}}],
+                    line => 3,
+                    return_type => {type, #{line => 3,
+                                            source => rufus_text,
+                                            spec => string}},
+                    spec => 'Echo'}},
+      {func_decl, #{args => [],
+                    exprs => [{apply, #{args => [{string_lit, #{line => 4,
+                                                                spec => <<"Hello">>,
+                                                                type => {type, #{line => 4,
+                                                                                 source => inferred,
+                                                                                 spec => string}}}}],
+                                        line => 4,
+                                        spec => 'Echo'}}],
+                    line => 4,
+                    return_type => {type, #{line => 4,
+                                            source => rufus_text,
+                                            spec => string}},
+                    spec => 'Echo'}}
     ], Forms).

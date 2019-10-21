@@ -3,6 +3,7 @@
 -include_lib("rufus_type.hrl").
 
 -export([
+    annotate/3,
     line/1,
     make_apply/3,
     make_arg_decl/3,
@@ -22,6 +23,11 @@
 
 %% Form API
 
+%% annotate updates a key/value pair in a form context.
+-spec annotate(rufus_form(), atom(), any()) -> rufus_form().
+annotate({FormType, Context}, Key, Value) ->
+    {FormType, Context#{Key => Value}}.
+
 %% line returns the line number from the specified form. A line number is
 %% expected with every single form, so lack of one will result in a
 %% function_clause exception at runtime.
@@ -30,7 +36,7 @@ line({_, #{line := Line}}) ->
     Line.
 
 %% source returns information about where the type information is from.
--spec source({type, context()}) -> inferred | rufus_text.
+-spec source({type, context()}) -> type_source().
 source({type, #{source := Source}}) ->
     Source.
 
@@ -106,16 +112,16 @@ make_apply(Spec, Args, Line) ->
 
 %% make_inferred_type creates a type form with 'inferred' as the 'source' value,
 %% to indicate that the type has been inferred by the compiler.
--spec make_inferred_type(type_spec(), integer()) -> {type, #{spec => atom(), source => inferred | rufus_text, line => integer()}}.
+-spec make_inferred_type(type_spec(), integer()) -> {type, #{spec => atom(), source => type_source(), line => integer()}}.
 make_inferred_type(Spec, Line) ->
     make_type(Spec, inferred, Line).
 
 %% make_type returns a type form with 'rufus_text' as the 'source' value, to
 %% indicate that the type came from source code.
--spec make_type(atom(), integer()) -> {type, #{spec => atom(), source => inferred | rufus_text, line => integer()}}.
+-spec make_type(atom(), integer()) -> {type, #{spec => atom(), source => type_source(), line => integer()}}.
 make_type(Spec, Line) ->
     make_type(Spec, rufus_text, Line).
 
--spec make_type(type_spec(), inferred | rufus_text, integer()) -> type_form().
+-spec make_type(type_spec(), type_source(), integer()) -> type_form().
 make_type(Spec, Source, Line) ->
     {type, #{spec => Spec, source => Source, line => Line}}.

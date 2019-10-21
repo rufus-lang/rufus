@@ -53,7 +53,7 @@ forms(Acc, [{identifier, #{line := Line, spec := Name, locals := Locals}}|T]) ->
     forms([Form|Acc], T);
 forms(Acc, [{func_decl, #{line := Line, spec := Name, args := Args, exprs := Exprs}}|T]) ->
     {ok, ArgsForms} = forms([], Args),
-    {ok, GuardForms} = guards([], Args),
+    {ok, GuardForms} = guard_forms([], Args),
     {ok, ExprForms} = forms([], Exprs),
     FunctionForms = [{clause, Line, ArgsForms, GuardForms, ExprForms}],
     ExportForms = {attribute, Line, export, [{Name, length(Args)}]},
@@ -75,36 +75,38 @@ forms(Acc, [Form = {arg_decl, #{line := Line, spec := Name}}|T]) ->
 forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}|T]) ->
     {ok, [LeftExpr]} = forms([], [Left]),
     {ok, [RightExpr]} = forms([], [Right]),
-    ErlangOp = erlang_operator(Op, rufus_form:type_spec(Left)),
+    ErlangOp = rufus_operator_to_erlang_operator(Op, rufus_form:type_spec(Left)),
     Form = {op, Line, ErlangOp, LeftExpr, RightExpr},
     forms([Form|Acc], T);
-forms(Acc, [{type, #{line := _Line, spec := _Spec}}|T]) ->
+forms(Acc, [{type, _Context}|T]) ->
+    forms(Acc, T); %% no-op to satisfy Dialyzer
+forms(Acc, [{apply, _Context}|T]) ->
     forms(Acc, T); %% no-op to satisfy Dialyzer
 forms(Acc, []) ->
     {ok, lists:reverse(Acc)};
-forms(_Acc, Form) ->
-    erlang:error(unhandled_form, Form).
+forms(Acc, Form) ->
+    erlang:error(unhandled_form, [Acc, Form]).
 
-erlang_operator('/', float) -> '/';
-erlang_operator('/', int) -> 'div';
-erlang_operator('%', int) -> 'rem';
-erlang_operator('%', float) -> erlang:error(unsupported_operand_type);
-erlang_operator(Op, _) -> Op.
+rufus_operator_to_erlang_operator('/', float) -> '/';
+rufus_operator_to_erlang_operator('/', int) -> 'div';
+rufus_operator_to_erlang_operator('%', int) -> 'rem';
+rufus_operator_to_erlang_operator('%', float) -> erlang:error(unsupported_operand_type, ['%', float]);
+rufus_operator_to_erlang_operator(Op, _) -> Op.
 
-% guards generates function guards for floats and integers.
--spec guards(list(erlang_form()) | list(list()), list(arg_decl_form())) -> {ok, list(erlang_form())}.
-guards(Acc, [{arg_decl, #{line := Line, spec := Name, type := {type, #{spec := atom}}}}|T]) ->
+% guard_forms generates function guard_forms for floats and integers.
+-spec guard_forms(list(erlang_form()) | list(list()), list(arg_decl_form())) -> {ok, list(erlang_form())}.
+guard_forms(Acc, [{arg_decl, #{line := Line, spec := Name, type := {type, #{spec := atom}}}}|T]) ->
     GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_atom}}, [{var, Line, Name}]}],
-    guards([GuardExpr|Acc], T);
-guards(Acc, [{arg_decl, #{line := Line, spec := Name, type := {type, #{spec := float}}}}|T]) ->
+    guard_forms([GuardExpr|Acc], T);
+guard_forms(Acc, [{arg_decl, #{line := Line, spec := Name, type := {type, #{spec := float}}}}|T]) ->
     GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_float}}, [{var, Line, Name}]}],
-    guards([GuardExpr|Acc], T);
-guards(Acc, [{arg_decl, #{line := Line, spec := Name, type := {type, #{spec := int}}}}|T]) ->
+    guard_forms([GuardExpr|Acc], T);
+guard_forms(Acc, [{arg_decl, #{line := Line, spec := Name, type := {type, #{spec := int}}}}|T]) ->
     GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_integer}}, [{var, Line, Name}]}],
-    guards([GuardExpr|Acc], T);
-guards(Acc, [_|T]) ->
-    guards(Acc, T);
-guards(Acc, []) ->
+    guard_forms([GuardExpr|Acc], T);
+guard_forms(Acc, [_|T]) ->
+    guard_forms(Acc, T);
+guard_forms(Acc, []) ->
     %% TODO(jkakar): Should we be reversing Acc here? Does ordering affect guard
     %% behavior?
     {ok, Acc}.
