@@ -1,3 +1,5 @@
+%% rufus_scope calculates visibility into global names and maps them to Rufus
+%% forms.
 -module(rufus_scope).
 
 -include_lib("rufus_type.hrl").

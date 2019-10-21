@@ -67,7 +67,12 @@ find_matching_form_decls(FormDecls, ArgExprs) ->
                         ArgDeclTypeSpec =:= ArgTypeSpec
                 end, Zipped)
             end, FormDeclsWithMatchingArity),
-            {ok, Result};
+            case Result of
+                Result when length(Result) =:= 0 ->
+                    {error, unmatched_args, #{form_decls => FormDeclsWithMatchingArity, arg_exprs => ArgExprs}};
+                _ ->
+                    {ok, Result}
+            end;
         _ ->
             {error, unknown_arity, #{form_decls => FormDecls, arg_exprs => ArgExprs}}
     end.
