@@ -35,13 +35,13 @@ forms([H|T], Forms) ->
 forms([], Forms) ->
     {ok, Forms}.
 
--spec typecheck(rufus_form()) -> ok | {error, rufus_error(), map()}.
+-spec typecheck(rufus_form()) -> ok | error_triple().
 typecheck({func_decl, #{return_type := ReturnType, exprs := Exprs}}) ->
     typecheck_return_value(ReturnType, lists:last(Exprs));
 typecheck(_) ->
     ok.
 
--spec typecheck_return_value(type_form(), identifier_form()) -> ok | {error, rufus_error(), map()}.
+-spec typecheck_return_value(type_form(), identifier_form()) -> ok | error_triple().
 typecheck_return_value({type, #{spec := ReturnType}}, {identifier, #{locals := Locals, spec := Spec}}) ->
     case maps:is_key(Spec, Locals) of
         true ->

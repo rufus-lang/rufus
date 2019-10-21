@@ -27,7 +27,7 @@ forms(RufusForms) ->
 
 %% Private API
 
--spec forms(list(rufus_form()), list(rufus_form())) -> {ok, list(rufus_form())} | {error, atom(), binary_op_form()}.
+-spec forms(list(rufus_form()), list(rufus_form())) -> {ok, list(rufus_form())} | error_triple().
 forms(Acc, [{func_decl, Context = #{exprs := Exprs}}|T]) ->
     case forms([], Exprs) of
         {ok, AnnotatedExprs} ->
@@ -48,7 +48,7 @@ forms(Acc, [H|T]) ->
 forms(Acc, []) ->
     {ok, lists:reverse(Acc)}.
 
--spec typecheck_and_annotate(binary_op_form() | rufus_form()) -> {ok, binary_op_form() | rufus_form()} | {error, atom(), binary_op_form()}.
+-spec typecheck_and_annotate(binary_op_form() | rufus_form()) -> {ok, binary_op_form() | rufus_form()} | error_triple().
 typecheck_and_annotate({binary_op, Context = #{left := Left, right := Right}}) ->
     {ok, AnnotatedLeft} = typecheck_and_annotate(Left),
     {ok, AnnotatedRight} = typecheck_and_annotate(Right),
@@ -63,7 +63,7 @@ typecheck_and_annotate(Form = {_, #{type := _}}) ->
 typecheck_and_annotate(Form) ->
     erlang:error({unhandled_form, [Form]}).
 
--spec infer_binary_op_type(binary_op_form()) -> {ok, binary_op_form()} | {error, unmatched_operand_type, binary_op_form()} | {error, unsupported_operand_type, binary_op_form()}.
+-spec infer_binary_op_type(binary_op_form()) -> {ok, binary_op_form()} | {error, unmatched_operand_type, context()} | {error, unsupported_operand_type, context()}.
 infer_binary_op_type(Form = {binary_op, Context = #{op := Op, left := Left, right := Right}}) ->
     LeftTypeSpec = rufus_form:type_spec(Left),
     RightTypeSpec = rufus_form:type_spec(Right),
@@ -73,10 +73,10 @@ infer_binary_op_type(Form = {binary_op, Context = #{op := Op, left := Left, righ
                 true ->
                     {ok, {binary_op, Context#{type => rufus_form:type(Left)}}};
                 false ->
-                    {error, unmatched_operand_type, Form}
+                    {error, unmatched_operand_type, #{form => Form}}
             end;
         false ->
-            {error, unsupported_operand_type, Form}
+            {error, unsupported_operand_type, #{form => Form}}
     end.
 
 -spec supported_type(atom(), float | int | atom()) -> boolean().
