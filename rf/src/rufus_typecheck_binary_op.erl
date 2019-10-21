@@ -61,7 +61,7 @@ typecheck_and_annotate({binary_op, Context = #{left := Left, right := Right}}) -
 typecheck_and_annotate(Form = {_, #{type := _}}) ->
     {ok, Form};
 typecheck_and_annotate(Form) ->
-    erlang:error({unhandled_form, Form}).
+    erlang:error({unhandled_form, [Form]}).
 
 -spec infer_binary_op_type(binary_op_form()) -> {ok, binary_op_form()} | {error, unmatched_operand_type, binary_op_form()} | {error, unsupported_operand_type, binary_op_form()}.
 infer_binary_op_type(Form = {binary_op, Context = #{op := Op, left := Left, right := Right}}) ->

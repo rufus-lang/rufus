@@ -82,13 +82,13 @@ forms(Acc, [{type, #{line := _Line, spec := _Spec}}|T]) ->
     forms(Acc, T); %% no-op to satisfy Dialyzer
 forms(Acc, []) ->
     {ok, lists:reverse(Acc)};
-forms(_Acc, Form) ->
-    erlang:error(unhandled_form, Form).
+forms(Acc, Form) ->
+    erlang:error(unhandled_form, [Acc, Form]).
 
 rufus_operator_to_erlang_operator('/', float) -> '/';
 rufus_operator_to_erlang_operator('/', int) -> 'div';
 rufus_operator_to_erlang_operator('%', int) -> 'rem';
-rufus_operator_to_erlang_operator('%', float) -> erlang:error(unsupported_operand_type);
+rufus_operator_to_erlang_operator('%', float) -> erlang:error(unsupported_operand_type, ['%', float]);
 rufus_operator_to_erlang_operator(Op, _) -> Op.
 
 % guard_forms generates function guard_forms for floats and integers.

@@ -23,12 +23,12 @@ resolve_type(_Globals, {_Form, #{type := Type}}) ->
     {ok, Type};
 resolve_type(_Globals, {func_decl, #{return_type := Type}}) ->
     {ok, Type};
-resolve_type(Globals, {apply, #{spec := Spec, args := ArgExprs}}) ->
+resolve_type(Globals, Form = {apply, #{spec := Spec, args := ArgExprs}}) ->
     case maps:get(Spec, Globals, undefined) of
         undefined ->
             {error, unknown_func, #{spec => Spec, args => ArgExprs}};
-        FormDecls ->
-            case find_matching_form_decls(FormDecls, ArgExprs) of
+        FuncDecls ->
+            case find_matching_form_decls(FuncDecls, ArgExprs) of
                 {error, Reason, Data} ->
                     {error, Reason, Data};
                 {ok, Result} when length(Result) > 1 ->
@@ -44,13 +44,14 @@ resolve_type(Globals, {apply, #{spec := Spec, args := ArgExprs}}) ->
                     %% account for all possible return types. When a callsite
                     %% specifies a literal value such as :hello or :goodbye we
                     %% should select the correct singular return type.
-                    [{_, #{return_type := Type}}|_] = FormDecls,
-                    {ok, Type};
+                    erlang:error({not_implemented, [Globals, Form]});
                 {ok, Result} when length(Result) =:= 1 ->
-                    [{_, #{return_type := Type}}] = FormDecls,
+                    [{_, #{return_type := Type}}] = FuncDecls,
                     {ok, Type}
             end
     end.
+
+%% apply form helpers
 
 find_matching_form_decls(FormDecls, ArgExprs) ->
     FormDeclsWithMatchingArity = lists:filter(fun({func_decl, #{args := ArgDecls}}) ->
