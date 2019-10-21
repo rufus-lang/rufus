@@ -1,0 +1,43 @@
+.MarkdownDocument {
+  margin: 75px auto 125px;
+  width: 578px;
+}
+
+.MarkdownDocument h1 {
+  text-align: left;
+  text-decoration: none;
+  font-weight: 400;
+  color: #292e31;
+}
+
+.MarkdownDocument h2 {
+  text-align: left;
+  text-decoration: none;
+  font-weight: 400;
+  color: #292e31;
+}
+
+.MarkdownDocument h3 {
+  text-align: left;
+  text-decoration: none;
+  font-weight: 400;
+  color: #292e31;
+}
+
+.MarkdownDocument ol li {
+  margin-left: -2.45em;
+}
+
+.MarkdownDocument ol li::before {
+  color: #939da3;
+}
+
+.MarkdownDocument ul li {
+  color: #4c555a;
+  list-style-type: disc;
+  margin-left: -2.45em;
+}
+
+.MarkdownDocument ul li::before {
+  color: #939da3;
+}
