@@ -32,7 +32,6 @@ forms_typecheck_for_binary_op_with_ints_test() ->
                                                       source => rufus_text,
                                                       spec => int}},
                               spec => 'FortyTwo'}}],
-    io:format("FORMS => ~p~n", [Forms]),
     {ok, TypecheckedForms} = rufus_typecheck_binary_op:forms(Forms),
     ?assertEqual(Expected, TypecheckedForms).
 
