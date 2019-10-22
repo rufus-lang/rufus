@@ -12,6 +12,11 @@ line_test() ->
     Form = {identifier, #{spec => n, line => 13}},
     ?assertEqual(13, rufus_form:line(Form)).
 
+return_type_test() ->
+    ReturnType = rufus_form:make_type(string, 13),
+    Form = rufus_form:make_func_decl('Ping', [], ReturnType, [], 13),
+    ?assertEqual(ReturnType, rufus_form:return_type(Form)).
+
 source_test() ->
     Type = rufus_form:make_type(int, 19),
     ?assertEqual(rufus_text, rufus_form:source(Type)),
