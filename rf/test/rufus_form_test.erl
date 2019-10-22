@@ -12,6 +12,11 @@ line_test() ->
     Form = {identifier, #{spec => n, line => 13}},
     ?assertEqual(13, rufus_form:line(Form)).
 
+return_type_test() ->
+    ReturnType = rufus_form:make_type(string, 13),
+    Form = rufus_form:make_func_decl('Ping', [], ReturnType, [], 13),
+    ?assertEqual(ReturnType, rufus_form:return_type(Form)).
+
 source_test() ->
     Type = rufus_form:make_type(int, 19),
     ?assertEqual(rufus_text, rufus_form:source(Type)),
@@ -27,10 +32,14 @@ type_test() ->
     Form = {int_lit, #{spec => 42, type => Type, line => 7}},
     ?assertEqual(Type, rufus_form:type(Form)).
 
-type_spec_test() ->
+type_spec_with_rufus_form_test() ->
     Type = rufus_form:make_inferred_type(int, 27),
     Form = {int_lit, #{spec => 42, type => Type, line => 7}},
     ?assertEqual(int, rufus_form:type_spec(Form)).
+
+type_spec_with_type_form_test() ->
+    Type = rufus_form:make_inferred_type(int, 27),
+    ?assertEqual(int, rufus_form:type_spec(Type)).
 
 make_module_test() ->
     ?assertEqual({module, #{spec => example, line => 1}}, rufus_form:make_module(example, 1)).

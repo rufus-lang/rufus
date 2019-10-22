@@ -14,7 +14,7 @@ main(Args) ->
         [Command|CommandArgs] ->
             run(Command, CommandArgs);
         [] ->
-            -1
+            run("help", [])
     end,
     ok = application:stop(rf),
     erlang:halt(ExitCode).
@@ -130,7 +130,7 @@ help(_Args) ->
     io:format("~n"),
     io:format("Additional help topics:~n"),
     io:format("~n"),
-    io:format("    spec            language specification~n"),
+    io:format("    spec                Language specification~n"),
     io:format("~n"),
     io:format("Use \"rf help [topic]\" for more information about that topic~n"),
     io:format("~n"),

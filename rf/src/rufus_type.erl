@@ -14,11 +14,15 @@
 %% associated with it, it will be returned. Otherwise, the type is inferred.
 -spec resolve(#{atom() => list(rufus_form())}, rufus_form()) -> {ok, type_form()} | error_triple().
 resolve(Globals, Form) ->
-    resolve_type(Globals, Form).
+    try
+        resolve_type(Globals, Form)
+    catch
+        {error, Code, Data} -> {error, Code, Data}
+    end.
 
 %% Private API
 
--spec resolve_type(#{atom() => list(rufus_form())}, rufus_form()) -> {ok, type_form()} | error_triple().
+-spec resolve_type(#{atom() => list(rufus_form())}, rufus_form()) -> {ok, type_form()} | no_return().
 resolve_type(_Globals, {_Form, #{type := Type}}) ->
     {ok, Type};
 resolve_type(_Globals, {func_decl, #{return_type := Type}}) ->
@@ -26,12 +30,12 @@ resolve_type(_Globals, {func_decl, #{return_type := Type}}) ->
 resolve_type(Globals, Form = {apply, #{spec := Spec, args := ArgExprs}}) ->
     case maps:get(Spec, Globals, undefined) of
         undefined ->
-            {error, unknown_func, #{spec => Spec, args => ArgExprs}};
+            throw({error, unknown_func, #{spec => Spec, args => ArgExprs}});
         FuncDecls ->
-            case find_matching_form_decls(FuncDecls, ArgExprs) of
+            case find_matching_func_decls(FuncDecls, ArgExprs) of
                 {error, Reason, Data} ->
-                    {error, Reason, Data};
-                {ok, Result} when length(Result) > 1 ->
+                    throw({error, Reason, Data});
+                {ok, MatchingFuncDecls} when length(MatchingFuncDecls) > 1 ->
                     %% TODO(jkakar): We need to handle cases where more than one
                     %% function matches a given set of parameters. For example,
                     %% consider two functions:
@@ -45,20 +49,37 @@ resolve_type(Globals, Form = {apply, #{spec := Spec, args := ArgExprs}}) ->
                     %% specifies a literal value such as :hello or :goodbye we
                     %% should select the correct singular return type.
                     erlang:error({not_implemented, [Globals, Form]});
-                {ok, Result} when length(Result) =:= 1 ->
-                    [{_, #{return_type := Type}}] = FuncDecls,
-                    {ok, Type}
+                {ok, MatchingFuncDecls} when length(MatchingFuncDecls) =:= 1 ->
+                    [FuncDecl] = MatchingFuncDecls,
+                    {ok, rufus_form:return_type(FuncDecl)}
             end
+    end;
+resolve_type(Globals, Form = {binary_op, #{op := Op, left := Left, right := Right}}) ->
+    {ok, LeftType} = resolve_type(Globals, Left),
+    LeftTypeSpec = rufus_form:type_spec(LeftType),
+    {ok, RightType} = resolve_type(Globals, Right),
+    RightTypeSpec = rufus_form:type_spec(RightType),
+    case supported_type(Op, LeftTypeSpec) and supported_type(Op, RightTypeSpec) of
+        true ->
+            case supported_type_pair(LeftTypeSpec, RightTypeSpec) of
+                true ->
+                    {ok, LeftType};
+                false ->
+                    throw({error, unmatched_operand_type, #{form => Form}})
+            end;
+        false ->
+            throw({error, unsupported_operand_type, #{form => Form}})
     end.
 
 %% apply form helpers
 
-find_matching_form_decls(FormDecls, ArgExprs) ->
-    FormDeclsWithMatchingArity = lists:filter(fun({func_decl, #{args := ArgDecls}}) ->
+-spec find_matching_func_decls(list(func_decl_form()), list(rufus_form())) -> {ok, list(func_decl_form())} | error_triple().
+find_matching_func_decls(FuncDecls, ArgExprs) ->
+    FuncDeclsWithMatchingArity = lists:filter(fun({func_decl, #{args := ArgDecls}}) ->
         length(ArgDecls) =:= length(ArgExprs)
-    end, FormDecls),
+    end, FuncDecls),
 
-    case length(FormDeclsWithMatchingArity) of
+    case length(FuncDeclsWithMatchingArity) of
         Length when Length > 0 ->
             Result = lists:filter(fun({func_decl, #{args := ArgDecls}}) ->
                 Zipped = lists:zip(ArgDecls, ArgExprs),
@@ -66,13 +87,26 @@ find_matching_form_decls(FormDecls, ArgExprs) ->
                                {_, #{type := {type, #{spec := ArgTypeSpec}}}}}) ->
                         ArgDeclTypeSpec =:= ArgTypeSpec
                 end, Zipped)
-            end, FormDeclsWithMatchingArity),
+            end, FuncDeclsWithMatchingArity),
             case Result of
                 Result when length(Result) =:= 0 ->
-                    {error, unmatched_args, #{form_decls => FormDeclsWithMatchingArity, arg_exprs => ArgExprs}};
+                    {error, unmatched_args, #{func_decls => FuncDeclsWithMatchingArity, arg_exprs => ArgExprs}};
                 _ ->
                     {ok, Result}
             end;
         _ ->
-            {error, unknown_arity, #{form_decls => FormDecls, arg_exprs => ArgExprs}}
+            {error, unknown_arity, #{func_decls => FuncDecls, arg_exprs => ArgExprs}}
     end.
+
+%% binary_op form helpers
+
+-spec supported_type(atom(), float | int | atom()) -> boolean().
+supported_type('%', float) -> false;
+supported_type(_, float) -> true;
+supported_type(_, int) -> true;
+supported_type(_, _) -> false.
+
+-spec supported_type_pair(float | int | atom(), float | int | atom()) -> boolean().
+supported_type_pair(float, float) -> true;
+supported_type_pair(int, int) -> true;
+supported_type_pair(_, _) -> false.

@@ -15,6 +15,7 @@
     make_literal/3,
     make_module/2,
     make_type/2,
+    return_type/1,
     source/1,
     spec/1,
     type/1,
@@ -31,28 +32,35 @@ annotate({FormType, Context}, Key, Value) ->
 %% line returns the line number from the specified form. A line number is
 %% expected with every single form, so lack of one will result in a
 %% function_clause exception at runtime.
--spec line({any(), context()}) -> integer().
+-spec line(rufus_form()) -> integer().
 line({_, #{line := Line}}) ->
     Line.
 
 %% source returns information about where the type information is from.
--spec source({type, context()}) -> type_source().
+-spec return_type(func_decl_form()) -> type_form().
+return_type({func_decl, #{return_type := ReturnType}}) ->
+    ReturnType.
+
+%% source returns information about where the type information is from.
+-spec source(type_form()) -> type_source().
 source({type, #{source := Source}}) ->
     Source.
 
 %% spec returns the human-readable name for the form.
--spec spec({any(), context()}) -> atom().
+-spec spec(rufus_form()) -> atom().
 spec({_, #{spec := Spec}}) ->
     Spec.
 
 %% type returns type information for the form.
--spec type({any(), context()}) -> context().
+-spec type(rufus_form()) -> context().
 type({_, #{type := Type}}) ->
     Type.
 
 %% type_spec returns the spec for the type of the form.
 -spec type_spec({any(), context()}) -> atom().
 type_spec({_, #{type := {type, #{spec := TypeSpec}}}}) ->
+    TypeSpec;
+type_spec({type, #{spec := TypeSpec}}) ->
     TypeSpec.
 
 %% Module form builder API

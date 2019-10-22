@@ -50,6 +50,12 @@ Run the tests:
 make check
 ```
 
+Sometimes eunit show an exception failure without a stack trace, which makes
+debugging tedious. You can use a test shell to run the failing tests by hand to
+see the stack trace:
+
+https://stackoverflow.com/questions/34658714/how-to-debug-erlang-code-during-rebar3-eunit
+
 ## Code layout
 
 - The `rf` module defines the escript that provides the `rf` command-line
