@@ -59,6 +59,8 @@ type({_, #{type := Type}}) ->
 %% type_spec returns the spec for the type of the form.
 -spec type_spec({any(), context()}) -> atom().
 type_spec({_, #{type := {type, #{spec := TypeSpec}}}}) ->
+    TypeSpec;
+type_spec({type, #{spec := TypeSpec}}) ->
     TypeSpec.
 
 %% Module form builder API

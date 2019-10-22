@@ -32,10 +32,14 @@ type_test() ->
     Form = {int_lit, #{spec => 42, type => Type, line => 7}},
     ?assertEqual(Type, rufus_form:type(Form)).
 
-type_spec_test() ->
+type_spec_with_rufus_form_test() ->
     Type = rufus_form:make_inferred_type(int, 27),
     Form = {int_lit, #{spec => 42, type => Type, line => 7}},
     ?assertEqual(int, rufus_form:type_spec(Form)).
+
+type_spec_with_type_form_test() ->
+    Type = rufus_form:make_inferred_type(int, 27),
+    ?assertEqual(int, rufus_form:type_spec(Type)).
 
 make_module_test() ->
     ?assertEqual({module, #{spec => example, line => 1}}, rufus_form:make_module(example, 1)).
