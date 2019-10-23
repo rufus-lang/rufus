@@ -1,19 +1,19 @@
--module(rufus_typecheck_apply_test).
+-module(rufus_apply_test).
 
 -include_lib("eunit/include/eunit.hrl").
 
-forms_with_function_calling_an_unknown_function_test() ->
+typecheck_and_annotate_with_function_calling_an_unknown_function_test() ->
     RufusText = "
     module example
     func Echo(text string) string { Ping() }
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    Result = rufus_typecheck_apply:forms(Forms),
+    Result = rufus_apply:typecheck_and_annotate(Forms),
     Data = #{args => [], spec => 'Ping'},
     ?assertEqual({error, unknown_func, Data}, Result).
 
-forms_with_function_calling_a_function_with_a_missing_argument_test() ->
+typecheck_and_annotate_with_function_calling_a_function_with_a_missing_argument_test() ->
     RufusText = "
     module example
     func Echo(n string) string { \"Hello\" }
@@ -21,7 +21,7 @@ forms_with_function_calling_a_function_with_a_missing_argument_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    Result = rufus_typecheck_apply:forms(Forms),
+    Result = rufus_apply:typecheck_and_annotate(Forms),
     Data = #{arg_exprs => [],
              func_decls => [{func_decl, #{args => [{arg_decl, #{line => 3,
                                                                 spec => n,
@@ -40,7 +40,7 @@ forms_with_function_calling_a_function_with_a_missing_argument_test() ->
                                           spec => 'Echo'}}]},
     ?assertEqual({error, unknown_arity, Data}, Result).
 
-forms_with_function_calling_a_function_with_a_mismatched_argument_type_test() ->
+typecheck_and_annotate_with_function_calling_a_function_with_a_mismatched_argument_type_test() ->
     RufusText = "
     module example
     func Echo(n string) string { \"Hello\" }
@@ -48,7 +48,7 @@ forms_with_function_calling_a_function_with_a_mismatched_argument_type_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    Result = rufus_typecheck_apply:forms(Forms),
+    Result = rufus_apply:typecheck_and_annotate(Forms),
     Data = #{arg_exprs => [{int_lit, #{line => 4,
                                        spec => 42,
                                        type => {type, #{line => 4,
@@ -71,7 +71,7 @@ forms_with_function_calling_a_function_with_a_mismatched_argument_type_test() ->
                                           spec => 'Echo'}}]},
     ?assertEqual({error, unmatched_args, Data}, Result).
 
-forms_with_function_calling_a_function_with_one_argument_test() ->
+typecheck_and_annotate_with_function_calling_a_function_with_one_argument_test() ->
     RufusText = "
     module math
     func Echo(text string) string { text }
@@ -80,7 +80,7 @@ forms_with_function_calling_a_function_with_one_argument_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms1} = rufus_scope:annotate_locals(Forms),
-    {ok, AnnotatedForms2} = rufus_typecheck_apply:forms(AnnotatedForms1),
+    {ok, AnnotatedForms2} = rufus_apply:typecheck_and_annotate(AnnotatedForms1),
     Expected = [{module,#{line => 2,
                           spec => math}},
                 {func_decl, #{args => [{arg_decl, #{line => 3,
