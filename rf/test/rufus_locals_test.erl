@@ -1,21 +1,21 @@
--module(rufus_annotate_locals_test).
+-module(rufus_locals_test).
 
 -include_lib("eunit/include/eunit.hrl").
 
-forms_with_empty_module_test() ->
+annotate_with_empty_module_test() ->
     RufusText = "module empty",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    ?assertEqual({ok, Forms}, rufus_annotate_locals:forms(Forms)).
+    ?assertEqual({ok, Forms}, rufus_locals:annotate(Forms)).
 
-forms_test() ->
+annotate_test() ->
     RufusText = "
     module example
     func Number() int { 42 }
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_locals:annotate(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
         {func_decl, #{args => [],
@@ -29,14 +29,14 @@ forms_test() ->
 
 %% Arity-1 functions taking an argument and returning a literal
 
-forms_for_function_taking_an_atom_and_returning_an_atom_literal_test() ->
+annotate_for_function_taking_an_atom_and_returning_an_atom_literal_test() ->
     RufusText = "
     module example
     func Ping(m atom) atom { :pong }
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_locals:annotate(Forms),
     Expected = [
         {module, #{line => 2,
                    spec => example}},
@@ -61,14 +61,14 @@ forms_for_function_taking_an_atom_and_returning_an_atom_literal_test() ->
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
-forms_for_function_taking_a_bool_and_returning_a_bool_literal_test() ->
+annotate_for_function_taking_a_bool_and_returning_a_bool_literal_test() ->
     RufusText = "
     module example
     func MaybeEcho(b bool) bool { true }
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_locals:annotate(Forms),
     Expected = [
         {module, #{line => 2,
                    spec => example}},
@@ -94,14 +94,14 @@ forms_for_function_taking_a_bool_and_returning_a_bool_literal_test() ->
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
-forms_for_function_taking_a_float_and_returning_a_float_literal_test() ->
+annotate_for_function_taking_a_float_and_returning_a_float_literal_test() ->
     RufusText = "
     module example
     func MaybeEcho(n float) float { 3.14159265359 }
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_locals:annotate(Forms),
     Expected = [
         {module, #{line => 2,
                    spec => example}},
@@ -126,14 +126,14 @@ forms_for_function_taking_a_float_and_returning_a_float_literal_test() ->
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
-forms_for_function_taking_an_int_and_returning_an_int_literal_test() ->
+annotate_for_function_taking_an_int_and_returning_an_int_literal_test() ->
     RufusText = "
     module example
     func MaybeEcho(n int) int { 42 }
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_locals:annotate(Forms),
     Expected = [
         {module, #{line => 2,
                    spec => example}},
@@ -158,14 +158,14 @@ forms_for_function_taking_an_int_and_returning_an_int_literal_test() ->
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
-forms_for_function_taking_a_string_and_returning_a_string_literal_test() ->
+annotate_for_function_taking_a_string_and_returning_a_string_literal_test() ->
     RufusText = "
     module example
     func MaybeEcho(s string) string { \"Hello\" }
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_locals:annotate(Forms),
     Expected = [
         {module, #{line => 2,
                    spec => example}},
@@ -192,14 +192,14 @@ forms_for_function_taking_a_string_and_returning_a_string_literal_test() ->
 
 %% Arity-1 functions taking and returning an argument
 
-forms_for_function_taking_an_atom_and_returning_it_test() ->
+annotate_for_function_taking_an_atom_and_returning_it_test() ->
     RufusText = "
     module example
     func Echo(b atom) atom { b }
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_locals:annotate(Forms),
     Expected = [
         {module, #{line => 2,
                    spec => example}},
@@ -222,14 +222,14 @@ forms_for_function_taking_an_atom_and_returning_it_test() ->
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
-forms_for_function_taking_a_bool_and_returning_it_test() ->
+annotate_for_function_taking_a_bool_and_returning_it_test() ->
     RufusText = "
     module example
     func Echo(b bool) bool { b }
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_locals:annotate(Forms),
     Expected = [
         {module, #{line => 2,
                    spec => example}},
@@ -251,14 +251,14 @@ forms_for_function_taking_a_bool_and_returning_it_test() ->
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
-forms_for_function_taking_a_float_and_returning_it_test() ->
+annotate_for_function_taking_a_float_and_returning_it_test() ->
     RufusText = "
     module example
     func Echo(n float) float { n }
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_locals:annotate(Forms),
     Expected = [
         {module, #{line => 2,
                    spec => example}},
@@ -281,14 +281,14 @@ forms_for_function_taking_a_float_and_returning_it_test() ->
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
-forms_for_function_taking_an_int_and_returning_it_test() ->
+annotate_for_function_taking_an_int_and_returning_it_test() ->
     RufusText = "
     module example
     func Echo(n int) int { n }
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_locals:annotate(Forms),
     Expected = [
         {module, #{line => 2,
                    spec => example}},
@@ -310,14 +310,14 @@ forms_for_function_taking_an_int_and_returning_it_test() ->
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
-forms_for_function_taking_a_string_and_returning_it_test() ->
+annotate_for_function_taking_a_string_and_returning_it_test() ->
     RufusText = "
     module example
     func Echo(s string) string { s }
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_locals:annotate(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
         {func_decl, #{args => [{arg_decl, #{line => 3,

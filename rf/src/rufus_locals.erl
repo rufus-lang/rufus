@@ -1,28 +1,28 @@
-%% rufus_annotate_locals adds a 'locals' map to each Rufus form that links
-%% variable names to type information.
--module(rufus_annotate_locals).
+%% rufus_locals adds a 'locals' map to each Rufus form that links variable names
+%% to type information.
+-module(rufus_locals).
 
 -include_lib("rufus_type.hrl").
 
 %% API exports
 
--export([forms/1]).
+-export([annotate/1]).
 
 %% API
 
-%% forms adds a 'locals' map to each form in RufusForms that links variable
+%% annotate adds a 'locals' map to each form in RufusForms that links variable
 %% names to type information.
--spec forms(list(rufus_form())) -> {ok, list(rufus_form())}.
-forms(RufusForms) ->
-    forms([], #{}, RufusForms).
+-spec annotate(list(rufus_form())) -> {ok, list(rufus_form())}.
+annotate(RufusForms) ->
+    annotate([], #{}, RufusForms).
 
 %% Private API
 
--spec forms(list(rufus_form()), locals(), list(rufus_form())) -> {ok, list(rufus_form())}.
-forms(Acc, Locals, [H|T]) ->
+-spec annotate(list(rufus_form()), locals(), list(rufus_form())) -> {ok, list(rufus_form())}.
+annotate(Acc, Locals, [H|T]) ->
     {ok, NewLocals, NewForm} = annotate_form(Locals, H),
-    forms([NewForm|Acc], NewLocals, T);
-forms(Acc, _Locals, []) ->
+    annotate([NewForm|Acc], NewLocals, T);
+annotate(Acc, _Locals, []) ->
     {ok, lists:reverse(Acc)}.
 
 -spec annotate_form(map(), func_decl_form()) -> {ok, map(), func_decl_form()}.

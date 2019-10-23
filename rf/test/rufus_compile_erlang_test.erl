@@ -227,7 +227,7 @@ forms_for_function_taking_an_atom_and_returning_an_atom_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_locals:annotate(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 2, module, example},
@@ -246,7 +246,7 @@ forms_for_function_taking_a_bool_and_returning_a_bool_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_locals:annotate(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 2, module, example},
@@ -265,7 +265,7 @@ forms_for_function_taking_a_float_and_returning_a_float_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_locals:annotate(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 2, module, example},
@@ -284,7 +284,7 @@ forms_for_function_taking_an_int_and_returning_an_int_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_locals:annotate(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 2, module, example},
@@ -303,7 +303,7 @@ forms_for_function_taking_a_string_and_returning_a_string_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_annotate_locals:forms(Forms),
+    {ok, AnnotatedForms} = rufus_locals:annotate(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 2, module, example},

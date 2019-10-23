@@ -79,7 +79,7 @@ forms_with_function_calling_a_function_with_one_argument_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms1} = rufus_annotate_locals:forms(Forms),
+    {ok, AnnotatedForms1} = rufus_locals:annotate(Forms),
     {ok, AnnotatedForms2} = rufus_typecheck_apply:forms(AnnotatedForms1),
     Expected = [{module,#{line => 2,
                           spec => math}},

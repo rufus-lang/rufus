@@ -21,7 +21,7 @@
 eval(RufusText) ->
     Handlers = [fun rufus_tokenize:string/1,
                 fun rufus_parse:parse/1,
-                fun rufus_annotate_locals:forms/1,
+                fun rufus_locals:annotate/1,
                 fun rufus_typecheck_binary_op:forms/1,
                 fun rufus_typecheck_func_return_type:forms/1,
                 fun rufus_compile_erlang:forms/1,
