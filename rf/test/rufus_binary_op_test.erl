@@ -1,8 +1,8 @@
--module(rufus_typecheck_binary_op_test).
+-module(rufus_binary_op_test).
 
 -include_lib("eunit/include/eunit.hrl").
 
-forms_typecheck_for_binary_op_with_ints_test() ->
+typecheck_and_annotate_binary_op_with_ints_test() ->
     RufusText = "
     module example
     func FortyTwo() int { 19 + 23 }
@@ -32,10 +32,10 @@ forms_typecheck_for_binary_op_with_ints_test() ->
                                                       source => rufus_text,
                                                       spec => int}},
                               spec => 'FortyTwo'}}],
-    {ok, TypecheckedForms} = rufus_typecheck_binary_op:forms(Forms),
+    {ok, TypecheckedForms} = rufus_binary_op:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, TypecheckedForms).
 
-forms_typecheck_for_binary_op_with_floats_test() ->
+typecheck_and_annotate_binary_op_with_floats_test() ->
     RufusText = "
     module example
     func Pi() float { 1.0 + 2.14159265359 }
@@ -65,10 +65,10 @@ forms_typecheck_for_binary_op_with_floats_test() ->
                                                       source => rufus_text,
                                                       spec => float}},
                               spec => 'Pi'}}],
-    {ok, TypecheckedForms} = rufus_typecheck_binary_op:forms(Forms),
+    {ok, TypecheckedForms} = rufus_binary_op:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, TypecheckedForms).
 
-forms_typecheck_for_binary_op_with_float_and_int_test() ->
+typecheck_and_annotate_binary_op_with_float_and_int_test() ->
     RufusText = "
     module example
     func FortyTwo() int { 19.0 + 23 }
@@ -87,10 +87,10 @@ forms_typecheck_for_binary_op_with_float_and_int_test() ->
                                                             type => {type, #{line => 3,
                                                                              source => inferred,
                                                                              spec => int}}}}}}},
-    {error, unmatched_operand_type, Data} = rufus_typecheck_binary_op:forms(Forms),
+    {error, unmatched_operand_type, Data} = rufus_binary_op:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, Data).
 
-forms_typecheck_for_binary_op_with_float_and_float_and_int_test() ->
+typecheck_and_annotate_binary_op_with_float_and_float_and_int_test() ->
     RufusText = "
     module example
     func FortyTwo() int { 13.0 + 6.0 + 23 }
@@ -116,10 +116,10 @@ forms_typecheck_for_binary_op_with_float_and_float_and_int_test() ->
                                                             type => {type, #{line => 3,
                                                                              source => inferred,
                                                                              spec => int}}}}}}},
-    {error, unmatched_operand_type, Data} = rufus_typecheck_binary_op:forms(Forms),
+    {error, unmatched_operand_type, Data} = rufus_binary_op:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, Data).
 
-forms_typecheck_for_binary_op_with_bools_test() ->
+typecheck_and_annotate_binary_op_with_bools_test() ->
     RufusText = "
     module example
     func Concat() bool { true + false }
@@ -138,10 +138,10 @@ forms_typecheck_for_binary_op_with_bools_test() ->
                                                              type => {type, #{line => 3,
                                                                               source => inferred,
                                                                               spec => bool}}}}}}},
-    {error, unsupported_operand_type, Data} = rufus_typecheck_binary_op:forms(Forms),
+    {error, unsupported_operand_type, Data} = rufus_binary_op:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, Data).
 
-forms_typecheck_for_binary_op_with_strings_test() ->
+typecheck_and_annotate_binary_op_with_strings_test() ->
     RufusText = "
     module example
     func Concat() string { \"port\" + \"manteau\" }
@@ -160,11 +160,11 @@ forms_typecheck_for_binary_op_with_strings_test() ->
                                                                type => {type, #{line => 3,
                                                                                 source => inferred,
                                                                                 spec => string}}}}}}},
-    {error, Reason, Data} = rufus_typecheck_binary_op:forms(Forms),
+    {error, Reason, Data} = rufus_binary_op:typecheck_and_annotate(Forms),
     ?assertEqual(unsupported_operand_type, Reason),
     ?assertEqual(Expected, Data).
 
-forms_typecheck_for_remainder_op_with_ints_test() ->
+typecheck_and_annotate_remainder_op_with_ints_test() ->
     RufusText = "
     module example
     func Six() int { 27 % 7 }
@@ -194,10 +194,10 @@ forms_typecheck_for_remainder_op_with_ints_test() ->
                                                       source => rufus_text,
                                                       spec => int}},
                    spec => 'Six'}}],
-    {ok, TypecheckedForms} = rufus_typecheck_binary_op:forms(Forms),
+    {ok, TypecheckedForms} = rufus_binary_op:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, TypecheckedForms).
 
-forms_typecheck_for_remainder_op_with_floats_test() ->
+typecheck_and_annotate_remainder_op_with_floats_test() ->
     RufusText = "
     module example
     func Six() int { 27.0 % 7.0 }
@@ -216,6 +216,6 @@ forms_typecheck_for_remainder_op_with_floats_test() ->
                                                                                source => inferred,
                                                                                spec => float}}}},
                                        line => 3}}},
-    {error, Reason, Data} = rufus_typecheck_binary_op:forms(Forms),
+    {error, Reason, Data} = rufus_binary_op:typecheck_and_annotate(Forms),
     ?assertEqual(unsupported_operand_type, Reason),
     ?assertEqual(Expected, Data).
