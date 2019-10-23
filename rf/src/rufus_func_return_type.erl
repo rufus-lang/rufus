@@ -27,20 +27,20 @@ typecheck(RufusForms) ->
 
 %% Private API
 
--spec typecheck_forms(list(rufus_form()), list(rufus_form())) -> {ok, list(rufus_form())}.
+-spec typecheck_forms(list(rufus_form()), list(rufus_form())) -> {ok, list(rufus_form())} | no_return().
 typecheck_forms([H|T], Forms) ->
     typecheck_forms(H),
     typecheck_forms(T, Forms);
 typecheck_forms([], Forms) ->
     {ok, Forms}.
 
--spec typecheck_forms(rufus_form()) -> ok | error_triple().
+-spec typecheck_forms(rufus_form()) -> ok | no_return().
 typecheck_forms({func_decl, #{return_type := ReturnType, exprs := Exprs}}) ->
     typecheck_return_value(ReturnType, lists:last(Exprs));
 typecheck_forms(_) ->
     ok.
 
--spec typecheck_return_value(type_form(), identifier_form()) -> ok | error_triple().
+-spec typecheck_return_value(type_form(), identifier_form()) -> ok | no_return().
 typecheck_return_value({type, #{spec := ReturnType}}, {identifier, #{locals := Locals, spec := Spec}}) ->
     case maps:is_key(Spec, Locals) of
         true ->
