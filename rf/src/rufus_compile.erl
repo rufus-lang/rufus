@@ -22,6 +22,7 @@ eval(RufusText) ->
                 fun rufus_parse:parse/1,
                 fun rufus_scope:annotate_locals/1,
                 fun rufus_binary_op:typecheck_and_annotate/1,
+                fun rufus_apply:typecheck_and_annotate/1,
                 fun rufus_func_return_type:typecheck/1,
                 fun rufus_compile_erlang:forms/1,
                 fun compile/1

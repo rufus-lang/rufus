@@ -556,3 +556,24 @@ forms_for_function_returning_a_remainder_of_three_int_literals_test() ->
         {function, 3, 'Four', 0, [{clause, 3, [], [], [BinaryOpExpr]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
+
+%% Arity-0 functions making function calls
+
+forms_for_function_apply_test() ->
+    RufusText = "
+    module example
+    func Four() int { 4 }
+    func Random() int { Four() }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_apply:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Four', 0}]},
+        {function, 3, 'Four', 0, [{clause, 3, [], [], [{integer, 3, 4}]}]},
+        {attribute, 4, export, [{'Random', 0}]},
+        {function, 4, 'Random', 0, [{clause, 4, [], [], [{call, 4, 'Four', []}]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
