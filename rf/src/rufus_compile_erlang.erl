@@ -51,13 +51,13 @@ forms(Acc, [{identifier, #{line := Line, spec := Name, locals := Locals}}|T]) ->
             {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Name}]}
     end,
     forms([Form|Acc], T);
-forms(Acc, [{func_decl, #{line := Line, spec := Name, args := Args, exprs := Exprs}}|T]) ->
+forms(Acc, [{func_decl, #{line := Line, spec := Spec, args := Args, exprs := Exprs}}|T]) ->
     {ok, ArgsForms} = forms([], Args),
     {ok, GuardForms} = guard_forms([], Args),
     {ok, ExprForms} = forms([], Exprs),
     FunctionForms = [{clause, Line, ArgsForms, GuardForms, ExprForms}],
-    ExportForms = {attribute, Line, export, [{Name, length(Args)}]},
-    Forms = {function, Line, Name, length(Args), FunctionForms},
+    ExportForms = {attribute, Line, export, [{Spec, length(Args)}]},
+    Forms = {function, Line, Spec, length(Args), FunctionForms},
     forms([Forms|[ExportForms|Acc]], T);
 forms(Acc, [Form = {arg_decl, #{line := Line, spec := Name}}|T]) ->
     TypeSpec = rufus_form:type_spec(Form),
@@ -74,7 +74,9 @@ forms(Acc, [Form = {arg_decl, #{line := Line, spec := Name}}|T]) ->
     forms([ErlangForm|Acc], T);
 forms(Acc, [{apply, #{spec := Spec, args := Args, line := Line}}|T]) ->
     {ok, ArgForms} = forms([], Args),
+    io:format("ArgForms => ~p~n", [ArgForms]),
     Form = {call, Line, Spec, ArgForms},
+    io:format("Form => ~p~n", [Form]),
     forms([Form|Acc], T);
 forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}|T]) ->
     {ok, [LeftExpr]} = forms([], [Left]),

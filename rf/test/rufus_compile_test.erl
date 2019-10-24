@@ -322,3 +322,15 @@ eval_with_function_returning_a_remainder_of_three_int_literals_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertEqual(4, example:'Four'()).
+
+%% Arity-0 functions making function calls
+
+eval_for_function_apply_test() ->
+    RufusText = "
+    module example
+    func Four() int { 100 % 13 % 5 }
+    func Random() int { Four() }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(4, example:'Random'()).
