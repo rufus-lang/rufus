@@ -4,16 +4,14 @@ import MarkdownDocument from './../component/MarkdownDocument';
 
 import './Main.css';
 
-class Main extends React.Component {
-    render() {
-        return (
-            <main className="Main">
-                <div className="Main-content">
-                    <MarkdownDocument />
-                </div>
-            </main>
-        );
-    }
+function Main() {
+    return (
+        <main className="Main">
+            <div className="Main-content">
+                <MarkdownDocument path="/doc/spec" />
+            </div>
+        </main>
+    );
 }
 
 export default Main;

@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Route, BrowserRouter as Router } from 'react-router-dom'
+import { Route, BrowserRouter as Router, Switch } from 'react-router-dom'
 
 import App from './App';
+import NotFound from './component/NotFound';
 import * as serviceWorker from './serviceWorker';
 
 import './index.css';
@@ -10,8 +11,10 @@ import './index.css';
 const routing = (
     <Router>
         <div>
-            <Route exact path="/" component={App} />
-            <Route path="/doc/rdr/:name" component={App} />
+            <Switch>
+                <Route path="/" component={App} />
+                <Route component={NotFound} />
+            </Switch>
         </div>
     </Router>
 );
