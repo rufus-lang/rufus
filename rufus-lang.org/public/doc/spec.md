@@ -58,7 +58,8 @@ The syntax is specified using Extended Backus-Naur Form (EBNF):
 Production  = production_name "=" [ Expression ] "." .
 Expression  = Alternative { "|" Alternative } .
 Alternative = Term { Term } .
-Term        = production_name | token [ "…" token ] | Group | Option | Repetition .
+Term        = production_name | token [ "…" token ] | Group |
+              Option | Repetition .
 Group       = "(" Expression ")" .
 Option      = "[" Expression "]" .
 Repetition  = "{" Expression "}" .
@@ -108,9 +109,12 @@ The following terms are used to denote specific Unicode character classes:
 
 ```
 newline        = /* the Unicode code point U+000A */ .
-unicode_char   = /* an arbitrary Unicode code point except newline */ .
-unicode_letter = /* a Unicode code point classified as "Letter" */ .
-unicode_digit  = /* a Unicode code point classified as "Number, decimal digit" */ .
+unicode_char   = /* an arbitrary Unicode code point except
+                    newline */ .
+unicode_letter = /* a Unicode code point classified as
+                    "Letter" */ .
+unicode_digit  = /* a Unicode code point classified as
+                    "Number, decimal digit" */ .
 ```
 
 In [The Unicode Standard 8.0](http://www.unicode.org/versions/Unicode8.0.0/), Section 4.5 "General Category" defines a set
@@ -188,6 +192,7 @@ The following keywords are reserved and may not be used as identifiers.
 
 ```
 func
+import
 module
 ```
 
@@ -285,10 +290,10 @@ string_lit = `"` { unicode_value | byte_value } `"` .
 These examples all represent the same string:
 
 ```
-"日本語"                                 // UTF-8 input text
-"\u65e5\u672c\u8a9e"                    // the explicit Unicode code points
-"\U000065e5\U0000672c\U00008a9e"        // the explicit Unicode code points
-"\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e"  // the explicit UTF-8 bytes
+"日本語"                                 // UTF-8
+"\u65e5\u672c\u8a9e"                    // Unicode code points
+"\U000065e5\U0000672c\U00008a9e"        // Unicode code points
+"\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e"  // UTF-8 bytes
 ```
 
 ## Types
@@ -455,7 +460,8 @@ assignment.
 ```
 Operand     = Literal | OperandName | "(" Expression ")" .
 Literal     = BasicLit | CompositeLit | FunctionLit .
-BasicLit    = int_lit | float_lit | imaginary_lit | rune_lit | string_lit .
+BasicLit    = int_lit | float_lit | imaginary_lit |
+              rune_lit | string_lit .
 OperandName = identifier | QualifiedIdent.
 ```
 
@@ -515,7 +521,8 @@ modules whose contents it wishes to use, followed by a possibly empty set of
 declarations of constants, types, and functions.
 
 ```
-SourceFile       = ModuleClause ";" { ImportDecl ";" } { TopLevelDecl ";" } .
+SourceFile       = ModuleClause ";" { ImportDecl ";" }
+                   { TopLevelDecl ";" } .
 ```
 
 ### Module clause
@@ -547,7 +554,8 @@ exported identifiers of that module. The import names an identifier
 to be imported.
 
 ```
-ImportDecl       = "import" ( ImportSpec | "(" { ImportSpec ";" } ")" ) .
+ImportDecl       = "import" ( ImportSpec |
+                              "(" { ImportSpec ";" } ")" ) .
 ImportSpec       = [ "." | ModuleName ] ImportPath .
 ImportPath       = string_lit .
 ```
@@ -591,7 +599,7 @@ exported identifiers.
 
 Here is a complete Rufus module that implements a prime sieve.
 
-```
+```rufus
 module main
 
 import "std/List"

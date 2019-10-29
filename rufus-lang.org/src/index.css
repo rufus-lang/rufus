@@ -4,16 +4,19 @@
 }
 
 body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
   background: #f5f7f9;
   color: #4c555a;
-  margin: 0;
   font-family: 'Heebo', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family: "Source Code Pro", Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-size: 11.5pt;
+  font-weight: 600;
+  color: #424770;
 }
 
 a, a:visited {
