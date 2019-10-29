@@ -4,10 +4,10 @@
 
 a.Header-logo {
   font-size: 18pt;
-  text-align: left;
-  text-decoration: none;
   font-weight: 500;
   margin-left: 25px;
+  text-align: left;
+  text-decoration: none;
 }
 
 .Header-links {

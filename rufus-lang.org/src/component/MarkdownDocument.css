@@ -4,27 +4,27 @@
 }
 
 .MarkdownDocument h1 {
+  color: #292e31;
+  font-weight: 400;
   text-align: left;
   text-decoration: none;
-  font-weight: 400;
-  color: #292e31;
 }
 
 .MarkdownDocument h2 {
+  color: #292e31;
+  font-weight: 400;
   text-align: left;
   text-decoration: none;
-  font-weight: 400;
-  color: #292e31;
 }
 
 .MarkdownDocument h3 {
+  color: #292e31;
+  font-weight: 400;
   text-align: left;
   text-decoration: none;
-  font-weight: 400;
-  color: #292e31;
 }
 
-.MarkdownDocument ol li {
+.MarkdownDocument ol {
   margin-left: -2.45em;
 }
 
@@ -32,12 +32,24 @@
   color: #939da3;
 }
 
+.MarkdownDocument ul {
+  margin-left: -2.45em;
+}
+
 .MarkdownDocument ul li {
   color: #4c555a;
   list-style-type: disc;
-  margin-left: -2.45em;
+  list-style-position: outside;
 }
 
 .MarkdownDocument ul li::before {
   color: #939da3;
+}
+
+.MarkdownDocument pre {
+  background: #fafafb;
+  border: 1px solid #f0f2f3;
+  margin: 35px -150px;
+  padding: 25px 150px;
+  position: relative;
 }

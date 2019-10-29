@@ -1,32 +1,34 @@
-[Copy this template to a file called `nnnn-<title>.md`. A number will be
-assigned at the time the decision is accepted.]
+_Copy this template to a file called `nnnn-<title>.md`. Replace all italics text
+to create a new proposal. A number will be assigned at the time the decision is
+accepted._
 
-# Short decision title
+# _Short decision title_
 
-* ID: RDR-_nnnn_
-* Status: [Drafting | Proposed | Rejected | Accepted | Deprecated | Superseded by [RDR-0005](0005-example.md)]
-* Deciders: [List the decision makers, like "John Doe <[johndoe@example.com](mailto:johndoe@example.com)>"]
-* Date: [Month DD, YYYY when the decision was last updated]
+* ID: RDR-nnnn
+* Status: _Drafting | Proposed | Rejected | Accepted | Deprecated | Superseded by [RDR-0005](0005-example.md)_
+* Authors: _List the authors, like "John Doe <[johndoe@example.com](mailto:johndoe@example.com)>"_
+* Deciders: _List the decision makers, like "Jane Doe <[janedoe@example.com](mailto:janedoe@example.com)>"_
+* Date: _Month DD, YYYY when the decision was last updated_
 
 ## Context and problem statement
 
-[Describe the context and problem statement, e.g., in free form. You may want to
-articulate the problem in form of a question.]
+_Describe the context and problem statement, e.g., in free form. You may want to
+articulate the problem in form of a question._
 
 ## Decision drivers
 
-* [driver 1, e.g., a force, facing concern, …]
-* [driver 2, e.g., a force, facing concern, …]
-* …
+* _driver 1, e.g., user experience, …_
+* _driver 2, e.g., technical issue, …_
+* _…_
 
 ## Considered options
 
-* [option 1]
-* [option 2]
-* [option 3]
-* …
+* _option 1_
+* _option 2_
+* _option 3_
+* _…_
 
 ## Decision outcome
 
-Chosen option: "[option 1]", because [justification. e.g., is a more isolated
-design that can be implemented in a cleaner way than the other options].
+Chosen option: "_option 1_", because _decision tradeoffs, e.g., is a more isolated
+design that can be implemented in a cleaner way than the other options._

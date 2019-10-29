@@ -2,6 +2,7 @@
 
 * ID: RDR-0000
 * Status: Accepted
+* Authors: Jamu Kakar <[jkakar@kakar.ca](mailto:jkakar@kakar.ca)>
 * Deciders: Jamu Kakar <[jkakar@kakar.ca](mailto:jkakar@kakar.ca)>
 * Date: March 24, 2019
 
