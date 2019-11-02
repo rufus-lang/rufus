@@ -1,34 +1,47 @@
 # Rufus programming language
 
 ```rufus
-module main
+module example
 
-import "fmt"
+import "Fmt"
 
 func main() {
-    fmt.Println("Hello, world!")
+    Fmt.Println("Hello, world!")
 }
 ```
 
 ## Design goals
 
-### Users first
+### Beginner-friendly
 
-### Large teams
+It's difficult for a new user with little experience to know how to get started
+with programming. Rufus should provide a smooth path for new users to learn the
+language and start writing Rufus programs.
 
-Rufus caters to large engineering teams building and operating huge numbers of
-services that run continuously for years, with no end in sight. In this
-environment, services outlive people. Over its lifetime, service ownership will
-be transferred to another team, people on the owning team will transfer to other
-teams, and people will leave. Teams need to know that new team members can join
-a project and quickly learn how the systems work. Considering its lifetime,
-operations is the primary cost of a service
+### Startup-friendly
 
-### New developers
+Startups have to make technology choices before they begin building their
+products. At the beginning of the product development cycle, when you don't know
+if your product is going to succeed or not, you want a language that lets you
+experiment easily and move quickly. Startups need a fast iteration cycle to get
+changes to production quickly and frequently. Rufus should be a great choice for
+startups with tools and patterns to support a fast iteration cycle.
 
-Rufus should provide a great experience for a user that has little to no
-programming experience, with documentation, tooling, mentorship opportunities,
-and more.
+### Team-friendly
+
+Startups grow into big companies. The technology choices they made when they
+were small and starting out need to scale to eventually support dozens of
+product lines, hundreds of teams, and thousands of developers. Big teams need a
+fast iteration cycle along with tools to manage ownership of code and systems.
+They often have security and compliance needs that must be met. Rufus should be
+a great choice for large teams and provide tools and patterns to support
+operating at scale.
 
 ### Open source
 
+Consider a case where rufus-lang.org has a package index service, for example.
+Services likes this will be open source and running them locally will be a first
+class operation. Large teams need to be able to run on premises, for a variety
+of reasons from secrecy to security to legal regulations and more. It should be
+easy to setup and run local services to create a user experience on par with
+rufus-lang.org.

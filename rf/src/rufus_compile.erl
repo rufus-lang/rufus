@@ -8,6 +8,7 @@
 -export([eval/1]).
 
 -ifdef(EUNIT).
+-export([compile/1]).
 -export([eval_chain/2]).
 -endif.
 
@@ -53,7 +54,9 @@ compile(ErlangForms) ->
         {ok, Module, BinaryOrCode} ->
             load(Module, BinaryOrCode);
         {error, Reason} ->
-            {error, Reason}
+            {error, Reason};
+        error ->
+            {error, unknown}
     end.
 
 -spec load(atom(), binary()) -> {ok, atom()} | {error, badarg | badfile | nofile | not_purged | on_load_failure | sticky_directory}.

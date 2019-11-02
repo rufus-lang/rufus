@@ -571,9 +571,9 @@ forms_for_function_apply_test() ->
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 2, module, example},
+        {attribute, 4, export, [{'Random', 0}]},
         {attribute, 3, export, [{'Four', 0}]},
         {function, 3, 'Four', 0, [{clause, 3, [], [], [{integer, 3, 4}]}]},
-        {attribute, 4, export, [{'Random', 0}]},
-        {function, 4, 'Random', 0, [{clause, 4, [], [], [{call, 4, 'Four', []}]}]}
+        {function, 4, 'Random', 0, [{clause, 4, [], [], [{call, 4, {atom, 4, 'Four'}, []}]}]}
     ],
     ?assertEqual(Expected, ErlangForms).

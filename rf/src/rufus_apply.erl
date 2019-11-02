@@ -24,14 +24,14 @@
 %% - `{error, invalid_arg_type, Data}` with `Data` containing `actual` and
 %%   `expected` atom keys pointing to Rufus types if return value types are
 %%   unmatched.
--spec typecheck_and_annotate(list(rufus_form())) -> {ok, list(rufus_form())}.
+-spec typecheck_and_annotate(list(rufus_form())) -> {ok, list(rufus_form())} | error_triple().
 typecheck_and_annotate(RufusForms) ->
     {ok, Globals} = rufus_scope:globals(RufusForms),
     case typecheck_and_annotate([], Globals, RufusForms) of
         {ok, AnnotatedForms} ->
             {ok, AnnotatedForms};
-        Error ->
-            Error
+        {error, Error, Data} ->
+            {error, Error, Data}
     end.
 
 %% Private API
@@ -42,16 +42,16 @@ typecheck_and_annotate(Acc, Globals, [Form = {func_decl, #{exprs := Exprs}}|T]) 
         {ok, AnnotatedExprs} ->
             AnnotatedForm = rufus_form:annotate(Form, exprs, AnnotatedExprs),
             typecheck_and_annotate([AnnotatedForm|Acc], Globals, T);
-        Error ->
-            Error
+        {error, Error, Data} ->
+            {error, Error, Data}
     end;
 typecheck_and_annotate(Acc, Globals, [Form = {apply, _Context}|T]) ->
     case rufus_type:resolve(Globals, Form) of
         {ok, TypeForm} ->
             AnnotatedForm = rufus_form:annotate(Form, type, TypeForm),
             typecheck_and_annotate([AnnotatedForm|Acc], Globals, T);
-        Error ->
-            Error
+        {error, Error, Data} ->
+            {error, Error, Data}
     end;
 typecheck_and_annotate(Acc, Globals, [H|T]) ->
     typecheck_and_annotate([H|Acc], Globals, T);

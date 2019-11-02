@@ -14,7 +14,8 @@
 %% compile:forms/1 and then loaded with code:load_binary/3.
 -spec forms(list(rufus_form())) -> {ok, list(erlang_form())}.
 forms(RufusForms) ->
-    forms([], RufusForms).
+    {ok, ErlangForms} = forms([], RufusForms),
+    annotate_exports(ErlangForms).
 
 %% Private API
 
@@ -56,9 +57,8 @@ forms(Acc, [{func_decl, #{line := Line, spec := Spec, args := Args, exprs := Exp
     {ok, GuardForms} = guard_forms([], Args),
     {ok, ExprForms} = forms([], Exprs),
     FunctionForms = [{clause, Line, ArgsForms, GuardForms, ExprForms}],
-    ExportForms = {attribute, Line, export, [{Spec, length(Args)}]},
-    Forms = {function, Line, Spec, length(Args), FunctionForms},
-    forms([Forms|[ExportForms|Acc]], T);
+    Form = {function, Line, Spec, length(Args), FunctionForms},
+    forms([Form|Acc], T);
 forms(Acc, [Form = {arg_decl, #{line := Line, spec := Name}}|T]) ->
     TypeSpec = rufus_form:type_spec(Form),
     ErlangForm = case TypeSpec of
@@ -73,10 +73,8 @@ forms(Acc, [Form = {arg_decl, #{line := Line, spec := Name}}|T]) ->
     end,
     forms([ErlangForm|Acc], T);
 forms(Acc, [{apply, #{spec := Spec, args := Args, line := Line}}|T]) ->
-    {ok, ArgForms} = forms([], Args),
-    io:format("ArgForms => ~p~n", [ArgForms]),
-    Form = {call, Line, Spec, ArgForms},
-    io:format("Form => ~p~n", [Form]),
+    {ok, ArgsForms} = forms([], Args),
+    Form = {call, Line, {atom, Line, Spec}, ArgsForms},
     forms([Form|Acc], T);
 forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}|T]) ->
     {ok, [LeftExpr]} = forms([], [Left]),
@@ -85,8 +83,6 @@ forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}
     Form = {op, Line, ErlangOp, LeftExpr, RightExpr},
     forms([Form|Acc], T);
 forms(Acc, [{type, _Context}|T]) ->
-    forms(Acc, T); %% no-op to satisfy Dialyzer
-forms(Acc, [{apply, _Context}|T]) ->
     forms(Acc, T); %% no-op to satisfy Dialyzer
 forms(Acc, []) ->
     {ok, lists:reverse(Acc)};
@@ -129,3 +125,30 @@ box({int_lit, #{line := Line, spec := Value}}) ->
 box({string_lit, #{line := Line, spec := Value}}) ->
     StringExpr = {bin_element, Line, {string, Line, binary_to_list(Value)}, default, default},
     {tuple, Line, [{atom, Line, string}, {bin, Line, [StringExpr]}]}.
+
+%% annotate_exports creates export attributes for all exported functions and
+%% injects them into the sequence of Erlang forms. They're defined before
+%% function definitions to avoid crashing the Erlang compiler.
+annotate_exports(ErlangForms) ->
+    annotate_exports([], ErlangForms).
+
+annotate_exports(Acc, [Form = {attribute, _Line, module, _Name}|T]) ->
+    {ok, ExportForms} = make_export_forms(T),
+    annotate_exports(Acc ++ ExportForms ++ [Form], T);
+annotate_exports(Acc, [Form|T]) ->
+    annotate_exports([Form|Acc], T);
+annotate_exports(Acc, []) ->
+    {ok, lists:reverse(Acc)}.
+
+make_export_forms(Forms) ->
+    make_export_forms([], Forms).
+
+make_export_forms(Acc, [{function, Line, Spec, Arity, _Forms}|T]) ->
+    %% TODO(jkakar) We're exporting all functions for now, to move quickly, but
+    %% we need to apply the rules from the 'Exported identifiers' RDR here.
+    Form = {attribute, Line, export, [{Spec, Arity}]},
+    make_export_forms([Form|Acc], T);
+make_export_forms(Acc, [_Form|T]) ->
+    make_export_forms(Acc, T);
+make_export_forms(Acc, []) ->
+    {ok, lists:reverse(Acc)}.
