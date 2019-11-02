@@ -27,31 +27,26 @@
 -spec typecheck_and_annotate(list(rufus_form())) -> {ok, list(rufus_form())} | error_triple().
 typecheck_and_annotate(RufusForms) ->
     {ok, Globals} = rufus_scope:globals(RufusForms),
-    case typecheck_and_annotate([], Globals, RufusForms) of
-        {ok, AnnotatedForms} ->
-            {ok, AnnotatedForms};
-        {error, Error, Data} ->
-            {error, Error, Data}
+    try
+        typecheck_and_annotate([], Globals, RufusForms)
+    catch
+        {error, Code, Data} -> {error, Code, Data}
     end.
 
 %% Private API
 
--spec typecheck_and_annotate(list(rufus_form()), #{atom => rufus_form()}, list(rufus_form())) -> {ok, list(rufus_form())}.
+-spec typecheck_and_annotate(list(rufus_form()), #{atom => rufus_form()}, list(rufus_form())) -> {ok, list(rufus_form())} | no_return().
 typecheck_and_annotate(Acc, Globals, [Form = {func_decl, #{exprs := Exprs}}|T]) ->
-    case typecheck_and_annotate([], Globals, Exprs) of
-        {ok, AnnotatedExprs} ->
-            AnnotatedForm = rufus_form:annotate(Form, exprs, AnnotatedExprs),
-            typecheck_and_annotate([AnnotatedForm|Acc], Globals, T);
-        {error, Error, Data} ->
-            {error, Error, Data}
-    end;
+    {ok, AnnotatedExprs} = typecheck_and_annotate([], Globals, Exprs),
+    AnnotatedForm = rufus_form:annotate(Form, exprs, AnnotatedExprs),
+    typecheck_and_annotate([AnnotatedForm|Acc], Globals, T);
 typecheck_and_annotate(Acc, Globals, [Form = {apply, _Context}|T]) ->
     case rufus_type:resolve(Globals, Form) of
         {ok, TypeForm} ->
             AnnotatedForm = rufus_form:annotate(Form, type, TypeForm),
             typecheck_and_annotate([AnnotatedForm|Acc], Globals, T);
-        {error, Error, Data} ->
-            {error, Error, Data}
+        Error ->
+            throw(Error)
     end;
 typecheck_and_annotate(Acc, Globals, [H|T]) ->
     typecheck_and_annotate([H|Acc], Globals, T);

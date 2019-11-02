@@ -94,3 +94,5 @@
         erlang3_form()
       | erlang4_form()
       | erlang5_form().
+
+-type export_attribute_erlang_form() :: {attribute, integer(), export, list()}.

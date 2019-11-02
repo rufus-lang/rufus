@@ -129,9 +129,11 @@ box({string_lit, #{line := Line, spec := Value}}) ->
 %% annotate_exports creates export attributes for all exported functions and
 %% injects them into the sequence of Erlang forms. They're defined before
 %% function definitions to avoid crashing the Erlang compiler.
-annotate_exports(ErlangForms) ->
-    annotate_exports([], ErlangForms).
+-spec annotate_exports(list(erlang_form())) -> {ok, list(erlang_form())}.
+annotate_exports(Forms) ->
+    annotate_exports([], Forms).
 
+-spec annotate_exports(list(erlang_form()), list(erlang_form())) -> {ok, list(erlang_form())}.
 annotate_exports(Acc, [Form = {attribute, _Line, module, _Name}|T]) ->
     {ok, ExportForms} = make_export_forms(T),
     annotate_exports(Acc ++ ExportForms ++ [Form], T);
@@ -140,9 +142,11 @@ annotate_exports(Acc, [Form|T]) ->
 annotate_exports(Acc, []) ->
     {ok, lists:reverse(Acc)}.
 
+-spec make_export_forms(list(erlang_form())) -> {ok, list(export_attribute_erlang_form())}.
 make_export_forms(Forms) ->
     make_export_forms([], Forms).
 
+-spec make_export_forms(list(erlang_form()), list(erlang_form())) -> {ok, list(export_attribute_erlang_form())}.
 make_export_forms(Acc, [{function, Line, Spec, Arity, _Forms}|T]) ->
     %% TODO(jkakar) We're exporting all functions for now, to move quickly, but
     %% we need to apply the rules from the 'Exported identifiers' RDR here.
