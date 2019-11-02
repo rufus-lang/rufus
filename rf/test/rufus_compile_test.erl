@@ -334,3 +334,55 @@ eval_for_function_apply_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertEqual(4, example:'Random'()).
+
+%% Arity-1 functions making function calls
+
+forms_for_function_apply_with_an_atom_argument_test() ->
+    RufusText = "
+    module example
+    func Echo(a atom) atom { a }
+    func Random() atom { Echo(:hello) }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(hello, example:'Random'()).
+
+forms_for_function_apply_with_a_bool_argument_test() ->
+    RufusText = "
+    module example
+    func Echo(b bool) bool { b }
+    func Random() bool { Echo(true) }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual({bool, true}, example:'Random'()).
+
+forms_for_function_apply_with_a_float_argument_test() ->
+    RufusText = "
+    module example
+    func Echo(n float) float { n }
+    func Random() float { Echo(4.0) }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(4.0, example:'Random'()).
+
+forms_for_function_apply_with_an_int_argument_test() ->
+    RufusText = "
+    module example
+    func Echo(n int) int { n }
+    func Random() int { Echo(4) }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(4, example:'Random'()).
+
+forms_for_function_apply_with_a_string_argument_test() ->
+    RufusText = "
+    module example
+    func Echo(t string) string { t }
+    func Random() string { Echo(\"hello\") }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual({string, <<"hello">>}, example:'Random'()).
