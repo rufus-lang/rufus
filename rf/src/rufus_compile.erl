@@ -8,6 +8,7 @@
 -export([eval/1]).
 
 -ifdef(EUNIT).
+-export([compile/1]).
 -export([eval_chain/2]).
 -endif.
 
@@ -22,6 +23,7 @@ eval(RufusText) ->
                 fun rufus_parse:parse/1,
                 fun rufus_scope:annotate_locals/1,
                 fun rufus_binary_op:typecheck_and_annotate/1,
+                fun rufus_apply:typecheck_and_annotate/1,
                 fun rufus_func_return_type:typecheck/1,
                 fun rufus_compile_erlang:forms/1,
                 fun compile/1
@@ -52,7 +54,9 @@ compile(ErlangForms) ->
         {ok, Module, BinaryOrCode} ->
             load(Module, BinaryOrCode);
         {error, Reason} ->
-            {error, Reason}
+            {error, Reason};
+        error ->
+            {error, unknown}
     end.
 
 -spec load(atom(), binary()) -> {ok, atom()} | {error, badarg | badfile | nofile | not_purged | on_load_failure | sticky_directory}.
