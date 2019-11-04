@@ -557,7 +557,7 @@ forms_for_function_returning_a_remainder_of_three_int_literals_test() ->
     ],
     ?assertEqual(Expected, ErlangForms).
 
-%% Arity-0 functions making function calls
+%% Arity-0 functions being called
 
 forms_for_function_apply_test() ->
     RufusText = "
@@ -578,7 +578,7 @@ forms_for_function_apply_test() ->
     ],
     ?assertEqual(Expected, ErlangForms).
 
-%% Arity-1 functions making function calls
+%% Arity-1 functions being called
 
 forms_for_function_apply_with_an_atom_argument_test() ->
     RufusText = "

@@ -1,7 +1,7 @@
 # Rufus programming language
 
 ```rufus
-module example
+module greet
 
 import "Fmt"
 
@@ -12,36 +12,35 @@ func main() {
 
 ## Design goals
 
-### Beginner-friendly
+### Grows with you
 
-It's difficult for a new user with little experience to know how to get started
-with programming. Rufus should provide a smooth path for new users to learn the
-language and start writing Rufus programs.
+Rufus is approachable, with great documentation to help users learn how to build
+and operate fault-tolerant services. It's a great technology choice for
+startups, and scales up as teams and projects grow into large organizations.
 
-### Startup-friendly
+### Statically typed
 
-Startups have to make technology choices before they begin building their
-products. At the beginning of the product development cycle, when you don't know
-if your product is going to succeed or not, you want a language that lets you
-experiment easily and move quickly. Startups need a fast iteration cycle to get
-changes to production quickly and frequently. Rufus should be a great choice for
-startups with tools and patterns to support a fast iteration cycle.
+Rufus is statically typed to make many runtime errors detectable at compile time
+instead. Furthermore, as systems get large, types help ensure that interfaces
+between adjacent modules don't get silently broken. This is essential for large
+teams building and operating large services.
 
-### Team-friendly
+### Builds on Erlang/OTP
 
-Startups grow into big companies. The technology choices they made when they
-were small and starting out need to scale to eventually support dozens of
-product lines, hundreds of teams, and thousands of developers. Big teams need a
-fast iteration cycle along with tools to manage ownership of code and systems.
-They often have security and compliance needs that must be met. Rufus should be
-a great choice for large teams and provide tools and patterns to support
-operating at scale.
+Rufus builds on Erlang/OTP. The full power of OTP's fault-tolerant distributed
+systems building blocks from applications to releases, and `supervisor` to
+`gen_server`, are available in Rufus programs. With a consistent project layout
+and common idioms for organizing service logic, Rufus services tend to be
+consistent and quickly become familiar.
 
 ### Open source
 
-Consider a case where rufus-lang.org has a package index service, for example.
-Services likes this will be open source and running them locally will be a first
-class operation. Large teams need to be able to run on premises, for a variety
-of reasons from secrecy to security to legal regulations and more. It should be
-easy to setup and run local services to create a user experience on par with
-rufus-lang.org.
+Rufus and all of its related services are open source. We foster a vibrant and
+positive community of people helping each other, and contributing to the
+language and its ecosystem.
+
+### Local first
+
+Large teams need to be able to run on premises, for a variety of reasons from
+secrecy to security to legal regulations and more. It's easy to setup and run
+local services to create a private user experience on par with [rufus-lang.org](/).
