@@ -5,9 +5,9 @@
 -export([
     annotate/3,
     line/1,
-    make_apply/3,
     make_arg_decl/3,
     make_binary_op/4,
+    make_call/3,
     make_func_decl/5,
     make_identifier/2,
     make_import/2,
@@ -111,10 +111,10 @@ make_func_decl(Spec, Args, ReturnType, Exprs, Line) ->
 make_arg_decl(Spec, Type, Line) ->
     {arg_decl, #{spec => Spec, type => Type, line => Line}}.
 
-%% make_apply returns a form a function call.
--spec make_apply(atom(), list(), integer()) -> {apply, #{spec => atom(), args => list(), line => integer()}}.
-make_apply(Spec, Args, Line) ->
-    {apply, #{spec => Spec, args => Args, line => Line}}.
+%% make_call returns a form a function call.
+-spec make_call(atom(), list(), integer()) -> {call, #{spec => atom(), args => list(), line => integer()}}.
+make_call(Spec, Args, Line) ->
+    {call, #{spec => Spec, args => Args, line => Line}}.
 
 %% Type form builder API
 

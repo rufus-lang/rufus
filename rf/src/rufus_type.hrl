@@ -55,7 +55,7 @@
 -type arg_decl_form() :: {arg_decl, context()}.
 -type identifier_form() :: {identifier, context()}.
 -type binary_op_form() :: {binary_op, context()}.
--type apply_form() :: {apply, context()}.
+-type call_form() :: {call, context()}.
 
 %% Rufus forms
 
@@ -71,7 +71,7 @@
       | identifier_form()
       | type_form()
       | binary_op_form()
-      | apply_form().
+      | call_form().
 
 %% Errors
 

@@ -325,7 +325,7 @@ eval_with_function_returning_a_remainder_of_three_int_literals_test() ->
 
 %% Arity-0 functions making function calls
 
-eval_for_function_apply_test() ->
+eval_for_function_call_test() ->
     RufusText = "
     module example
     func Four() int { 100 % 13 % 5 }
@@ -337,7 +337,7 @@ eval_for_function_apply_test() ->
 
 %% Arity-1 functions making function calls
 
-forms_for_function_apply_with_an_atom_argument_test() ->
+forms_for_function_call_with_an_atom_argument_test() ->
     RufusText = "
     module example
     func Echo(a atom) atom { a }
@@ -347,7 +347,7 @@ forms_for_function_apply_with_an_atom_argument_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(hello, example:'Random'()).
 
-forms_for_function_apply_with_a_bool_argument_test() ->
+forms_for_function_call_with_a_bool_argument_test() ->
     RufusText = "
     module example
     func Echo(b bool) bool { b }
@@ -357,7 +357,7 @@ forms_for_function_apply_with_a_bool_argument_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual({bool, true}, example:'Random'()).
 
-forms_for_function_apply_with_a_float_argument_test() ->
+forms_for_function_call_with_a_float_argument_test() ->
     RufusText = "
     module example
     func Echo(n float) float { n }
@@ -367,7 +367,7 @@ forms_for_function_apply_with_a_float_argument_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(4.0, example:'Random'()).
 
-forms_for_function_apply_with_an_int_argument_test() ->
+forms_for_function_call_with_an_int_argument_test() ->
     RufusText = "
     module example
     func Echo(n int) int { n }
@@ -377,7 +377,7 @@ forms_for_function_apply_with_an_int_argument_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(4, example:'Random'()).
 
-forms_for_function_apply_with_a_string_argument_test() ->
+forms_for_function_call_with_a_string_argument_test() ->
     RufusText = "
     module example
     func Echo(t string) string { t }

@@ -27,7 +27,7 @@ resolve_type(_Globals, {_Form, #{type := Type}}) ->
     {ok, Type};
 resolve_type(_Globals, {func_decl, #{return_type := Type}}) ->
     {ok, Type};
-resolve_type(Globals, Form = {apply, #{spec := Spec, args := ArgExprs}}) ->
+resolve_type(Globals, Form = {call, #{spec := Spec, args := ArgExprs}}) ->
     case maps:get(Spec, Globals, undefined) of
         undefined ->
             throw({error, unknown_func, #{spec => Spec, args => ArgExprs}});
@@ -71,7 +71,7 @@ resolve_type(Globals, Form = {binary_op, #{op := Op, left := Left, right := Righ
             throw({error, unsupported_operand_type, #{form => Form}})
     end.
 
-%% apply form helpers
+%% call form helpers
 
 -spec find_matching_func_decls(list(func_decl_form()), list(rufus_form())) -> {ok, list(func_decl_form())} | error_triple().
 find_matching_func_decls(FuncDecls, ArgExprs) ->

@@ -72,7 +72,7 @@ forms(Acc, [Form = {arg_decl, #{line := Line, spec := Name}}|T]) ->
             {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Name}]}
     end,
     forms([ErlangForm|Acc], T);
-forms(Acc, [{apply, #{spec := Spec, args := Args, line := Line}}|T]) ->
+forms(Acc, [{call, #{spec := Spec, args := Args, line := Line}}|T]) ->
     {ok, ArgsForms} = forms([], Args),
     Form = {call, Line, {atom, Line, Spec}, ArgsForms},
     forms([Form|Acc], T);

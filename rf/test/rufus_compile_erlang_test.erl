@@ -559,7 +559,7 @@ forms_for_function_returning_a_remainder_of_three_int_literals_test() ->
 
 %% Arity-0 functions being called
 
-forms_for_function_apply_test() ->
+forms_for_function_call_test() ->
     RufusText = "
     module example
     func Four() int { 4 }
@@ -567,7 +567,7 @@ forms_for_function_apply_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_apply:typecheck_and_annotate(Forms),
+    {ok, AnnotatedForms} = rufus_call:typecheck_and_annotate(Forms),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 2, module, example},
@@ -580,7 +580,7 @@ forms_for_function_apply_test() ->
 
 %% Arity-1 functions being called
 
-forms_for_function_apply_with_an_atom_argument_test() ->
+forms_for_function_call_with_an_atom_argument_test() ->
     RufusText = "
     module example
     func Echo(a atom) atom { a }
@@ -589,7 +589,7 @@ forms_for_function_apply_with_an_atom_argument_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms1} = rufus_scope:annotate_locals(Forms),
-    {ok, AnnotatedForms2} = rufus_apply:typecheck_and_annotate(AnnotatedForms1),
+    {ok, AnnotatedForms2} = rufus_call:typecheck_and_annotate(AnnotatedForms1),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms2),
     Expected = [
         {attribute, 2, module, example},
@@ -602,7 +602,7 @@ forms_for_function_apply_with_an_atom_argument_test() ->
     ],
     ?assertEqual(Expected, ErlangForms).
 
-forms_for_function_apply_with_a_bool_argument_test() ->
+forms_for_function_call_with_a_bool_argument_test() ->
     RufusText = "
     module example
     func Echo(b bool) bool { b }
@@ -611,7 +611,7 @@ forms_for_function_apply_with_a_bool_argument_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms1} = rufus_scope:annotate_locals(Forms),
-    {ok, AnnotatedForms2} = rufus_apply:typecheck_and_annotate(AnnotatedForms1),
+    {ok, AnnotatedForms2} = rufus_call:typecheck_and_annotate(AnnotatedForms1),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms2),
     Expected = [
         {attribute, 2, module, example},
@@ -626,7 +626,7 @@ forms_for_function_apply_with_a_bool_argument_test() ->
     ],
     ?assertEqual(Expected, ErlangForms).
 
-forms_for_function_apply_with_a_float_argument_test() ->
+forms_for_function_call_with_a_float_argument_test() ->
     RufusText = "
     module example
     func Echo(n float) float { n }
@@ -635,7 +635,7 @@ forms_for_function_apply_with_a_float_argument_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms1} = rufus_scope:annotate_locals(Forms),
-    {ok, AnnotatedForms2} = rufus_apply:typecheck_and_annotate(AnnotatedForms1),
+    {ok, AnnotatedForms2} = rufus_call:typecheck_and_annotate(AnnotatedForms1),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms2),
     Expected = [
         {attribute, 2, module, example},
@@ -648,7 +648,7 @@ forms_for_function_apply_with_a_float_argument_test() ->
     ],
     ?assertEqual(Expected, ErlangForms).
 
-forms_for_function_apply_with_an_int_argument_test() ->
+forms_for_function_call_with_an_int_argument_test() ->
     RufusText = "
     module example
     func Echo(n int) int { n }
@@ -657,7 +657,7 @@ forms_for_function_apply_with_an_int_argument_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms1} = rufus_scope:annotate_locals(Forms),
-    {ok, AnnotatedForms2} = rufus_apply:typecheck_and_annotate(AnnotatedForms1),
+    {ok, AnnotatedForms2} = rufus_call:typecheck_and_annotate(AnnotatedForms1),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms2),
     Expected = [
         {attribute, 2, module, example},
@@ -670,7 +670,7 @@ forms_for_function_apply_with_an_int_argument_test() ->
     ],
     ?assertEqual(Expected, ErlangForms).
 
-forms_for_function_apply_with_a_string_argument_test() ->
+forms_for_function_call_with_a_string_argument_test() ->
     RufusText = "
     module example
     func Echo(t string) string { t }
@@ -679,7 +679,7 @@ forms_for_function_apply_with_a_string_argument_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms1} = rufus_scope:annotate_locals(Forms),
-    {ok, AnnotatedForms2} = rufus_apply:typecheck_and_annotate(AnnotatedForms1),
+    {ok, AnnotatedForms2} = rufus_call:typecheck_and_annotate(AnnotatedForms1),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms2),
     Expected = [
         {attribute, 2, module, example},
