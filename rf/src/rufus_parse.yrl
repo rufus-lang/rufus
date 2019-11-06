@@ -77,7 +77,7 @@ expr  -> int_lit                 : rufus_form:make_literal(int, text('$1'), line
 expr  -> string_lit              : rufus_form:make_literal(string, list_to_binary(text('$1')), line('$1')).
 expr  -> identifier              : rufus_form:make_identifier(list_to_atom(text('$1')), line('$1')).
 expr  -> binary_op               : '$1'.
-expr  -> identifier '(' args ')' : rufus_form:make_apply(list_to_atom(text('$1')), '$3', line('$1')).
+expr  -> identifier '(' args ')' : rufus_form:make_call(list_to_atom(text('$1')), '$3', line('$1')).
 
 binary_op -> expr '+' expr       : rufus_form:make_binary_op('+', '$1', '$3', line('$2')).
 binary_op -> expr '-' expr       : rufus_form:make_binary_op('-', '$1', '$3', line('$2')).

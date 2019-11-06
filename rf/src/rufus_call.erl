@@ -1,8 +1,8 @@
-%% rufus_apply enforces the invariant that the type for each argument associated
-%% with an apply form matches the type specified in the related function
-%% signature. It also annotates the apply form with a type form that describes
-%% the possible return types.
--module(rufus_apply).
+%% rufus_call enforces the invariant that the type for each argument in a
+%% function call matches the type specified in the related function declaration.
+%% It also annotates the call form with a type form that describes the possible
+%% return types.
+-module(rufus_call).
 
 -include_lib("rufus_type.hrl").
 
@@ -40,7 +40,7 @@ typecheck_and_annotate(Acc, Globals, [Form = {func_decl, #{exprs := Exprs}}|T]) 
     {ok, AnnotatedExprs} = typecheck_and_annotate([], Globals, Exprs),
     AnnotatedForm = rufus_form:annotate(Form, exprs, AnnotatedExprs),
     typecheck_and_annotate([AnnotatedForm|Acc], Globals, T);
-typecheck_and_annotate(Acc, Globals, [Form = {apply, _Context}|T]) ->
+typecheck_and_annotate(Acc, Globals, [Form = {call, _Context}|T]) ->
     case rufus_type:resolve(Globals, Form) of
         {ok, TypeForm} ->
             AnnotatedForm = rufus_form:annotate(Form, type, TypeForm),

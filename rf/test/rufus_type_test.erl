@@ -2,10 +2,10 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-%% resolve type for an apply form
+%% resolve type for an call form
 
 resolve_unknown_func_error_test() ->
-    Form = rufus_form:make_apply('Ping', [], 7),
+    Form = rufus_form:make_call('Ping', [], 7),
     Expected = {error, unknown_func, #{args => [],
                                        spec => 'Ping'}},
     ?assertEqual(Expected, rufus_type:resolve(#{}, Form)).
@@ -18,7 +18,7 @@ resolve_unknown_arity_error_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, Globals} = rufus_scope:globals(Forms),
-    Form = rufus_form:make_apply('Ping', [], 7),
+    Form = rufus_form:make_call('Ping', [], 7),
     Data = #{arg_exprs => [],
              func_decls => [{func_decl, #{args => [{arg_decl, #{line => 3,
                                                                 spec => message,
@@ -43,7 +43,7 @@ resolve_unmatched_args_error_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, Globals} = rufus_scope:globals(Forms),
-    Form = rufus_form:make_apply('Echo', [rufus_form:make_literal(integer, 42, 7)], 7),
+    Form = rufus_form:make_call('Echo', [rufus_form:make_literal(integer, 42, 7)], 7),
     Data = #{arg_exprs => [{integer_lit, #{line => 7,
                                            spec => 42,
                                            type => {type, #{line => 7,
@@ -76,7 +76,7 @@ resolve_form_with_no_arguments_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, Globals} = rufus_scope:globals(Forms),
-    Form = rufus_form:make_apply('Random', [], 7),
+    Form = rufus_form:make_call('Random', [], 7),
     Expected = rufus_form:make_type(int, 3),
     ?assertEqual({ok, Expected}, rufus_type:resolve(Globals, Form)).
 
@@ -88,7 +88,7 @@ resolve_form_with_one_argument_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, Globals} = rufus_scope:globals(Forms),
-    Form = rufus_form:make_apply('Echo', [rufus_form:make_literal(string, <<"hello">>, 7)], 7),
+    Form = rufus_form:make_call('Echo', [rufus_form:make_literal(string, <<"hello">>, 7)], 7),
     Expected = rufus_form:make_type(string, 3),
     ?assertEqual({ok, Expected}, rufus_type:resolve(Globals, Form)).
 
@@ -104,7 +104,7 @@ resolve_form_with_one_argument_and_many_function_heads_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, Globals} = rufus_scope:globals(Forms),
-    Form = rufus_form:make_apply('Echo', [rufus_form:make_literal(string, <<"hello">>, 7)], 7),
+    Form = rufus_form:make_call('Echo', [rufus_form:make_literal(string, <<"hello">>, 7)], 7),
     Expected = rufus_form:make_type(string, 7),
     ?assertEqual({ok, Expected}, rufus_type:resolve(Globals, Form)).
 
@@ -116,8 +116,8 @@ resolve_form_with_two_argument_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, Globals} = rufus_scope:globals(Forms),
-    Form = rufus_form:make_apply('Concatenate', [rufus_form:make_literal(atom, hello, 7),
-                                                 rufus_form:make_literal(string, <<"world">>, 7)], 7),
+    Form = rufus_form:make_call('Concatenate', [rufus_form:make_literal(atom, hello, 7),
+                                                rufus_form:make_literal(string, <<"world">>, 7)], 7),
     Expected = rufus_form:make_type(string, 3),
     ?assertEqual({ok, Expected}, rufus_type:resolve(Globals, Form)).
 
