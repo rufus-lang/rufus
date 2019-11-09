@@ -52,14 +52,14 @@ forms(Acc, [{identifier, #{line := Line, spec := Name, locals := Locals}}|T]) ->
             {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Name}]}
     end,
     forms([Form|Acc], T);
-forms(Acc, [{func_decl, #{line := Line, spec := Spec, args := Args, exprs := Exprs}}|T]) ->
-    {ok, ArgsForms} = forms([], Args),
-    {ok, GuardForms} = guard_forms([], Args),
+forms(Acc, [{func_decl, #{line := Line, spec := Spec, params := Params, exprs := Exprs}}|T]) ->
+    {ok, ParamForms} = forms([], Params),
+    {ok, GuardForms} = guard_forms([], Params),
     {ok, ExprForms} = forms([], Exprs),
-    FunctionForms = [{clause, Line, ArgsForms, GuardForms, ExprForms}],
-    Form = {function, Line, Spec, length(Args), FunctionForms},
+    FunctionForms = [{clause, Line, ParamForms, GuardForms, ExprForms}],
+    Form = {function, Line, Spec, length(Params), FunctionForms},
     forms([Form|Acc], T);
-forms(Acc, [Form = {arg_decl, #{line := Line, spec := Name}}|T]) ->
+forms(Acc, [Form = {param, #{line := Line, spec := Name}}|T]) ->
     TypeSpec = rufus_form:type_spec(Form),
     ErlangForm = case TypeSpec of
         atom ->
@@ -96,14 +96,14 @@ rufus_operator_to_erlang_operator('%', float) -> erlang:error(unsupported_operan
 rufus_operator_to_erlang_operator(Op, _) -> Op.
 
 % guard_forms generates function guard_forms for floats and integers.
--spec guard_forms(list(erlang_form()) | list(list()), list(arg_decl_form())) -> {ok, list(erlang_form())}.
-guard_forms(Acc, [{arg_decl, #{line := Line, spec := Name, type := {type, #{spec := atom}}}}|T]) ->
+-spec guard_forms(list(erlang_form()) | list(list()), list(param_form())) -> {ok, list(erlang_form())}.
+guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := atom}}}}|T]) ->
     GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_atom}}, [{var, Line, Name}]}],
     guard_forms([GuardExpr|Acc], T);
-guard_forms(Acc, [{arg_decl, #{line := Line, spec := Name, type := {type, #{spec := float}}}}|T]) ->
+guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := float}}}}|T]) ->
     GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_float}}, [{var, Line, Name}]}],
     guard_forms([GuardExpr|Acc], T);
-guard_forms(Acc, [{arg_decl, #{line := Line, spec := Name, type := {type, #{spec := int}}}}|T]) ->
+guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := int}}}}|T]) ->
     GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_integer}}, [{var, Line, Name}]}],
     guard_forms([GuardExpr|Acc], T);
 guard_forms(Acc, [_|T]) ->

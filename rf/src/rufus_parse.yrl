@@ -7,7 +7,7 @@ Nonterminals
     decl
     type
     block
-    func_decl arg_decl arg_decls expr exprs args
+    func_decl param params expr exprs args
     binary_op.
 
 Terminals
@@ -55,13 +55,13 @@ type -> float                    : rufus_form:make_type(float, line('$1')).
 type -> int                      : rufus_form:make_type(int, line('$1')).
 type -> string                   : rufus_form:make_type(string, line('$1')).
 
-func_decl -> func identifier '(' arg_decls ')' type block :
+func_decl -> func identifier '(' params ')' type block :
                                     rufus_form:make_func_decl(list_to_atom(text('$2')), '$4', '$6', '$7', line('$1')).
 
-arg_decls -> arg_decl arg_decls  : ['$1'|'$2'].
-arg_decls -> '$empty'            : [].
-arg_decl -> identifier type ','  : rufus_form:make_arg_decl(list_to_atom(text('$1')), '$2', line('$1')).
-arg_decl -> identifier type      : rufus_form:make_arg_decl(list_to_atom(text('$1')), '$2', line('$1')).
+params -> param params           : ['$1'|'$2'].
+params -> '$empty'               : [].
+param -> identifier type ','     : rufus_form:make_param(list_to_atom(text('$1')), '$2', line('$1')).
+param -> identifier type         : rufus_form:make_param(list_to_atom(text('$1')), '$2', line('$1')).
 
 block -> '{' exprs '}'           : '$2'.
 

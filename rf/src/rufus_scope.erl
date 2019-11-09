@@ -44,26 +44,26 @@ annotate(Acc, _Locals, []) ->
     {ok, lists:reverse(Acc)}.
 
 -spec annotate_form(map(), func_decl_form()) -> {ok, map(), func_decl_form()}.
-annotate_form(Locals, {func_decl, Context = #{args := Args, exprs := Exprs}}) ->
-    % walk over functions args and add locals to the context
-    {ok, NewLocals1, NewArgs} = annotate_func_args(Locals, Args),
+annotate_form(Locals, {func_decl, Context = #{params := Params, exprs := Exprs}}) ->
+    % walk over functions parameters and add locals to the context
+    {ok, NewLocals1, NewParams} = annotate_func_params(Locals, Params),
     % walk over exprs and add locals to the context
     {ok, NewLocals2, NewExprs} = annotate_func_exprs(NewLocals1, Exprs),
-    AnnotatedForm = {func_decl, Context#{args => NewArgs, exprs => NewExprs}},
+    AnnotatedForm = {func_decl, Context#{params => NewParams, exprs => NewExprs}},
     {ok, NewLocals2, AnnotatedForm};
 annotate_form(Locals, Form) ->
     {ok, Locals, Form}.
 
--spec annotate_func_args(locals(), list(rufus_form())) -> {ok, locals(), list(rufus_form())}.
-annotate_func_args(Locals, Args) ->
-    annotate_func_args(Locals, [], Args).
+-spec annotate_func_params(locals(), list(rufus_form())) -> {ok, locals(), list(rufus_form())}.
+annotate_func_params(Locals, Params) ->
+    annotate_func_params(Locals, [], Params).
 
--spec annotate_func_args(locals(), list(arg_decl_form()), list(arg_decl_form())) -> {ok, locals(), list(rufus_form())}.
-annotate_func_args(Locals, Acc, [{arg_decl, Context = #{spec := Spec, type := Type}}|T]) ->
+-spec annotate_func_params(locals(), list(param_form()), list(param_form())) -> {ok, locals(), list(rufus_form())}.
+annotate_func_params(Locals, Acc, [{param, Context = #{spec := Spec, type := Type}}|T]) ->
     NewLocals = Locals#{Spec => Type},
-    NewArg = {arg_decl, Context},
-    annotate_func_args(NewLocals, [NewArg|Acc], T);
-annotate_func_args(Locals, Acc, []) ->
+    NewParam = {param, Context},
+    annotate_func_params(NewLocals, [NewParam|Acc], T);
+annotate_func_params(Locals, Acc, []) ->
     {ok, Locals, lists:reverse(Acc)}.
 
 -spec annotate_func_exprs(locals(), list(rufus_form())) -> {ok, locals(), list(rufus_form())}.
