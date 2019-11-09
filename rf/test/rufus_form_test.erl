@@ -61,18 +61,18 @@ make_literal_test() ->
                  rufus_form:make_literal(string, <<"hello">>, 9)).
 
 make_binary_op_test() ->
-    Arg = {int_lit, #{spec => 2, line => 4}},
-    ?assertEqual({binary_op, #{op => '+', left => Arg, right => Arg, line => 4}},
-                 rufus_form:make_binary_op('+', Arg, Arg, 4)).
+    Operand = {int_lit, #{spec => 2, line => 4}},
+    ?assertEqual({binary_op, #{op => '+', left => Operand, right => Operand, line => 4}},
+                 rufus_form:make_binary_op('+', Operand, Operand, 4)).
 
 make_func_decl_test() ->
     Type = rufus_form:make_type(bool, 81),
-    ?assertEqual({func_decl, #{spec => 'True', args => [], return_type => Type, exprs => [], line => 81}},
+    ?assertEqual({func_decl, #{spec => 'True', params => [], return_type => Type, exprs => [], line => 81}},
                  rufus_form:make_func_decl('True', [], Type, [], 81)).
 
-make_arg_decl_test() ->
+make_param_test() ->
     Type = rufus_form:make_type(int, 52),
-    ?assertEqual({arg_decl, #{spec => n, type => Type, line => 52}}, rufus_form:make_arg_decl(n, Type, 52)).
+    ?assertEqual({param, #{spec => n, type => Type, line => 52}}, rufus_form:make_param(n, Type, 52)).
 
 make_inferred_type_test() ->
     ?assertEqual({type, #{spec => int, source => inferred, line => 4}}, rufus_form:make_inferred_type(int, 4)).

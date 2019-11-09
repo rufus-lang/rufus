@@ -75,17 +75,17 @@ resolve_type(Globals, Form = {binary_op, #{op := Op, left := Left, right := Righ
 
 -spec find_matching_func_decls(list(func_decl_form()), list(rufus_form())) -> {ok, list(func_decl_form())} | error_triple().
 find_matching_func_decls(FuncDecls, ArgExprs) ->
-    FuncDeclsWithMatchingArity = lists:filter(fun({func_decl, #{args := ArgDecls}}) ->
-        length(ArgDecls) =:= length(ArgExprs)
+    FuncDeclsWithMatchingArity = lists:filter(fun({func_decl, #{params := Params}}) ->
+        length(Params) =:= length(ArgExprs)
     end, FuncDecls),
 
     case length(FuncDeclsWithMatchingArity) of
         Length when Length > 0 ->
-            Result = lists:filter(fun({func_decl, #{args := ArgDecls}}) ->
-                Zipped = lists:zip(ArgDecls, ArgExprs),
-                lists:all(fun({{arg_decl, #{type := {type, #{spec := ArgDeclTypeSpec}}}},
+            Result = lists:filter(fun({func_decl, #{params := Params}}) ->
+                Zipped = lists:zip(Params, ArgExprs),
+                lists:all(fun({{param, #{type := {type, #{spec := ParamTypeSpec}}}},
                                {_, #{type := {type, #{spec := ArgTypeSpec}}}}}) ->
-                        ArgDeclTypeSpec =:= ArgTypeSpec
+                        ParamTypeSpec =:= ArgTypeSpec
                 end, Zipped)
             end, FuncDeclsWithMatchingArity),
             case Result of
