@@ -680,6 +680,7 @@ forms_for_function_call_with_a_string_argument_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms1} = rufus_scope:annotate_locals(Forms),
     {ok, AnnotatedForms2} = rufus_call:typecheck_and_annotate(AnnotatedForms1),
+    io:format("AnnotatedForms2 => ~p~n", [AnnotatedForms2]),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms2),
     Expected = [
         {attribute, 2, module, example},
@@ -691,5 +692,38 @@ forms_for_function_call_with_a_string_argument_test() ->
         {function, 4, 'Random', 0, [
                 {clause, 4, [], [], [{call, 4, {atom, 4, 'Echo'}, [{tuple, 4, [{atom, 4, string}, {bin, 4, [{bin_element, 4, {string, 4, "hello"}, default, default}]}]}]}]}
             ]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+%% Arity-2 functions being called
+
+forms_for_function_apply_with_two_int_arguments_test() ->
+    RufusText = "
+    module example
+    func Sum(m int, n int) int { m + n }
+    func Random() int { Sum(1, 2) }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms1} = rufus_scope:annotate_locals(Forms),
+    {ok, AnnotatedForms2} = rufus_call:typecheck_and_annotate(AnnotatedForms1),
+    {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms2),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 4, export, [{'Random', 0}]},
+        {attribute, 3, export, [{'Sum', 2}]},
+        {function, 3, 'Sum', 2,
+            [{clause, 3,
+                 [{var, 3, m}, {var, 3, n}],
+                 [[{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_integer}}, [{var, 3, n}]}],
+                  [{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_integer}}, [{var, 3, m}]}]],
+                 [{op, 3, '+', {var, 3, m}, {var, 3, n}}]}]
+        },
+        {function, 4, 'Random', 0,
+            [{clause, 4,
+                 [],
+                 [],
+                 [{call, 4, {atom, 4, 'Sum'}, [{integer, 4, 1}, {integer, 4, 2}]}]}]
+        }
     ],
     ?assertEqual(Expected, ErlangForms).

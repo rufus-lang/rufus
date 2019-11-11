@@ -17,7 +17,7 @@
 %% variable names to type information.
 -spec annotate_locals(list(rufus_form())) -> {ok, list(rufus_form())}.
 annotate_locals(RufusForms) ->
-    annotate([], #{}, RufusForms).
+    annotate_locals([], #{}, RufusForms).
 
 %% globals creates a map of function names to func_decl forms for all top-level
 %% functions in RufusForms.
@@ -36,11 +36,11 @@ globals(Acc, [_H|T]) ->
 globals(Acc, []) ->
     {ok, Acc}.
 
--spec annotate(list(rufus_form()), locals(), list(rufus_form())) -> {ok, list(rufus_form())}.
-annotate(Acc, Locals, [H|T]) ->
+-spec annotate_locals(list(rufus_form()), locals(), list(rufus_form())) -> {ok, list(rufus_form())}.
+annotate_locals(Acc, Locals, [H|T]) ->
     {ok, NewLocals, NewForm} = annotate_form(Locals, H),
-    annotate([NewForm|Acc], NewLocals, T);
-annotate(Acc, _Locals, []) ->
+    annotate_locals([NewForm|Acc], NewLocals, T);
+annotate_locals(Acc, _Locals, []) ->
     {ok, lists:reverse(Acc)}.
 
 -spec annotate_form(map(), func_decl_form()) -> {ok, map(), func_decl_form()}.
@@ -51,6 +51,15 @@ annotate_form(Locals, {func_decl, Context = #{params := Params, exprs := Exprs}}
     {ok, NewLocals2, NewExprs} = annotate_func_exprs(NewLocals1, Exprs),
     AnnotatedForm = {func_decl, Context#{params => NewParams, exprs => NewExprs}},
     {ok, NewLocals2, AnnotatedForm};
+annotate_form(Locals, {binary_op, Context = #{left := {LeftFormName, LeftContext}, right := {RightFormName, RightContext}}}) ->
+    io:format("WTF?~n"),
+    AnnotatedLeft = {LeftFormName, LeftContext#{locals => Locals}},
+    AnnotatedRight ={RightFormName,  RightContext#{locals => Locals}},
+    AnnotatedForm = {binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight}},
+    {ok, Locals, AnnotatedForm};
+annotate_form(Locals, {identifier, Context}) ->
+    AnnotatedForm = {identifier, Context#{locals => Locals}},
+    {ok, Locals, AnnotatedForm};
 annotate_form(Locals, Form) ->
     {ok, Locals, Form}.
 
@@ -71,8 +80,13 @@ annotate_func_exprs(Locals, Exprs) ->
     annotate_func_exprs(Locals, [], Exprs).
 
 -spec annotate_func_exprs(locals(), list(rufus_form()), list(rufus_form())) -> {ok, locals(), list(rufus_form())}.
-annotate_func_exprs(Locals, Acc, [{FormType, Context}|T]) ->
-    NewContext = Context#{locals => Locals},
-    annotate_func_exprs(Locals, [{FormType, NewContext}|Acc], T);
+annotate_func_exprs(Locals, Acc, [Form|T]) ->
+    io:format("annotate_form(Locals, Form) => annotate_form(~p, ~p)~n", [Locals, Form]),
+    io:format("Form => ~p~n", [Form]),
+    io:format("Locals => ~p~n", [Locals]),
+    {ok, NewLocals, AnnotatedForm} = annotate_form(Locals, Form),
+    io:format("AnnotatedForm => ~p~n", [AnnotatedForm]),
+    io:format("NewLocals => ~p~n", [NewLocals]),
+    annotate_func_exprs(NewLocals, [AnnotatedForm|Acc], T);
 annotate_func_exprs(Locals, Acc, []) ->
     {ok, Locals, lists:reverse(Acc)}.
