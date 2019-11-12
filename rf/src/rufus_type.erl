@@ -25,6 +25,9 @@ resolve(Globals, Form) ->
 -spec resolve_type(#{atom() => list(rufus_form())}, rufus_form()) -> {ok, type_form()} | no_return().
 resolve_type(_Globals, {_Form, #{type := Type}}) ->
     {ok, Type};
+resolve_type(_Globals, {identifier, #{spec := Spec, locals := Locals}}) ->
+    Type = maps:get(Spec, Locals),
+    {ok, Type};
 resolve_type(_Globals, {func_decl, #{return_type := Type}}) ->
     {ok, Type};
 resolve_type(Globals, Form = {call, #{spec := Spec, args := ArgExprs}}) ->

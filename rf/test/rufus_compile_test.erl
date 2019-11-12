@@ -337,7 +337,7 @@ eval_for_function_call_test() ->
 
 %% Arity-1 functions making function calls
 
-forms_for_function_call_with_an_atom_argument_test() ->
+eval_with_function_call_with_an_atom_argument_test() ->
     RufusText = "
     module example
     func Echo(a atom) atom { a }
@@ -347,7 +347,7 @@ forms_for_function_call_with_an_atom_argument_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(hello, example:'Random'()).
 
-forms_for_function_call_with_a_bool_argument_test() ->
+eval_with_function_call_with_a_bool_argument_test() ->
     RufusText = "
     module example
     func Echo(b bool) bool { b }
@@ -357,7 +357,7 @@ forms_for_function_call_with_a_bool_argument_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual({bool, true}, example:'Random'()).
 
-forms_for_function_call_with_a_float_argument_test() ->
+eval_with_function_call_with_a_float_argument_test() ->
     RufusText = "
     module example
     func Echo(n float) float { n }
@@ -367,7 +367,7 @@ forms_for_function_call_with_a_float_argument_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(4.0, example:'Random'()).
 
-forms_for_function_call_with_an_int_argument_test() ->
+eval_with_function_call_with_an_int_argument_test() ->
     RufusText = "
     module example
     func Echo(n int) int { n }
@@ -377,7 +377,7 @@ forms_for_function_call_with_an_int_argument_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(4, example:'Random'()).
 
-forms_for_function_call_with_a_string_argument_test() ->
+eval_with_function_call_with_a_string_argument_test() ->
     RufusText = "
     module example
     func Echo(t string) string { t }
@@ -386,3 +386,25 @@ forms_for_function_call_with_a_string_argument_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertEqual({string, <<"hello">>}, example:'Random'()).
+
+%% Arity-2 functions making function calls
+
+eval_with_function_call_with_two_int_arguments_test() ->
+    RufusText = "
+    module example
+    func Sum(m int, n int) int { m + n }
+    func Random() int { Sum(1, 2) }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(3, example:'Random'()).
+
+eval_with_function_call_with_two_float_arguments_test() ->
+    RufusText = "
+    module example
+    func Sum(m float, n float) float { m + n }
+    func Random() float { Sum(1.2, 2.3) }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(3.5, example:'Random'()).
