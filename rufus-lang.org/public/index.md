@@ -1,7 +1,7 @@
 # Rufus programming language
 
 ```rufus
-module greet
+module main
 
 import "Fmt"
 

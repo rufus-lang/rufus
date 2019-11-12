@@ -680,7 +680,6 @@ forms_for_function_call_with_a_string_argument_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms1} = rufus_scope:annotate_locals(Forms),
     {ok, AnnotatedForms2} = rufus_call:typecheck_and_annotate(AnnotatedForms1),
-    io:format("AnnotatedForms2 => ~p~n", [AnnotatedForms2]),
     {ok, ErlangForms} = rufus_compile_erlang:forms(AnnotatedForms2),
     Expected = [
         {attribute, 2, module, example},

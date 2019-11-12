@@ -41,6 +41,16 @@ type_spec_with_type_form_test() ->
     Type = rufus_form:make_inferred_type(int, 27),
     ?assertEqual(int, rufus_form:type_spec(Type)).
 
+type_spec_with_locals_test() ->
+    Locals = #{t => rufus_form:make_type(string, 3)},
+    Form = {identifier, #{line => 3, locals => Locals, spec => t}},
+    ?assertEqual(string, rufus_form:type_spec(Form)).
+
+type_spec_with_unknown_form_test() ->
+    Locals = #{other => rufus_form:make_type(string, 3)},
+    Form = {identifier, #{line => 3, locals => Locals, spec => unknown}},
+    ?assertEqual({error, unknown_form, #{form => Form}}, rufus_form:type_spec(Form)).
+
 make_module_test() ->
     ?assertEqual({module, #{spec => example, line => 1}}, rufus_form:make_module(example, 1)).
 

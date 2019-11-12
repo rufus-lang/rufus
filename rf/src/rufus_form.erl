@@ -58,7 +58,7 @@ type({_, #{type := Type}}) ->
 
 %% type_spec returns the spec for the type of the form.
 -spec type_spec({any(), context()}) -> atom() | error_triple().
-type_spec(Form = {_, #{spec := Spec, locals := Locals}}) ->
+type_spec(Form = {identifier, #{spec := Spec, locals := Locals}}) ->
     case maps:get(Spec, Locals, undefined) of
         undefined ->
             {error, unknown_form, #{form => Form}};
