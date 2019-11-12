@@ -37,7 +37,7 @@ globals(Acc, [_H|T]) ->
 globals(Acc, []) ->
     {ok, Acc}.
 
--spec annotate_locals(list(rufus_form()), locals(), list(rufus_form())) -> {ok, list(rufus_form())}.
+-spec annotate_locals(list(rufus_form()), locals(), list(rufus_form())) -> {ok, locals(), list(rufus_form())}.
 annotate_locals(Acc, Locals, [{func_decl, Context = #{params := Params, exprs := Exprs}}|T]) ->
     {ok, NewLocals1, AnnotatedParams} = annotate_locals([], Locals, Params),
     {ok, NewLocals2, AnnotatedExprs} = annotate_locals([], NewLocals1, Exprs),
