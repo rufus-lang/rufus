@@ -51,9 +51,9 @@ annotate_form(Locals, {func_decl, Context = #{params := Params, exprs := Exprs}}
     {ok, NewLocals2, NewExprs} = annotate_func_exprs(NewLocals1, Exprs),
     AnnotatedForm = {func_decl, Context#{params => NewParams, exprs => NewExprs}},
     {ok, NewLocals2, AnnotatedForm};
-annotate_form(Locals, {binary_op, Context = #{left := {LeftFormName, LeftContext}, right := {RightFormName, RightContext}}}) ->
-    AnnotatedLeft = {LeftFormName, LeftContext#{locals => Locals}},
-    AnnotatedRight ={RightFormName,  RightContext#{locals => Locals}},
+annotate_form(Locals, {binary_op, Context = #{left := Left, right := Right}}) ->
+    {ok, Locals, AnnotatedLeft} = annotate_form(Locals, Left),
+    {ok, Locals, AnnotatedRight} = annotate_form(Locals, Right),
     AnnotatedForm = {binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight}},
     {ok, Locals, AnnotatedForm};
 annotate_form(Locals, {identifier, Context}) ->
