@@ -8,23 +8,31 @@
 %% API exports
 
 -export([
-    annotate_locals/1,
-    globals/1
+    globals/1,
+    typecheck_and_annotate/1
 ]).
 
 %% API
-
-%% annotate_locals adds a type form to each identifier form in RufusForms.
--spec annotate_locals(list(rufus_form())) -> {ok, list(rufus_form())}.
-annotate_locals(RufusForms) ->
-    {ok, _Locals, AnnotatedForms} = annotate_locals([], #{}, RufusForms),
-    {ok, AnnotatedForms}.
 
 %% globals creates a map of function names to func_decl forms for all top-level
 %% functions in RufusForms.
 -spec globals(list(rufus_form())) -> {ok, #{atom() => list(rufus_form())}}.
 globals(RufusForms) ->
     globals(#{}, RufusForms).
+
+%% typecheck_and_annotate iterates over RufusForms and adds type information
+%% from the current scope to each form. Iteration stops at the first error.
+%% Return values:
+%% - `{ok, AnnotatedRufusForms}` if no issues are found.
+%% - `{
+typecheck_and_annotate(RufusForms) ->
+    {ok, Globals} = rufus_scope:globals(RufusForms),
+    try
+        {ok, _Locals, AnnotatedForms} = typecheck_and_annotate([], Globals, #{}, RufusForms),
+        {ok, AnnotatedForms}
+    catch
+        {error, Code, Data} -> {error, Code, Data}
+    end.
 
 %% Private API
 
@@ -37,25 +45,33 @@ globals(Acc, [_H|T]) ->
 globals(Acc, []) ->
     {ok, Acc}.
 
--spec annotate_locals(list(rufus_form()), locals(), list(rufus_form())) -> {ok, locals(), list(rufus_form())}.
-annotate_locals(Acc, Locals, [{func_decl, Context = #{params := Params, exprs := Exprs}}|T]) ->
-    {ok, NewLocals1, AnnotatedParams} = annotate_locals([], Locals, Params),
-    {ok, NewLocals2, AnnotatedExprs} = annotate_locals([], NewLocals1, Exprs),
+-spec typecheck_and_annotate(list(rufus_form()), globals(), locals(), list(rufus_form())) -> {ok, locals(), list(rufus_form())}.
+typecheck_and_annotate(Acc, Globals, Locals, [{func_decl, Context = #{params := Params, exprs := Exprs}}|T]) ->
+    {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate([], Globals, Locals, Params),
+    {ok, NewLocals2, AnnotatedExprs} = typecheck_and_annotate([], Globals, NewLocals1, Exprs),
     AnnotatedForm = {func_decl, Context#{params => AnnotatedParams, exprs => AnnotatedExprs}},
-    annotate_locals([AnnotatedForm|Acc], NewLocals2, T);
-annotate_locals(Acc, Locals, [{param, Context = #{spec := Spec, type := Type}}|T]) ->
+    typecheck_and_annotate([AnnotatedForm|Acc], Globals, NewLocals2, T);
+typecheck_and_annotate(Acc, Globals, Locals, [{param, Context = #{spec := Spec, type := Type}}|T]) ->
     NewLocals = Locals#{Spec => Type},
     AnnotatedForm = {param, Context},
-    annotate_locals([AnnotatedForm|Acc], NewLocals, T);
-annotate_locals(Acc, Locals, [{binary_op, Context = #{left := Left, right := Right}}|T]) ->
-    {ok, Locals, [AnnotatedLeft]} = annotate_locals([], Locals, [Left]),
-    {ok, Locals, [AnnotatedRight]} = annotate_locals([], Locals, [Right]),
+    typecheck_and_annotate([AnnotatedForm|Acc], Globals, NewLocals, T);
+typecheck_and_annotate(Acc, Globals, Locals, [{binary_op, Context = #{left := Left, right := Right}}|T]) ->
+    {ok, Locals, [AnnotatedLeft]} = typecheck_and_annotate([], Globals, Locals, [Left]),
+    {ok, Locals, [AnnotatedRight]} = typecheck_and_annotate([], Globals, Locals, [Right]),
     AnnotatedForm = {binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight}},
-    annotate_locals([AnnotatedForm|Acc], Locals, T);
-annotate_locals(Acc, Locals, [{identifier, Context}|T]) ->
+    typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
+typecheck_and_annotate(Acc, Globals, Locals, [{identifier, Context}|T]) ->
     AnnotatedForm = {identifier, Context#{locals => Locals}},
-    annotate_locals([AnnotatedForm|Acc], Locals, T);
-annotate_locals(Acc, Locals, [H|T]) ->
-    annotate_locals([H|Acc], Locals, T);
-annotate_locals(Acc, Locals, []) ->
+    typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
+typecheck_and_annotate(Acc, Globals, Locals, [Form = {call, _Context}|T]) ->
+    case rufus_type:resolve(Globals, Form) of
+        {ok, TypeForm} ->
+            AnnotatedForm = rufus_form:annotate(Form, type, TypeForm),
+            typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
+        Error ->
+            throw(Error)
+    end;
+typecheck_and_annotate(Acc, Globals, Locals, [H|T]) ->
+    typecheck_and_annotate([H|Acc], Globals, Locals, T);
+typecheck_and_annotate(Acc, _Globals, Locals, []) ->
     {ok, Locals, lists:reverse(Acc)}.
