@@ -48,8 +48,14 @@ typecheck_and_annotate(Acc, Globals, Locals, [{param, Context = #{spec := Spec, 
 typecheck_and_annotate(Acc, Globals, Locals, [{binary_op, Context = #{left := Left, right := Right}}|T]) ->
     {ok, Locals, [AnnotatedLeft]} = typecheck_and_annotate([], Globals, Locals, [Left]),
     {ok, Locals, [AnnotatedRight]} = typecheck_and_annotate([], Globals, Locals, [Right]),
-    AnnotatedForm = {binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight}},
-    typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
+    Form = {binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight, locals => Locals}},
+    case rufus_type:resolve(Globals, Form) of
+        {ok, TypeForm} ->
+            AnnotatedForm = {binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight, type => TypeForm}},
+            typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
+        {error, Code, Data} ->
+            throw({error, Code, Data})
+    end;
 typecheck_and_annotate(Acc, Globals, Locals, [{identifier, Context}|T]) ->
     AnnotatedForm = {identifier, Context#{locals => Locals}},
     typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);

@@ -2,6 +2,8 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
+%% binary_op tests
+
 typecheck_and_annotate_binary_op_with_ints_test() ->
     RufusText = "
     module example
