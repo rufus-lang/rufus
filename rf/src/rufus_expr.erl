@@ -1,7 +1,6 @@
-%% rufus_scope calculates visibility into global names and maps them to Rufus
-%% forms. It also annotates Rufus forms representing variables with type
-%% information.
--module(rufus_scope).
+%% rufus_expr annotates forms with type information and performs typechecks to
+%% ensure correctness.
+-module(rufus_expr).
 
 -include_lib("rufus_type.hrl").
 
@@ -24,9 +23,16 @@ globals(RufusForms) ->
 %% from the current scope to each form. Iteration stops at the first error.
 %% Return values:
 %% - `{ok, AnnotatedRufusForms}` if no issues are found.
-%% - `{
+%% - `{error, unknown_func, Data}` with `Data` containing a `spec` key that has
+%%   the function name.
+%% - `{error, incorrect_arg_count, Data}` with `Data` containing `actual` and
+%%   `expected` atom keys pointing to the number of args received and the number
+%%   of args expected, respectively
+%% - `{error, invalid_arg_type, Data}` with `Data` containing `actual` and
+%%   `expected` atom keys pointing to Rufus types if return value types are
+%%   unmatched.
 typecheck_and_annotate(RufusForms) ->
-    {ok, Globals} = rufus_scope:globals(RufusForms),
+    {ok, Globals} = globals(RufusForms),
     try
         {ok, _Locals, AnnotatedForms} = typecheck_and_annotate([], Globals, #{}, RufusForms),
         {ok, AnnotatedForms}

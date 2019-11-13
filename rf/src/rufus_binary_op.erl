@@ -24,7 +24,7 @@
 %%   used as an operand. `Form` contains the illegal operands.
 -spec typecheck_and_annotate(list(rufus_form())) -> {ok, list(rufus_form())} | error_triple().
 typecheck_and_annotate(RufusForms) ->
-    {ok, Globals} = rufus_scope:globals(RufusForms),
+    {ok, Globals} = rufus_expr:globals(RufusForms),
     try
         typecheck_and_annotate([], Globals, RufusForms)
     catch

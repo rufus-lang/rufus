@@ -1,4 +1,4 @@
--module(rufus_scope_test).
+-module(rufus_expr_test).
 
 -include_lib("eunit/include/eunit.hrl").
 
@@ -11,7 +11,7 @@ typecheck_and_annotate_with_function_calling_an_unknown_function_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    Result = rufus_scope:typecheck_and_annotate(Forms),
+    Result = rufus_expr:typecheck_and_annotate(Forms),
     Data = #{args => [], spec => 'Ping'},
     ?assertEqual({error, unknown_func, Data}, Result).
 
@@ -23,7 +23,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_a_missing_argument_
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    Result = rufus_scope:typecheck_and_annotate(Forms),
+    Result = rufus_expr:typecheck_and_annotate(Forms),
     Data = #{arg_exprs => [],
              func_decls => [{func_decl, #{params => [{param, #{line => 3,
                                                                spec => n,
@@ -50,7 +50,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_a_mismatched_argume
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    Result = rufus_scope:typecheck_and_annotate(Forms),
+    Result = rufus_expr:typecheck_and_annotate(Forms),
     Data = #{arg_exprs => [{int_lit, #{line => 4,
                                        spec => 42,
                                        type => {type, #{line => 4,
@@ -77,7 +77,7 @@ typecheck_and_annotate_with_empty_module_test() ->
     RufusText = "module empty",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    ?assertEqual({ok, Forms}, rufus_scope:typecheck_and_annotate(Forms)).
+    ?assertEqual({ok, Forms}, rufus_expr:typecheck_and_annotate(Forms)).
 
 typecheck_and_annotate_test() ->
     RufusText = "
@@ -86,7 +86,7 @@ typecheck_and_annotate_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope:typecheck_and_annotate(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
         {func_decl, #{params => [],
@@ -106,7 +106,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_one_argument_test()
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope:typecheck_and_annotate(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [{module, #{line => 2,
                            spec => math}},
                 {func_decl, #{exprs => [{identifier, #{line => 3,
@@ -150,7 +150,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope:typecheck_and_annotate(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [{module, #{line => 2,
                            spec => math}},
                 {func_decl, #{exprs => [{binary_op, #{left => {identifier, #{line => 3,
@@ -218,7 +218,7 @@ typecheck_and_annotate_for_function_taking_an_atom_and_returning_an_atom_literal
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope:typecheck_and_annotate(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
         {module, #{line => 2,
                    spec => example}},
@@ -247,7 +247,7 @@ typecheck_and_annotate_for_function_taking_a_bool_and_returning_a_bool_literal_t
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope:typecheck_and_annotate(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
         {module, #{line => 2,
                    spec => example}},
@@ -277,7 +277,7 @@ typecheck_and_annotate_for_function_taking_a_float_and_returning_a_float_literal
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope:typecheck_and_annotate(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
         {module, #{line => 2,
                    spec => example}},
@@ -306,7 +306,7 @@ typecheck_and_annotate_for_function_taking_an_int_and_returning_an_int_literal_t
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope:typecheck_and_annotate(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
         {module, #{line => 2,
                    spec => example}},
@@ -335,7 +335,7 @@ typecheck_and_annotate_for_function_taking_a_string_and_returning_a_string_liter
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope:typecheck_and_annotate(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
         {module, #{line => 2,
                    spec => example}},
@@ -366,7 +366,7 @@ typecheck_and_annotate_for_function_taking_an_atom_and_returning_it_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope:typecheck_and_annotate(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
         {module, #{line => 2,
                    spec => example}},
@@ -396,7 +396,7 @@ typecheck_and_annotate_for_function_taking_a_bool_and_returning_it_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope:typecheck_and_annotate(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
         {module, #{line => 2,
                    spec => example}},
@@ -425,7 +425,7 @@ typecheck_and_annotate_for_function_taking_a_float_and_returning_it_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope:typecheck_and_annotate(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
         {module, #{line => 2,
                    spec => example}},
@@ -455,7 +455,7 @@ typecheck_and_annotate_for_function_taking_an_int_and_returning_it_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope:typecheck_and_annotate(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
         {module, #{line => 2,
                    spec => example}},
@@ -484,7 +484,7 @@ typecheck_and_annotate_for_function_taking_a_string_and_returning_it_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_scope:typecheck_and_annotate(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
         {module, #{line => 2, spec => example}},
         {func_decl, #{params => [{param, #{line => 3,
@@ -511,7 +511,7 @@ globals_without_func_forms_test() ->
     RufusText = "module empty",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    ?assertEqual({ok, #{}}, rufus_scope:globals(Forms)).
+    ?assertEqual({ok, #{}}, rufus_expr:globals(Forms)).
 
 globals_test() ->
     RufusText = "
@@ -544,7 +544,7 @@ globals_test() ->
                                                     source => rufus_text,
                                                     spec => int}},
                             spec => 'Number'}},
-    ?assertEqual({ok, #{'Echo' => [Echo1], 'Number' => [Number0]}}, rufus_scope:globals(Forms)).
+    ?assertEqual({ok, #{'Echo' => [Echo1], 'Number' => [Number0]}}, rufus_expr:globals(Forms)).
 
 globals_with_multiple_function_heads_test() ->
     RufusText = "
@@ -578,4 +578,4 @@ globals_with_multiple_function_heads_test() ->
                                                     source => rufus_text,
                                                     spec => int}},
                             spec => 'Echo'}},
-    ?assertEqual({ok, #{'Echo' => [EchoString, EchoInt]}}, rufus_scope:globals(Forms)).
+    ?assertEqual({ok, #{'Echo' => [EchoString, EchoInt]}}, rufus_expr:globals(Forms)).
