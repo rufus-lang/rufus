@@ -7,17 +7,10 @@
 %% API exports
 
 -export([
-    globals/1,
     typecheck_and_annotate/1
 ]).
 
 %% API
-
-%% globals creates a map of function names to func_decl forms for all top-level
-%% functions in RufusForms.
--spec globals(list(rufus_form())) -> {ok, #{atom() => list(rufus_form())}}.
-globals(RufusForms) ->
-    globals(#{}, RufusForms).
 
 %% typecheck_and_annotate iterates over RufusForms and adds type information
 %% from the current scope to each form. Iteration stops at the first error.
@@ -32,7 +25,7 @@ globals(RufusForms) ->
 %%   `expected` atom keys pointing to Rufus types if return value types are
 %%   unmatched.
 typecheck_and_annotate(RufusForms) ->
-    {ok, Globals} = globals(RufusForms),
+    {ok, Globals} = rufus_form:globals(RufusForms),
     try
         {ok, _Locals, AnnotatedForms} = typecheck_and_annotate([], Globals, #{}, RufusForms),
         {ok, AnnotatedForms}
@@ -41,15 +34,6 @@ typecheck_and_annotate(RufusForms) ->
     end.
 
 %% Private API
-
--spec globals(map(), list(rufus_form())) -> {ok, #{atom() => list(rufus_form())}}.
-globals(Acc, [Form = {func_decl, #{spec := Spec}}|T]) ->
-    Forms = maps:get(Spec, Acc, []),
-    globals(Acc#{Spec => Forms ++ [Form]}, T);
-globals(Acc, [_H|T]) ->
-    globals(Acc, T);
-globals(Acc, []) ->
-    {ok, Acc}.
 
 -spec typecheck_and_annotate(list(rufus_form()), globals(), locals(), list(rufus_form())) -> {ok, locals(), list(rufus_form())}.
 typecheck_and_annotate(Acc, Globals, Locals, [{func_decl, Context = #{params := Params, exprs := Exprs}}|T]) ->

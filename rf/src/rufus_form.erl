@@ -4,6 +4,7 @@
 
 -export([
     annotate/3,
+    globals/1,
     line/1,
     make_binary_op/4,
     make_call/3,
@@ -55,6 +56,12 @@ spec({_, #{spec := Spec}}) ->
 -spec type(rufus_form()) -> context().
 type({_, #{type := Type}}) ->
     Type.
+
+%% globals creates a map of function names to func_decl forms for all top-level
+%% functions in RufusForms.
+-spec globals(list(rufus_form())) -> {ok, #{atom() => list(rufus_form())}}.
+globals(RufusForms) ->
+    globals(#{}, RufusForms).
 
 %% type_spec returns the spec for the type of the form.
 -spec type_spec({any(), context()}) -> atom() | error_triple().
@@ -140,3 +147,14 @@ make_type(Spec, Line) ->
 -spec make_type(type_spec(), type_source(), integer()) -> type_form().
 make_type(Spec, Source, Line) ->
     {type, #{spec => Spec, source => Source, line => Line}}.
+
+%% Private API
+
+-spec globals(map(), list(rufus_form())) -> {ok, #{atom() => list(rufus_form())}}.
+globals(Acc, [Form = {func_decl, #{spec := Spec}}|T]) ->
+    Forms = maps:get(Spec, Acc, []),
+    globals(Acc#{Spec => Forms ++ [Form]}, T);
+globals(Acc, [_H|T]) ->
+    globals(Acc, T);
+globals(Acc, []) ->
+    {ok, Acc}.
