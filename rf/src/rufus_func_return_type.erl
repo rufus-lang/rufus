@@ -36,12 +36,12 @@ typecheck_forms([], Forms) ->
 
 -spec typecheck_forms(rufus_form()) -> ok | no_return().
 typecheck_forms({func_decl, #{return_type := ReturnType, exprs := Exprs}}) ->
-    typecheck_return_value(ReturnType, lists:last(Exprs));
+    typecheck_return_type(ReturnType, lists:last(Exprs));
 typecheck_forms(_) ->
     ok.
 
--spec typecheck_return_value(type_form(), identifier_form()) -> ok | no_return().
-typecheck_return_value({type, #{spec := ReturnType}}, {identifier, #{locals := Locals, spec := Spec}}) ->
+-spec typecheck_return_type(type_form(), identifier_form()) -> ok | no_return().
+typecheck_return_type({type, #{spec := ReturnType}}, {identifier, #{locals := Locals, spec := Spec}}) ->
     case maps:is_key(Spec, Locals) of
         true ->
             {type, TypeData} = maps:get(Spec, Locals),
@@ -57,8 +57,8 @@ typecheck_return_value({type, #{spec := ReturnType}}, {identifier, #{locals := L
             Data = #{spec => Spec},
             throw({error, unknown_variable, Data})
     end;
-typecheck_return_value({type, #{spec := _ReturnType}}, {_FormType, #{type := {type, #{spec := _ReturnType}}}}) ->
+typecheck_return_type({type, #{spec := _ReturnType}}, {_FormType, #{type := {type, #{spec := _ReturnType}}}}) ->
     ok;
-typecheck_return_value({type, #{spec := ExpectedReturnType}}, {_FormType, #{type := {type, #{spec := ActualReturnType}}}}) ->
+typecheck_return_type({type, #{spec := ExpectedReturnType}}, {_FormType, #{type := {type, #{spec := ActualReturnType}}}}) ->
     Data = #{expected => ExpectedReturnType, actual => ActualReturnType},
     throw({error, unmatched_return_type, Data}).
