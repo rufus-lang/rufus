@@ -53,8 +53,8 @@ typecheck_and_annotate(Acc, Globals, Locals, [{binary_op, Context = #{left := Le
         {ok, TypeForm} ->
             AnnotatedForm = {binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight, type => TypeForm}},
             typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
-        {error, Code, Data} ->
-            throw({error, Code, Data})
+        Error ->
+            throw(Error)
     end;
 typecheck_and_annotate(Acc, Globals, Locals, [{identifier, Context}|T]) ->
     AnnotatedForm = {identifier, Context#{locals => Locals}},
