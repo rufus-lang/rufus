@@ -30,12 +30,12 @@ resolve_type(_Globals, {identifier, #{spec := Spec, locals := Locals}}) ->
     {ok, Type};
 resolve_type(_Globals, {func, #{return_type := Type}}) ->
     {ok, Type};
-resolve_type(Globals, Form = {call, #{spec := Spec, args := ArgExprs}}) ->
+resolve_type(Globals, Form = {call, #{spec := Spec, args := Args}}) ->
     case maps:get(Spec, Globals, undefined) of
         undefined ->
-            throw({error, unknown_func, #{spec => Spec, args => ArgExprs}});
+            throw({error, unknown_func, #{spec => Spec, args => Args}});
         Funcs ->
-            case find_matching_funcs(Funcs, ArgExprs) of
+            case find_matching_funcs(Funcs, Args) of
                 {error, Reason, Data} ->
                     throw({error, Reason, Data});
                 {ok, MatchingFuncs} when length(MatchingFuncs) > 1 ->
@@ -77,15 +77,15 @@ resolve_type(Globals, Form = {binary_op, #{op := Op, left := Left, right := Righ
 %% call form helpers
 
 -spec find_matching_funcs(list(func_form()), list(rufus_form())) -> {ok, list(func_form())} | error_triple().
-find_matching_funcs(Funcs, ArgExprs) ->
+find_matching_funcs(Funcs, Args) ->
     FuncsWithMatchingArity = lists:filter(fun({func, #{params := Params}}) ->
-        length(Params) =:= length(ArgExprs)
+        length(Params) =:= length(Args)
     end, Funcs),
 
     case length(FuncsWithMatchingArity) of
         Length when Length > 0 ->
             Result = lists:filter(fun({func, #{params := Params}}) ->
-                Zipped = lists:zip(Params, ArgExprs),
+                Zipped = lists:zip(Params, Args),
                 lists:all(fun({{param, #{type := {type, #{spec := ParamTypeSpec}}}},
                                {_, #{type := {type, #{spec := ArgTypeSpec}}}}}) ->
                         ParamTypeSpec =:= ArgTypeSpec
@@ -93,12 +93,12 @@ find_matching_funcs(Funcs, ArgExprs) ->
             end, FuncsWithMatchingArity),
             case Result of
                 Result when length(Result) =:= 0 ->
-                    {error, unmatched_args, #{funcs => FuncsWithMatchingArity, arg_exprs => ArgExprs}};
+                    {error, unmatched_args, #{funcs => FuncsWithMatchingArity, args => Args}};
                 _ ->
                     {ok, Result}
             end;
         _ ->
-            {error, unknown_arity, #{funcs => Funcs, arg_exprs => ArgExprs}}
+            {error, unknown_arity, #{funcs => Funcs, args => Args}}
     end.
 
 %% binary_op form helpers
