@@ -162,3 +162,9 @@ make_inferred_type_test() ->
 
 make_type_test() ->
     ?assertEqual({type, #{spec => float, source => rufus_text, line => 37}}, rufus_form:make_type(float, 37)).
+
+make_match_test() ->
+    Left = rufus_form:make_identifier(n, 3),
+    Right = rufus_form:make_identifier(m, 3),
+    ?assertEqual({match, #{left => Left, right => Right, line => 3}},
+                 rufus_form:make_match(Left, Right, 3)).

@@ -13,6 +13,7 @@
     make_import/2,
     make_inferred_type/2,
     make_literal/3,
+    make_match/3,
     make_module/2,
     make_param/3,
     make_type/2,
@@ -89,29 +90,23 @@ make_module(Spec, Line) ->
 make_import(Spec, Line) ->
     {import, #{spec => Spec, line => Line}}.
 
-%% Identifier form builder API
+%% Type form builder API
 
-%% make_identifier returns a form for an identifier.
--spec make_identifier(atom(), integer()) -> {identifier, #{spec => atom(), line => integer()}}.
-make_identifier(Spec, Line) ->
-    {identifier, #{spec => Spec, line => Line}}.
+%% make_inferred_type creates a type form with 'inferred' as the 'source' value,
+%% to indicate that the type has been inferred by the compiler.
+-spec make_inferred_type(type_spec(), integer()) -> {type, #{spec => atom(), source => type_source(), line => integer()}}.
+make_inferred_type(Spec, Line) ->
+    make_type(Spec, inferred, Line).
 
-%% Literal form builder API
+%% make_type returns a type form with 'rufus_text' as the 'source' value, to
+%% indicate that the type came from source code.
+-spec make_type(atom(), integer()) -> {type, #{spec => atom(), source => type_source(), line => integer()}}.
+make_type(Spec, Line) ->
+    make_type(Spec, rufus_text, Line).
 
-%% make_literal returns a form for a literal value.
--spec make_literal(literal(), atom(), term()) -> literal_form().
-make_literal(TypeSpec, Spec, Line) ->
-    FormSpec = list_to_atom(unicode:characters_to_list([atom_to_list(TypeSpec), "_lit"])),
-    {FormSpec, #{spec => Spec,
-                 type => make_inferred_type(TypeSpec, Line),
-                 line => Line}}.
-
-%% Binary operation form builder API
-
-%% make_binary_op returns a form for a binary operation.
--spec make_binary_op(atom(), rufus_form(), rufus_form(), integer()) -> {binary_op, #{op => atom(), left => rufus_form(), right => rufus_form(), line => integer()}}.
-make_binary_op(Op, Left, Right, Line) ->
-    {binary_op, #{op => Op, left => Left, right => Right, line => Line}}.
+-spec make_type(type_spec(), type_source(), integer()) -> type_form().
+make_type(Spec, Source, Line) ->
+    {type, #{spec => Spec, source => Source, line => Line}}.
 
 %% Function form builder API
 
@@ -130,23 +125,36 @@ make_param(Spec, Type, Line) ->
 make_call(Spec, Args, Line) ->
     {call, #{spec => Spec, args => Args, line => Line}}.
 
-%% Type form builder API
+%% Identifier form builder API
 
-%% make_inferred_type creates a type form with 'inferred' as the 'source' value,
-%% to indicate that the type has been inferred by the compiler.
--spec make_inferred_type(type_spec(), integer()) -> {type, #{spec => atom(), source => type_source(), line => integer()}}.
-make_inferred_type(Spec, Line) ->
-    make_type(Spec, inferred, Line).
+%% make_identifier returns a form for an identifier.
+-spec make_identifier(atom(), integer()) -> {identifier, #{spec => atom(), line => integer()}}.
+make_identifier(Spec, Line) ->
+    {identifier, #{spec => Spec, line => Line}}.
 
-%% make_type returns a type form with 'rufus_text' as the 'source' value, to
-%% indicate that the type came from source code.
--spec make_type(atom(), integer()) -> {type, #{spec => atom(), source => type_source(), line => integer()}}.
-make_type(Spec, Line) ->
-    make_type(Spec, rufus_text, Line).
+%% Literal form builder API
 
--spec make_type(type_spec(), type_source(), integer()) -> type_form().
-make_type(Spec, Source, Line) ->
-    {type, #{spec => Spec, source => Source, line => Line}}.
+%% make_literal returns a form for a literal value.
+-spec make_literal(literal(), atom(), term()) -> literal_form().
+make_literal(TypeSpec, Spec, Line) ->
+    FormSpec = list_to_atom(unicode:characters_to_list([atom_to_list(TypeSpec), "_lit"])),
+    {FormSpec, #{spec => Spec,
+                 type => make_inferred_type(TypeSpec, Line),
+                 line => Line}}.
+
+%% binary_op form builder API
+
+%% make_binary_op returns a form for a binary operation.
+-spec make_binary_op(atom(), rufus_form(), rufus_form(), integer()) -> {binary_op, #{op => atom(), left => rufus_form(), right => rufus_form(), line => integer()}}.
+make_binary_op(Op, Left, Right, Line) ->
+    {binary_op, #{op => Op, left => Left, right => Right, line => Line}}.
+
+%% match form builder API
+
+%% make_match returns a form for a binary operation.
+-spec make_match(rufus_form(), rufus_form(), integer()) -> {match, #{left => rufus_form(), right => rufus_form(), line => integer()}}.
+make_match(Left, Right, Line) ->
+    {match, #{left => Left, right => Right, line => Line}}.
 
 %% Private API
 
