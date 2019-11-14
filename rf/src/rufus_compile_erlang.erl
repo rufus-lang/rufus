@@ -52,7 +52,7 @@ forms(Acc, [{identifier, #{line := Line, spec := Name, locals := Locals}}|T]) ->
             {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Name}]}
     end,
     forms([Form|Acc], T);
-forms(Acc, [{func_decl, #{line := Line, spec := Spec, params := Params, exprs := Exprs}}|T]) ->
+forms(Acc, [{func, #{line := Line, spec := Spec, params := Params, exprs := Exprs}}|T]) ->
     {ok, ParamForms} = forms([], Params),
     {ok, GuardForms} = guard_forms([], Params),
     {ok, ExprForms} = forms([], Exprs),

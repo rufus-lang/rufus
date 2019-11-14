@@ -8,7 +8,7 @@
     line/1,
     make_binary_op/4,
     make_call/3,
-    make_func_decl/5,
+    make_func/5,
     make_identifier/2,
     make_import/2,
     make_inferred_type/2,
@@ -38,8 +38,8 @@ line({_, #{line := Line}}) ->
     Line.
 
 %% source returns information about where the type information is from.
--spec return_type(func_decl_form()) -> type_form().
-return_type({func_decl, #{return_type := ReturnType}}) ->
+-spec return_type(func_form()) -> type_form().
+return_type({func, #{return_type := ReturnType}}) ->
     ReturnType.
 
 %% source returns information about where the type information is from.
@@ -57,7 +57,7 @@ spec({_, #{spec := Spec}}) ->
 type({_, #{type := Type}}) ->
     Type.
 
-%% globals creates a map of function names to func_decl forms for all top-level
+%% globals creates a map of function names to func forms for all top-level
 %% functions in RufusForms.
 -spec globals(list(rufus_form())) -> {ok, #{atom() => list(rufus_form())}}.
 globals(RufusForms) ->
@@ -115,10 +115,10 @@ make_binary_op(Op, Left, Right, Line) ->
 
 %% Function form builder API
 
-%% make_func_decl returns a form for a function declaration.
--spec make_func_decl(atom(), list(param_form()), type_form(), list(), integer()) -> {func_decl, #{spec => atom(), params => list(param_form), return_type => type_form(), exprs => list(), line => integer()}}.
-make_func_decl(Spec, Params, ReturnType, Exprs, Line) ->
-    {func_decl, #{spec => Spec, params => Params, return_type => ReturnType, exprs => Exprs, line => Line}}.
+%% make_func returns a form for a function declaration.
+-spec make_func(atom(), list(param_form()), type_form(), list(), integer()) -> {func, #{spec => atom(), params => list(param_form), return_type => type_form(), exprs => list(), line => integer()}}.
+make_func(Spec, Params, ReturnType, Exprs, Line) ->
+    {func, #{spec => Spec, params => Params, return_type => ReturnType, exprs => Exprs, line => Line}}.
 
 %% make_param returns a form for a function parameter declaration.
 -spec make_param(atom(), type_form(), integer()) -> {param, #{spec => atom(), type => type_form(), line => integer()}}.
@@ -151,7 +151,7 @@ make_type(Spec, Source, Line) ->
 %% Private API
 
 -spec globals(map(), list(rufus_form())) -> {ok, #{atom() => list(rufus_form())}}.
-globals(Acc, [Form = {func_decl, #{spec := Spec}}|T]) ->
+globals(Acc, [Form = {func, #{spec := Spec}}|T]) ->
     Forms = maps:get(Spec, Acc, []),
     globals(Acc#{Spec => Forms ++ [Form]}, T);
 globals(Acc, [_H|T]) ->

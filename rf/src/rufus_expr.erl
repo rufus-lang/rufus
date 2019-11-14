@@ -43,10 +43,10 @@ typecheck_and_annotate(RufusForms) ->
 %% from the current scope to each form. An `{error, Reason, Data}` error triple
 %% is thrown at the first error.
 -spec typecheck_and_annotate(list(rufus_form()), globals(), locals(), list(rufus_form())) -> {ok, locals(), list(rufus_form())}.
-typecheck_and_annotate(Acc, Globals, Locals, [{func_decl, Context = #{params := Params, exprs := Exprs}}|T]) ->
+typecheck_and_annotate(Acc, Globals, Locals, [{func, Context = #{params := Params, exprs := Exprs}}|T]) ->
     {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate([], Globals, Locals, Params),
     {ok, NewLocals2, AnnotatedExprs} = typecheck_and_annotate([], Globals, NewLocals1, Exprs),
-    AnnotatedForm = {func_decl, Context#{params => AnnotatedParams, exprs => AnnotatedExprs}},
+    AnnotatedForm = {func, Context#{params => AnnotatedParams, exprs => AnnotatedExprs}},
     typecheck_and_annotate([AnnotatedForm|Acc], Globals, NewLocals2, T);
 typecheck_and_annotate(Acc, Globals, Locals, [{param, Context = #{spec := Spec, type := Type}}|T]) ->
     NewLocals = Locals#{Spec => Type},
@@ -83,7 +83,7 @@ typecheck_and_annotate(Acc, _Globals, Locals, []) ->
 %% expression in a function matches its return type. `ok` is returned if
 %% typechecks all pass, otherwise an `{error, Reason, Data}` error triple is
 %% thrown.
-typecheck_func_return_type(Globals, [{func_decl, #{return_type := ReturnType, exprs := Exprs}}|T]) ->
+typecheck_func_return_type(Globals, [{func, #{return_type := ReturnType, exprs := Exprs}}|T]) ->
     LastExpr = lists:last(Exprs),
     case rufus_type:resolve(Globals, LastExpr) of
         {ok, {type, #{spec := ActualSpec}}} ->

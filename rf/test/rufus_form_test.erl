@@ -22,7 +22,40 @@ globals_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    Echo1 = {func_decl, #{params => [{param, #{line => 3,
+    Echo1 = {func, #{params => [{param, #{line => 3,
+                                          spec => n,
+                                          type => {type, #{line => 3,
+                                                           source => rufus_text,
+                                                           spec => string}}}}],
+                     exprs => [{identifier, #{line => 3,
+                                              spec => n}}],
+                     line => 3,
+                     return_type => {type, #{line => 3,
+                                             source => rufus_text,
+                                             spec => string}},
+                     spec => 'Echo'}},
+    Number0 = {func, #{params => [],
+                       exprs => [{int_lit, #{line => 4,
+                                             spec => 42,
+                                             type => {type, #{line => 4,
+                                                              source => inferred,
+                                                              spec => int}}}}],
+                       line => 4,
+                       return_type => {type, #{line => 4,
+                                               source => rufus_text,
+                                               spec => int}},
+                       spec => 'Number'}},
+    ?assertEqual({ok, #{'Echo' => [Echo1], 'Number' => [Number0]}}, rufus_form:globals(Forms)).
+
+globals_with_multiple_function_heads_test() ->
+    RufusText = "
+    module example
+    func Echo(n string) string { n }
+    func Echo(n int) int { n }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    EchoString = {func, #{params => [{param, #{line => 3,
                                                spec => n,
                                                type => {type, #{line => 3,
                                                                 source => rufus_text,
@@ -34,51 +67,18 @@ globals_test() ->
                                                   source => rufus_text,
                                                   spec => string}},
                           spec => 'Echo'}},
-    Number0 = {func_decl, #{params => [],
-                            exprs => [{int_lit, #{line => 4,
-                                                  spec => 42,
-                                                  type => {type, #{line => 4,
-                                                                   source => inferred,
-                                                                   spec => int}}}}],
-                            line => 4,
-                            return_type => {type, #{line => 4,
-                                                    source => rufus_text,
-                                                    spec => int}},
-                            spec => 'Number'}},
-    ?assertEqual({ok, #{'Echo' => [Echo1], 'Number' => [Number0]}}, rufus_form:globals(Forms)).
-
-globals_with_multiple_function_heads_test() ->
-    RufusText = "
-    module example
-    func Echo(n string) string { n }
-    func Echo(n int) int { n }
-    ",
-    {ok, Tokens} = rufus_tokenize:string(RufusText),
-    {ok, Forms} = rufus_parse:parse(Tokens),
-    EchoString = {func_decl, #{params => [{param, #{line => 3,
-                                                    spec => n,
-                                                    type => {type, #{line => 3,
-                                                                     source => rufus_text,
-                                                                     spec => string}}}}],
-                               exprs => [{identifier, #{line => 3,
-                                                        spec => n}}],
-                               line => 3,
-                               return_type => {type, #{line => 3,
-                                                       source => rufus_text,
-                                                       spec => string}},
-                               spec => 'Echo'}},
-    EchoInt = {func_decl, #{params => [{param, #{line => 4,
-                                                 spec => n,
-                                                 type => {type, #{line => 4,
-                                                                  source => rufus_text,
-                                                                  spec => int}}}}],
-                            exprs => [{identifier, #{line => 4,
-                                                     spec => n}}],
-                            line => 4,
-                            return_type => {type, #{line => 4,
-                                                    source => rufus_text,
-                                                    spec => int}},
-                            spec => 'Echo'}},
+    EchoInt = {func, #{params => [{param, #{line => 4,
+                                            spec => n,
+                                            type => {type, #{line => 4,
+                                                             source => rufus_text,
+                                                             spec => int}}}}],
+                       exprs => [{identifier, #{line => 4,
+                                                spec => n}}],
+                       line => 4,
+                       return_type => {type, #{line => 4,
+                                               source => rufus_text,
+                                               spec => int}},
+                       spec => 'Echo'}},
     ?assertEqual({ok, #{'Echo' => [EchoString, EchoInt]}}, rufus_form:globals(Forms)).
 
 line_test() ->
@@ -87,7 +87,7 @@ line_test() ->
 
 return_type_test() ->
     ReturnType = rufus_form:make_type(string, 13),
-    Form = rufus_form:make_func_decl('Ping', [], ReturnType, [], 13),
+    Form = rufus_form:make_func('Ping', [], ReturnType, [], 13),
     ?assertEqual(ReturnType, rufus_form:return_type(Form)).
 
 source_test() ->
@@ -148,10 +148,10 @@ make_binary_op_test() ->
     ?assertEqual({binary_op, #{op => '+', left => Operand, right => Operand, line => 4}},
                  rufus_form:make_binary_op('+', Operand, Operand, 4)).
 
-make_func_decl_test() ->
+make_func_test() ->
     Type = rufus_form:make_type(bool, 81),
-    ?assertEqual({func_decl, #{spec => 'True', params => [], return_type => Type, exprs => [], line => 81}},
-                 rufus_form:make_func_decl('True', [], Type, [], 81)).
+    ?assertEqual({func, #{spec => 'True', params => [], return_type => Type, exprs => [], line => 81}},
+                 rufus_form:make_func('True', [], Type, [], 81)).
 
 make_param_test() ->
     Type = rufus_form:make_type(int, 52),
