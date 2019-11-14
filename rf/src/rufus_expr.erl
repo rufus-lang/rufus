@@ -28,6 +28,9 @@ typecheck_and_annotate(RufusForms) ->
     {ok, Globals} = rufus_form:globals(RufusForms),
     try
         {ok, _Locals, AnnotatedForms} = typecheck_and_annotate([], Globals, #{}, RufusForms),
+        %% Return type checking needs to happen in a second pass because it
+        %% depends on the first pass to add type annotations to all forms.
+        ok = typecheck_return_type(Globals, AnnotatedForms),
         {ok, AnnotatedForms}
     catch
         {error, Code, Data} -> {error, Code, Data}
@@ -35,6 +38,9 @@ typecheck_and_annotate(RufusForms) ->
 
 %% Private API
 
+%% typecheck_and_annotate iterates over RufusForms and adds type information
+%% from the current scope to each form. An error triple is thrown at the first
+%% error.
 -spec typecheck_and_annotate(list(rufus_form()), globals(), locals(), list(rufus_form())) -> {ok, locals(), list(rufus_form())}.
 typecheck_and_annotate(Acc, Globals, Locals, [{func_decl, Context = #{params := Params, exprs := Exprs}}|T]) ->
     {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate([], Globals, Locals, Params),
@@ -71,3 +77,53 @@ typecheck_and_annotate(Acc, Globals, Locals, [H|T]) ->
     typecheck_and_annotate([H|Acc], Globals, Locals, T);
 typecheck_and_annotate(Acc, _Globals, Locals, []) ->
     {ok, Locals, lists:reverse(Acc)}.
+
+%% typecheck_return_type enforces the constraint that the type of the final
+%% expression in a function matches its return type. `ok` is returned if
+%% typechecks all pass, otherwise an {error, Reason, Data} error triple is
+%% thrown.
+typecheck_return_type(Globals, [{func_decl, #{return_type := ReturnType, exprs := Exprs}}|T]) ->
+    LastExpr = lists:last(Exprs),
+    case rufus_type:resolve(Globals, LastExpr) of
+        {ok, {type, #{spec := ActualSpec}}} ->
+            {type, #{spec := ExpectedSpec}} = ReturnType,
+            case ExpectedSpec == ActualSpec of
+                true ->
+                    ok;
+                false ->
+                    Data = #{return_type => ReturnType, expr => LastExpr},
+                    throw({error, unmatched_return_type, Data})
+            end;
+        Error ->
+            throw(Error)
+    end,
+    typecheck_return_type(Globals, T);
+typecheck_return_type(Globals, [_H|T]) ->
+    typecheck_return_type(Globals, T);
+typecheck_return_type(_Globals, []) ->
+    ok.
+
+
+
+
+
+%%     case maps:is_key(Spec, Locals) of
+%%         true ->
+%%             {type, TypeData} = maps:get(Spec, Locals),
+%%             IdentifierType = maps:get(spec, TypeData),
+%%             case IdentifierType of
+%%                 ReturnType ->
+%%                     ok;
+%%                 _ ->
+%%                     Data = #{expected => ReturnType, actual => IdentifierType},
+%%                     throw({error, unmatched_return_type, Data})
+%%             end;
+%%         false ->
+%%             Data = #{spec => Spec},
+%%             throw({error, unknown_variable, Data})
+%%     end;
+%% typecheck_return_type({type, #{spec := _ReturnType}}, {_FormType, #{type := {type, #{spec := _ReturnType}}}}) ->
+%%     ok;
+%% typecheck_return_type({type, #{spec := ExpectedReturnType}}, {_FormType, #{type := {type, #{spec := ActualReturnType}}}}) ->
+%%     Data = #{expected => ExpectedReturnType, actual => ActualReturnType},
+%%     throw({error, unmatched_return_type, Data}).

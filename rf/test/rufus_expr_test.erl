@@ -735,3 +735,31 @@ typecheck_and_annotate_remainder_op_with_floats_test() ->
     {error, Reason, Data} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(unsupported_operand_type, Reason),
     ?assertEqual(Expected, Data).
+
+%% Function return type checking tests
+
+typecheck_and_annotate_function_with_literal_return_value_test() ->
+    RufusText = "
+    module example
+    func Number() int { 42 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    ?assertEqual({ok, Forms}, rufus_expr:typecheck_and_annotate(Forms)).
+
+typecheck_and_annotate__function_with_unmatched_return_types_test() ->
+    RufusText = "
+    module example
+    func Number() int { 42.0 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = {error, unmatched_return_type, #{expr => {float_lit, #{line => 3,
+                                                                      spec => 42.0,
+                                                                      type => {type, #{line => 3,
+                                                                                       source => inferred,
+                                                                                       spec => float}}}},
+                                                return_type => {type, #{line => 3,
+                                                                        source => rufus_text,
+                                                                        spec => int}}}},
+    ?assertEqual(Expected, rufus_expr:typecheck_and_annotate(Forms)).
