@@ -31,7 +31,7 @@ typecheck_and_annotate(RufusForms) ->
         %% Function return type typechecks need to happen in a second pass
         %% because they depend on the first pass to add type annotations to all
         %% forms.
-        ok = typecheck_return_type(Globals, AnnotatedForms),
+        ok = typecheck_func_return_type(Globals, AnnotatedForms),
         {ok, AnnotatedForms}
     catch
         {error, Code, Data} -> {error, Code, Data}
@@ -79,11 +79,11 @@ typecheck_and_annotate(Acc, Globals, Locals, [H|T]) ->
 typecheck_and_annotate(Acc, _Globals, Locals, []) ->
     {ok, Locals, lists:reverse(Acc)}.
 
-%% typecheck_return_type enforces the constraint that the type of the final
+%% typecheck_func_return_type enforces the constraint that the type of the final
 %% expression in a function matches its return type. `ok` is returned if
 %% typechecks all pass, otherwise an `{error, Reason, Data}` error triple is
 %% thrown.
-typecheck_return_type(Globals, [{func_decl, #{return_type := ReturnType, exprs := Exprs}}|T]) ->
+typecheck_func_return_type(Globals, [{func_decl, #{return_type := ReturnType, exprs := Exprs}}|T]) ->
     LastExpr = lists:last(Exprs),
     case rufus_type:resolve(Globals, LastExpr) of
         {ok, {type, #{spec := ActualSpec}}} ->
@@ -98,8 +98,8 @@ typecheck_return_type(Globals, [{func_decl, #{return_type := ReturnType, exprs :
         Error ->
             throw(Error)
     end,
-    typecheck_return_type(Globals, T);
-typecheck_return_type(Globals, [_H|T]) ->
-    typecheck_return_type(Globals, T);
-typecheck_return_type(_Globals, []) ->
+    typecheck_func_return_type(Globals, T);
+typecheck_func_return_type(Globals, [_H|T]) ->
+    typecheck_func_return_type(Globals, T);
+typecheck_func_return_type(_Globals, []) ->
     ok.
