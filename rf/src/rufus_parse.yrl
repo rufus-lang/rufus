@@ -8,12 +8,12 @@ Nonterminals
     type
     block
     func_decl param params expr exprs args
-    binary_op.
+    binary_op match.
 
 Terminals
     '{' '}' '(' ')' ','
     '+' '-' '*' '/' '%'
-    ';'
+    ';' '='
     module import
     func identifier
     atom atom_lit
@@ -37,6 +37,7 @@ Left 100 '-'.
 Left 100 '*'.
 Left 100 '/'.
 Left 100 '%'.
+Left 300 '='.
 
 %%
 %% Grammar rules
@@ -56,7 +57,7 @@ type -> int                      : rufus_form:make_type(int, line('$1')).
 type -> string                   : rufus_form:make_type(string, line('$1')).
 
 func_decl -> func identifier '(' params ')' type block :
-                                    rufus_form:make_func(list_to_atom(text('$2')), '$4', '$6', '$7', line('$1')).
+                                   rufus_form:make_func(list_to_atom(text('$2')), '$4', '$6', '$7', line('$1')).
 
 params -> param params           : ['$1'|'$2'].
 params -> '$empty'               : [].
@@ -77,6 +78,7 @@ expr  -> int_lit                 : rufus_form:make_literal(int, text('$1'), line
 expr  -> string_lit              : rufus_form:make_literal(string, list_to_binary(text('$1')), line('$1')).
 expr  -> identifier              : rufus_form:make_identifier(list_to_atom(text('$1')), line('$1')).
 expr  -> binary_op               : '$1'.
+expr  -> match                   : '$1'.
 expr  -> identifier '(' args ')' : rufus_form:make_call(list_to_atom(text('$1')), '$3', line('$1')).
 
 binary_op -> expr '+' expr       : rufus_form:make_binary_op('+', '$1', '$3', line('$2')).
@@ -84,6 +86,8 @@ binary_op -> expr '-' expr       : rufus_form:make_binary_op('-', '$1', '$3', li
 binary_op -> expr '*' expr       : rufus_form:make_binary_op('*', '$1', '$3', line('$2')).
 binary_op -> expr '/' expr       : rufus_form:make_binary_op('/', '$1', '$3', line('$2')).
 binary_op -> expr '%' expr       : rufus_form:make_binary_op('%', '$1', '$3', line('$2')).
+
+match -> expr '=' expr           : rufus_form:make_match('$1', '$3', line('$2')).
 
 Erlang code.
 
