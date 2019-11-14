@@ -151,7 +151,7 @@ make_binary_op(Op, Left, Right, Line) ->
 
 %% match form builder API
 
-%% make_match returns a form for a binary operation.
+%% make_match returns a form for a match expression.
 -spec make_match(rufus_form(), rufus_form(), integer()) -> {match, #{left => rufus_form(), right => rufus_form(), line => integer()}}.
 make_match(Left, Right, Line) ->
     {match, #{left => Left, right => Right, line => Line}}.
