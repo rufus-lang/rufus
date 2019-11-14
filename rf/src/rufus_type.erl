@@ -28,17 +28,17 @@ resolve_type(_Globals, {_Form, #{type := Type}}) ->
 resolve_type(_Globals, {identifier, #{spec := Spec, locals := Locals}}) ->
     Type = maps:get(Spec, Locals),
     {ok, Type};
-resolve_type(_Globals, {func_decl, #{return_type := Type}}) ->
+resolve_type(_Globals, {func, #{return_type := Type}}) ->
     {ok, Type};
-resolve_type(Globals, Form = {call, #{spec := Spec, args := ArgExprs}}) ->
+resolve_type(Globals, Form = {call, #{spec := Spec, args := Args}}) ->
     case maps:get(Spec, Globals, undefined) of
         undefined ->
-            throw({error, unknown_func, #{spec => Spec, args => ArgExprs}});
-        FuncDecls ->
-            case find_matching_func_decls(FuncDecls, ArgExprs) of
+            throw({error, unknown_func, #{spec => Spec, args => Args}});
+        Funcs ->
+            case find_matching_funcs(Funcs, Args) of
                 {error, Reason, Data} ->
                     throw({error, Reason, Data});
-                {ok, MatchingFuncDecls} when length(MatchingFuncDecls) > 1 ->
+                {ok, MatchingFuncs} when length(MatchingFuncs) > 1 ->
                     %% TODO(jkakar): We need to handle cases where more than one
                     %% function matches a given set of parameters. For example,
                     %% consider two functions:
@@ -52,9 +52,9 @@ resolve_type(Globals, Form = {call, #{spec := Spec, args := ArgExprs}}) ->
                     %% specifies a literal value such as :hello or :goodbye we
                     %% should select the correct singular return type.
                     erlang:error({not_implemented, [Globals, Form]});
-                {ok, MatchingFuncDecls} when length(MatchingFuncDecls) =:= 1 ->
-                    [FuncDecl] = MatchingFuncDecls,
-                    {ok, rufus_form:return_type(FuncDecl)}
+                {ok, MatchingFuncs} when length(MatchingFuncs) =:= 1 ->
+                    [Func] = MatchingFuncs,
+                    {ok, rufus_form:return_type(Func)}
             end
     end;
 resolve_type(Globals, Form = {binary_op, #{op := Op, left := Left, right := Right}}) ->
@@ -76,29 +76,29 @@ resolve_type(Globals, Form = {binary_op, #{op := Op, left := Left, right := Righ
 
 %% call form helpers
 
--spec find_matching_func_decls(list(func_decl_form()), list(rufus_form())) -> {ok, list(func_decl_form())} | error_triple().
-find_matching_func_decls(FuncDecls, ArgExprs) ->
-    FuncDeclsWithMatchingArity = lists:filter(fun({func_decl, #{params := Params}}) ->
-        length(Params) =:= length(ArgExprs)
-    end, FuncDecls),
+-spec find_matching_funcs(list(func_form()), list(rufus_form())) -> {ok, list(func_form())} | error_triple().
+find_matching_funcs(Funcs, Args) ->
+    FuncsWithMatchingArity = lists:filter(fun({func, #{params := Params}}) ->
+        length(Params) =:= length(Args)
+    end, Funcs),
 
-    case length(FuncDeclsWithMatchingArity) of
+    case length(FuncsWithMatchingArity) of
         Length when Length > 0 ->
-            Result = lists:filter(fun({func_decl, #{params := Params}}) ->
-                Zipped = lists:zip(Params, ArgExprs),
+            Result = lists:filter(fun({func, #{params := Params}}) ->
+                Zipped = lists:zip(Params, Args),
                 lists:all(fun({{param, #{type := {type, #{spec := ParamTypeSpec}}}},
                                {_, #{type := {type, #{spec := ArgTypeSpec}}}}}) ->
                         ParamTypeSpec =:= ArgTypeSpec
                 end, Zipped)
-            end, FuncDeclsWithMatchingArity),
+            end, FuncsWithMatchingArity),
             case Result of
                 Result when length(Result) =:= 0 ->
-                    {error, unmatched_args, #{func_decls => FuncDeclsWithMatchingArity, arg_exprs => ArgExprs}};
+                    {error, unmatched_args, #{funcs => FuncsWithMatchingArity, args => Args}};
                 _ ->
                     {ok, Result}
             end;
         _ ->
-            {error, unknown_arity, #{func_decls => FuncDecls, arg_exprs => ArgExprs}}
+            {error, unknown_arity, #{funcs => Funcs, args => Args}}
     end.
 
 %% binary_op form helpers

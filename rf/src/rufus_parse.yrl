@@ -56,7 +56,7 @@ type -> int                      : rufus_form:make_type(int, line('$1')).
 type -> string                   : rufus_form:make_type(string, line('$1')).
 
 func_decl -> func identifier '(' params ')' type block :
-                                    rufus_form:make_func_decl(list_to_atom(text('$2')), '$4', '$6', '$7', line('$1')).
+                                    rufus_form:make_func(list_to_atom(text('$2')), '$4', '$6', '$7', line('$1')).
 
 params -> param params           : ['$1'|'$2'].
 params -> '$empty'               : [].
