@@ -31,7 +31,7 @@ typecheck_and_annotate(RufusForms) ->
         %% Function return type typechecks need to happen in a second pass
         %% because they depend on the first pass to add type annotations to all
         %% forms.
-        ok = typecheck_func_return_type(Globals, AnnotatedForms),
+        ok = typecheck_func_return_types(Globals, AnnotatedForms),
         {ok, AnnotatedForms}
     catch
         {error, Code, Data} -> {error, Code, Data}
@@ -68,24 +68,44 @@ typecheck_and_annotate(Acc, _Globals, Locals, []) ->
 
 %% scope helpers
 
+%% annotate_locals adds a `locals` key to a form context.
+-spec annotate_locals(locals(), rufus_form()) -> {ok, rufus_form()}.
 annotate_locals(Locals, {FormType, Context}) ->
     {ok, {FormType, Context#{locals => Locals}}}.
 
+%% push_local adds a form to the local scope.
+-spec push_local(locals(), rufus_form()) -> {ok, locals()}.
 push_local(Locals, {_FormType, #{spec := Spec, type := Type}}) ->
     {ok, Locals#{Spec => Type}}.
 
 %% func helpers
 
+%% typecheck_and_annotate_func adds all parameters to the local scope. It also
+%% resolves and annotates types for all expressions in the function body to
+%% ensure they satisfy type constraints.
+-spec typecheck_and_annotate_func(globals(), locals(), func_form()) -> {ok, locals(), func_form()} | no_return().
 typecheck_and_annotate_func(Globals, Locals, {func, Context = #{params := Params, exprs := Exprs}}) ->
     {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate([], Globals, Locals, Params),
     {ok, NewLocals2, AnnotatedExprs} = typecheck_and_annotate([], Globals, NewLocals1, Exprs),
     {ok, NewLocals2, {func, Context#{params => AnnotatedParams, exprs => AnnotatedExprs}}}.
 
+%% typecheck_func_return_types loops over annotated forms and typechecks return
+%% types against the value produced by the function.
+-spec typecheck_func_return_types(globals(), list(rufus_form())) -> ok | no_return().
+typecheck_func_return_types(Globals, [Form = {func, _Context}|T]) ->
+    ok = typecheck_func_return_type(Globals, Form),
+    typecheck_func_return_types(Globals, T);
+typecheck_func_return_types(Globals, [_H|T]) ->
+    typecheck_func_return_types(Globals, T);
+typecheck_func_return_types(_Globals, []) ->
+    ok.
+
 %% typecheck_func_return_type enforces the constraint that the type of the final
 %% expression in a function matches its return type. `ok` is returned if
-%% typechecks all pass, otherwise an `{error, Reason, Data}` error triple is
-%% thrown.
-typecheck_func_return_type(Globals, [{func, #{return_type := ReturnType, exprs := Exprs}}|T]) ->
+%% typechecks all pass, otherwise an `{error, unmatched_return_type, Data}`
+%% error triple is thrown.
+-spec typecheck_func_return_type(globals(), func_form()) -> ok | no_return().
+typecheck_func_return_type(Globals, {func, #{return_type := ReturnType, exprs := Exprs}}) ->
     LastExpr = lists:last(Exprs),
     case rufus_type:resolve(Globals, LastExpr) of
         {ok, {type, #{spec := ActualSpec}}} ->
@@ -99,19 +119,19 @@ typecheck_func_return_type(Globals, [{func, #{return_type := ReturnType, exprs :
             end;
         Error ->
             throw(Error)
-    end,
-    typecheck_func_return_type(Globals, T);
-typecheck_func_return_type(Globals, [_H|T]) ->
-    typecheck_func_return_type(Globals, T);
-typecheck_func_return_type(_Globals, []) ->
-    ok.
+    end.
 
 %% call helpers
 
-typecheck_and_annotate_call(Globals, Form = {FormType, Context}) ->
+%% typecheck_and_annotate_call resolves the return type for a function call and
+%% returns a call form annotated with type information.
+%%
+%% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
+%% -spec typecheck_and_annotate_call(globals(), call_form()) -> {ok, call_form()} | no_return().
+typecheck_and_annotate_call(Globals, Form = {call, Context}) ->
     case rufus_type:resolve(Globals, Form) of
         {ok, TypeForm} ->
-            AnnotatedForm = {FormType, Context#{type => TypeForm}},
+            AnnotatedForm = {call, Context#{type => TypeForm}},
             {ok, AnnotatedForm};
         Error ->
             throw(Error)
@@ -119,6 +139,16 @@ typecheck_and_annotate_call(Globals, Form = {FormType, Context}) ->
 
 %% binary_op helpers
 
+%% typecheck_and_annotate_binary_op ensures that binary_op operands are
+%% exclusively ints or exclusively floats. Inferred type information is added to
+%% every `binary_op` form. Returns values:
+%% - `{ok, AnnotatedForms}` if no issues are found. Every `binary_op` form is
+%%   annotated with an inferred type annotation.
+%% - `{error, unmatched_operand_type, Form}` is thrown if an `int` operand is
+%%   mixed with a `float` operand. `Form` contains the illegal operands.
+%% - `{error, unsupported_operand_type, Form}` is thrown if a type other than an
+%%   int is used as an operand. `Form` contains the illegal operands.
+-spec typecheck_and_annotate_binary_op(globals(), locals(), binary_op_form()) -> {ok, binary_op_form()} | no_return().
 typecheck_and_annotate_binary_op(Globals, Locals, {binary_op, Context = #{left := Left, right := Right}}) ->
     {ok, Locals, [AnnotatedLeft]} = typecheck_and_annotate([], Globals, Locals, [Left]),
     {ok, Locals, [AnnotatedRight]} = typecheck_and_annotate([], Globals, Locals, [Right]),
@@ -135,5 +165,6 @@ typecheck_and_annotate_binary_op(Globals, Locals, {binary_op, Context = #{left :
 
 %% match helpers
 
-typecheck_match(_Globals, Locals, Form) ->
+-spec typecheck_match(globals(), locals(), match_form()) -> {ok, locals(), match_form()} | no_return().
+typecheck_match(_Globals, Locals, Form = {match, _Context}) ->
     {ok, Locals, Form}.

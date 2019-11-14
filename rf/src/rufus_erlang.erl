@@ -83,6 +83,8 @@ forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}
     forms([Form|Acc], T);
 forms(Acc, [{type, _Context}|T]) ->
     forms(Acc, T); %% no-op to satisfy Dialyzer
+forms(Acc, [{match, _Context}|T]) ->
+    forms(Acc, T); %% no-op to satisfy Dialyzer
 forms(Acc, []) ->
     {ok, lists:reverse(Acc)};
 forms(Acc, Form) ->
