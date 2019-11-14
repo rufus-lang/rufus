@@ -813,38 +813,6 @@ parse_function_calling_a_function_with_an_argument_test() ->
 
 %% match tests
 
-parse_function_with_a_match_that_binds_a_variable_test() ->
-    RufusText = "
-    module example
-    func Echo(n int) int {
-        m = n
-        m
-    }
-    ",
-    {ok, Tokens} = rufus_tokenize:string(RufusText),
-    {ok, Forms} = rufus_parse:parse(Tokens),
-
-    Expected = [{module, #{line => 2,
-                           spec => example}},
-                {func, #{exprs => [{match, #{left => {identifier, #{line => 4,
-                                                                    spec => m}},
-                                             line => 4,
-                                             right => {identifier, #{line => 4,
-                                                                     spec => n}}}},
-                                   {identifier, #{line => 5,
-                                                  spec => m}}],
-                         line => 3,
-                         params => [{param, #{line => 3,
-                                              spec => n,
-                                              type => {type, #{line => 3,
-                                                               source => rufus_text,
-                                                               spec => int}}}}],
-                         return_type => {type, #{line => 3,
-                                                 source => rufus_text,
-                                                 spec => int}},
-                         spec => 'Echo'}}],
-    ?assertEqual(Expected, Forms).
-
 parse_function_with_a_match_that_binds_an_atom_literal_test() ->
     RufusText = "
     module example
@@ -991,4 +959,36 @@ parse_function_with_a_match_that_binds_a_string_literal_test() ->
                                                  source => rufus_text,
                                                  spec => string}},
                          spec => 'Ping'}}],
+    ?assertEqual(Expected, Forms).
+
+parse_function_with_a_match_that_binds_a_variable_test() ->
+    RufusText = "
+    module example
+    func Echo(n int) int {
+        m = n
+        m
+    }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{match, #{left => {identifier, #{line => 4,
+                                                                    spec => m}},
+                                             line => 4,
+                                             right => {identifier, #{line => 4,
+                                                                     spec => n}}}},
+                                   {identifier, #{line => 5,
+                                                  spec => m}}],
+                         line => 3,
+                         params => [{param, #{line => 3,
+                                              spec => n,
+                                              type => {type, #{line => 3,
+                                                               source => rufus_text,
+                                                               spec => int}}}}],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => int}},
+                         spec => 'Echo'}}],
     ?assertEqual(Expected, Forms).

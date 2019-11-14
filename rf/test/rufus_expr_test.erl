@@ -740,7 +740,7 @@ typecheck_and_annotate_function_with_literal_return_value_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     ?assertEqual({ok, Forms}, rufus_expr:typecheck_and_annotate(Forms)).
 
-typecheck_and_annotate__function_with_unmatched_return_types_test() ->
+typecheck_and_annotate_function_with_unmatched_return_types_test() ->
     RufusText = "
     module example
     func Number() int { 42.0 }
@@ -755,4 +755,36 @@ typecheck_and_annotate__function_with_unmatched_return_types_test() ->
                                                 return_type => {type, #{line => 3,
                                                                         source => rufus_text,
                                                                         spec => int}}}},
+    ?assertEqual(Expected, rufus_expr:typecheck_and_annotate(Forms)).
+
+%% match tests
+
+parse_function_with_a_match_that_binds_an_atom_literal_test() ->
+    RufusText = "
+    module example
+    func Ping() atom {
+        response = :pong
+        response
+    }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{match, #{left => {identifier, #{line => 4,
+                                                                    spec => response}},
+                                             line => 4,
+                                             right => {atom_lit, #{line => 4,
+                                                                   spec => pong,
+                                                                   type => {type, #{line => 4,
+                                                                                    source => inferred,
+                                                                                    spec => atom}}}}}},
+                                   {identifier, #{line => 5,
+                                                  spec => response}}],
+                         line => 3,
+                         params => [],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => atom}},
+                         spec => 'Ping'}}],
     ?assertEqual(Expected, rufus_expr:typecheck_and_annotate(Forms)).

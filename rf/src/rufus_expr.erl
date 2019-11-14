@@ -43,41 +43,43 @@ typecheck_and_annotate(RufusForms) ->
 %% from the current scope to each form. An `{error, Reason, Data}` error triple
 %% is thrown at the first error.
 -spec typecheck_and_annotate(list(rufus_form()), globals(), locals(), list(rufus_form())) -> {ok, locals(), list(rufus_form())}.
-typecheck_and_annotate(Acc, Globals, Locals, [{func, Context = #{params := Params, exprs := Exprs}}|T]) ->
-    {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate([], Globals, Locals, Params),
-    {ok, NewLocals2, AnnotatedExprs} = typecheck_and_annotate([], Globals, NewLocals1, Exprs),
-    AnnotatedForm = {func, Context#{params => AnnotatedParams, exprs => AnnotatedExprs}},
-    typecheck_and_annotate([AnnotatedForm|Acc], Globals, NewLocals2, T);
-typecheck_and_annotate(Acc, Globals, Locals, [{param, Context = #{spec := Spec, type := Type}}|T]) ->
-    NewLocals = Locals#{Spec => Type},
-    AnnotatedForm = {param, Context},
+typecheck_and_annotate(Acc, Globals, Locals, [Form = {func, _Context}|T]) ->
+    {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_func(Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm|Acc], Globals, NewLocals, T);
-typecheck_and_annotate(Acc, Globals, Locals, [{binary_op, Context = #{left := Left, right := Right}}|T]) ->
-    {ok, Locals, [AnnotatedLeft]} = typecheck_and_annotate([], Globals, Locals, [Left]),
-    {ok, Locals, [AnnotatedRight]} = typecheck_and_annotate([], Globals, Locals, [Right]),
-    Form = {binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight, locals => Locals}},
-    case rufus_type:resolve(Globals, Form) of
-        {ok, TypeForm} ->
-            AnnotatedForm = {binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight, type => TypeForm}},
-            typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
-        Error ->
-            throw(Error)
-    end;
-typecheck_and_annotate(Acc, Globals, Locals, [{identifier, Context}|T]) ->
-    AnnotatedForm = {identifier, Context#{locals => Locals}},
+typecheck_and_annotate(Acc, Globals, Locals, [Form = {param, _Context}|T]) ->
+    {ok, NewLocals} = push_local(Locals, Form),
+    typecheck_and_annotate([Form|Acc], Globals, NewLocals, T);
+typecheck_and_annotate(Acc, Globals, Locals, [Form = {binary_op, _Context}|T]) ->
+    {ok, AnnotatedForm} = typecheck_and_annotate_binary_op(Globals, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
+typecheck_and_annotate(Acc, Globals, Locals, [Form = {identifier, _Context}|T]) ->
+    {ok, AnnotatedForm} = annotate_locals(Locals, Form),
     typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
 typecheck_and_annotate(Acc, Globals, Locals, [Form = {call, _Context}|T]) ->
-    case rufus_type:resolve(Globals, Form) of
-        {ok, TypeForm} ->
-            AnnotatedForm = rufus_form:annotate(Form, type, TypeForm),
-            typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
-        Error ->
-            throw(Error)
-    end;
+    {ok, AnnotatedForm} = typecheck_and_annotate_call(Globals, Form),
+    typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
+typecheck_and_annotate(Acc, Globals, Locals, [Form = {match, _Context}|T]) ->
+    {ok, NewLocals, AnnotatedForm} = typecheck_match(Globals, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm|Acc], Globals, NewLocals, T);
 typecheck_and_annotate(Acc, Globals, Locals, [H|T]) ->
     typecheck_and_annotate([H|Acc], Globals, Locals, T);
 typecheck_and_annotate(Acc, _Globals, Locals, []) ->
     {ok, Locals, lists:reverse(Acc)}.
+
+%% scope helpers
+
+annotate_locals(Locals, {FormType, Context}) ->
+    {ok, {FormType, Context#{locals => Locals}}}.
+
+push_local(Locals, {_FormType, #{spec := Spec, type := Type}}) ->
+    {ok, Locals#{Spec => Type}}.
+
+%% func helpers
+
+typecheck_and_annotate_func(Globals, Locals, {func, Context = #{params := Params, exprs := Exprs}}) ->
+    {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate([], Globals, Locals, Params),
+    {ok, NewLocals2, AnnotatedExprs} = typecheck_and_annotate([], Globals, NewLocals1, Exprs),
+    {ok, NewLocals2, {func, Context#{params => AnnotatedParams, exprs => AnnotatedExprs}}}.
 
 %% typecheck_func_return_type enforces the constraint that the type of the final
 %% expression in a function matches its return type. `ok` is returned if
@@ -103,3 +105,35 @@ typecheck_func_return_type(Globals, [_H|T]) ->
     typecheck_func_return_type(Globals, T);
 typecheck_func_return_type(_Globals, []) ->
     ok.
+
+%% call helpers
+
+typecheck_and_annotate_call(Globals, Form = {FormType, Context}) ->
+    case rufus_type:resolve(Globals, Form) of
+        {ok, TypeForm} ->
+            AnnotatedForm = {FormType, Context#{type => TypeForm}},
+            {ok, AnnotatedForm};
+        Error ->
+            throw(Error)
+    end.
+
+%% binary_op helpers
+
+typecheck_and_annotate_binary_op(Globals, Locals, {binary_op, Context = #{left := Left, right := Right}}) ->
+    {ok, Locals, [AnnotatedLeft]} = typecheck_and_annotate([], Globals, Locals, [Left]),
+    {ok, Locals, [AnnotatedRight]} = typecheck_and_annotate([], Globals, Locals, [Right]),
+    Form = {binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight, locals => Locals}},
+    case rufus_type:resolve(Globals, Form) of
+        {ok, TypeForm} ->
+            AnnotatedForm = {binary_op, Context#{left => AnnotatedLeft,
+                                                 right => AnnotatedRight,
+                                                 type => TypeForm}},
+            {ok, AnnotatedForm};
+        Error ->
+            throw(Error)
+    end.
+
+%% match helpers
+
+typecheck_match(_Globals, Locals, Form) ->
+    {ok, Locals, Form}.
