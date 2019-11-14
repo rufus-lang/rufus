@@ -40,8 +40,8 @@ typecheck_and_annotate(RufusForms) ->
 %% Private API
 
 %% typecheck_and_annotate iterates over RufusForms and adds type information
-%% from the current scope to each form. An {error, Reason, Data} error triple is
-%% thrown at the first error.
+%% from the current scope to each form. An `{error, Reason, Data}` error triple
+%% is thrown at the first error.
 -spec typecheck_and_annotate(list(rufus_form()), globals(), locals(), list(rufus_form())) -> {ok, locals(), list(rufus_form())}.
 typecheck_and_annotate(Acc, Globals, Locals, [{func_decl, Context = #{params := Params, exprs := Exprs}}|T]) ->
     {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate([], Globals, Locals, Params),
@@ -81,7 +81,7 @@ typecheck_and_annotate(Acc, _Globals, Locals, []) ->
 
 %% typecheck_return_type enforces the constraint that the type of the final
 %% expression in a function matches its return type. `ok` is returned if
-%% typechecks all pass, otherwise an {error, Reason, Data} error triple is
+%% typechecks all pass, otherwise an `{error, Reason, Data}` error triple is
 %% thrown.
 typecheck_return_type(Globals, [{func_decl, #{return_type := ReturnType, exprs := Exprs}}|T]) ->
     LastExpr = lists:last(Exprs),
