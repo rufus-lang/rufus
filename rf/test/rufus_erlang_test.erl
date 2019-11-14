@@ -691,7 +691,7 @@ forms_for_function_call_with_a_string_argument_test() ->
 
 %% Arity-2 functions being called
 
-forms_for_function_apply_with_two_int_arguments_test() ->
+forms_for_function_call_with_two_int_arguments_test() ->
     RufusText = "
     module example
     func Sum(m int, n int) int { m + n }
@@ -721,7 +721,7 @@ forms_for_function_apply_with_two_int_arguments_test() ->
     ],
     ?assertEqual(Expected, ErlangForms).
 
-forms_for_function_apply_with_two_float_arguments_test() ->
+forms_for_function_call_with_two_float_arguments_test() ->
     RufusText = "
     module example
     func Sum(m float, n float) float { m + n }
