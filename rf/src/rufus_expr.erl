@@ -28,8 +28,9 @@ typecheck_and_annotate(RufusForms) ->
     {ok, Globals} = rufus_form:globals(RufusForms),
     try
         {ok, _Locals, AnnotatedForms} = typecheck_and_annotate([], Globals, #{}, RufusForms),
-        %% Return type checking needs to happen in a second pass because it
-        %% depends on the first pass to add type annotations to all forms.
+        %% Function return type typechecks need to happen in a second pass
+        %% because they depend on the first pass to add type annotations to all
+        %% forms.
         ok = typecheck_return_type(Globals, AnnotatedForms),
         {ok, AnnotatedForms}
     catch
@@ -39,8 +40,8 @@ typecheck_and_annotate(RufusForms) ->
 %% Private API
 
 %% typecheck_and_annotate iterates over RufusForms and adds type information
-%% from the current scope to each form. An error triple is thrown at the first
-%% error.
+%% from the current scope to each form. An {error, Reason, Data} error triple is
+%% thrown at the first error.
 -spec typecheck_and_annotate(list(rufus_form()), globals(), locals(), list(rufus_form())) -> {ok, locals(), list(rufus_form())}.
 typecheck_and_annotate(Acc, Globals, Locals, [{func_decl, Context = #{params := Params, exprs := Exprs}}|T]) ->
     {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate([], Globals, Locals, Params),
@@ -102,28 +103,3 @@ typecheck_return_type(Globals, [_H|T]) ->
     typecheck_return_type(Globals, T);
 typecheck_return_type(_Globals, []) ->
     ok.
-
-
-
-
-
-%%     case maps:is_key(Spec, Locals) of
-%%         true ->
-%%             {type, TypeData} = maps:get(Spec, Locals),
-%%             IdentifierType = maps:get(spec, TypeData),
-%%             case IdentifierType of
-%%                 ReturnType ->
-%%                     ok;
-%%                 _ ->
-%%                     Data = #{expected => ReturnType, actual => IdentifierType},
-%%                     throw({error, unmatched_return_type, Data})
-%%             end;
-%%         false ->
-%%             Data = #{spec => Spec},
-%%             throw({error, unknown_variable, Data})
-%%     end;
-%% typecheck_return_type({type, #{spec := _ReturnType}}, {_FormType, #{type := {type, #{spec := _ReturnType}}}}) ->
-%%     ok;
-%% typecheck_return_type({type, #{spec := ExpectedReturnType}}, {_FormType, #{type := {type, #{spec := ActualReturnType}}}}) ->
-%%     Data = #{expected => ExpectedReturnType, actual => ActualReturnType},
-%%     throw({error, unmatched_return_type, Data}).
