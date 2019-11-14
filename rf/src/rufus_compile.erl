@@ -19,12 +19,13 @@
 %% - `error` or `{error, ...}` if an error occurs.
 -spec eval(rufus_text()) -> ok_tuple() | error_tuple().
 eval(RufusText) ->
-    Handlers = [fun rufus_tokenize:string/1,
-                fun rufus_parse:parse/1,
-                fun rufus_expr:typecheck_and_annotate/1,
-                fun rufus_compile_erlang:forms/1,
-                fun compile/1
-               ],
+    Handlers = [
+        fun rufus_tokenize:string/1,
+        fun rufus_parse:parse/1,
+        fun rufus_expr:typecheck_and_annotate/1,
+        fun rufus_erlang:forms/1,
+        fun compile/1
+    ],
     eval_chain(RufusText, Handlers).
 
 %% Private API
