@@ -1,6 +1,7 @@
 Definitions.
 
 Newline       = \n
+Colon         = \:
 Semicolon     = \;
 UnicodeLetter = [A-Za-z]
 Digit         = [0-9]
@@ -18,7 +19,7 @@ FloatType     = float
 IntType       = int
 StringType    = string
 
-AtomLiteral   = \:({UnicodeLetter}({Digit}|{UnicodeLetter})+|\'({Digit}|{UnicodeLetter}|{Whitespace})+\')
+AtomLiteral   = {Colon}({UnicodeLetter}+({Digit}|{UnicodeLetter})?|\'({Digit}|{UnicodeLetter}|{Whitespace})+\')
 BoolLiteral   = (true|false)
 Exponent      = (e|E)?(\+|\-)?{Digit}+
 FloatLiteral  = (\+|\-)?{Digit}+\.{Digit}+{Exponent}?
