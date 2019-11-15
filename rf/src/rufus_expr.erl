@@ -165,6 +165,19 @@ typecheck_and_annotate_binary_op(Globals, Locals, {binary_op, Context = #{left :
 
 %% match helpers
 
+%% typecheck_and_annotate_match ensures that match operands have matching types.
+%% The left operand is treated as unbound variable when no information is known
+%% about it, and it's added to the local scope with type information from the
+%% right operand. Return values:
+%%
+%% - `{ok, Locals, AnnotatedForm}` if no issues are found. The match form and
+%%   its operands are annotated with type information.
+%% - `{error, unbound_variable, Data}` is thrown if the right operand is
+%%   unbound.
+%% - `{error, unbound_variables, Data}` is thrown if both the left and right
+%%   operands are unbound.
+%% - `{error, unmarched_types, Data}` is thrown when the left and right operand
+%%   have differing types.
 -spec typecheck_and_annotate_match(globals(), locals(), match_form()) -> {ok, locals(), match_form()} | no_return().
 typecheck_and_annotate_match(Globals, Locals, Form = {match, Context = #{left := Left, right := Right}}) ->
     case resolve_match_operand_type(Globals, Locals, Left) of
