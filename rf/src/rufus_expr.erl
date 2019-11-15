@@ -28,10 +28,6 @@ typecheck_and_annotate(RufusForms) ->
     {ok, Globals} = rufus_form:globals(RufusForms),
     try
         {ok, _Locals, AnnotatedForms} = typecheck_and_annotate([], Globals, #{}, RufusForms),
-        %% Function return type typechecks need to happen in a second pass
-        %% because they depend on the first pass to add type annotations to all
-        %% forms.
-        ok = typecheck_func_return_types(Globals, AnnotatedForms),
         {ok, AnnotatedForms}
     catch
         {error, Code, Data} -> {error, Code, Data}
@@ -87,18 +83,9 @@ push_local(Locals, {_FormType, #{spec := Spec, type := Type}}) ->
 typecheck_and_annotate_func(Globals, Locals, {func, Context = #{params := Params, exprs := Exprs}}) ->
     {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate([], Globals, Locals, Params),
     {ok, NewLocals2, AnnotatedExprs} = typecheck_and_annotate([], Globals, NewLocals1, Exprs),
-    {ok, NewLocals2, {func, Context#{params => AnnotatedParams, exprs => AnnotatedExprs}}}.
-
-%% typecheck_func_return_types loops over annotated forms and typechecks return
-%% types against the value produced by the function.
--spec typecheck_func_return_types(globals(), list(rufus_form())) -> ok | no_return().
-typecheck_func_return_types(Globals, [Form = {func, _Context}|T]) ->
-    ok = typecheck_func_return_type(Globals, Form),
-    typecheck_func_return_types(Globals, T);
-typecheck_func_return_types(Globals, [_H|T]) ->
-    typecheck_func_return_types(Globals, T);
-typecheck_func_return_types(_Globals, []) ->
-    ok.
+    AnnotatedForm = {func, Context#{params => AnnotatedParams, exprs => AnnotatedExprs}},
+    ok = typecheck_func_return_type(Globals, AnnotatedForm),
+    {ok, NewLocals2, AnnotatedForm}.
 
 %% typecheck_func_return_type enforces the constraint that the type of the final
 %% expression in a function matches its return type. `ok` is returned if
