@@ -15,7 +15,7 @@
 %% typecheck_and_annotate iterates over RufusForms and adds type information
 %% from the current scope to each form. Iteration stops at the first error.
 %% Return values:
-%% - `{ok, AnnotatedRufusForms}` if no issues are found.
+%% - `{ok, AnnotatedForms}` if no issues are found.
 %% - `{error, unknown_func, Data}` with `Data` containing a `spec` key that has
 %%   the function name.
 %% - `{error, incorrect_arg_count, Data}` with `Data` containing `actual` and
