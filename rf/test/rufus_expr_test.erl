@@ -73,6 +73,49 @@ typecheck_and_annotate_with_function_calling_a_function_with_a_mismatched_argume
                                 spec => 'Echo'}}]},
     ?assertEqual({error, unmatched_args, Data}, Result).
 
+typecheck_and_annotate_does_not_allow_locals_to_escape_function_scope_test() ->
+    RufusText = "
+    module example
+    func Echo(n string) string {
+        a = n
+        a
+    }
+    func Broken() string { a }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Result = rufus_expr:typecheck_and_annotate(Forms),
+    Data = #{form => {identifier, #{line => 7,
+                                    locals => #{},
+                                    spec => a}},
+             globals => #{'Broken' => [{func, #{exprs => [{identifier, #{line => 7,
+                                                                         spec => a}}],
+                                                line => 7,
+                                                params => [],
+                                                return_type => {type, #{line => 7,
+                                                                        source => rufus_text,
+                                                                        spec => string}},
+                                                spec => 'Broken'}}],
+                          'Echo' => [{func, #{exprs => [{match, #{left => {identifier, #{line => 4,
+                                                                                         spec => a}},
+                                                                  line => 4,
+                                                                  right => {identifier, #{line => 4,
+                                                                                          spec => n}}}},
+                                                        {identifier, #{line => 5,
+                                                                       spec => a}}],
+                                              line => 3,
+                                              params => [{param, #{line => 3,
+                                                                   spec => n,
+                                                                   type => {type, #{line => 3,
+                                                                                    source => rufus_text,
+                                                                                    spec => string}}}}],
+                                              return_type => {type, #{line => 3,
+                                                                      source => rufus_text,
+                                                                      spec => string}},
+                                              spec => 'Echo'}}]},
+             locals => #{}},
+    ?assertEqual({error, unknown_identifier, Data}, Result).
+
 typecheck_and_annotate_with_empty_module_test() ->
     RufusText = "module empty",
     {ok, Tokens} = rufus_tokenize:string(RufusText),

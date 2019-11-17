@@ -40,8 +40,8 @@ typecheck_and_annotate(RufusForms) ->
 %% is thrown at the first error.
 -spec typecheck_and_annotate(list(rufus_form()), globals(), locals(), list(rufus_form())) -> {ok, locals(), list(rufus_form())}.
 typecheck_and_annotate(Acc, Globals, Locals, [Form = {func, _Context}|T]) ->
-    {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_func(Globals, Locals, Form),
-    typecheck_and_annotate([AnnotatedForm|Acc], Globals, NewLocals, T);
+    {ok, AnnotatedForm} = typecheck_and_annotate_func(Globals, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
 typecheck_and_annotate(Acc, Globals, Locals, [Form = {param, _Context}|T]) ->
     {ok, NewLocals} = push_local(Locals, Form),
     typecheck_and_annotate([Form|Acc], Globals, NewLocals, T);
@@ -79,13 +79,13 @@ push_local(Locals, {_FormType, #{spec := Spec, type := Type}}) ->
 %% typecheck_and_annotate_func adds all parameters to the local scope. It also
 %% resolves and annotates types for all expressions in the function body to
 %% ensure they satisfy type constraints.
--spec typecheck_and_annotate_func(globals(), locals(), func_form()) -> {ok, locals(), func_form()} | no_return().
+-spec typecheck_and_annotate_func(globals(), locals(), func_form()) -> {ok, func_form()} | no_return().
 typecheck_and_annotate_func(Globals, Locals, {func, Context = #{params := Params, exprs := Exprs}}) ->
     {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate([], Globals, Locals, Params),
-    {ok, NewLocals2, AnnotatedExprs} = typecheck_and_annotate([], Globals, NewLocals1, Exprs),
+    {ok, _NewLocals2, AnnotatedExprs} = typecheck_and_annotate([], Globals, NewLocals1, Exprs),
     AnnotatedForm = {func, Context#{params => AnnotatedParams, exprs => AnnotatedExprs}},
     ok = typecheck_func_return_type(Globals, AnnotatedForm),
-    {ok, NewLocals2, AnnotatedForm}.
+    {ok, AnnotatedForm}.
 
 %% typecheck_func_return_type enforces the constraint that the type of the final
 %% expression in a function matches its return type. `ok` is returned if
