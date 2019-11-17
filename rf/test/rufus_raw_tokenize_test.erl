@@ -37,6 +37,15 @@ string_with_atom_literal_test() ->
         {atom_lit, 1, rufus}
     ], Tokens).
 
+string_with_single_character_atom_literal_test() ->
+    {ok, Tokens, _} = rufus_raw_tokenize:string("const Letter = :r"),
+    ?assertEqual([
+        {const, 1},
+        {identifier, 1, "Letter"},
+        {'=', 1},
+        {atom_lit, 1, r}
+    ], Tokens).
+
 string_with_quoted_atom_literal_test() ->
     {ok, Tokens, _} = rufus_raw_tokenize:string("const Name = :'rufus programming language'"),
     ?assertEqual([
@@ -44,6 +53,15 @@ string_with_quoted_atom_literal_test() ->
         {identifier, 1, "Name"},
         {'=', 1},
         {atom_lit, 1, 'rufus programming language'}
+    ], Tokens).
+
+string_with_quoted_single_character_atom_literal_test() ->
+    {ok, Tokens, _} = rufus_raw_tokenize:string("const Letter = :'r'"),
+    ?assertEqual([
+        {const, 1},
+        {identifier, 1, "Letter"},
+        {'=', 1},
+        {atom_lit, 1, r}
     ], Tokens).
 
 string_with_false_bool_literal_test() ->

@@ -14,24 +14,28 @@
 
 %% API
 
-%% eval parses, typechecks, compiles and loads Rufus source code. Return values:
+%% eval tokenizes, parses, typechecks, compiles, and loads Rufus source code.
+%% Return values:
 %% - `{ok, Module}` if compilation completed and `Module` is loaded.
 %% - `error` or `{error, ...}` if an error occurs.
 -spec eval(rufus_text()) -> ok_tuple() | error_tuple().
 eval(RufusText) ->
-    Handlers = [fun rufus_tokenize:string/1,
-                fun rufus_parse:parse/1,
-                fun rufus_expr:typecheck_and_annotate/1,
-                fun rufus_compile_erlang:forms/1,
-                fun compile/1
-               ],
-    eval_chain(RufusText, Handlers).
+    CompilationStages = [
+        fun rufus_tokenize:string/1,
+        fun rufus_parse:parse/1,
+        fun rufus_expr:typecheck_and_annotate/1,
+        fun rufus_erlang:forms/1,
+        fun compile/1
+    ],
+    eval_chain(RufusText, CompilationStages).
 
 %% Private API
 
-%% eval_chain runs each handler H as H(Input) in order. Each handler result must
-%% match {ok, Output}. Any other response is treated as an error. Processing
-%% stops when a handler returns an error.
+%% eval_chain runs each compilation stage H as H(Input), in order. Each
+%% compilation stage must return {ok, Output} on success. Any other response is
+%% treated as an error. The output from one compilation stage is provided as
+%% input to the next. Processing stops when a compilation stage returns an
+%% error.
 -spec eval_chain(any(), list(fun((_) -> any()))) -> ok_tuple() | error_tuple() | error_triple().
 eval_chain(Input, [H|T]) ->
     case H(Input) of
@@ -43,6 +47,8 @@ eval_chain(Input, [H|T]) ->
 eval_chain(Input, []) ->
     {ok, Input}.
 
+%% compile uses the Erlang compiler to compile Erlang abstract forms and loads
+%% the resulting module.
 -spec compile(list()) -> ok_tuple() | error_tuple().
 compile(ErlangForms) ->
     case compile:forms(ErlangForms) of
@@ -56,6 +62,7 @@ compile(ErlangForms) ->
             {error, unknown}
     end.
 
+%% load creates or overwrites a module with a code binary.
 -spec load(atom(), binary()) -> {ok, atom()} | {error, badarg | badfile | nofile | not_purged | on_load_failure | sticky_directory}.
 load(Module, BinaryOrCode) ->
     case code:load_binary(Module, "nofile", BinaryOrCode) of

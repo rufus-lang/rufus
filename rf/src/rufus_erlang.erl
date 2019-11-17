@@ -1,6 +1,5 @@
-%% rufus_compile_erlang transforms Rufus's abstract form into Erlang's abstract
-%% form.
--module(rufus_compile_erlang).
+%% rufus_erlang transforms Rufus abstract forms into Erlang abstract forms.
+-module(rufus_erlang).
 
 -include_lib("rufus_type.hrl").
 
@@ -83,6 +82,8 @@ forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}
     Form = {op, Line, ErlangOp, LeftExpr, RightExpr},
     forms([Form|Acc], T);
 forms(Acc, [{type, _Context}|T]) ->
+    forms(Acc, T); %% no-op to satisfy Dialyzer
+forms(Acc, [{match, _Context}|T]) ->
     forms(Acc, T); %% no-op to satisfy Dialyzer
 forms(Acc, []) ->
     {ok, lists:reverse(Acc)};

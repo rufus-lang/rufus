@@ -2,12 +2,6 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-annotate_test() ->
-    Form = {identifier, #{spec => n, line => 13}},
-    TypeForm = rufus_form:make_type(integer, 13),
-    Expected = {identifier, #{spec => n, line => 13, type => TypeForm}},
-    ?assertEqual(Expected, rufus_form:annotate(Form, type, TypeForm)).
-
 globals_without_func_forms_test() ->
     RufusText = "module empty",
     {ok, Tokens} = rufus_tokenize:string(RufusText),

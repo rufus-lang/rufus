@@ -55,6 +55,7 @@
 -type param_form() :: {param, context()}.
 -type identifier_form() :: {identifier, context()}.
 -type binary_op_form() :: {binary_op, context()}.
+-type match_form() :: {match, context()}.
 -type call_form() :: {call, context()}.
 
 %% Rufus forms
@@ -71,6 +72,7 @@
       | identifier_form()
       | type_form()
       | binary_op_form()
+      | match_form()
       | call_form().
 
 %% Errors

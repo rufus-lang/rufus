@@ -25,9 +25,14 @@ resolve(Globals, Form) ->
 -spec resolve_type(#{atom() => list(rufus_form())}, rufus_form()) -> {ok, type_form()} | no_return().
 resolve_type(_Globals, {_Form, #{type := Type}}) ->
     {ok, Type};
-resolve_type(_Globals, {identifier, #{spec := Spec, locals := Locals}}) ->
-    Type = maps:get(Spec, Locals),
-    {ok, Type};
+resolve_type(Globals, Form = {identifier, #{spec := Spec, locals := Locals}}) ->
+    case maps:get(Spec, Locals, undefined) of
+        {type, _Context} = Type ->
+            {ok, Type};
+        undefined ->
+            Data = #{globals => Globals, locals => Locals, form => Form},
+            throw({error, unknown_identifier, Data})
+    end;
 resolve_type(_Globals, {func, #{return_type := Type}}) ->
     {ok, Type};
 resolve_type(Globals, Form = {call, #{spec := Spec, args := Args}}) ->
