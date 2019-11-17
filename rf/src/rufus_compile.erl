@@ -14,7 +14,7 @@
 
 %% API
 
-%% eval tokenizes, parses, typechecks, compiles and loads Rufus source code.
+%% eval tokenizes, parses, typechecks, compiles, and loads Rufus source code.
 %% Return values:
 %% - `{ok, Module}` if compilation completed and `Module` is loaded.
 %% - `error` or `{error, ...}` if an error occurs.
