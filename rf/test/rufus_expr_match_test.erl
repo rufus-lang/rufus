@@ -1,0 +1,346 @@
+-module(rufus_expr_match_test).
+
+-include_lib("eunit/include/eunit.hrl").
+
+%% match expressions that bind variables
+
+typecheck_and_annotate_function_with_a_match_that_binds_an_atom_literal_test() ->
+    RufusText = "
+    module example
+    func Ping() atom {
+        response = :pong
+        response
+    }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{match, #{left => {identifier, #{line => 4,
+                                                                    spec => response,
+                                                                    type => {type, #{line => 4,
+                                                                                     source => inferred,
+                                                                                     spec => atom}}}},
+                                             line => 4,
+                                             right => {atom_lit, #{line => 4,
+                                                                   spec => pong,
+                                                                   type => {type, #{line => 4,
+                                                                                    source => inferred,
+                                                                                    spec => atom}}}},
+                                             type => {type, #{line => 4,
+                                                              source => inferred,
+                                                              spec => atom}}}},
+                                   {identifier, #{line => 5,
+                                                  locals => #{response => {type, #{line => 4,
+                                                                                   source => inferred,
+                                                                                   spec => atom}}},
+                                                  spec => response}}],
+                         line => 3,
+                         params => [],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => atom}},
+                         spec => 'Ping'}}],
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_function_with_a_match_that_binds_a_bool_literal_test() ->
+    RufusText = "
+    module example
+    func Truthy() bool {
+        response = true
+        response
+    }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{match, #{left => {identifier, #{line => 4,
+                                                                    spec => response,
+                                                                    type => {type, #{line => 4,
+                                                                                     source => inferred,
+                                                                                     spec => bool}}}},
+                                             line => 4,
+                                             right => {bool_lit, #{line => 4,
+                                                                   spec => true,
+                                                                   type => {type, #{line => 4,
+                                                                                    source => inferred,
+                                                                                    spec => bool}}}},
+                                             type => {type, #{line => 4,
+                                                              source => inferred,
+                                                              spec => bool}}}},
+                                   {identifier, #{line => 5,
+                                                  locals => #{response => {type, #{line => 4,
+                                                                                   source => inferred,
+                                                                                   spec => bool}}},
+                                                  spec => response}}],
+                         line => 3,
+                         params => [],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => bool}},
+                         spec => 'Truthy'}}],
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_function_with_a_match_that_binds_a_float_literal_test() ->
+    RufusText = "
+    module example
+    func FortyTwo() float {
+        response = 42.0
+        response
+    }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{match, #{left => {identifier, #{line => 4,
+                                                                    spec => response,
+                                                                    type => {type, #{line => 4,
+                                                                                     source => inferred,
+                                                                                     spec => float}}}},
+                                             line => 4,
+                                             right => {float_lit, #{line => 4,
+                                                                   spec => 42.0,
+                                                                   type => {type, #{line => 4,
+                                                                                    source => inferred,
+                                                                                    spec => float}}}},
+                                             type => {type, #{line => 4,
+                                                              source => inferred,
+                                                              spec => float}}}},
+                                   {identifier, #{line => 5,
+                                                  locals => #{response => {type, #{line => 4,
+                                                                                   source => inferred,
+                                                                                   spec => float}}},
+                                                  spec => response}}],
+                         line => 3,
+                         params => [],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => float}},
+                         spec => 'FortyTwo'}}],
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_function_with_a_match_that_binds_an_int_literal_test() ->
+    RufusText = "
+    module example
+    func FortyTwo() int {
+        response = 42
+        response
+    }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{match, #{left => {identifier, #{line => 4,
+                                                                    spec => response,
+                                                                    type => {type, #{line => 4,
+                                                                                     source => inferred,
+                                                                                     spec => int}}}},
+                                             line => 4,
+                                             right => {int_lit, #{line => 4,
+                                                                  spec => 42,
+                                                                  type => {type, #{line => 4,
+                                                                                   source => inferred,
+                                                                                   spec => int}}}},
+                                             type => {type, #{line => 4,
+                                                              source => inferred,
+                                                              spec => int}}}},
+                                   {identifier, #{line => 5,
+                                                  locals => #{response => {type, #{line => 4,
+                                                                                   source => inferred,
+                                                                                   spec => int}}},
+                                                  spec => response}}],
+                         line => 3,
+                         params => [],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => int}},
+                         spec => 'FortyTwo'}}],
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_function_with_a_match_that_binds_a_string_literal_test() ->
+    RufusText = "
+    module example
+    func Ping() string {
+        response = \"pong\"
+        response
+    }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{match, #{left => {identifier, #{line => 4,
+                                                                    spec => response,
+                                                                    type => {type, #{line => 4,
+                                                                                     source => inferred,
+                                                                                     spec => string}}}},
+                                             line => 4,
+                                             right => {string_lit, #{line => 4,
+                                                                     spec => <<"pong">>,
+                                                                     type => {type, #{line => 4,
+                                                                                      source => inferred,
+                                                                                      spec => string}}}},
+                                             type => {type, #{line => 4,
+                                                              source => inferred,
+                                                              spec => string}}}},
+                                   {identifier, #{line => 5,
+                                                  locals => #{response => {type, #{line => 4,
+                                                                                   source => inferred,
+                                                                                   spec => string}}},
+                                                  spec => response}}],
+                         line => 3,
+                         params => [],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => string}},
+                         spec => 'Ping'}}],
+    ?assertEqual(Expected, AnnotatedForms).
+
+%% match expressions with type constraint violations
+
+typecheck_and_annotate_function_with_a_match_that_has_an_unbound_variable_test() ->
+    RufusText = "
+    module example
+    func Broken() int {
+        value = 1
+        value = unbound
+    }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{form => {identifier, #{line => 5,
+                                    locals => #{value => {type, #{line => 4,
+                                                                  source => inferred,
+                                                                  spec => int}}},
+                                    spec => unbound}},
+             globals => #{'Broken' => [{func, #{exprs => [{match, #{left => {identifier, #{line => 4,
+                                                                                           spec => value}},
+                                                                    line => 4,
+                                                                    right => {int_lit, #{line => 4,
+                                                                                         spec => 1,
+                                                                                         type => {type, #{line => 4,
+                                                                                                          source => inferred,
+                                                                                                          spec => int}}}}}},
+                                                          {match, #{left => {identifier, #{line => 5,
+                                                                                           spec => value}},
+                                                                    line => 5,
+                                                                    right => {identifier, #{line => 5,
+                                                                                            spec => unbound}}}}],
+                                                line => 3,
+                                                params => [],
+                                                return_type => {type, #{line => 3,
+                                                                        source => rufus_text,
+                                                                        spec => int}},
+                                                spec => 'Broken'}}]},
+             locals => #{value => {type, #{line => 4,
+                                           source => inferred,
+                                           spec => int}}}},
+    ?assertEqual({error, unbound_variable, Data}, rufus_expr:typecheck_and_annotate(Forms)).
+
+typecheck_and_annotate_function_with_a_match_that_has_unbound_variables_test() ->
+    RufusText = "
+    module example
+    func Broken() int {
+        unbound1 = unbound2
+    }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{left => #{form => {identifier, #{line => 4,
+                                              locals => #{},
+                                              spec => unbound1}},
+                       globals => #{'Broken' => [{func, #{exprs => [{match, #{left => {identifier, #{line => 4,
+                                                                                                     spec => unbound1}},
+                                                                              line => 4,
+                                                                              right => {identifier, #{line => 4,
+                                                                                                      spec => unbound2}}}}],
+                                                          line => 3,
+                                                          params => [],
+                                                          return_type => {type, #{line => 3,
+                                                                                  source => rufus_text,
+                                                                                  spec => int}},
+                                                          spec => 'Broken'}}]},
+                       locals => #{}},
+             right => #{form => {identifier, #{line => 4,
+                                               locals => #{},
+                                               spec => unbound2}},
+                        globals => #{'Broken' => [{func, #{exprs => [{match, #{left => {identifier, #{line => 4,
+                                                                                                      spec => unbound1}},
+                                                                               line => 4,
+                                                                               right => {identifier, #{line => 4,
+                                                                                                       spec => unbound2}}}}],
+                                                           line => 3,
+                                                           params => [],
+                                                           return_type => {type, #{line => 3,
+                                                                                   source => rufus_text,
+                                                                                   spec => int}},
+                                                           spec => 'Broken'}}]},
+                        locals => #{}}},
+    ?assertEqual({error, unbound_variables, Data}, rufus_expr:typecheck_and_annotate(Forms)).
+
+typecheck_and_annotate_function_with_a_match_that_has_unmatched_types_test() ->
+    RufusText = "
+    module example
+    func Broken() int {
+        a = :hello
+        i = 42
+        a = i
+        i
+    }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{globals => #{'Broken' => [{func, #{exprs => [{match, #{left => {identifier, #{line => 4,
+                                                                                           spec => a}},
+                                                                    line => 4,
+                                                                    right => {atom_lit, #{line => 4,
+                                                                                          spec => hello,
+                                                                                          type => {type, #{line => 4,
+                                                                                                           source => inferred,
+                                                                                                           spec => atom}}}}}},
+                                                          {match, #{left => {identifier, #{line => 5,
+                                                                                           spec => i}},
+                                                                    line => 5,
+                                                                    right => {int_lit, #{line => 5,
+                                                                                         spec => 42,
+                                                                                         type => {type, #{line => 5,
+                                                                                                          source => inferred,
+                                                                                                          spec => int}}}}}},
+                                                          {match, #{left => {identifier, #{line => 6,
+                                                                                           spec => a}},
+                                                                    line => 6,
+                                                                    right => {identifier, #{line => 6,
+                                                                                            spec => i}}}},
+                                                          {identifier, #{line => 7,
+                                                                         spec => i}}],
+                                                line => 3,
+                                                params => [],
+                                                return_type => {type, #{line => 3,
+                                                                        source => rufus_text,
+                                                                        spec => int}},
+                                                spec => 'Broken'}}]},
+             left => {identifier, #{line => 6,
+                                    spec => a,
+                                    type => {type, #{line => 4,
+                                                     source => inferred,
+                                                     spec => atom}}}},
+             locals => #{a => {type, #{line => 4,
+                                       source => inferred,
+                                       spec => atom}},
+                         i => {type, #{line => 5,
+                                       source => inferred,
+                                       spec => int}}},
+             right => {identifier, #{line => 6,
+                                     spec => i,
+                                     type => {type, #{line => 5,
+                                                      source => inferred,
+                                                      spec => int}}}}},
+    ?assertEqual({error, unmatched_types, Data}, rufus_expr:typecheck_and_annotate(Forms)).
