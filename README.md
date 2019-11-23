@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.com/rufus-lang/rufus.svg?branch=master)](https://travis-ci.com/rufus-lang/rufus)
 # Rufus
 
-A programming language for the BEAM.
+Rufus is for teams building and operating fault tolerant distributed systems.
 
 ```rufus
 module main

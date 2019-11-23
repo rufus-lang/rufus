@@ -30,7 +30,8 @@ typecheck_and_annotate(RufusForms) ->
         {ok, _Locals, AnnotatedForms} = typecheck_and_annotate([], Globals, #{}, RufusForms),
         {ok, AnnotatedForms}
     catch
-        {error, Code, Data} -> {error, Code, Data}
+        {error, Code, Data} ->
+            {error, Code, Data}
     end.
 
 %% Private API
@@ -153,9 +154,9 @@ typecheck_and_annotate_binary_op(Globals, Locals, {binary_op, Context = #{left :
 %% match helpers
 
 %% typecheck_and_annotate_match ensures that match operands have matching types.
-%% The left operand is treated as unbound variable when no information is known
-%% about it, and it's added to the local scope with type information from the
-%% right operand. Return values:
+%% When the left operand is an identifier it's treated as an unbound variable if
+%% no type information is available. It's added to the local scope with type
+%% information inferred from the right operand. Return values:
 %%
 %% - `{ok, Locals, AnnotatedForm}` if no issues are found. The match form and
 %%   its operands are annotated with type information.
@@ -166,39 +167,57 @@ typecheck_and_annotate_binary_op(Globals, Locals, {binary_op, Context = #{left :
 %% - `{error, unmarched_types, Data}` is thrown when the left and right operand
 %%   have differing types.
 -spec typecheck_and_annotate_match(globals(), locals(), match_form()) -> {ok, locals(), match_form()} | no_return().
-typecheck_and_annotate_match(Globals, Locals, Form = {match, Context = #{left := Left, right := Right}}) ->
-    case resolve_match_operand_type(Globals, Locals, Left) of
-        {ok, NewLocals, AnnotatedLeft} ->
-            AnnotatedForm = {match, Context#{left => AnnotatedLeft, right => Right}},
-            typecheck_and_annotate_match_with_known_left_operand(Globals, NewLocals, AnnotatedForm);
-        {error, unknown_identifier, LeftData} ->
-            typecheck_and_annotate_match_with_unknown_left_operand(Globals, Locals, Form, LeftData)
+typecheck_and_annotate_match(Globals, Locals, {match, Context = #{left := Left}}) ->
+    {ok, NewLocals, [AnnotatedLeft]} = typecheck_and_annotate([], Globals, Locals, [Left]),
+    AnnotatedForm = {match, Context#{left => AnnotatedLeft}},
+    case rufus_form:has_type(AnnotatedLeft) of
+        true ->
+            typecheck_and_annotate_match_with_bound_left_operand(Globals, NewLocals, AnnotatedForm);
+        false ->
+            typecheck_and_annotate_match_with_unbound_left_operand(Globals, NewLocals, AnnotatedForm)
     end.
 
-typecheck_and_annotate_match_with_known_left_operand(Globals, Locals, {match, Context = #{left := Left, right := Right}}) ->
-    case resolve_match_operand_type(Globals, Locals, Right) of
-        {ok, NewLocals, AnnotatedRight} ->
-            case rufus_form:type_spec(Left) == rufus_form:type_spec(AnnotatedRight) of
-                true ->
-                    RightType = rufus_form:type(AnnotatedRight),
-                    AnnotatedForm = {match, Context#{left => Left,
-                                                     right => AnnotatedRight,
-                                                     type => RightType}},
-                    {ok, NewLocals, AnnotatedForm};
-                false ->
-                    Data = #{globals => Globals,
-                             locals => Locals,
-                             left => Left,
-                             right => AnnotatedRight},
-                    throw({error, unmatched_types, Data})
-            end;
-        {error, unknown_identifier, Data} ->
-            throw({error, unbound_variable, Data})
+typecheck_and_annotate_match_with_bound_left_operand(Globals, Locals, {match, Context = #{left := Left, right := Right}}) ->
+    {ok, NewLocals, [AnnotatedRight]} = try
+        typecheck_and_annotate([], Globals, Locals, [Right])
+    catch {error, unknown_identifier, Data1} ->
+        throw({error, unbound_variable, Data1})
+    end,
+
+    case rufus_form:type_spec(Left) == rufus_form:type_spec(AnnotatedRight) of
+        true ->
+            RightType = rufus_form:type(AnnotatedRight),
+            AnnotatedForm = {match, Context#{left => Left,
+                                             right => AnnotatedRight,
+                                             type => RightType}},
+            {ok, NewLocals, AnnotatedForm};
+        false ->
+            case AnnotatedRight of
+                {identifier, _Context} ->
+                    case rufus_form:has_type(AnnotatedRight) of
+                        false ->
+                            Data2 = #{globals => Globals,
+                                      locals => Locals,
+                                      form => AnnotatedRight},
+                            throw({error, unbound_variable, Data2});
+                        true ->
+                            ok
+                    end;
+                _ ->
+                    ok
+            end,
+
+            Data3 = #{globals => Globals,
+                      locals => Locals,
+                      left => Left,
+                      right => AnnotatedRight},
+            throw({error, unmatched_types, Data3})
     end.
 
-typecheck_and_annotate_match_with_unknown_left_operand(Globals, Locals, {match, Context = #{left := Left, right := Right}}, LeftData) ->
-    case resolve_match_operand_type(Globals, Locals, Right) of
-        {ok, NewLocals1, AnnotatedRight} ->
+typecheck_and_annotate_match_with_unbound_left_operand(Globals, Locals, {match, Context = #{left := Left, right := Right}}) ->
+    {ok, NewLocals1, [AnnotatedRight]} = typecheck_and_annotate([], Globals, Locals, [Right]),
+    case rufus_form:has_type(AnnotatedRight) of
+        true ->
             {LeftType, LeftContext} = Left,
             RightType = rufus_form:type(AnnotatedRight),
             AnnotatedLeft = {LeftType, LeftContext#{type => RightType}},
@@ -207,17 +226,10 @@ typecheck_and_annotate_match_with_unknown_left_operand(Globals, Locals, {match, 
                                              type => RightType}},
             {ok, NewLocals2} = push_local(NewLocals1, AnnotatedLeft),
             {ok, NewLocals2, AnnotatedForm};
-        {error, unknown_identifier, RightData} ->
-            throw({error, unbound_variables, #{left => LeftData, right => RightData}})
-    end.
-
-resolve_match_operand_type(Globals, Locals, Form = {FormType, Context}) ->
-    {ok, AnnotatedForm} = annotate_locals(Locals, Form),
-    case rufus_type:resolve(Globals, AnnotatedForm) of
-        {ok, TypeForm} ->
-            {ok, Locals, {FormType, Context#{type => TypeForm}}};
-        {error, unknown_identifier, Data} ->
-            {error, unknown_identifier, Data};
-        Error ->
-            throw(Error)
+        false ->
+            Data = #{globals => Globals,
+                     locals => Locals,
+                     left => Left,
+                     right => AnnotatedRight},
+            throw({error, unbound_variables, Data})
     end.
