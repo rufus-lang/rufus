@@ -157,7 +157,6 @@ typecheck_and_annotate_binary_op(Globals, Locals, {binary_op, Context = #{left :
 %% When the left operand is an identifier it's treated as an unbound variable if
 %% no type information is available. It's added to the local scope with type
 %% information inferred from the right operand. Return values:
-%%
 %% - `{ok, Locals, AnnotatedForm}` if no issues are found. The match form and
 %%   its operands are annotated with type information.
 %% - `{error, unbound_variable, Data}` is thrown if the right operand is
@@ -177,6 +176,15 @@ typecheck_and_annotate_match(Globals, Locals, {match, Context = #{left := Left}}
             typecheck_and_annotate_match_with_unbound_left_operand(Globals, NewLocals, AnnotatedForm)
     end.
 
+%% typecheck_and_annotate_match_with_bound_left_operand typechecks match
+%% expressions with a left operand that has a known type. Return values:
+%% - `{ok, Locals, AnnotatedForm}` if no issues are found. The match form and
+%%   its operands are annotated with type information.
+%% - `{error, unbound_variable, Data}` is thrown if the right operand is
+%%   unbound.
+%% - `{error, unmarched_types, Data}` is thrown when the left and right operand
+%%   have differing types.
+-spec typecheck_and_annotate_match_with_bound_left_operand(globals(), locals(), match_form()) -> {ok, locals(), match_form()} | no_return().
 typecheck_and_annotate_match_with_bound_left_operand(Globals, Locals, {match, Context = #{left := Left, right := Right}}) ->
     {ok, NewLocals, [AnnotatedRight]} = try
         typecheck_and_annotate([], Globals, Locals, [Right])
@@ -214,6 +222,14 @@ typecheck_and_annotate_match_with_bound_left_operand(Globals, Locals, {match, Co
             throw({error, unmatched_types, Data3})
     end.
 
+%% typecheck_and_annotate_match_with_unbound_left_operand typechecks match
+%% expressions with a left operand that does not have a known type. Return
+%% values:
+%% - `{ok, Locals, AnnotatedForm}` if no issues are found. The match form and
+%%   its operands are annotated with type information.
+%% - `{error, unbound_variables, Data}` is thrown if both the left and right
+%%   operands are unbound.
+-spec typecheck_and_annotate_match_with_unbound_left_operand(globals(), locals(), match_form()) -> {ok, locals(), match_form()} | no_return().
 typecheck_and_annotate_match_with_unbound_left_operand(Globals, Locals, {match, Context = #{left := Left, right := Right}}) ->
     {ok, NewLocals1, [AnnotatedRight]} = typecheck_and_annotate([], Globals, Locals, [Right]),
     case rufus_form:has_type(AnnotatedRight) of
