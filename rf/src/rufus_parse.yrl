@@ -37,7 +37,7 @@ Left 100 '-'.
 Left 100 '*'.
 Left 100 '/'.
 Left 100 '%'.
-Left 300 '='.
+Left 50 '='.
 
 %%
 %% Grammar rules

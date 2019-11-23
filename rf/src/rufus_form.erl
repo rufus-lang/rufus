@@ -4,6 +4,7 @@
 
 -export([
     globals/1,
+    has_type/1,
     line/1,
     make_binary_op/4,
     make_call/3,
@@ -47,8 +48,29 @@ source({type, #{source := Source}}) ->
 spec({_, #{spec := Spec}}) ->
     Spec.
 
+%% has_type returns true if the form has type information.
+-spec has_type(rufus_form()) -> boolean().
+has_type({identifier, #{spec := Spec, locals := Locals}}) ->
+    case maps:get(Spec, Locals, undefined) of
+        {type, _Context} ->
+            true;
+        undefined ->
+            false
+    end;
+has_type({_FormType, #{type := _Type}}) ->
+    true;
+has_type(_Form) ->
+    false.
+
 %% type returns type information for the form.
 -spec type(rufus_form()) -> context().
+type(Form = {identifier, #{spec := Spec, locals := Locals}}) ->
+    case maps:get(Spec, Locals, undefined) of
+        {type, Context} ->
+            {type, Context};
+        undefined ->
+            {error, unknown_form, #{form => Form}}
+    end;
 type({_, #{type := Type}}) ->
     Type.
 
@@ -62,10 +84,10 @@ globals(RufusForms) ->
 -spec type_spec({any(), context()}) -> atom() | error_triple().
 type_spec(Form = {identifier, #{spec := Spec, locals := Locals}}) ->
     case maps:get(Spec, Locals, undefined) of
-        undefined ->
-            {error, unknown_form, #{form => Form}};
         {type, #{spec := TypeSpec}} ->
-            TypeSpec
+            TypeSpec;
+        undefined ->
+            {error, unknown_form, #{form => Form}}
     end;
 type_spec({_, #{type := {type, #{spec := TypeSpec}}}}) ->
     TypeSpec;
