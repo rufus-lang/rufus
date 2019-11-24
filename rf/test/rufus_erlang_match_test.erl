@@ -2,7 +2,7 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-typecheck_and_annotate_function_with_a_match_that_binds_an_atom_literal_test() ->
+forms_for_function_with_a_match_that_binds_an_atom_literal_test() ->
     RufusText = "
     module example
     func Ping() atom {
@@ -21,7 +21,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_an_atom_literal_test() -
                                        {var, 5, response}]}]}],
     ?assertEqual(Expected, ErlangForms).
 
-typecheck_and_annotate_function_with_a_match_that_binds_a_bool_literal_test() ->
+forms_for_function_with_a_match_that_binds_a_bool_literal_test() ->
     RufusText = "
     module example
     func Truthy() bool {
@@ -41,7 +41,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_bool_literal_test() ->
                                                       {tuple, 5, [{atom, 5, bool}, {var, 5, response}]}]}]}],
     ?assertEqual(Expected, ErlangForms).
 
-typecheck_and_annotate_function_with_a_match_that_binds_a_float_literal_test() ->
+forms_for_function_with_a_match_that_binds_a_float_literal_test() ->
     RufusText = "
     module example
     func Pi() float {
@@ -61,7 +61,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_float_literal_test() -
                                                       {var, 5, response}]}]}],
     ?assertEqual(Expected, ErlangForms).
 
-typecheck_and_annotate_function_with_a_match_that_binds_an_int_literal_test() ->
+forms_for_function_with_a_match_that_binds_an_int_literal_test() ->
     RufusText = "
     module example
     func FortyTwo() int {
@@ -81,7 +81,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_an_int_literal_test() ->
                                                       {var, 5, response}]}]}],
     ?assertEqual(Expected, ErlangForms).
 
-typecheck_and_annotate_function_with_a_match_that_binds_a_string_literal_test() ->
+forms_for_function_with_a_match_that_binds_a_string_literal_test() ->
     RufusText = "
     module example
     func Greeting() string {
