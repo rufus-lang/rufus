@@ -37,6 +37,19 @@ forms(Acc, [{int_lit, _Context} = IntLit|T]) ->
 forms(Acc, [{string_lit, _Context} = StringLit|T]) ->
     Form = box(StringLit),
     forms([Form|Acc], T);
+forms(Acc, [{identifier, #{line := Line, spec := Name, type := Type}}|T]) ->
+    TypeSpec = rufus_form:spec(Type),
+    Form = case TypeSpec of
+        atom ->
+            {var, Line, Name};
+        float ->
+            {var, Line, Name};
+        int ->
+            {var, Line, Name};
+        _ ->
+            {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Name}]}
+    end,
+    forms([Form|Acc], T);
 forms(Acc, [{identifier, #{line := Line, spec := Name, locals := Locals}}|T]) ->
     Type = maps:get(Name, Locals),
     TypeSpec = rufus_form:spec(Type),
@@ -76,14 +89,17 @@ forms(Acc, [{call, #{spec := Spec, args := Args, line := Line}}|T]) ->
     Form = {call, Line, {atom, Line, Spec}, ArgsForms},
     forms([Form|Acc], T);
 forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}|T]) ->
-    {ok, [LeftExpr]} = forms([], [Left]),
-    {ok, [RightExpr]} = forms([], [Right]),
+    {ok, [LeftForm]} = forms([], [Left]),
+    {ok, [RightForm]} = forms([], [Right]),
     ErlangOp = rufus_operator_to_erlang_operator(Op, rufus_form:type_spec(Left)),
-    Form = {op, Line, ErlangOp, LeftExpr, RightExpr},
+    Form = {op, Line, ErlangOp, LeftForm, RightForm},
+    forms([Form|Acc], T);
+forms(Acc, [{match, #{line := Line, left := Left, right := Right}}|T]) ->
+    {ok, [LeftForm]} = forms([], [Left]),
+    {ok, [RightForm]} = forms([], [Right]),
+    Form = {match, Line, LeftForm, RightForm},
     forms([Form|Acc], T);
 forms(Acc, [{type, _Context}|T]) ->
-    forms(Acc, T); %% no-op to satisfy Dialyzer
-forms(Acc, [{match, _Context}|T]) ->
     forms(Acc, T); %% no-op to satisfy Dialyzer
 forms(Acc, []) ->
     {ok, lists:reverse(Acc)};

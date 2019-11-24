@@ -167,14 +167,15 @@ typecheck_and_annotate_binary_op(Globals, Locals, {binary_op, Context = #{left :
 %%   have differing types.
 -spec typecheck_and_annotate_match(globals(), locals(), match_form()) -> {ok, locals(), match_form()} | no_return().
 typecheck_and_annotate_match(Globals, Locals, {match, Context = #{left := Left}}) ->
-    {ok, NewLocals, [AnnotatedLeft]} = typecheck_and_annotate([], Globals, Locals, [Left]),
-    AnnotatedForm = {match, Context#{left => AnnotatedLeft}},
-    case rufus_form:has_type(AnnotatedLeft) of
+    {ok, NewLocals1, [AnnotatedLeft1]} = typecheck_and_annotate([], Globals, Locals, [Left]),
+    AnnotatedForm1 = {match, Context#{left => AnnotatedLeft1}},
+    case rufus_form:has_type(AnnotatedLeft1) of
         true ->
-            typecheck_and_annotate_match_with_bound_left_operand(Globals, NewLocals, AnnotatedForm);
+            typecheck_and_annotate_match_with_bound_left_operand(Globals, NewLocals1, AnnotatedForm1);
         false ->
-            typecheck_and_annotate_match_with_unbound_left_operand(Globals, NewLocals, AnnotatedForm)
+            typecheck_and_annotate_match_with_unbound_left_operand(Globals, NewLocals1, AnnotatedForm1)
     end.
+
 
 %% typecheck_and_annotate_match_with_bound_left_operand typechecks match
 %% expressions with a left operand that has a known type. Return values:
@@ -185,41 +186,49 @@ typecheck_and_annotate_match(Globals, Locals, {match, Context = #{left := Left}}
 %% - `{error, unmarched_types, Data}` is thrown when the left and right operand
 %%   have differing types.
 -spec typecheck_and_annotate_match_with_bound_left_operand(globals(), locals(), match_form()) -> {ok, locals(), match_form()} | no_return().
-typecheck_and_annotate_match_with_bound_left_operand(Globals, Locals, {match, Context = #{left := Left, right := Right}}) ->
-    {ok, NewLocals, [AnnotatedRight]} = try
-        typecheck_and_annotate([], Globals, Locals, [Right])
+typecheck_and_annotate_match_with_bound_left_operand(Globals, Locals, Form = {match, Context = #{left := Left, right := Right}}) ->
+    case Left of
+        {call, _Context1} ->
+            Data = #{globals => Globals,
+                     locals => Locals,
+                     form => Form},
+            throw({error, illegal_pattern, Data});
+        _ ->
+            ok
+    end,
+    try
+        {ok, NewLocals, [AnnotatedRight]} = typecheck_and_annotate([], Globals, Locals, [Right]),
+        case rufus_form:type_spec(Left) == rufus_form:type_spec(AnnotatedRight) of
+            true ->
+                RightType = rufus_form:type(AnnotatedRight),
+                AnnotatedForm = {match, Context#{left => Left,
+                                                 right => AnnotatedRight,
+                                                 type => RightType}},
+                {ok, NewLocals, AnnotatedForm};
+            false ->
+                case AnnotatedRight of
+                    {identifier, _Context2} ->
+                        case rufus_form:has_type(AnnotatedRight) of
+                            false ->
+                                Data2 = #{globals => Globals,
+                                          locals => Locals,
+                                          form => AnnotatedRight},
+                                throw({error, unbound_variable, Data2});
+                            true ->
+                                ok
+                        end;
+                    _ ->
+                        ok
+                end,
+
+                Data3 = #{globals => Globals,
+                          locals => Locals,
+                          left => Left,
+                          right => AnnotatedRight},
+                throw({error, unmatched_types, Data3})
+        end
     catch {error, unknown_identifier, Data1} ->
         throw({error, unbound_variable, Data1})
-    end,
-
-    case rufus_form:type_spec(Left) == rufus_form:type_spec(AnnotatedRight) of
-        true ->
-            RightType = rufus_form:type(AnnotatedRight),
-            AnnotatedForm = {match, Context#{left => Left,
-                                             right => AnnotatedRight,
-                                             type => RightType}},
-            {ok, NewLocals, AnnotatedForm};
-        false ->
-            case AnnotatedRight of
-                {identifier, _Context} ->
-                    case rufus_form:has_type(AnnotatedRight) of
-                        false ->
-                            Data2 = #{globals => Globals,
-                                      locals => Locals,
-                                      form => AnnotatedRight},
-                            throw({error, unbound_variable, Data2});
-                        true ->
-                            ok
-                    end;
-                _ ->
-                    ok
-            end,
-
-            Data3 = #{globals => Globals,
-                      locals => Locals,
-                      left => Left,
-                      right => AnnotatedRight},
-            throw({error, unmatched_types, Data3})
     end.
 
 %% typecheck_and_annotate_match_with_unbound_left_operand typechecks match
@@ -236,11 +245,12 @@ typecheck_and_annotate_match_with_unbound_left_operand(Globals, Locals, {match, 
         true ->
             {LeftType, LeftContext} = Left,
             RightType = rufus_form:type(AnnotatedRight),
-            AnnotatedLeft = {LeftType, LeftContext#{type => RightType}},
-            AnnotatedForm = {match, Context#{left => AnnotatedLeft,
+            AnnotatedLeft1 = {LeftType, LeftContext#{type => RightType}},
+            {ok, NewLocals2} = push_local(NewLocals1, AnnotatedLeft1),
+            {ok, AnnotatedLeft2} = annotate_locals(NewLocals2, AnnotatedLeft1),
+            AnnotatedForm = {match, Context#{left => AnnotatedLeft2,
                                              right => AnnotatedRight,
                                              type => RightType}},
-            {ok, NewLocals2} = push_local(NewLocals1, AnnotatedLeft),
             {ok, NewLocals2, AnnotatedForm};
         false ->
             Data = #{globals => Globals,
