@@ -50,6 +50,8 @@ spec({_, #{spec := Spec}}) ->
 
 %% has_type returns true if the form has type information.
 -spec has_type(rufus_form()) -> boolean().
+has_type({_FormType, #{type := _Type}}) ->
+    true;
 has_type({identifier, #{spec := Spec, locals := Locals}}) ->
     case maps:get(Spec, Locals, undefined) of
         {type, _Context} ->
@@ -57,22 +59,20 @@ has_type({identifier, #{spec := Spec, locals := Locals}}) ->
         undefined ->
             false
     end;
-has_type({_FormType, #{type := _Type}}) ->
-    true;
 has_type(_Form) ->
     false.
 
 %% type returns type information for the form.
 -spec type(rufus_form()) -> context().
+type({_, #{type := Type}}) ->
+    Type;
 type(Form = {identifier, #{spec := Spec, locals := Locals}}) ->
     case maps:get(Spec, Locals, undefined) of
         {type, Context} ->
             {type, Context};
         undefined ->
             {error, unknown_form, #{form => Form}}
-    end;
-type({_, #{type := Type}}) ->
-    Type.
+    end.
 
 %% globals creates a map of function names to func forms for all top-level
 %% functions in RufusForms.
@@ -82,17 +82,17 @@ globals(RufusForms) ->
 
 %% type_spec returns the spec for the type of the form.
 -spec type_spec({any(), context()}) -> atom() | error_triple().
+type_spec({type, #{spec := TypeSpec}}) ->
+    TypeSpec;
+type_spec({_, #{type := {type, #{spec := TypeSpec}}}}) ->
+    TypeSpec;
 type_spec(Form = {identifier, #{spec := Spec, locals := Locals}}) ->
     case maps:get(Spec, Locals, undefined) of
         {type, #{spec := TypeSpec}} ->
             TypeSpec;
         undefined ->
             {error, unknown_form, #{form => Form}}
-    end;
-type_spec({_, #{type := {type, #{spec := TypeSpec}}}}) ->
-    TypeSpec;
-type_spec({type, #{spec := TypeSpec}}) ->
-    TypeSpec.
+    end.
 
 %% Module form builder API
 

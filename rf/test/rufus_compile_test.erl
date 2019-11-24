@@ -173,15 +173,15 @@ eval_with_function_having_unmatched_return_types_test() ->
     module example
     func Number() float { 42 }
     ",
-    Expected = {error, unmatched_return_type, #{expr => {int_lit, #{line => 3,
-                                                                    spec => 42,
-                                                                    type => {type, #{line => 3,
-                                                                                     source => inferred,
-                                                                                     spec => int}}}},
-                                                return_type => {type, #{line => 3,
-                                                                        source => rufus_text,
-                                                                        spec => float}}}},
-    ?assertEqual(Expected, rufus_compile:eval(RufusText)).
+    Data = #{expr => {int_lit, #{line => 3,
+                                 spec => 42,
+                                 type => {type, #{line => 3,
+                                                  source => inferred,
+                                                  spec => int}}}},
+             return_type => {type, #{line => 3,
+                                     source => rufus_text,
+                                     spec => float}}},
+    ?assertEqual({error, unmatched_return_type, Data}, rufus_compile:eval(RufusText)).
 
 %% Arity-1 functions taking and returning an argument with a mismatched return
 %% type
@@ -191,15 +191,15 @@ eval_with_function_taking_a_bool_and_returning_it_with_a_mismatched_return_type_
     module example
     func MismatchedReturnType(b bool) int { b }
     ",
-    Expected = {error, unmatched_return_type, #{expr => {identifier, #{line => 3,
-                                                                       locals => #{b => {type, #{line => 3,
-                                                                                                 source => rufus_text,
-                                                                                                 spec => bool}}},
-                                                                       spec => b}},
-                                                return_type => {type, #{line => 3,
-                                                                        source => rufus_text,
-                                                                        spec => int}}}},
-    ?assertEqual(Expected, rufus_compile:eval(RufusText)).
+    Data = #{expr => {identifier, #{line => 3,
+                                    spec => b,
+                                    type => {type, #{line => 3,
+                                                     source => rufus_text,
+                                                     spec => bool}}}},
+             return_type => {type, #{line => 3,
+                                     source => rufus_text,
+                                     spec => int}}},
+    ?assertEqual({error, unmatched_return_type, Data}, rufus_compile:eval(RufusText)).
 
 %% Arity-0 functions returning a sum of literal values for scalar types
 

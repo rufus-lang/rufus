@@ -28,6 +28,7 @@ typecheck_and_annotate(RufusForms) ->
     {ok, Globals} = rufus_form:globals(RufusForms),
     try
         {ok, _Locals, AnnotatedForms} = typecheck_and_annotate([], Globals, #{}, RufusForms),
+        ok = sanity_check(AnnotatedForms),
         {ok, AnnotatedForms}
     catch
         {error, Code, Data} ->
@@ -50,7 +51,7 @@ typecheck_and_annotate(Acc, Globals, Locals, [Form = {binary_op, _Context}|T]) -
     {ok, AnnotatedForm} = typecheck_and_annotate_binary_op(Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
 typecheck_and_annotate(Acc, Globals, Locals, [Form = {identifier, _Context}|T]) ->
-    {ok, AnnotatedForm} = annotate_locals(Locals, Form),
+    {ok, AnnotatedForm} = typecheck_and_annotate_identifier(Locals, Form),
     typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
 typecheck_and_annotate(Acc, Globals, Locals, [Form = {call, _Context}|T]) ->
     {ok, AnnotatedForm} = typecheck_and_annotate_call(Globals, Form),
@@ -63,6 +64,32 @@ typecheck_and_annotate(Acc, Globals, Locals, [H|T]) ->
 typecheck_and_annotate(Acc, _Globals, Locals, []) ->
     {ok, Locals, lists:reverse(Acc)}.
 
+%% sanity_check ensures that every form has type information. An `{error,
+%% sanity_check, Data}` error tripe is thrown if a form doesn't have type
+%% information, otherwise `ok` is returned.
+-spec sanity_check(list(rufus_form())) -> ok | no_return().
+sanity_check([{module, _Context}|T]) ->
+    sanity_check(T);
+sanity_check([{func, #{params := Params, exprs := Exprs}}|T]) ->
+    ok = sanity_check(Params),
+    ok = sanity_check(Exprs),
+    sanity_check(T);
+sanity_check([{binary_op, #{left := Left, right := Right}}|T]) ->
+    ok = sanity_check([Left]),
+    ok = sanity_check([Right]),
+    sanity_check(T);
+sanity_check([{match, #{left := Left, right := Right}}|T]) ->
+    ok = sanity_check([Left]),
+    ok = sanity_check([Right]),
+    sanity_check(T);
+sanity_check([{_FormType, #{type := _Type}}|T]) ->
+    sanity_check(T);
+sanity_check([Form|_T]) ->
+    Data = #{form => Form},
+    throw({error, sanity_check, Data});
+sanity_check([]) ->
+    ok.
+
 %% scope helpers
 
 %% annotate_locals adds a `locals` key to a form context.
@@ -74,6 +101,48 @@ annotate_locals(Locals, {FormType, Context}) ->
 -spec push_local(locals(), rufus_form()) -> {ok, locals()}.
 push_local(Locals, {_FormType, #{spec := Spec, type := Type}}) ->
     {ok, Locals#{Spec => Type}}.
+
+%% binary_op helpers
+
+%% typecheck_and_annotate_binary_op ensures that binary_op operands are
+%% exclusively ints or exclusively floats. Inferred type information is added to
+%% every `binary_op` form. Returns values:
+%% - `{ok, AnnotatedForms}` if no issues are found. Every `binary_op` form is
+%%   annotated with an inferred type annotation.
+%% - `{error, unmatched_operand_type, Form}` is thrown if an `int` operand is
+%%   mixed with a `float` operand. `Form` contains the illegal operands.
+%% - `{error, unsupported_operand_type, Form}` is thrown if a type other than an
+%%   int is used as an operand. `Form` contains the illegal operands.
+-spec typecheck_and_annotate_binary_op(globals(), locals(), binary_op_form()) -> {ok, binary_op_form()} | no_return().
+typecheck_and_annotate_binary_op(Globals, Locals, {binary_op, Context = #{left := Left, right := Right}}) ->
+    {ok, Locals, [AnnotatedLeft]} = typecheck_and_annotate([], Globals, Locals, [Left]),
+    {ok, Locals, [AnnotatedRight]} = typecheck_and_annotate([], Globals, Locals, [Right]),
+    Form = {binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight, locals => Locals}},
+    case rufus_type:resolve(Globals, Form) of
+        {ok, TypeForm} ->
+            AnnotatedForm = {binary_op, Context#{left => AnnotatedLeft,
+                                                 right => AnnotatedRight,
+                                                 type => TypeForm}},
+            {ok, AnnotatedForm};
+        Error ->
+            throw(Error)
+    end.
+
+%% call helpers
+
+%% typecheck_and_annotate_call resolves the return type for a function call and
+%% returns a call form annotated with type information.
+%%
+%% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
+%% -spec typecheck_and_annotate_call(globals(), call_form()) -> {ok, call_form()} | no_return().
+typecheck_and_annotate_call(Globals, Form = {call, Context}) ->
+    case rufus_type:resolve(Globals, Form) of
+        {ok, TypeForm} ->
+            AnnotatedForm = {call, Context#{type => TypeForm}},
+            {ok, AnnotatedForm};
+        Error ->
+            throw(Error)
+    end.
 
 %% func helpers
 
@@ -109,46 +178,16 @@ typecheck_func_return_type(Globals, {func, #{return_type := ReturnType, exprs :=
             throw(Error)
     end.
 
-%% call helpers
+%% identifier helpers
 
-%% typecheck_and_annotate_call resolves the return type for a function call and
-%% returns a call form annotated with type information.
-%%
-%% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
-%% -spec typecheck_and_annotate_call(globals(), call_form()) -> {ok, call_form()} | no_return().
-typecheck_and_annotate_call(Globals, Form = {call, Context}) ->
-    case rufus_type:resolve(Globals, Form) of
-        {ok, TypeForm} ->
-            AnnotatedForm = {call, Context#{type => TypeForm}},
-            {ok, AnnotatedForm};
-        Error ->
-            throw(Error)
-    end.
-
-%% binary_op helpers
-
-%% typecheck_and_annotate_binary_op ensures that binary_op operands are
-%% exclusively ints or exclusively floats. Inferred type information is added to
-%% every `binary_op` form. Returns values:
-%% - `{ok, AnnotatedForms}` if no issues are found. Every `binary_op` form is
-%%   annotated with an inferred type annotation.
-%% - `{error, unmatched_operand_type, Form}` is thrown if an `int` operand is
-%%   mixed with a `float` operand. `Form` contains the illegal operands.
-%% - `{error, unsupported_operand_type, Form}` is thrown if a type other than an
-%%   int is used as an operand. `Form` contains the illegal operands.
--spec typecheck_and_annotate_binary_op(globals(), locals(), binary_op_form()) -> {ok, binary_op_form()} | no_return().
-typecheck_and_annotate_binary_op(Globals, Locals, {binary_op, Context = #{left := Left, right := Right}}) ->
-    {ok, Locals, [AnnotatedLeft]} = typecheck_and_annotate([], Globals, Locals, [Left]),
-    {ok, Locals, [AnnotatedRight]} = typecheck_and_annotate([], Globals, Locals, [Right]),
-    Form = {binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight, locals => Locals}},
-    case rufus_type:resolve(Globals, Form) of
-        {ok, TypeForm} ->
-            AnnotatedForm = {binary_op, Context#{left => AnnotatedLeft,
-                                                 right => AnnotatedRight,
-                                                 type => TypeForm}},
-            {ok, AnnotatedForm};
-        Error ->
-            throw(Error)
+typecheck_and_annotate_identifier(Locals, Form = {identifier, Context = #{spec := Spec}}) ->
+    {ok, AnnotatedForm1} = annotate_locals(Locals, Form),
+    case maps:get(Spec, Locals, undefined) of
+        undefined ->
+            {ok, AnnotatedForm1};
+        Type ->
+            AnnotatedForm2 = {identifier, Context#{type => Type}},
+            {ok, AnnotatedForm2}
     end.
 
 %% match helpers

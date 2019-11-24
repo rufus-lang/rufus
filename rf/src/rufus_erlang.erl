@@ -50,20 +50,6 @@ forms(Acc, [{identifier, #{line := Line, spec := Name, type := Type}}|T]) ->
             {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Name}]}
     end,
     forms([Form|Acc], T);
-forms(Acc, [{identifier, #{line := Line, spec := Name, locals := Locals}}|T]) ->
-    Type = maps:get(Name, Locals),
-    TypeSpec = rufus_form:spec(Type),
-    Form = case TypeSpec of
-        atom ->
-            {var, Line, Name};
-        float ->
-            {var, Line, Name};
-        int ->
-            {var, Line, Name};
-        _ ->
-            {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Name}]}
-    end,
-    forms([Form|Acc], T);
 forms(Acc, [{func, #{line := Line, spec := Spec, params := Params, exprs := Exprs}}|T]) ->
     {ok, ParamForms} = forms([], Params),
     {ok, GuardForms} = guard_forms([], Params),

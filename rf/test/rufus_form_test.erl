@@ -94,6 +94,22 @@ spec_test() ->
     Form = {identifier, #{spec => n, line => 13}},
     ?assertEqual(n, rufus_form:spec(Form)).
 
+has_type_test() ->
+    Type = rufus_form:make_inferred_type(int, 27),
+    Form = {int_lit, #{spec => 42, type => Type, line => 7}},
+    ?assertEqual(true, rufus_form:has_type(Form)).
+
+has_type_infers_identifier_type_from_locals_test() ->
+    Type = rufus_form:make_inferred_type(int, 27),
+    {FormType, Context} = rufus_form:make_identifier(number, 13),
+    Locals = #{number => Type},
+    Form = {FormType, Context#{locals => Locals}},
+    ?assertEqual(true, rufus_form:has_type(Form)).
+
+has_type_without_identifier_type_test() ->
+    Form = {identifier, #{spec => unknown, line => 7}},
+    ?assertEqual(false, rufus_form:has_type(Form)).
+
 type_test() ->
     Type = rufus_form:make_inferred_type(int, 27),
     Form = {int_lit, #{spec => 42, type => Type, line => 7}},
