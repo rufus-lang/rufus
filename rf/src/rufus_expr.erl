@@ -171,6 +171,7 @@ typecheck_and_annotate_match(Globals, Locals, {match, Context = #{left := Left}}
     AnnotatedForm1 = {match, Context#{left => AnnotatedLeft1}},
     case rufus_form:has_type(AnnotatedLeft1) of
         true ->
+            ok = validate_left_operand(Globals, NewLocals1, AnnotatedForm1),
             typecheck_and_annotate_match_with_bound_left_operand(Globals, NewLocals1, AnnotatedForm1);
         false ->
             typecheck_and_annotate_match_with_unbound_left_operand(Globals, NewLocals1, AnnotatedForm1)
@@ -186,16 +187,7 @@ typecheck_and_annotate_match(Globals, Locals, {match, Context = #{left := Left}}
 %% - `{error, unmarched_types, Data}` is thrown when the left and right operand
 %%   have differing types.
 -spec typecheck_and_annotate_match_with_bound_left_operand(globals(), locals(), match_form()) -> {ok, locals(), match_form()} | no_return().
-typecheck_and_annotate_match_with_bound_left_operand(Globals, Locals, Form = {match, Context = #{left := Left, right := Right}}) ->
-    case Left of
-        {call, _Context1} ->
-            Data = #{globals => Globals,
-                     locals => Locals,
-                     form => Form},
-            throw({error, illegal_pattern, Data});
-        _ ->
-            ok
-    end,
+typecheck_and_annotate_match_with_bound_left_operand(Globals, Locals, {match, Context = #{left := Left, right := Right}}) ->
     try
         {ok, NewLocals, [AnnotatedRight]} = typecheck_and_annotate([], Globals, Locals, [Right]),
         case rufus_form:type_spec(Left) == rufus_form:type_spec(AnnotatedRight) of
@@ -259,3 +251,19 @@ typecheck_and_annotate_match_with_unbound_left_operand(Globals, Locals, {match, 
                      right => AnnotatedRight},
             throw({error, unbound_variables, Data})
     end.
+
+validate_left_operand(Globals, Locals, Form = {match, _Context}) ->
+    Data = #{globals => Globals,
+             locals => Locals,
+             form => Form},
+    validate_left_operand(Data, Form).
+
+validate_left_operand(Data, {match, #{left := Left}}) ->
+    validate_left_operand(Data, Left);
+validate_left_operand(Data, {call, _Context}) ->
+    throw({error, illegal_pattern, Data});
+validate_left_operand(Data, {binary_op, #{left := Left, right := Right}}) ->
+    validate_left_operand(Data, Left),
+    validate_left_operand(Data, Right);
+validate_left_operand(_Data, _Form) ->
+    ok.
