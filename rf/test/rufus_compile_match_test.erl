@@ -81,9 +81,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_right_binary_op_operand_
 typecheck_and_annotate_function_with_a_match_that_has_left_and_right_binary_op_operands_test() ->
     RufusText = "
     module example
-    func Random() int {
-        1 + 2 = 2 + 1
-    }
+    func Random() int { 1 + 2 = 2 + 1 }
     ",
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(3, example:'Random'()).
