@@ -171,12 +171,11 @@ typecheck_and_annotate_match(Globals, Locals, {match, Context = #{left := Left}}
     AnnotatedForm1 = {match, Context#{left => AnnotatedLeft1}},
     case rufus_form:has_type(AnnotatedLeft1) of
         true ->
-            ok = validate_left_operand(Globals, NewLocals1, AnnotatedForm1),
+            ok = validate_pattern(Globals, NewLocals1, AnnotatedForm1),
             typecheck_and_annotate_match_with_bound_left_operand(Globals, NewLocals1, AnnotatedForm1);
         false ->
             typecheck_and_annotate_match_with_unbound_left_operand(Globals, NewLocals1, AnnotatedForm1)
     end.
-
 
 %% typecheck_and_annotate_match_with_bound_left_operand typechecks match
 %% expressions with a left operand that has a known type. Return values:
@@ -252,18 +251,28 @@ typecheck_and_annotate_match_with_unbound_left_operand(Globals, Locals, {match, 
             throw({error, unbound_variables, Data})
     end.
 
-validate_left_operand(Globals, Locals, Form = {match, _Context}) ->
+%% validate_pattern checks the left hand side of a pattern match expression for
+%% call expressions. An `{error, illegal_pattern, Data}` error triple is thrown
+%% if one is found.
+%%
+%% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
+%% -spec validate_pattern(globals(), locals(), match_form()) -> ok | no_return().
+validate_pattern(Globals, Locals, Form = {match, _Context}) ->
     Data = #{globals => Globals,
              locals => Locals,
              form => Form},
-    validate_left_operand(Data, Form).
+    validate_pattern(Data, Form).
 
-validate_left_operand(Data, {match, #{left := Left}}) ->
-    validate_left_operand(Data, Left);
-validate_left_operand(Data, {call, _Context}) ->
+%% validate_pattern recursively searches the left hand operand for signs of a
+%% call expession. An `{error, illegal_pattern, Data}` error triple is thrown if
+%% one is found.
+-spec validate_pattern(context(), rufus_form()) -> ok | no_return().
+validate_pattern(Data, {match, #{left := Left}}) ->
+    validate_pattern(Data, Left);
+validate_pattern(Data, {call, _Context}) ->
     throw({error, illegal_pattern, Data});
-validate_left_operand(Data, {binary_op, #{left := Left, right := Right}}) ->
-    validate_left_operand(Data, Left),
-    validate_left_operand(Data, Right);
-validate_left_operand(_Data, _Form) ->
+validate_pattern(Data, {binary_op, #{left := Left, right := Right}}) ->
+    validate_pattern(Data, Left),
+    validate_pattern(Data, Right);
+validate_pattern(_Data, _Form) ->
     ok.
