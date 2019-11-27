@@ -2,7 +2,7 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-resolve_form_with_ints_test() ->
+resolve_binary_op_with_ints_test() ->
     Op = '+',
     Left = rufus_form:make_literal(int, 5, 9),
     Right = rufus_form:make_literal(int, 7, 9),
@@ -10,7 +10,7 @@ resolve_form_with_ints_test() ->
     Expected = rufus_form:make_inferred_type(int, 9),
     ?assertEqual({ok, Expected}, rufus_type:resolve(#{}, Form)).
 
-resolve_form_with_floats_test() ->
+resolve_binary_op_with_floats_test() ->
     Op = '+',
     Left = rufus_form:make_literal(float, 1.0, 9),
     Right = rufus_form:make_literal(float, 2.14159265359, 9),

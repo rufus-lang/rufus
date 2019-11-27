@@ -2,7 +2,7 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-resolve_form_with_no_arguments_test() ->
+resolve_call_with_no_arguments_test() ->
     RufusText = "
     module example
     func Random() int { 42 }
@@ -14,7 +14,7 @@ resolve_form_with_no_arguments_test() ->
     Expected = rufus_form:make_type(int, 3),
     ?assertEqual({ok, Expected}, rufus_type:resolve(Globals, Form)).
 
-resolve_form_with_one_argument_test() ->
+resolve_call_with_one_argument_test() ->
     RufusText = "
     module example
     func Echo(text string) string { text }
@@ -26,7 +26,7 @@ resolve_form_with_one_argument_test() ->
     Expected = rufus_form:make_type(string, 3),
     ?assertEqual({ok, Expected}, rufus_type:resolve(Globals, Form)).
 
-resolve_form_with_one_argument_and_many_function_heads_test() ->
+resolve_call_with_one_argument_and_many_function_heads_test() ->
     RufusText = "
     module example
     func Echo(name atom) atom { name }
@@ -42,7 +42,7 @@ resolve_form_with_one_argument_and_many_function_heads_test() ->
     Expected = rufus_form:make_type(string, 7),
     ?assertEqual({ok, Expected}, rufus_type:resolve(Globals, Form)).
 
-resolve_form_with_two_argument_test() ->
+resolve_call_with_two_argument_test() ->
     RufusText = "
     module example
     func Concatenate(a atom, b string) string { \"hello world\" }
