@@ -87,3 +87,15 @@ eval_with_function_call_with_two_float_arguments_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertEqual(3.5, example:'Random'()).
+
+%% Function calls with binary_op arguments
+
+eval_with_function_call_with_binary_op_argument_test() ->
+    RufusText = "
+    module example
+    func double(n int) int { n * 2 }
+    func SumAndDouble(m int, n int) int { double(m + n) }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(20, example:'SumAndDouble'(3, 7)).
