@@ -54,7 +54,7 @@ typecheck_and_annotate(Acc, Globals, Locals, [Form = {identifier, _Context}|T]) 
     {ok, AnnotatedForm} = typecheck_and_annotate_identifier(Locals, Form),
     typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
 typecheck_and_annotate(Acc, Globals, Locals, [Form = {call, _Context}|T]) ->
-    {ok, AnnotatedForm} = typecheck_and_annotate_call(Globals, Form),
+    {ok, AnnotatedForm} = typecheck_and_annotate_call(Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
 typecheck_and_annotate(Acc, Globals, Locals, [Form = {match, _Context}|T]) ->
     {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_match(Globals, Locals, Form),
@@ -135,10 +135,12 @@ typecheck_and_annotate_binary_op(Globals, Locals, {binary_op, Context = #{left :
 %%
 %% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
 %% -spec typecheck_and_annotate_call(globals(), call_form()) -> {ok, call_form()} | no_return().
-typecheck_and_annotate_call(Globals, Form = {call, Context}) ->
+typecheck_and_annotate_call(Globals, Locals, {call, Context1 = #{args := Args}}) ->
+    {ok, _NewLocals, AnnotatedArgs} = typecheck_and_annotate([], Globals, Locals, Args),
+    Form = {call, Context2 = Context1#{args => AnnotatedArgs}},
     case rufus_type:resolve(Globals, Form) of
         {ok, TypeForm} ->
-            AnnotatedForm = {call, Context#{type => TypeForm}},
+            AnnotatedForm = {call, Context2#{type => TypeForm}},
             {ok, AnnotatedForm};
         Error ->
             throw(Error)

@@ -1,15 +1,16 @@
 [![Build Status](https://travis-ci.com/rufus-lang/rufus.svg?branch=master)](https://travis-ci.com/rufus-lang/rufus)
 # Rufus
 
-Rufus is for teams building and operating fault tolerant distributed systems.
+Rufus is a programming language for teams to build and operate fault tolerant
+systems.
 
 ```rufus
 module main
 
-import "fmt"
+import "Fmt"
 
 func main() {
-    fmt.Println("Hello, world!")
+    Fmt.Println("Hello, world!")
 }
 ```
 
@@ -33,13 +34,26 @@ Collection types:
 
 ```rufus
 list[int]
-numbers = list[int]{1, 2, 3, 4, 5}
+empty = []
+numbers = [1, 2, 3, 4, 5]
 
 map[atom]string
-alice = map[atom]string{:name -> "Alice", :age -> "34"}
+empty = #{}
+alice = #{:name => "Alice", :age => "34"}
 
 tuple[string, int]
-alice = tuple[string, int]{"Alice", 34}
+empty = {}
+alice = {"Alice", 34}
+
+type Person tuple[string, int]
+alice = Person{"Alice", 34}
+
+type Person struct {
+    Name string
+    Age int
+}
+alice = Person{Name => "Alice", Age => 34}
+Fmt.Printf("%s is age %d", [alice.Name, alice.Age])
 ```
 
 Function types:
@@ -53,15 +67,15 @@ func Echo(text string) string {
 Higher order functions:
 
 ```rufus
-func Map(n list[int], f func(int) int) list[int] {
-    mapAccumulate(list[int]{}, n, f)
+func Map(items list[int], fn func(int) int) list[int] {
+    mapAccumulate([], items, fn)
 }
 
 func mapAccumulate(acc list[int], [h|t] list[int], f func(int) int) list[int] {
     map([f(h)|acc], t, f)
 }
 func mapAccumulate(acc list[int], [] list[int], func(int) int) list[int] {
-    lists.Reverse(acc)
+    reverse(acc)
 }
 ```
 
@@ -70,14 +84,14 @@ Named tuple:
 ```rufus
 type Point tuple[X int, Y int, Z int]
 
-point = Point{X: 2, Y: 5, Z: -1}
+point = Point{X => 2, Y => 5, Z => -1}
 point.X = 2
 ```
 
 Anonymous union type:
 
 ```rufus
-func Teleport(point Point) :ok | tuple[:error, string] {
+func Teleport(point Point) :ok | Error {
     // ...
 }
 ```
@@ -85,34 +99,21 @@ func Teleport(point Point) :ok | tuple[:error, string] {
 Named union type:
 
 ```rufus
-type Outcome :ok | tuple[:error, string]
+type Outcome :ok | Error
 
 func Teleport(point Point) Outcome {
     // ...
 }
 ```
 
-Match expression:
+Pattern match expression:
 
 ```rufus
-point = Point{X: 3, Y: -6, Z: 13}
-match Teleport(point) {
+point = Point{X => 3, Y => -6, Z => 13}
+switch Teleport(point) {
 case :ok =>
     // ...
-case tuple[:error, Reason string] =>
-    // ...
-}
-```
-
-Each `case` branch needs to return the same (inferred) type otherwise the match
-type must be declared.
-
-```rufus
-point = Point{X: 3, Y: -6, Z: 13}
-match Teleport(point) Result {
-case :ok =>
-    // ...
-case tuple[:error, Reason string] =>
+case err error.T =>
     // ...
 }
 ```
