@@ -41,3 +41,27 @@ string_with_binary_op_expression_using_remainder_operator_test() ->
         {'%', 1},
         {int_lit, 1, 5}
     ], Tokens).
+
+string_with_binary_op_expression_using_and_operator_test() ->
+    {ok, Tokens, _} = rufus_raw_tokenize:string("true and false"),
+    ?assertEqual([
+        {bool_lit, 1, true},
+        {'and', 1},
+        {bool_lit, 1, false}
+    ], Tokens).
+
+string_with_binary_op_expression_using_or_operator_test() ->
+    {ok, Tokens, _} = rufus_raw_tokenize:string("true or false"),
+    ?assertEqual([
+        {bool_lit, 1, true},
+        {'or', 1},
+        {bool_lit, 1, false}
+    ], Tokens).
+
+string_with_binary_op_expression_using_xor_operator_test() ->
+    {ok, Tokens, _} = rufus_raw_tokenize:string("true xor false"),
+    ?assertEqual([
+        {bool_lit, 1, true},
+        {'xor', 1},
+        {bool_lit, 1, false}
+    ], Tokens).
