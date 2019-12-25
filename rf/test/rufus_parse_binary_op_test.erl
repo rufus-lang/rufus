@@ -336,3 +336,90 @@ parse_function_remaindering_three_ints_test() ->
                                        source => rufus_text}},
                spec => 'Four'}}
     ], Forms).
+
+parse_function_anding_two_bools_test() ->
+    RufusText = "
+    module example
+    func Falsy() bool { true and false }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{binary_op, #{left => {bool_lit, #{line => 3,
+                                                                      spec => true,
+                                                                      type => {type, #{line => 3,
+                                                                                       source => inferred,
+                                                                                       spec => bool}}}},
+                                                 line => 3,
+                                                 op => 'and',
+                                                 right => {bool_lit, #{line => 3,
+                                                                       spec => false,
+                                                                       type => {type, #{line => 3,
+                                                                                        source => inferred,
+                                                                                        spec => bool}}}}}}],
+                         line => 3,
+                         params => [],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => bool}},
+                         spec => 'Falsy'}}],
+    ?assertEqual(Expected, Forms).
+
+parse_function_oring_two_bools_test() ->
+    RufusText = "
+    module example
+    func Truthy() bool { true or false }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{binary_op, #{left => {bool_lit, #{line => 3,
+                                                                      spec => true,
+                                                                      type => {type, #{line => 3,
+                                                                                       source => inferred,
+                                                                                       spec => bool}}}},
+                                                 line => 3,
+                                                 op => 'or',
+                                                 right => {bool_lit, #{line => 3,
+                                                                       spec => false,
+                                                                       type => {type, #{line => 3,
+                                                                                        source => inferred,
+                                                                                        spec => bool}}}}}}],
+                         line => 3,
+                         params => [],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => bool}},
+                         spec => 'Truthy'}}],
+    ?assertEqual(Expected, Forms).
+
+parse_function_xoring_two_bools_test() ->
+    RufusText = "
+    module example
+    func Truthy() bool { true xor false }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{binary_op, #{left => {bool_lit, #{line => 3,
+                                                                      spec => true,
+                                                                      type => {type, #{line => 3,
+                                                                                       source => inferred,
+                                                                                       spec => bool}}}},
+                                                 line => 3,
+                                                 op => 'xor',
+                                                 right => {bool_lit, #{line => 3,
+                                                                       spec => false,
+                                                                       type => {type, #{line => 3,
+                                                                                        source => inferred,
+                                                                                        spec => bool}}}}}}],
+                         line => 3,
+                         params => [],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => bool}},
+                         spec => 'Truthy'}}],
+    ?assertEqual(Expected, Forms).
