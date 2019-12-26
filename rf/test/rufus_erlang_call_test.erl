@@ -61,11 +61,13 @@ forms_for_function_call_with_a_bool_argument_test() ->
         {attribute, 4, export, [{'Random', 0}]},
         {attribute, 3, export, [{'Echo', 1}]},
         {function, 3, 'Echo', 1, [
-                {clause, 3, [{tuple, 3, [{atom, 3, bool}, {var, 3, b}]}], [], [{tuple, 3, [{atom, 3, bool}, {var, 3, b}]}]}
+            {clause, 3, [{var, 3, b}], [
+                [{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_boolean}}, [{var, 3, b}]}]],
+                [{var, 3, b}]}
             ]},
         {function, 4, 'Random', 0, [
-                {clause, 4, [], [], [{call, 4, {atom, 4, 'Echo'}, [{tuple, 4, [{atom, 4, bool}, {atom, 4, true}]}]}]}
-            ]}
+            {clause, 4, [], [], [
+                {call, 4, {atom, 4, 'Echo'}, [{atom, 4, true}]}]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
 

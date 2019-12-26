@@ -42,6 +42,8 @@ forms(Acc, [{identifier, #{line := Line, spec := Name, type := Type}}|T]) ->
     Form = case TypeSpec of
         atom ->
             {var, Line, Name};
+        bool ->
+            {var, Line, Name};
         float ->
             {var, Line, Name};
         int ->
@@ -61,6 +63,8 @@ forms(Acc, [Form = {param, #{line := Line, spec := Name}}|T]) ->
     TypeSpec = rufus_form:type_spec(Form),
     ErlangForm = case TypeSpec of
         atom ->
+            {var, Line, Name};
+        bool ->
             {var, Line, Name};
         float ->
             {var, Line, Name};
@@ -92,16 +96,27 @@ forms(Acc, []) ->
 forms(Acc, Form) ->
     erlang:error(unhandled_form, [Acc, Form]).
 
-rufus_operator_to_erlang_operator('/', float) -> '/';
-rufus_operator_to_erlang_operator('/', int) -> 'div';
-rufus_operator_to_erlang_operator('%', int) -> 'rem';
-rufus_operator_to_erlang_operator('%', float) -> erlang:error(unsupported_operand_type, ['%', float]);
-rufus_operator_to_erlang_operator(Op, _) -> Op.
+%% rufus_operator_to_erlang_operator converts a Rufus operator to the Erlang
+%% equivalent.
+-spec rufus_operator_to_erlang_operator(atom(), atom()) -> atom().
+rufus_operator_to_erlang_operator('/', float) ->
+    '/';
+rufus_operator_to_erlang_operator('/', int) ->
+    'div';
+rufus_operator_to_erlang_operator('%', int) ->
+    'rem';
+rufus_operator_to_erlang_operator('%', float) ->
+    erlang:error(unsupported_operand_type, ['%', float]);
+rufus_operator_to_erlang_operator(Op, _) ->
+    Op.
 
-% guard_forms generates function guard_forms for floats and integers.
+%% guard_forms generates function guard_forms for float and integer parameters.
 -spec guard_forms(list(erlang_form()) | list(list()), list(param_form())) -> {ok, list(erlang_form())}.
 guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := atom}}}}|T]) ->
     GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_atom}}, [{var, Line, Name}]}],
+    guard_forms([GuardExpr|Acc], T);
+guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := bool}}}}|T]) ->
+    GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_boolean}}, [{var, Line, Name}]}],
     guard_forms([GuardExpr|Acc], T);
 guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := float}}}}|T]) ->
     GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_float}}, [{var, Line, Name}]}],
@@ -116,11 +131,14 @@ guard_forms(Acc, []) ->
     %% behavior?
     {ok, Acc}.
 
+%% box converts a Rufus literal to its representation in Erlang. atom, bool,
+%% float and int are all represented as primitive values in Erlang, while string
+%% is represented as an annotated {string, BinaryValue} tuple.
 -spec box(atom_lit_form() | bool_lit_form() | float_lit_form() | int_lit_form() | string_lit_form()) -> erlang3_form().
 box({atom_lit, #{line := Line, spec := Value}}) ->
     {atom, Line, Value};
 box({bool_lit, #{line := Line, spec := Value}}) ->
-    {tuple, Line, [{atom, Line, bool}, {atom, Line, Value}]};
+    {atom, Line, Value};
 box({float_lit, #{line := Line, spec := Value}}) ->
     {float, Line, Value};
 box({int_lit, #{line := Line, spec := Value}}) ->

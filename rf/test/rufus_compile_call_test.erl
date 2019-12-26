@@ -34,7 +34,7 @@ eval_with_function_call_with_a_bool_argument_test() ->
     ",
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
-    ?assertEqual({bool, true}, example:'Random'()).
+    ?assertEqual(true, example:'Random'()).
 
 eval_with_function_call_with_a_float_argument_test() ->
     RufusText = "
