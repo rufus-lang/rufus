@@ -157,6 +157,7 @@ annotate_exports(Forms) ->
 -spec annotate_exports(list(erlang_form()), list(erlang_form())) -> {ok, list(erlang_form())}.
 annotate_exports(Acc, [Form = {attribute, _Line, module, _Name}|T]) ->
     {ok, ExportForms} = make_export_forms(T),
+    %% Inject export forms directly after the module declaration.
     annotate_exports(Acc ++ ExportForms ++ [Form], T);
 annotate_exports(Acc, [Form|T]) ->
     annotate_exports([Form|Acc], T);
@@ -169,11 +170,47 @@ make_export_forms(Forms) ->
 
 -spec make_export_forms(list(erlang_form()), list(erlang_form())) -> {ok, list(export_attribute_erlang_form())}.
 make_export_forms(Acc, [{function, Line, Spec, Arity, _Forms}|T]) ->
-    %% TODO(jkakar) We're exporting all functions for now, to move quickly, but
-    %% we need to apply the rules from the 'Exported identifiers' RDR here.
-    Form = {attribute, Line, export, [{Spec, Arity}]},
-    make_export_forms([Form|Acc], T);
+    case is_public(Spec) of
+        true ->
+            Form = {attribute, Line, export, [{Spec, Arity}]},
+            make_export_forms([Form|Acc], T);
+        false ->
+            make_export_forms(Acc, T)
+    end;
 make_export_forms(Acc, [_Form|T]) ->
     make_export_forms(Acc, T);
 make_export_forms(Acc, []) ->
     {ok, lists:reverse(Acc)}.
+
+is_public(Name) ->
+    LeadingChar = string:slice(atom_to_list(Name), 0, 1),
+    not is_private(LeadingChar).
+
+is_private("_") -> true;
+is_private("a") -> true;
+is_private("b") -> true;
+is_private("c") -> true;
+is_private("d") -> true;
+is_private("e") -> true;
+is_private("f") -> true;
+is_private("g") -> true;
+is_private("h") -> true;
+is_private("i") -> true;
+is_private("j") -> true;
+is_private("k") -> true;
+is_private("l") -> true;
+is_private("m") -> true;
+is_private("n") -> true;
+is_private("o") -> true;
+is_private("p") -> true;
+is_private("q") -> true;
+is_private("r") -> true;
+is_private("s") -> true;
+is_private("t") -> true;
+is_private("u") -> true;
+is_private("v") -> true;
+is_private("w") -> true;
+is_private("x") -> true;
+is_private("y") -> true;
+is_private("z") -> true;
+is_private(_)   -> false.

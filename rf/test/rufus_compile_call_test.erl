@@ -99,3 +99,22 @@ eval_with_function_call_with_binary_op_argument_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertEqual(20, example:'SumAndDouble'(3, 7)).
+
+%% Multiple function heads
+
+eval_with_function_call_with_one_argument_and_many_function_heads_test() ->
+    RufusText = "
+    module example
+    func Echo(name atom) atom { name }
+    func Echo(b bool) bool { b }
+    func Echo(n float) float { n }
+    func Echo(n int) int { n }
+    func Echo(text string) string { text }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(hello, example:'Echo'(hello)),
+    ?assertEqual(false, example:'Echo'(false)),
+    ?assertEqual(3.14159265359, example:'Echo'(3.14159265359)),
+    ?assertEqual(42, example:'Echo'(42)),
+    ?assertEqual(<<"hello">>, example:'Echo'({string, <<"hello">>})).

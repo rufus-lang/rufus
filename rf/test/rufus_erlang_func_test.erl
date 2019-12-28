@@ -313,3 +313,23 @@ forms_for_function_taking_a_string_and_returning_a_string_test() ->
                          [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
+
+%% Function exports
+
+forms_for_private_functions_are_not_exported_test() ->
+    RufusText = "
+    module example
+    func echo(s string) string { s }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
+    Expected = [
+        {attribute, 2, module, example},
+        {function, 3, 'echo', 1,
+            [{clause, 3, [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}],
+                         [],
+                         [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).

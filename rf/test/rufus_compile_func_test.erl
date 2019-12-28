@@ -186,3 +186,14 @@ eval_with_function_taking_a_bool_and_returning_it_with_a_mismatched_return_type_
                                      source => rufus_text,
                                      spec => int}}},
     ?assertEqual({error, unmatched_return_type, Data}, rufus_compile:eval(RufusText)).
+
+%% Function exports
+
+eval_with_private_function_test() ->
+    RufusText = "
+    module example
+    func echo(s string) string { s }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertError(undef, example:echo({string, <<"Hello">>})).
