@@ -13,10 +13,21 @@
 %% compile:forms/1 and then loaded with code:load_binary/3.
 -spec forms(list(rufus_form())) -> {ok, list(erlang_form())}.
 forms(RufusForms) ->
-    {ok, ErlangForms} = forms([], RufusForms),
+    {ok, GroupedRufusForms} = group_forms_by_func([], RufusForms),
+    {ok, ErlangForms} = forms([], GroupedRufusForms),
     annotate_exports(ErlangForms).
 
 %% Private API
+
+%% group_forms_by_func transforms a list of Rufus forms with individual entries
+%% for func expressions of the same name and arity into a list of Rufus forms
+%% with a single func expression for each name/arity pair, with form details
+%% represented as a list instead of a context map.
+-spec group_forms_by_func(list(), list(rufus_form())) -> list(rufus_form()).
+group_forms_by_func(Acc, [H|T]) ->
+    group_forms_by_func([H|Acc], T);
+group_forms_by_func(Acc, []) ->
+    {ok, lists:reverse(Acc)}.
 
 -spec forms(list(erlang_form()), list(rufus_form())) -> {ok, list(erlang_form())}.
 forms(Acc, [{module, #{line := Line, spec := Name}}|T]) ->
@@ -164,6 +175,7 @@ annotate_exports(Acc, [Form|T]) ->
 annotate_exports(Acc, []) ->
     {ok, lists:reverse(Acc)}.
 
+%% make_export_forms generates export attributes for all public functions.
 -spec make_export_forms(list(erlang_form())) -> {ok, list(export_attribute_erlang_form())}.
 make_export_forms(Forms) ->
     make_export_forms([], Forms).
@@ -182,10 +194,16 @@ make_export_forms(Acc, [_Form|T]) ->
 make_export_forms(Acc, []) ->
     {ok, lists:reverse(Acc)}.
 
+%% is_public returns true if Name represents a public function that should be
+%% exported from the module, otherwise it returns false.
+-spec is_public(atom()) -> boolean().
 is_public(Name) ->
     LeadingChar = string:slice(atom_to_list(Name), 0, 1),
     not is_private(LeadingChar).
 
+%% is_private returns true if Name represents a private function that should be
+%% exported from the module, otherwise it returns false.
+-spec is_private(string()) -> boolean().
 is_private("_") -> true;
 is_private("a") -> true;
 is_private("b") -> true;
