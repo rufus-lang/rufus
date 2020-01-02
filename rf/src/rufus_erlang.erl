@@ -27,10 +27,7 @@ forms(RufusForms) ->
 group_forms_by_func(Forms) ->
     {value, ModuleForm} = lists:search(fun match_module_form/1, Forms),
     {ok, Globals} = rufus_form:globals(Forms),
-    {ok, group_forms_by_func(ModuleForm, Globals)}.
 
--spec group_forms_by_func(module_form(), globals()) -> list(rufus_form() | {func_group, context()}).
-group_forms_by_func(ModuleForm, Globals) ->
     GroupBy = fun(Name, FuncForms, Acc) ->
         {func, #{line := Line, params := Params}} = lists:nth(1, FuncForms),
         Form = {func_group, #{line => Line, spec => Name, arity => length(Params), forms => FuncForms}},
@@ -48,7 +45,7 @@ group_forms_by_func(ModuleForm, Globals) ->
     end,
     SortedFuncForms = lists:sort(SortBy, GroupedFuncForms),
 
-    [ModuleForm|lists:reverse(SortedFuncForms)].
+    {ok, [ModuleForm|lists:reverse(SortedFuncForms)]}.
 
 match_module_form({module, _Context}) ->
     true;
