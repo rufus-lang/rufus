@@ -13,12 +13,46 @@
 %% compile:forms/1 and then loaded with code:load_binary/3.
 -spec forms(list(rufus_form())) -> {ok, list(erlang_form())}.
 forms(RufusForms) ->
-    {ok, ErlangForms} = forms([], RufusForms),
+    {ok, GroupedRufusForms} = group_forms_by_func(RufusForms),
+    {ok, ErlangForms} = forms([], GroupedRufusForms),
     annotate_exports(ErlangForms).
 
 %% Private API
 
--spec forms(list(erlang_form()), list(rufus_form())) -> {ok, list(erlang_form())}.
+%% group_forms_by_func transforms a list of Rufus forms with individual entries
+%% for func expressions of the same name and arity into a list of Rufus forms
+%% with a single func expression for each name/arity pair, with form details
+%% represented as a list instead of a context map.
+-spec group_forms_by_func(list(rufus_form())) -> {ok, list(rufus_form() | {func_group, context()})}.
+group_forms_by_func(Forms) ->
+    MatchModuleForm = fun({module, _Context}) ->
+        true;
+    (_) ->
+        false
+    end,
+    {value, ModuleForm} = lists:search(MatchModuleForm, Forms),
+    {ok, Globals} = rufus_form:globals(Forms),
+
+    GroupBy = fun(Name, FuncForms, Acc) ->
+        {func, #{line := Line, params := Params}} = lists:nth(1, FuncForms),
+        Form = {func_group, #{line => Line, spec => Name, arity => length(Params), forms => FuncForms}},
+        [Form|Acc]
+    end,
+    GroupedFuncForms = maps:fold(GroupBy, [], Globals),
+
+    %% We can't rely on the order of func forms in GroupedFuncForms because the
+    %% order of key/value pairs in Globals is undefined, so we sort here to
+    %% ensure stable ordering. This is only needed to ensure that tests are
+    %% reliable, and could be disabled in a production build to avoid paying
+    %% this cost at runtime.
+    SortBy = fun({func_group, #{spec := LeftName}}, {func_group, #{spec := RightName}}) ->
+        LeftName > RightName
+    end,
+    SortedFuncForms = lists:sort(SortBy, GroupedFuncForms),
+
+    {ok, [ModuleForm|lists:reverse(SortedFuncForms)]}.
+
+-spec forms(list(erlang_form()), list(rufus_form() | {func_group, context()})) -> {ok, list(erlang_form())}.
 forms(Acc, [{module, #{line := Line, spec := Name}}|T]) ->
     Form = {attribute, Line, module, Name},
     forms([Form|Acc], T);
@@ -42,6 +76,8 @@ forms(Acc, [{identifier, #{line := Line, spec := Name, type := Type}}|T]) ->
     Form = case TypeSpec of
         atom ->
             {var, Line, Name};
+        bool ->
+            {var, Line, Name};
         float ->
             {var, Line, Name};
         int ->
@@ -50,17 +86,22 @@ forms(Acc, [{identifier, #{line := Line, spec := Name, type := Type}}|T]) ->
             {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Name}]}
     end,
     forms([Form|Acc], T);
-forms(Acc, [{func, #{line := Line, spec := Spec, params := Params, exprs := Exprs}}|T]) ->
-    {ok, ParamForms} = forms([], Params),
-    {ok, GuardForms} = guard_forms([], Params),
-    {ok, ExprForms} = forms([], Exprs),
-    FunctionForms = [{clause, Line, ParamForms, GuardForms, ExprForms}],
-    Form = {function, Line, Spec, length(Params), FunctionForms},
+forms(Acc, [{func_group, #{line := Line1, spec := Spec, arity := Arity, forms := Forms}}|T]) ->
+    FuncClauses = lists:map(fun(Form) ->
+        {func, #{line := Line2, spec := Spec, params := Params, exprs := Exprs}} = Form,
+        {ok, ParamForms} = forms([], Params),
+        {ok, GuardForms} = guard_forms([], Params),
+        {ok, ExprForms} = forms([], Exprs),
+        {clause, Line2, ParamForms, GuardForms, ExprForms}
+    end, Forms),
+    Form = {function, Line1, Spec, Arity, FuncClauses},
     forms([Form|Acc], T);
 forms(Acc, [Form = {param, #{line := Line, spec := Name}}|T]) ->
     TypeSpec = rufus_form:type_spec(Form),
     ErlangForm = case TypeSpec of
         atom ->
+            {var, Line, Name};
+        bool ->
             {var, Line, Name};
         float ->
             {var, Line, Name};
@@ -92,16 +133,28 @@ forms(Acc, []) ->
 forms(Acc, Form) ->
     erlang:error(unhandled_form, [Acc, Form]).
 
-rufus_operator_to_erlang_operator('/', float) -> '/';
-rufus_operator_to_erlang_operator('/', int) -> 'div';
-rufus_operator_to_erlang_operator('%', int) -> 'rem';
-rufus_operator_to_erlang_operator('%', float) -> erlang:error(unsupported_operand_type, ['%', float]);
-rufus_operator_to_erlang_operator(Op, _) -> Op.
+%% rufus_operator_to_erlang_operator converts a Rufus operator to the Erlang
+%% equivalent.
+-spec rufus_operator_to_erlang_operator(atom(), atom()) -> atom().
+rufus_operator_to_erlang_operator('/', float) ->
+    '/';
+rufus_operator_to_erlang_operator('/', int) ->
+    'div';
+rufus_operator_to_erlang_operator('%', int) ->
+    'rem';
+rufus_operator_to_erlang_operator('%', float) ->
+    erlang:error(unsupported_operand_type, ['%', float]);
+rufus_operator_to_erlang_operator(Op, _) ->
+    Op.
 
-% guard_forms generates function guard_forms for floats and integers.
+%% guard_forms generates function guard forms for various scalar parameter
+%% types.
 -spec guard_forms(list(erlang_form()) | list(list()), list(param_form())) -> {ok, list(erlang_form())}.
 guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := atom}}}}|T]) ->
     GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_atom}}, [{var, Line, Name}]}],
+    guard_forms([GuardExpr|Acc], T);
+guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := bool}}}}|T]) ->
+    GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_boolean}}, [{var, Line, Name}]}],
     guard_forms([GuardExpr|Acc], T);
 guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := float}}}}|T]) ->
     GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_float}}, [{var, Line, Name}]}],
@@ -116,11 +169,14 @@ guard_forms(Acc, []) ->
     %% behavior?
     {ok, Acc}.
 
+%% box converts a Rufus literal to its representation in Erlang. atom, bool,
+%% float and int are all represented as scalar values in Erlang, while string is
+%% represented as an annotated {string, BinaryValue} tuple.
 -spec box(atom_lit_form() | bool_lit_form() | float_lit_form() | int_lit_form() | string_lit_form()) -> erlang3_form().
 box({atom_lit, #{line := Line, spec := Value}}) ->
     {atom, Line, Value};
 box({bool_lit, #{line := Line, spec := Value}}) ->
-    {tuple, Line, [{atom, Line, bool}, {atom, Line, Value}]};
+    {atom, Line, Value};
 box({float_lit, #{line := Line, spec := Value}}) ->
     {float, Line, Value};
 box({int_lit, #{line := Line, spec := Value}}) ->
@@ -139,23 +195,41 @@ annotate_exports(Forms) ->
 -spec annotate_exports(list(erlang_form()), list(erlang_form())) -> {ok, list(erlang_form())}.
 annotate_exports(Acc, [Form = {attribute, _Line, module, _Name}|T]) ->
     {ok, ExportForms} = make_export_forms(T),
+    %% Inject export forms directly after the module declaration.
     annotate_exports(Acc ++ ExportForms ++ [Form], T);
 annotate_exports(Acc, [Form|T]) ->
     annotate_exports([Form|Acc], T);
 annotate_exports(Acc, []) ->
     {ok, lists:reverse(Acc)}.
 
+%% make_export_forms generates export attributes for all public functions.
 -spec make_export_forms(list(erlang_form())) -> {ok, list(export_attribute_erlang_form())}.
 make_export_forms(Forms) ->
     make_export_forms([], Forms).
 
 -spec make_export_forms(list(erlang_form()), list(erlang_form())) -> {ok, list(export_attribute_erlang_form())}.
 make_export_forms(Acc, [{function, Line, Spec, Arity, _Forms}|T]) ->
-    %% TODO(jkakar) We're exporting all functions for now, to move quickly, but
-    %% we need to apply the rules from the 'Exported identifiers' RDR here.
-    Form = {attribute, Line, export, [{Spec, Arity}]},
-    make_export_forms([Form|Acc], T);
+    case is_public(Spec) of
+        true ->
+            Form = {attribute, Line, export, [{Spec, Arity}]},
+            make_export_forms([Form|Acc], T);
+        false ->
+            make_export_forms(Acc, T)
+    end;
 make_export_forms(Acc, [_Form|T]) ->
     make_export_forms(Acc, T);
 make_export_forms(Acc, []) ->
     {ok, lists:reverse(Acc)}.
+
+%% is_public returns true if Name represents a public function that should be
+%% exported from the module, otherwise it returns false.
+-spec is_public(atom()) -> boolean().
+is_public(Name) ->
+    LeadingChar = lists:nth(1, string:slice(atom_to_list(Name), 0, 1)),
+    not is_private(LeadingChar).
+
+%% is_private returns true if Name represents a private function that should be
+%% exported from the module, otherwise it returns false.
+-spec is_private(integer()) -> boolean().
+is_private(LeadingChar) ->
+    (LeadingChar >= $a) and (LeadingChar =< $z).

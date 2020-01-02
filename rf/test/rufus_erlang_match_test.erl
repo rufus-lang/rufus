@@ -36,9 +36,8 @@ forms_for_function_with_a_match_that_binds_a_bool_literal_test() ->
     Expected = [{attribute, 2, module, example},
                   {attribute, 3, export, [{'Truthy', 0}]},
                   {function, 3, 'Truthy', 0, [
-                      {clause, 3, [], [], [{match, 4, {tuple, 4, [{atom, 4, bool}, {var, 4, response}]},
-                                                      {tuple, 4, [{atom, 4, bool}, {atom, 4, true}]}},
-                                                      {tuple, 5, [{atom, 5, bool}, {var, 5, response}]}]}]}],
+                      {clause, 3, [], [], [{match, 4, {var, 4, response}, {atom, 4, true}},
+                                           {var, 5, response}]}]}],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_with_a_match_that_binds_a_float_literal_test() ->

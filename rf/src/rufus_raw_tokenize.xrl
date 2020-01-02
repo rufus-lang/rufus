@@ -5,7 +5,7 @@ Colon         = \:
 Semicolon     = \;
 UnicodeLetter = [A-Za-z]
 Digit         = [0-9]
-Letter        = ({UnicodeLetter}|"_")
+Letter        = ({UnicodeLetter}|'_')
 Whitespace    = [\s\t]
 
 Module        = module

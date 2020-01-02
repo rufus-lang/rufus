@@ -22,7 +22,7 @@ eval_a_function_with_a_match_that_binds_a_bool_literal_test() ->
     }
     ",
     {ok, example} = rufus_compile:eval(RufusText),
-    ?assertEqual({bool, true}, example:'Truthy'()).
+    ?assertEqual(true, example:'Truthy'()).
 
 eval_a_function_with_a_match_that_binds_a_float_literal_test() ->
     RufusText = "

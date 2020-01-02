@@ -53,6 +53,7 @@ eval_chain(Input, []) ->
 compile(ErlangForms) ->
     case compile:forms(ErlangForms) of
         {ok, Module, BinaryOrCode, _Warnings} ->
+            %% TODO(jkakar) We should bail when there are warnings.
             load(Module, BinaryOrCode);
         {ok, Module, BinaryOrCode} ->
             load(Module, BinaryOrCode);

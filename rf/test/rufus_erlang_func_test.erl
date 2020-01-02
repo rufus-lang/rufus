@@ -28,12 +28,10 @@ forms_for_function_returning_a_bool_literal_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
-    BoolExpr = {atom, 3, false},
-    BoxedBoolExpr = {tuple, 3, [{atom, 3, bool}, BoolExpr]},
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'False', 0}]},
-        {function, 3, 'False', 0, [{clause, 3, [], [], [BoxedBoolExpr]}]}
+        {function, 3, 'False', 0, [{clause, 3, [], [], [{atom, 3, false}]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
 
@@ -153,13 +151,14 @@ forms_for_function_taking_an_unused_bool_and_returning_a_bool_literal_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
+
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'MaybeEcho', 1}]},
-        {function, 3, 'MaybeEcho', 1, [
-            {clause, 3, [{tuple, 3, [{atom, 3, bool}, {var, 3, b}]}],
-                        [],
-                        [{tuple, 3, [{atom, 3, bool}, {atom, 3, true}]}]}]}
+        {function, 3, 'MaybeEcho', 1,
+            [{clause, 3, [{var, 3, b}],
+                         [[{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_boolean}}, [{var, 3, b}]}]],
+                         [{atom, 3, true}]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
 
@@ -252,9 +251,9 @@ forms_for_function_taking_a_bool_and_returning_a_bool_test() ->
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Echo', 1}]},
         {function, 3, 'Echo', 1,
-            [{clause, 3, [{tuple, 3, [{atom, 3, bool}, {var, 3, b}]}],
-                         [],
-                         [{tuple, 3, [{atom, 3, bool}, {var, 3, b}]}]}]}
+            [{clause, 3, [{var, 3, b}],
+                         [[{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_boolean}}, [{var, 3, b}]}]],
+                         [{var, 3, b}]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
 
@@ -309,6 +308,26 @@ forms_for_function_taking_a_string_and_returning_a_string_test() ->
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Echo', 1}]},
         {function, 3, 'Echo', 1,
+            [{clause, 3, [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}],
+                         [],
+                         [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+%% Function exports
+
+forms_for_private_functions_with_leading_lowercase_character_are_not_exported_test() ->
+    RufusText = "
+    module example
+    func echo(s string) string { s }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
+    Expected = [
+        {attribute, 2, module, example},
+        {function, 3, 'echo', 1,
             [{clause, 3, [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}],
                          [],
                          [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}]}]}
