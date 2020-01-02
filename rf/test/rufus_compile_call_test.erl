@@ -106,7 +106,6 @@ eval_with_function_call_with_one_argument_and_many_function_heads_test() ->
     RufusText = "
     module example
     func Echo(name atom) atom { name }
-    func Echo(b bool) bool { b }
     func Echo(n float) float { n }
     func Echo(n int) int { n }
     func Echo(text string) string { text }
@@ -114,7 +113,6 @@ eval_with_function_call_with_one_argument_and_many_function_heads_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertEqual(hello, example:'Echo'(hello)),
-    ?assertEqual(false, example:'Echo'(false)),
     ?assertEqual(3.14159265359, example:'Echo'(3.14159265359)),
     ?assertEqual(42, example:'Echo'(42)),
     ?assertEqual({string, <<"hello">>}, example:'Echo'({string, <<"hello">>})).

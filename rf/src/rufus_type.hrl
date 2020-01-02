@@ -52,7 +52,6 @@
 %% Expressions
 
 -type func_form() :: {func, context()}.
--type funcs_form() :: {funcs, context()}.
 -type param_form() :: {param, context()}.
 -type identifier_form() :: {identifier, context()}.
 -type binary_op_form() :: {binary_op, context()}.
@@ -69,7 +68,6 @@
       | string_lit_form()
       | module_form()
       | func_form()
-      | funcs_form()
       | param_form()
       | identifier_form()
       | type_form()
