@@ -34,7 +34,7 @@ group_forms_by_func(Forms) ->
     {ok, Globals} = rufus_form:globals(Forms),
 
     GroupBy = fun(Name, FuncForms, Acc) ->
-        {func, #{line := Line, params := Params}} = lists:nth(1, FuncForms),
+        {func, #{line := Line, params := Params}} = hd(FuncForms),
         Form = {func_group, #{line => Line, spec => Name, arity => length(Params), forms => FuncForms}},
         [Form|Acc]
     end,
@@ -225,7 +225,7 @@ make_export_forms(Acc, []) ->
 %% exported from the module, otherwise it returns false.
 -spec is_public(atom()) -> boolean().
 is_public(Name) ->
-    LeadingChar = lists:nth(1, string:slice(atom_to_list(Name), 0, 1)),
+    LeadingChar = hd(string:slice(atom_to_list(Name), 0, 1)),
     not is_private(LeadingChar).
 
 %% is_private returns true if Name represents a private function that should be
