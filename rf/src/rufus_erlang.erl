@@ -126,8 +126,6 @@ forms(Acc, [{match, #{line := Line, left := Left, right := Right}}|T]) ->
     {ok, [RightForm]} = forms([], [Right]),
     Form = {match, Line, LeftForm, RightForm},
     forms([Form|Acc], T);
-%% forms(Acc, [{func, _Context}|T]) ->
-%%     forms(Acc, T); %% no-op to satisfy Dialyzer
 forms(Acc, [{type, _Context}|T]) ->
     forms(Acc, T); %% no-op to satisfy Dialyzer
 forms(Acc, []) ->
@@ -149,7 +147,8 @@ rufus_operator_to_erlang_operator('%', float) ->
 rufus_operator_to_erlang_operator(Op, _) ->
     Op.
 
-%% guard_forms generates function guard_forms for float and integer parameters.
+%% guard_forms generates function guard forms for various scalar parameter
+%% types.
 -spec guard_forms(list(erlang_form()) | list(list()), list(param_form())) -> {ok, list(erlang_form())}.
 guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := atom}}}}|T]) ->
     GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_atom}}, [{var, Line, Name}]}],
@@ -171,8 +170,8 @@ guard_forms(Acc, []) ->
     {ok, Acc}.
 
 %% box converts a Rufus literal to its representation in Erlang. atom, bool,
-%% float and int are all represented as primitive values in Erlang, while string
-%% is represented as an annotated {string, BinaryValue} tuple.
+%% float and int are all represented as scalar values in Erlang, while string is
+%% represented as an annotated {string, BinaryValue} tuple.
 -spec box(atom_lit_form() | bool_lit_form() | float_lit_form() | int_lit_form() | string_lit_form()) -> erlang3_form().
 box({atom_lit, #{line := Line, spec := Value}}) ->
     {atom, Line, Value};
@@ -226,37 +225,11 @@ make_export_forms(Acc, []) ->
 %% exported from the module, otherwise it returns false.
 -spec is_public(atom()) -> boolean().
 is_public(Name) ->
-    LeadingChar = string:slice(atom_to_list(Name), 0, 1),
+    LeadingChar = lists:nth(1, string:slice(atom_to_list(Name), 0, 1)),
     not is_private(LeadingChar).
 
 %% is_private returns true if Name represents a private function that should be
 %% exported from the module, otherwise it returns false.
--spec is_private(string()) -> boolean().
-is_private("_") -> true;
-is_private("a") -> true;
-is_private("b") -> true;
-is_private("c") -> true;
-is_private("d") -> true;
-is_private("e") -> true;
-is_private("f") -> true;
-is_private("g") -> true;
-is_private("h") -> true;
-is_private("i") -> true;
-is_private("j") -> true;
-is_private("k") -> true;
-is_private("l") -> true;
-is_private("m") -> true;
-is_private("n") -> true;
-is_private("o") -> true;
-is_private("p") -> true;
-is_private("q") -> true;
-is_private("r") -> true;
-is_private("s") -> true;
-is_private("t") -> true;
-is_private("u") -> true;
-is_private("v") -> true;
-is_private("w") -> true;
-is_private("x") -> true;
-is_private("y") -> true;
-is_private("z") -> true;
-is_private(_)   -> false.
+-spec is_private(integer()) -> boolean().
+is_private(C) ->
+    (C >= $a) and (C =< $z).
