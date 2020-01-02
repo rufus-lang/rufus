@@ -150,20 +150,20 @@ forms_for_function_call_with_two_int_arguments_test() ->
     {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 2, module, example},
-        {attribute, 4, export, [{'Random', 0}]},
         {attribute, 3, export, [{'Sum', 2}]},
+        {attribute, 4, export, [{'Random', 0}]},
+        {function, 4, 'Random', 0,
+            [{clause, 4,
+                 [],
+                 [],
+                 [{call, 4, {atom, 4, 'Sum'}, [{integer, 4, 1}, {integer, 4, 2}]}]}]
+        },
         {function, 3, 'Sum', 2,
             [{clause, 3,
                  [{var, 3, m}, {var, 3, n}],
                  [[{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_integer}}, [{var, 3, n}]}],
                   [{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_integer}}, [{var, 3, m}]}]],
                  [{op, 3, '+', {var, 3, m}, {var, 3, n}}]}]
-        },
-        {function, 4, 'Random', 0,
-            [{clause, 4,
-                 [],
-                 [],
-                 [{call, 4, {atom, 4, 'Sum'}, [{integer, 4, 1}, {integer, 4, 2}]}]}]
         }
     ],
     ?assertEqual(Expected, ErlangForms).
@@ -180,20 +180,20 @@ forms_for_function_call_with_two_float_arguments_test() ->
     {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 2, module, example},
-        {attribute, 4, export, [{'Random', 0}]},
         {attribute, 3, export, [{'Sum', 2}]},
+        {attribute, 4, export, [{'Random', 0}]},
+        {function, 4, 'Random', 0,
+            [{clause, 4,
+                 [],
+                 [],
+                 [{call, 4, {atom, 4, 'Sum'}, [{float, 4, 1.2}, {float, 4, 2.3}]}]}]
+        },
         {function, 3, 'Sum', 2,
             [{clause, 3,
                  [{var, 3, m}, {var, 3, n}],
                  [[{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_float}}, [{var, 3, n}]}],
                   [{call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_float}}, [{var, 3, m}]}]],
                  [{op, 3, '+', {var, 3, m}, {var, 3, n}}]}]
-        },
-        {function, 4, 'Random', 0,
-            [{clause, 4,
-                 [],
-                 [],
-                 [{call, 4, {atom, 4, 'Sum'}, [{float, 4, 1.2}, {float, 4, 2.3}]}]}]
         }
     ],
     ?assertEqual(Expected, ErlangForms).

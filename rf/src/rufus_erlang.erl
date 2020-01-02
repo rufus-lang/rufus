@@ -13,7 +13,7 @@
 %% compile:forms/1 and then loaded with code:load_binary/3.
 -spec forms(list(rufus_form())) -> {ok, list(erlang_form())}.
 forms(RufusForms) ->
-    {ok, GroupedRufusForms} = group_forms_by_func([], RufusForms),
+    {ok, GroupedRufusForms} = group_forms_by_func(RufusForms),
     {ok, ErlangForms} = forms([], GroupedRufusForms),
     annotate_exports(ErlangForms).
 
@@ -23,13 +23,39 @@ forms(RufusForms) ->
 %% for func expressions of the same name and arity into a list of Rufus forms
 %% with a single func expression for each name/arity pair, with form details
 %% represented as a list instead of a context map.
--spec group_forms_by_func(list(), list(rufus_form())) -> list(rufus_form()).
-group_forms_by_func(Acc, [H|T]) ->
-    group_forms_by_func([H|Acc], T);
-group_forms_by_func(Acc, []) ->
-    {ok, lists:reverse(Acc)}.
+-spec group_forms_by_func(list(rufus_form())) -> {ok, list(rufus_form() | {func_group, context()})}.
+group_forms_by_func(Forms) ->
+    {value, ModuleForm} = lists:search(fun match_module_form/1, Forms),
+    {ok, Globals} = rufus_form:globals(Forms),
+    {ok, group_forms_by_func(ModuleForm, Globals)}.
 
--spec forms(list(erlang_form()), list(rufus_form())) -> {ok, list(erlang_form())}.
+-spec group_forms_by_func(module_form(), globals()) -> list(rufus_form() | {func_group, context()}).
+group_forms_by_func(ModuleForm, Globals) ->
+    GroupBy = fun(Name, FuncForms, Acc) ->
+        {func, #{line := Line, params := Params}} = lists:nth(1, FuncForms),
+        Form = {func_group, #{line => Line, spec => Name, arity => length(Params), forms => FuncForms}},
+        [Form|Acc]
+    end,
+    GroupedFuncForms = maps:fold(GroupBy, [], Globals),
+
+    %% We can't rely on the order of func forms in GroupedFuncForms because the
+    %% order of key/value pairs in Globals is undefined, so we sort here to
+    %% ensure stable ordering. This is only needed to ensure that tests are
+    %% reliable, and could be disabled in a production build to avoid paying
+    %% this cost at runtime.
+    SortBy = fun({func_group, #{spec := LeftName}}, {func_group, #{spec := RightName}}) ->
+        LeftName > RightName
+    end,
+    SortedFuncForms = lists:sort(SortBy, GroupedFuncForms),
+
+    [ModuleForm|lists:reverse(SortedFuncForms)].
+
+match_module_form({module, _Context}) ->
+    true;
+match_module_form(_) ->
+    false.
+
+-spec forms(list(erlang_form()), list(rufus_form() | {func_group, context()})) -> {ok, list(erlang_form())}.
 forms(Acc, [{module, #{line := Line, spec := Name}}|T]) ->
     Form = {attribute, Line, module, Name},
     forms([Form|Acc], T);
@@ -63,12 +89,15 @@ forms(Acc, [{identifier, #{line := Line, spec := Name, type := Type}}|T]) ->
             {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Name}]}
     end,
     forms([Form|Acc], T);
-forms(Acc, [{func, #{line := Line, spec := Spec, params := Params, exprs := Exprs}}|T]) ->
-    {ok, ParamForms} = forms([], Params),
-    {ok, GuardForms} = guard_forms([], Params),
-    {ok, ExprForms} = forms([], Exprs),
-    FunctionForms = [{clause, Line, ParamForms, GuardForms, ExprForms}],
-    Form = {function, Line, Spec, length(Params), FunctionForms},
+forms(Acc, [{func_group, #{line := Line1, spec := Spec, arity := Arity, forms := Forms}}|T]) ->
+    FuncClauses = lists:map(fun(Form) ->
+        {func, #{line := Line2, spec := Spec, params := Params, exprs := Exprs}} = Form,
+        {ok, ParamForms} = forms([], Params),
+        {ok, GuardForms} = guard_forms([], Params),
+        {ok, ExprForms} = forms([], Exprs),
+        {clause, Line2, ParamForms, GuardForms, ExprForms}
+    end, Forms),
+    Form = {function, Line1, Spec, Arity, FuncClauses},
     forms([Form|Acc], T);
 forms(Acc, [Form = {param, #{line := Line, spec := Name}}|T]) ->
     TypeSpec = rufus_form:type_spec(Form),
@@ -100,6 +129,8 @@ forms(Acc, [{match, #{line := Line, left := Left, right := Right}}|T]) ->
     {ok, [RightForm]} = forms([], [Right]),
     Form = {match, Line, LeftForm, RightForm},
     forms([Form|Acc], T);
+%% forms(Acc, [{func, _Context}|T]) ->
+%%     forms(Acc, T); %% no-op to satisfy Dialyzer
 forms(Acc, [{type, _Context}|T]) ->
     forms(Acc, T); %% no-op to satisfy Dialyzer
 forms(Acc, []) ->

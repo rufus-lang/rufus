@@ -117,4 +117,4 @@ eval_with_function_call_with_one_argument_and_many_function_heads_test() ->
     ?assertEqual(false, example:'Echo'(false)),
     ?assertEqual(3.14159265359, example:'Echo'(3.14159265359)),
     ?assertEqual(42, example:'Echo'(42)),
-    ?assertEqual(<<"hello">>, example:'Echo'({string, <<"hello">>})).
+    ?assertEqual({string, <<"hello">>}, example:'Echo'({string, <<"hello">>})).
