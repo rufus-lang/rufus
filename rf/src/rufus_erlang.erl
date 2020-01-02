@@ -231,5 +231,5 @@ is_public(Name) ->
 %% is_private returns true if Name represents a private function that should be
 %% exported from the module, otherwise it returns false.
 -spec is_private(integer()) -> boolean().
-is_private(C) ->
-    (C >= $a) and (C =< $z).
+is_private(LeadingChar) ->
+    (LeadingChar >= $a) and (LeadingChar =< $z).
