@@ -25,7 +25,12 @@ forms(RufusForms) ->
 %% represented as a list instead of a context map.
 -spec group_forms_by_func(list(rufus_form())) -> {ok, list(rufus_form() | {func_group, context()})}.
 group_forms_by_func(Forms) ->
-    {value, ModuleForm} = lists:search(fun match_module_form/1, Forms),
+    MatchModuleForm = fun({module, _Context}) ->
+        true;
+    (_) ->
+        false
+    end,
+    {value, ModuleForm} = lists:search(MatchModuleForm, Forms),
     {ok, Globals} = rufus_form:globals(Forms),
 
     GroupBy = fun(Name, FuncForms, Acc) ->
@@ -46,11 +51,6 @@ group_forms_by_func(Forms) ->
     SortedFuncForms = lists:sort(SortBy, GroupedFuncForms),
 
     {ok, [ModuleForm|lists:reverse(SortedFuncForms)]}.
-
-match_module_form({module, _Context}) ->
-    true;
-match_module_form(_) ->
-    false.
 
 -spec forms(list(erlang_form()), list(rufus_form() | {func_group, context()})) -> {ok, list(erlang_form())}.
 forms(Acc, [{module, #{line := Line, spec := Name}}|T]) ->
