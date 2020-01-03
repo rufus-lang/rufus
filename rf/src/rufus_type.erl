@@ -64,20 +64,9 @@ resolve_type(Globals, Form = {call, #{spec := Spec, args := Args}}) ->
     end;
 resolve_type(Globals, Form = {binary_op, #{op := Op, left := Left, right := Right}}) ->
     {ok, LeftType} = resolve_type(Globals, Left),
-    LeftTypeSpec = rufus_form:type_spec(LeftType),
     {ok, RightType} = resolve_type(Globals, Right),
-    RightTypeSpec = rufus_form:type_spec(RightType),
-    case supported_type(Op, LeftTypeSpec) and supported_type(Op, RightTypeSpec) of
-        true ->
-            case supported_type_pair(LeftTypeSpec, RightTypeSpec) of
-                true ->
-                    {ok, LeftType};
-                false ->
-                    throw({error, unmatched_operand_type, #{form => Form}})
-            end;
-        false ->
-            throw({error, unsupported_operand_type, #{form => Form}})
-    end.
+    Resolve = make_binary_op_resolver(Op, LeftType, RightType),
+    Resolve(Form).
 
 %% call form helpers
 
@@ -108,13 +97,61 @@ find_matching_funcs(Funcs, Args) ->
 
 %% binary_op form helpers
 
--spec supported_type(atom(), float | int | atom()) -> boolean().
-supported_type('%', float) -> false;
-supported_type(_, float) -> true;
-supported_type(_, int) -> true;
-supported_type(_, _) -> false.
+-spec make_binary_op_resolver(operator(), type_form(), type_form()) -> fun((rufus_form()) -> {ok, type_form()} | no_return()).
+make_binary_op_resolver(Op, LeftType, RightType) ->
+    LeftTypeSpec = rufus_form:type_spec(LeftType),
+    RightTypeSpec = rufus_form:type_spec(RightType),
+    fun (Form) ->
+        SupportedType = case Op of
+            '+'   -> fun supported_arithmetic_type/2;
+            '-'   -> fun supported_arithmetic_type/2;
+            '*'   -> fun supported_arithmetic_type/2;
+            '/'   -> fun supported_arithmetic_type/2;
+            '%'   -> fun supported_arithmetic_type/2;
+            'or'  -> fun supported_boolean_type/2;
+            'xor' -> fun supported_boolean_type/2;
+            'and' -> fun supported_boolean_type/2
+        end,
 
--spec supported_type_pair(float | int | atom(), float | int | atom()) -> boolean().
-supported_type_pair(float, float) -> true;
-supported_type_pair(int, int) -> true;
-supported_type_pair(_, _) -> false.
+        SupportedTypePair = case Op of
+            '+'   -> fun supported_arithmetic_type_pair/2;
+            '-'   -> fun supported_arithmetic_type_pair/2;
+            '*'   -> fun supported_arithmetic_type_pair/2;
+            '/'   -> fun supported_arithmetic_type_pair/2;
+            '%'   -> fun supported_arithmetic_type_pair/2;
+            'or'  -> fun supported_boolean_type_pair/2;
+            'xor' -> fun supported_boolean_type_pair/2;
+            'and' -> fun supported_boolean_type_pair/2
+        end,
+
+        case SupportedType(Op, LeftTypeSpec) and SupportedType(Op, RightTypeSpec) of
+            true ->
+                case SupportedTypePair(LeftTypeSpec, RightTypeSpec) of
+                    true ->
+                        {ok, LeftType};
+                    false ->
+                        throw({error, unmatched_operand_type, #{form => Form}})
+                end;
+            false ->
+                throw({error, unsupported_operand_type, #{form => Form}})
+        end
+    end.
+
+-spec supported_arithmetic_type(atom(), float | int | atom()) -> boolean().
+supported_arithmetic_type('%', float) -> false;
+supported_arithmetic_type(_, float) -> true;
+supported_arithmetic_type(_, int) -> true;
+supported_arithmetic_type(_, _) -> false.
+
+-spec supported_arithmetic_type_pair(float | int | atom(), float | int | atom()) -> boolean().
+supported_arithmetic_type_pair(float, float) -> true;
+supported_arithmetic_type_pair(int, int) -> true;
+supported_arithmetic_type_pair(_, _) -> false.
+
+-spec supported_boolean_type(atom(), bool | atom()) -> boolean().
+supported_boolean_type(_, bool) -> true;
+supported_boolean_type(_, _) -> false.
+
+-spec supported_boolean_type_pair(bool | atom(), bool | atom()) -> boolean().
+supported_boolean_type_pair(bool, bool) -> true;
+supported_boolean_type_pair(_, _) -> false.
