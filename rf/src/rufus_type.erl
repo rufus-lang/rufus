@@ -62,11 +62,8 @@ resolve_type(Globals, Form = {call, #{spec := Spec, args := Args}}) ->
                     {ok, rufus_form:return_type(Func)}
             end
     end;
-resolve_type(Globals, Form = {binary_op, #{op := Op, left := Left, right := Right}}) ->
-    {ok, LeftType} = resolve_type(Globals, Left),
-    {ok, RightType} = resolve_type(Globals, Right),
-    Resolve = make_binary_op_resolver(Op, LeftType, RightType),
-    Resolve(Form).
+resolve_type(Globals, Form = {binary_op, _Context}) ->
+    resolve_binary_op_type(Globals, Form).
 
 %% call form helpers
 
@@ -97,44 +94,44 @@ find_matching_funcs(Funcs, Args) ->
 
 %% binary_op form helpers
 
--spec make_binary_op_resolver(operator(), type_form(), type_form()) -> fun((rufus_form()) -> {ok, type_form()} | no_return()).
-make_binary_op_resolver(Op, LeftType, RightType) ->
+-spec resolve_binary_op_type(globals(), binary_op_form()) -> {ok, type_form()} | no_return().
+resolve_binary_op_type(Globals, Form = {binary_op, #{op := Op, left := Left, right := Right}}) ->
+    {ok, LeftType} = resolve_type(Globals, Left),
+    {ok, RightType} = resolve_type(Globals, Right),
     LeftTypeSpec = rufus_form:type_spec(LeftType),
     RightTypeSpec = rufus_form:type_spec(RightType),
-    fun (Form) ->
-        SupportedType = case Op of
-            '+'   -> fun supported_arithmetic_type/2;
-            '-'   -> fun supported_arithmetic_type/2;
-            '*'   -> fun supported_arithmetic_type/2;
-            '/'   -> fun supported_arithmetic_type/2;
-            '%'   -> fun supported_arithmetic_type/2;
-            'or'  -> fun supported_boolean_type/2;
-            'xor' -> fun supported_boolean_type/2;
-            'and' -> fun supported_boolean_type/2
-        end,
+    SupportedType = case Op of
+        '+'   -> fun supported_arithmetic_type/2;
+        '-'   -> fun supported_arithmetic_type/2;
+        '*'   -> fun supported_arithmetic_type/2;
+        '/'   -> fun supported_arithmetic_type/2;
+        '%'   -> fun supported_arithmetic_type/2;
+        'or'  -> fun supported_boolean_type/2;
+        'xor' -> fun supported_boolean_type/2;
+        'and' -> fun supported_boolean_type/2
+    end,
 
-        SupportedTypePair = case Op of
-            '+'   -> fun supported_arithmetic_type_pair/2;
-            '-'   -> fun supported_arithmetic_type_pair/2;
-            '*'   -> fun supported_arithmetic_type_pair/2;
-            '/'   -> fun supported_arithmetic_type_pair/2;
-            '%'   -> fun supported_arithmetic_type_pair/2;
-            'or'  -> fun supported_boolean_type_pair/2;
-            'xor' -> fun supported_boolean_type_pair/2;
-            'and' -> fun supported_boolean_type_pair/2
-        end,
+    SupportedTypePair = case Op of
+        '+'   -> fun supported_arithmetic_type_pair/2;
+        '-'   -> fun supported_arithmetic_type_pair/2;
+        '*'   -> fun supported_arithmetic_type_pair/2;
+        '/'   -> fun supported_arithmetic_type_pair/2;
+        '%'   -> fun supported_arithmetic_type_pair/2;
+        'or'  -> fun supported_boolean_type_pair/2;
+        'xor' -> fun supported_boolean_type_pair/2;
+        'and' -> fun supported_boolean_type_pair/2
+    end,
 
-        case SupportedType(Op, LeftTypeSpec) and SupportedType(Op, RightTypeSpec) of
-            true ->
-                case SupportedTypePair(LeftTypeSpec, RightTypeSpec) of
-                    true ->
-                        {ok, LeftType};
-                    false ->
-                        throw({error, unmatched_operand_type, #{form => Form}})
-                end;
-            false ->
-                throw({error, unsupported_operand_type, #{form => Form}})
-        end
+    case SupportedType(Op, LeftTypeSpec) and SupportedType(Op, RightTypeSpec) of
+        true ->
+            case SupportedTypePair(LeftTypeSpec, RightTypeSpec) of
+                true ->
+                    {ok, LeftType};
+                false ->
+                    throw({error, unmatched_operand_type, #{form => Form}})
+            end;
+        false ->
+            throw({error, unsupported_operand_type, #{form => Form}})
     end.
 
 -spec supported_arithmetic_type(atom(), float | int | atom()) -> boolean().
