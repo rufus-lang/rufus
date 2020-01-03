@@ -100,26 +100,15 @@ resolve_binary_op_type(Globals, Form = {binary_op, #{op := Op, left := Left, rig
     {ok, RightType} = resolve_type(Globals, Right),
     LeftTypeSpec = rufus_form:type_spec(LeftType),
     RightTypeSpec = rufus_form:type_spec(RightType),
-    SupportedType = case Op of
-        '+'   -> fun supported_arithmetic_type/2;
-        '-'   -> fun supported_arithmetic_type/2;
-        '*'   -> fun supported_arithmetic_type/2;
-        '/'   -> fun supported_arithmetic_type/2;
-        '%'   -> fun supported_arithmetic_type/2;
-        'or'  -> fun supported_boolean_type/2;
-        'xor' -> fun supported_boolean_type/2;
-        'and' -> fun supported_boolean_type/2
-    end,
-
-    SupportedTypePair = case Op of
-        '+'   -> fun supported_arithmetic_type_pair/2;
-        '-'   -> fun supported_arithmetic_type_pair/2;
-        '*'   -> fun supported_arithmetic_type_pair/2;
-        '/'   -> fun supported_arithmetic_type_pair/2;
-        '%'   -> fun supported_arithmetic_type_pair/2;
-        'or'  -> fun supported_boolean_type_pair/2;
-        'xor' -> fun supported_boolean_type_pair/2;
-        'and' -> fun supported_boolean_type_pair/2
+    {SupportedType, SupportedTypePair} = case Op of
+        '+'   -> {fun supported_arithmetic_type/2, fun supported_arithmetic_type_pair/2};
+        '-'   -> {fun supported_arithmetic_type/2, fun supported_arithmetic_type_pair/2};
+        '*'   -> {fun supported_arithmetic_type/2, fun supported_arithmetic_type_pair/2};
+        '/'   -> {fun supported_arithmetic_type/2, fun supported_arithmetic_type_pair/2};
+        '%'   -> {fun supported_arithmetic_type/2, fun supported_arithmetic_type_pair/2};
+        'or'  -> {fun supported_boolean_type/2,    fun supported_boolean_type_pair/2};
+        'xor' -> {fun supported_boolean_type/2,    fun supported_boolean_type_pair/2};
+        'and' -> {fun supported_boolean_type/2,    fun supported_boolean_type_pair/2}
     end,
 
     case SupportedType(Op, LeftTypeSpec) and SupportedType(Op, RightTypeSpec) of
