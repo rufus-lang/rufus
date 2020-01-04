@@ -108,7 +108,7 @@ push_local(Locals, {_FormType, #{spec := Spec, type := Type}}) ->
 %% exclusively ints or exclusively floats. Inferred type information is added to
 %% every `binary_op` form. Return values:
 %% - `{ok, AnnotatedForms}` if no issues are found. Every `binary_op` form is
-%%   annotated with a inferred type annotation.
+%%   annotated with a type annotation.
 %% - `{error, unmatched_operand_type, Form}` is thrown if an `int` operand is
 %%   mixed with a `float` operand. `Form` contains the illegal operands.
 %% - `{error, unsupported_operand_type, Form}` is thrown if a type other than an
