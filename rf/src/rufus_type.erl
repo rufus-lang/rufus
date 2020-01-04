@@ -125,7 +125,7 @@ resolve_binary_op_type(Globals, Form = {binary_op, #{op := Op, left := Left, rig
 
 %% allow_type_with_arithmetic_binary_op returns true if the specified type may
 %% be used with the specified arithmetic operator, otherwise false.
--spec allow_type_with_arithmetic_binary_op(atom(), float | int | atom()) -> boolean().
+-spec allow_type_with_arithmetic_binary_op(arithmetic_operator(), float | int | atom()) -> boolean().
 allow_type_with_arithmetic_binary_op('%', float) -> false;
 allow_type_with_arithmetic_binary_op(_, float) -> true;
 allow_type_with_arithmetic_binary_op(_, int) -> true;
@@ -141,7 +141,7 @@ allow_type_pair_with_arithmetic_binary_op(_, _) -> false.
 
 %% allow_type_with_boolean_binary_op returns true if the specified type may be
 %% used with the specified boolean operator, otherwise false.
--spec allow_type_with_boolean_binary_op(atom(), bool | atom()) -> boolean().
+-spec allow_type_with_boolean_binary_op(boolean_operator(), bool | atom()) -> boolean().
 allow_type_with_boolean_binary_op(_, bool) -> true;
 allow_type_with_boolean_binary_op(_, _) -> false.
 
