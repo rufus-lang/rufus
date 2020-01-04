@@ -169,8 +169,7 @@ typecheck_and_annotate_arithmetic_binary_op_with_strings_test() ->
                                                                type => {type, #{line => 3,
                                                                                 source => inferred,
                                                                                 spec => string}}}}}}},
-    {error, Reason, Data} = rufus_expr:typecheck_and_annotate(Forms),
-    ?assertEqual(unsupported_operand_type, Reason),
+    {error, unsupported_operand_type, Data} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, Data).
 
 %% arithmetic binary_op expressions with the remainder operator
