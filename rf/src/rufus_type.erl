@@ -62,22 +62,8 @@ resolve_type(Globals, Form = {call, #{spec := Spec, args := Args}}) ->
                     {ok, rufus_form:return_type(Func)}
             end
     end;
-resolve_type(Globals, Form = {binary_op, #{op := Op, left := Left, right := Right}}) ->
-    {ok, LeftType} = resolve_type(Globals, Left),
-    LeftTypeSpec = rufus_form:type_spec(LeftType),
-    {ok, RightType} = resolve_type(Globals, Right),
-    RightTypeSpec = rufus_form:type_spec(RightType),
-    case supported_type(Op, LeftTypeSpec) and supported_type(Op, RightTypeSpec) of
-        true ->
-            case supported_type_pair(LeftTypeSpec, RightTypeSpec) of
-                true ->
-                    {ok, LeftType};
-                false ->
-                    throw({error, unmatched_operand_type, #{form => Form}})
-            end;
-        false ->
-            throw({error, unsupported_operand_type, #{form => Form}})
-    end.
+resolve_type(Globals, Form = {binary_op, _Context}) ->
+    resolve_binary_op_type(Globals, Form).
 
 %% call form helpers
 
@@ -108,13 +94,60 @@ find_matching_funcs(Funcs, Args) ->
 
 %% binary_op form helpers
 
--spec supported_type(atom(), float | int | atom()) -> boolean().
-supported_type('%', float) -> false;
-supported_type(_, float) -> true;
-supported_type(_, int) -> true;
-supported_type(_, _) -> false.
+-spec resolve_binary_op_type(globals(), binary_op_form()) -> {ok, type_form()} | no_return().
+resolve_binary_op_type(Globals, Form = {binary_op, #{op := Op, left := Left, right := Right}}) ->
+    {ok, LeftType} = resolve_type(Globals, Left),
+    {ok, RightType} = resolve_type(Globals, Right),
+    LeftTypeSpec = rufus_form:type_spec(LeftType),
+    RightTypeSpec = rufus_form:type_spec(RightType),
+    {AllowType, AllowTypePair} = case Op of
+        '+'   -> {fun allow_type_with_arithmetic_binary_op/2, fun allow_type_pair_with_arithmetic_binary_op/2};
+        '-'   -> {fun allow_type_with_arithmetic_binary_op/2, fun allow_type_pair_with_arithmetic_binary_op/2};
+        '*'   -> {fun allow_type_with_arithmetic_binary_op/2, fun allow_type_pair_with_arithmetic_binary_op/2};
+        '/'   -> {fun allow_type_with_arithmetic_binary_op/2, fun allow_type_pair_with_arithmetic_binary_op/2};
+        '%'   -> {fun allow_type_with_arithmetic_binary_op/2, fun allow_type_pair_with_arithmetic_binary_op/2};
+        'or'  -> {fun allow_type_with_boolean_binary_op/2,    fun allow_type_pair_with_boolean_binary_op/2};
+        'xor' -> {fun allow_type_with_boolean_binary_op/2,    fun allow_type_pair_with_boolean_binary_op/2};
+        'and' -> {fun allow_type_with_boolean_binary_op/2,    fun allow_type_pair_with_boolean_binary_op/2}
+    end,
 
--spec supported_type_pair(float | int | atom(), float | int | atom()) -> boolean().
-supported_type_pair(float, float) -> true;
-supported_type_pair(int, int) -> true;
-supported_type_pair(_, _) -> false.
+    case AllowType(Op, LeftTypeSpec) and AllowType(Op, RightTypeSpec) of
+        true ->
+            case AllowTypePair(LeftTypeSpec, RightTypeSpec) of
+                true ->
+                    {ok, LeftType};
+                false ->
+                    throw({error, unmatched_operand_type, #{form => Form}})
+            end;
+        false ->
+            throw({error, unsupported_operand_type, #{form => Form}})
+    end.
+
+%% allow_type_with_arithmetic_binary_op returns true if the specified type may
+%% be used with the specified arithmetic operator, otherwise false.
+-spec allow_type_with_arithmetic_binary_op(arithmetic_operator(), float | int | atom()) -> boolean().
+allow_type_with_arithmetic_binary_op('%', float) -> false;
+allow_type_with_arithmetic_binary_op(_, float) -> true;
+allow_type_with_arithmetic_binary_op(_, int) -> true;
+allow_type_with_arithmetic_binary_op(_, _) -> false.
+
+%% allow_type_pair_with_arithmetic_binary_op returns true if the specified pair
+%% of types are either both of type float, or both of type int, which are the
+%% only types that may be used with an arithmetic operator.
+-spec allow_type_pair_with_arithmetic_binary_op(float | int | atom(), float | int | atom()) -> boolean().
+allow_type_pair_with_arithmetic_binary_op(float, float) -> true;
+allow_type_pair_with_arithmetic_binary_op(int, int) -> true;
+allow_type_pair_with_arithmetic_binary_op(_, _) -> false.
+
+%% allow_type_with_boolean_binary_op returns true if the specified type may be
+%% used with the specified boolean operator, otherwise false.
+-spec allow_type_with_boolean_binary_op(boolean_operator(), bool | atom()) -> boolean().
+allow_type_with_boolean_binary_op(_, bool) -> true;
+allow_type_with_boolean_binary_op(_, _) -> false.
+
+%% allow_type_pair_with_boolean_binary_op returns true if the specified pair of
+%% types are both of type bool, which is the only type that may be used with a
+%% boolean operator.
+-spec allow_type_pair_with_boolean_binary_op(bool | atom(), bool | atom()) -> boolean().
+allow_type_pair_with_boolean_binary_op(bool, bool) -> true;
+allow_type_pair_with_boolean_binary_op(_, _) -> false.

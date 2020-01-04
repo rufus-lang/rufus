@@ -49,6 +49,11 @@
        | int
        | string.
 
+%% Operators
+
+-type arithmetic_operator() :: '+' | '-' | '*' | '/' | '%'.
+-type boolean_operator() :: 'or' | 'xor' | 'and'.
+
 %% Expressions
 
 -type func_form() :: {func, context()}.
