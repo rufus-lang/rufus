@@ -144,6 +144,10 @@ rufus_operator_to_erlang_operator('%', int) ->
     'rem';
 rufus_operator_to_erlang_operator('%', float) ->
     erlang:error(unsupported_operand_type, ['%', float]);
+rufus_operator_to_erlang_operator('and', bool) ->
+    'andalso';
+rufus_operator_to_erlang_operator('or', bool) ->
+    'orelse';
 rufus_operator_to_erlang_operator(Op, _) ->
     Op.
 
