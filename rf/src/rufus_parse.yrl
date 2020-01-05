@@ -14,7 +14,7 @@ Terminals
     '{' '}' '(' ')' ','
     '+' '-' '*' '/' '%'
     ';' '='
-    'and' 'or' 'xor'
+    'and' 'or'
     module import
     func identifier
     atom atom_lit
@@ -40,7 +40,6 @@ Left 100 '/'.
 Left 100 '%'.
 Left 100 'and'.
 Left 80  'or'.
-Left 80  'xor'.
 Left 50  '='.
 
 %%
@@ -92,7 +91,6 @@ binary_op -> expr '/' expr       : rufus_form:make_binary_op('/', '$1', '$3', li
 binary_op -> expr '%' expr       : rufus_form:make_binary_op('%', '$1', '$3', line('$2')).
 binary_op -> expr 'and' expr     : rufus_form:make_binary_op('and', '$1', '$3', line('$2')).
 binary_op -> expr 'or' expr      : rufus_form:make_binary_op('or', '$1', '$3', line('$2')).
-binary_op -> expr 'xor' expr     : rufus_form:make_binary_op('xor', '$1', '$3', line('$2')).
 
 match -> expr '=' expr           : rufus_form:make_match('$1', '$3', line('$2')).
 

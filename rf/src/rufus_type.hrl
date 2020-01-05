@@ -52,7 +52,7 @@
 %% Operators
 
 -type arithmetic_operator() :: '+' | '-' | '*' | '/' | '%'.
--type boolean_operator() :: 'or' | 'xor' | 'and'.
+-type boolean_operator() :: 'and' | 'or'.
 
 %% Expressions
 

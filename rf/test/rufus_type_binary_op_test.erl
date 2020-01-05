@@ -53,7 +53,7 @@ resolve_boolean_binary_op_with_bools_test() ->
         Form = rufus_form:make_binary_op(Op, Left, Right, 9),
         Expected = rufus_form:make_inferred_type(bool, 9),
         ?assertEqual({ok, Expected}, rufus_type:resolve(#{}, Form))
-    end, ['and', 'or', 'xor']).
+    end, ['and', 'or']).
 
 resolve_boolean_unsupported_operand_type_error_test() ->
     lists:map(fun(Op) ->
@@ -61,7 +61,7 @@ resolve_boolean_unsupported_operand_type_error_test() ->
         Right = rufus_form:make_literal(bool, true, 9),
         Form = rufus_form:make_binary_op(Op, Left, Right, 9),
         ?assertEqual({error, unsupported_operand_type, #{form => Form}}, rufus_type:resolve(#{}, Form))
-    end, ['and', 'or', 'xor']).
+    end, ['and', 'or']).
 
 resolve_boolean_nested_unsupported_operand_type_error_test() ->
     lists:map(fun(Op) ->
@@ -71,4 +71,4 @@ resolve_boolean_nested_unsupported_operand_type_error_test() ->
         RightForm = rufus_form:make_literal(int, 23, 9),
         Form = rufus_form:make_binary_op(Op, LeftForm, RightForm, 9),
         ?assertEqual({error, unsupported_operand_type, #{form => Form}}, rufus_type:resolve(#{}, Form))
-    end, ['and', 'or', 'xor']).
+    end, ['and', 'or']).
