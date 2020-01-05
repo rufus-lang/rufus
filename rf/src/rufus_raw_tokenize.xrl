@@ -39,7 +39,6 @@ Divide        = \/
 Remainder     = \%
 And           = and
 Or            = or
-XOr           = xor
 
 Identifier    = {Letter}({Letter}|{Digit})*
 
@@ -81,7 +80,6 @@ Rules.
 {Remainder}     : {token, {'%', TokenLine}}.
 {And}           : {token, {'and', TokenLine}}.
 {Or}            : {token, {'or', TokenLine}}.
-{XOr}           : {token, {'xor', TokenLine}}.
 
 {Identifier}    : {token, {identifier, TokenLine, TokenChars}}.
 

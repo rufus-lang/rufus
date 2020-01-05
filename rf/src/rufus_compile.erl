@@ -9,7 +9,7 @@
 
 -ifdef(EUNIT).
 -export([compile/1]).
--export([eval_chain/2]).
+-export([eval_stages/2]).
 -endif.
 
 %% API
@@ -27,24 +27,24 @@ eval(RufusText) ->
         fun rufus_erlang:forms/1,
         fun compile/1
     ],
-    eval_chain(RufusText, CompilationStages).
+    eval_stages(RufusText, CompilationStages).
 
 %% Private API
 
-%% eval_chain runs each compilation stage H as H(Input), in order. Each
+%% eval_stages runs each compilation stage H as H(Input), in order. Each
 %% compilation stage must return {ok, Output} on success. Any other response is
 %% treated as an error. The output from one compilation stage is provided as
 %% input to the next. Processing stops when a compilation stage returns an
 %% error.
--spec eval_chain(any(), list(fun((_) -> any()))) -> ok_tuple() | error_tuple() | error_triple().
-eval_chain(Input, [H|T]) ->
+-spec eval_stages(any(), list(fun((_) -> any()))) -> ok_tuple() | error_tuple() | error_triple().
+eval_stages(Input, [H|T]) ->
     case H(Input) of
         {ok, Forms} ->
-            eval_chain(Forms, T);
+            eval_stages(Forms, T);
         Error ->
             Error
     end;
-eval_chain(Input, []) ->
+eval_stages(Input, []) ->
     {ok, Input}.
 
 %% compile uses the Erlang compiler to compile Erlang abstract forms and loads

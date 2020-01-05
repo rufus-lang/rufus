@@ -137,3 +137,43 @@ eval_with_function_returning_a_remainder_of_three_int_literals_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertEqual(4, example:'Four'()).
+
+%% Arity-0 functions returning the result of a boolean operation
+
+eval_with_function_returning_the_result_of_an_and_operation_test() ->
+    RufusText = "
+    module example
+    func Falsy() bool { true and false }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(false, example:'Falsy'()).
+
+eval_with_function_returning_the_result_of_an_and_operation_with_a_call_operand_test() ->
+    RufusText = "
+    module example
+    func False() bool { false }
+    func Falsy() bool { true and False() }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(false, example:'Falsy'()).
+
+eval_with_function_returning_the_result_of_an_or_operation_test() ->
+    RufusText = "
+    module example
+    func Truthy() bool { true or false }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(true, example:'Truthy'()).
+
+eval_with_function_returning_the_result_of_an_or_operation_with_a_call_operand_test() ->
+    RufusText = "
+    module example
+    func True() bool { true }
+    func Truthy() bool { True() or false }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(true, example:'Truthy'()).

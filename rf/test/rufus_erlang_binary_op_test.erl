@@ -210,6 +210,8 @@ forms_for_function_returning_a_division_of_float_literals_test() ->
     ],
     ?assertEqual(Expected, ErlangForms).
 
+%% Arity-0 functions returning a remainder after dividing literal values
+
 forms_for_function_returning_a_remainder_of_int_literals_test() ->
     RufusText = "
     module example
@@ -241,5 +243,78 @@ forms_for_function_returning_a_remainder_of_three_int_literals_test() ->
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Four', 0}]},
         {function, 3, 'Four', 0, [{clause, 3, [], [], [BinaryOpExpr]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+%% Arity-0 functions returning the result of a boolean operation
+
+forms_for_function_returning_a_boolean_from_an_and_operation_test() ->
+    RufusText = "
+    module example
+    func Falsy() bool { true and false }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    BinaryOpExpr = {op, 3, 'andalso', {atom, 3, true}, {atom, 3, false}},
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Falsy', 0}]},
+        {function, 3, 'Falsy', 0, [{clause, 3, [], [], [BinaryOpExpr]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_returning_a_boolean_from_an_and_operation_with_a_call_operand_test() ->
+    RufusText = "
+    module example
+    func False() bool { false }
+    func Falsy() bool { true and False() }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    BinaryOpExpr = {op, 4, 'andalso',  {atom, 4, true}, {call, 4, {atom, 4, 'False'}, []}},
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 4, export, [{'Falsy', 0}]},
+        {attribute, 3, export, [{'False', 0}]},
+        {function, 3, 'False', 0, [{clause, 3, [], [], [{atom, 3, false}]}]},
+        {function, 4, 'Falsy', 0, [{clause, 4, [], [], [BinaryOpExpr]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_returning_a_boolean_from_an_or_operation_test() ->
+    RufusText = "
+    module example
+    func Truthy() bool { true or false }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    BinaryOpExpr = {op, 3, 'orelse', {atom, 3, true}, {atom, 3, false}},
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Truthy', 0}]},
+        {function, 3, 'Truthy', 0, [{clause, 3, [], [], [BinaryOpExpr]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_returning_a_boolean_from_an_or_operation_with_a_call_test() ->
+    RufusText = "
+    module example
+    func True() bool { true }
+    func Truthy() bool { True() or false }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
+    BinaryOpExpr = {op, 4, 'orelse', {call, 4, {atom, 4, 'True'}, []}, {atom, 4, false}},
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 4, export, [{'Truthy', 0}]},
+        {attribute, 3, export, [{'True', 0}]},
+        {function, 3, 'True', 0, [{clause, 3, [], [], [{atom, 3, true}]}]},
+        {function, 4, 'Truthy', 0, [{clause, 4, [], [], [BinaryOpExpr]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
