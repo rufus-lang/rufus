@@ -318,3 +318,21 @@ forms_for_function_returning_a_boolean_from_an_or_operation_with_a_call_test() -
         {function, 4, 'Truthy', 0, [{clause, 4, [], [], [BinaryOpExpr]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_returning_a_boolean_from_a_nested_boolean_operation_test() ->
+    RufusText = "
+    module example
+    func Truthy() bool { true and true or false }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
+    AndBinaryOp = {op, 3, 'andalso', {atom, 3, true}, {atom, 3, true}},
+    OrBinaryOp = {op, 3, 'orelse', AndBinaryOp, {atom, 3, false}},
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Truthy', 0}]},
+        {function, 3, 'Truthy', 0, [{clause, 3, [], [], [OrBinaryOp]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).

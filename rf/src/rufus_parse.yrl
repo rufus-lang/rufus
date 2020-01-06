@@ -38,7 +38,7 @@ Left 100 '-'.
 Left 100 '*'.
 Left 100 '/'.
 Left 100 '%'.
-Left 100 'and'.
+Left 90  'and'.
 Left 80  'or'.
 Left 50  '='.
 

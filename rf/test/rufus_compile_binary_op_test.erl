@@ -177,3 +177,14 @@ eval_with_function_returning_the_result_of_an_or_operation_with_a_call_operand_t
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertEqual(true, example:'Truthy'()).
+
+forms_for_function_returning_a_boolean_from_a_nested_boolean_operation_test() ->
+    RufusText = "
+    module example
+    func Falsy() bool { false or false and true }
+    func Truthy() bool { true and true or false }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(false, example:'Falsy'()),
+    ?assertEqual(true, example:'Truthy'()).
