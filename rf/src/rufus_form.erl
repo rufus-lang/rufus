@@ -17,6 +17,7 @@
     make_module/2,
     make_param/3,
     make_type/2,
+    make_type/3,
     return_type/1,
     source/1,
     spec/1,
@@ -112,17 +113,29 @@ make_import(Spec, Line) ->
 %% to indicate that the type has been inferred by the compiler.
 -spec make_inferred_type(type_spec(), integer()) -> {type, #{spec => atom(), source => type_source(), line => integer()}}.
 make_inferred_type(Spec, Line) ->
-    make_type(Spec, inferred, Line).
+    make_type_with_source(Spec, inferred, Line).
 
 %% make_type returns a type form with 'rufus_text' as the 'source' value, to
 %% indicate that the type came from source code.
 -spec make_type(atom(), integer()) -> {type, #{spec => atom(), source => type_source(), line => integer()}}.
 make_type(Spec, Line) ->
-    make_type(Spec, rufus_text, Line).
+    make_type_with_source(Spec, rufus_text, Line).
 
--spec make_type(type_spec(), type_source(), integer()) -> type_form().
-make_type(Spec, Source, Line) ->
+%% make_type returns a list type form with 'rufus_text' as the 'source' value,
+%% to indicate that the type came from source code. The type form has a
+%% 'collection' key with value 'list', and a 'spec' key with a value that
+%% defines the element type.
+-spec make_type(list, {type, context()}, integer()) -> {type, #{collection => list, spec => atom(), source => type_source(), line => integer()}}.
+make_type(list, {type, #{spec := ElementSpec}}, Line) ->
+    make_type_with_source(list, ElementSpec, rufus_text, Line).
+
+-spec make_type_with_source(type_spec(), type_source(), integer()) -> type_form().
+make_type_with_source(Spec, Source, Line) ->
     {type, #{spec => Spec, source => Source, line => Line}}.
+
+-spec make_type_with_source(collection_type_spec(), type_spec(), type_source(), integer()) -> type_form().
+make_type_with_source(list, ElementSpec, Source, Line) ->
+    {type, #{collection => list, spec => ElementSpec, source => Source, line => Line}}.
 
 %% Function form builder API
 
@@ -151,7 +164,10 @@ make_identifier(Spec, Line) ->
 %% Literal form builder API
 
 %% make_literal returns a form for a literal value.
--spec make_literal(literal(), atom(), term()) -> literal_form().
+-spec make_literal(list | literal(), atom() | list(), term()) -> literal_form().
+make_literal(list, Elements, Line) ->
+    {list_lit, #{elements => Elements,
+                 line => Line}};
 make_literal(TypeSpec, Spec, Line) ->
     FormSpec = list_to_atom(unicode:characters_to_list([atom_to_list(TypeSpec), "_lit"])),
     {FormSpec, #{spec => Spec,

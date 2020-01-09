@@ -19,6 +19,8 @@ FloatType     = float
 IntType       = int
 StringType    = string
 
+ListType      = list
+
 AtomLiteral   = {Colon}({UnicodeLetter}+({Digit}|{UnicodeLetter})?|\'({Digit}|{UnicodeLetter}|{Whitespace})+\')
 BoolLiteral   = (true|false)
 Exponent      = (e|E)?(\+|\-)?{Digit}+
@@ -26,10 +28,12 @@ FloatLiteral  = (\+|\-)?{Digit}+\.{Digit}+{Exponent}?
 IntLiteral    = (\+|\-)?{Digit}+
 StringLiteral = \"({Digit}|{UnicodeLetter}|{Whitespace})+\"
 
-LeftParen     = \(
-RightParen    = \)
 LeftBrace     = \{
 RightBrace    = \}
+LeftBracket   = \[
+RightBracket  = \]
+LeftParen     = \(
+RightParen    = \)
 Comma         = ,
 Match         = =
 Plus          = \+
@@ -59,6 +63,8 @@ Rules.
 {IntType}       : {token, {int, TokenLine}}.
 {StringType}    : {token, {string, TokenLine}}.
 
+{ListType}      : {token, {list, TokenLine}}.
+
 {AtomLiteral}   : A = trim_atom_markup(TokenChars, TokenLen),
                   {token, {atom_lit, TokenLine, A}}.
 {BoolLiteral}   : {token, {bool_lit, TokenLine, list_to_atom(TokenChars)}}.
@@ -67,10 +73,12 @@ Rules.
 {StringLiteral} : S = trim_quotes(TokenChars, TokenLen),
                   {token, {string_lit, TokenLine, S}}.
 
-{LeftParen}     : {token, {'(', TokenLine}}.
-{RightParen}    : {token, {')', TokenLine}}.
 {LeftBrace}     : {token, {'{', TokenLine}}.
 {RightBrace}    : {token, {'}', TokenLine}}.
+{LeftBracket}   : {token, {'[', TokenLine}}.
+{RightBracket}  : {token, {']', TokenLine}}.
+{LeftParen}     : {token, {'(', TokenLine}}.
+{RightParen}    : {token, {')', TokenLine}}.
 {Comma}         : {token, {',', TokenLine}}.
 {Match}         : {token, {'=', TokenLine}}.
 {Plus}          : {token, {'+', TokenLine}}.
