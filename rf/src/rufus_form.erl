@@ -125,17 +125,24 @@ make_type(Spec, Line) ->
 %% to indicate that the type came from source code. The type form has a
 %% 'collection' key with value 'list', and a 'spec' key with a value that
 %% defines the element type.
--spec make_type(list, {type, context()}, integer()) -> {type, #{collection => list, spec => atom(), source => type_source(), line => integer()}}.
-make_type(list, {type, #{spec := ElementSpec}}, Line) ->
-    make_type_with_source(list, ElementSpec, rufus_text, Line).
+%% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
+%% -spec make_type(list, {type, context()}, integer()) -> {type, #{collection_type => list, element_type => type_spec(), spec => atom(), source => type_source(), line => integer()}}.
+make_type(list, ElementType, Line) ->
+    make_type_with_source(list, ElementType, rufus_text, Line).
 
 -spec make_type_with_source(type_spec(), type_source(), integer()) -> type_form().
 make_type_with_source(Spec, Source, Line) ->
     {type, #{spec => Spec, source => Source, line => Line}}.
 
--spec make_type_with_source(collection_type_spec(), type_spec(), type_source(), integer()) -> type_form().
-make_type_with_source(list, ElementSpec, Source, Line) ->
-    {type, #{collection => list, spec => ElementSpec, source => Source, line => Line}}.
+%% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
+%% -spec make_type_with_source(list, type_spec(), type_source(), integer()) -> type_form().
+make_type_with_source(list, ElementType = {type, #{spec := Spec}}, Source, Line) ->
+    TypeSpec = list_to_atom(unicode:characters_to_list(["list[", atom_to_list(Spec), "]"])),
+    {type, #{collection_type => list,
+             element_type => ElementType,
+             spec => TypeSpec,
+             source => Source,
+             line => Line}}.
 
 %% Function form builder API
 
