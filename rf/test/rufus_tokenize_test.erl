@@ -253,3 +253,57 @@ string_with_newline_in_expression_after_reserved_word_test() ->
         {atom_lit, 2, rufus},
         {';', 2}
     ], Tokens).
+
+%% Lists
+
+string_with_list_test() ->
+    RufusText = "func Numbers() list[int] { [42, 17, 3] }",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    ?assertEqual([
+        {func, 1},
+        {identifier, 1, "Numbers"},
+        {'(', 1},
+        {')', 1},
+        {list, 1},
+        {'[', 1},
+        {int, 1},
+        {']', 1},
+        {'{', 1},
+        {'[', 1},
+        {int_lit, 1, 42},
+        {',', 1},
+        {int_lit, 1, 17},
+        {',', 1},
+        {int_lit, 1, 3},
+        {']', 1},
+        {';', 1},
+        {'}', 1}
+    ], Tokens).
+
+string_with_list_and_newlines_test() ->
+    RufusText = "
+    func Numbers() list[int] {
+        [42, 17, 3]
+    }
+",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    ?assertEqual([
+        {func, 2},
+        {identifier, 2, "Numbers"},
+        {'(', 2},
+        {')', 2},
+        {list, 2},
+        {'[', 2},
+        {int, 2},
+        {']', 2},
+        {'{', 2},
+        {'[', 3},
+        {int_lit, 3, 42},
+        {',', 3},
+        {int_lit, 3, 17},
+        {',', 3},
+        {int_lit, 3, 3},
+        {']', 3},
+        {';', 3},
+        {'}', 4}
+    ], Tokens).
