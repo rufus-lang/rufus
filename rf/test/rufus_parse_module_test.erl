@@ -5,7 +5,6 @@
 parse_module_test() ->
     {ok, Tokens} = rufus_tokenize:string("module example"),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    ?assertEqual([
-        {module, #{line => 1,
-                   spec => example}}
-    ], Forms).
+    Expected = [{module, #{line => 1,
+                           spec => example}}],
+    ?assertEqual(Expected, Forms).
