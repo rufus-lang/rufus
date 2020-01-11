@@ -19,6 +19,7 @@
 
 %% Types
 
+-type collection_type_spec() :: list.
 -type type_spec() :: atom().
 -type type_form() :: {type, context()}.
 -type type_source() :: inferred | rufus_text.
@@ -34,13 +35,15 @@
 -type float_lit_form() :: {float_lit, context()}.
 -type int_lit_form() :: {int_lit, context()}.
 -type string_lit_form() :: {string_lit, context()}.
+-type list_lit_form() :: {list_lit, context()}.
 
 -type literal_form() ::
         atom_lit_form()
       | bool_lit_form()
       | float_lit_form()
       | int_lit_form()
-      | string_lit_form().
+      | string_lit_form()
+      | list_lit_form().
 
 - type literal() ::
          atom
