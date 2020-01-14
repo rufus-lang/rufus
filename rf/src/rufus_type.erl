@@ -173,5 +173,4 @@ resolve_list_lit_type(Globals, {list_lit, #{elements := Elements, line := Line}}
     end, Elements),
     ElementType = hd(ElementTypes),
     Type = rufus_form:make_type(list, ElementType, Line),
-    io:format("~p~n", [Type]),
     {ok, Type}.
