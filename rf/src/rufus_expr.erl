@@ -200,7 +200,7 @@ typecheck_and_annotate_identifier(Locals, Form = {identifier, Context = #{spec :
             {ok, AnnotatedForm2}
     end.
 
-%% list_list helpers
+%% list_lit helpers
 
 typecheck_and_annotate_list_lit(Globals, Locals, Form = {list_lit, Context = #{elements := Elements}}) ->
     {ok, NewLocals, AnnotatedElements} = typecheck_and_annotate([], Globals, Locals, Elements),
