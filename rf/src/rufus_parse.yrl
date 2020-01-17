@@ -59,7 +59,6 @@ type -> bool                     : rufus_form:make_type(bool, line('$1')).
 type -> float                    : rufus_form:make_type(float, line('$1')).
 type -> int                      : rufus_form:make_type(int, line('$1')).
 type -> string                   : rufus_form:make_type(string, line('$1')).
-
 type -> list '[' type ']'        : rufus_form:make_type(list, '$3', line('$1')).
 
 func_decl -> func identifier '(' params ')' type block :
@@ -86,7 +85,8 @@ expr  -> identifier              : rufus_form:make_identifier(list_to_atom(text(
 expr  -> binary_op               : '$1'.
 expr  -> match                   : '$1'.
 expr  -> identifier '(' args ')' : rufus_form:make_call(list_to_atom(text('$1')), '$3', line('$1')).
-expr  -> '[' args ']'            : rufus_form:make_literal(list, '$2', line('$1')).
+expr  -> list '[' type ']' '{' args '}' :
+                                   rufus_form:make_literal(list, '$3', '$6', line('$1')).
 
 binary_op -> expr '+' expr       : rufus_form:make_binary_op('+', '$1', '$3', line('$2')).
 binary_op -> expr '-' expr       : rufus_form:make_binary_op('-', '$1', '$3', line('$2')).

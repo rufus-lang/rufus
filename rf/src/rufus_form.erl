@@ -13,6 +13,7 @@
     make_import/2,
     make_inferred_type/2,
     make_literal/3,
+    make_literal/4,
     make_match/3,
     make_module/2,
     make_param/3,
@@ -171,14 +172,17 @@ make_identifier(Spec, Line) ->
 %% Literal form builder API
 
 %% make_literal returns a form for a literal value.
--spec make_literal(list | literal(), atom() | list(), term()) -> literal_form().
-make_literal(list, Elements, Line) ->
-    {list_lit, #{elements => Elements,
-                 line => Line}};
 make_literal(TypeSpec, Spec, Line) ->
     FormSpec = list_to_atom(unicode:characters_to_list([atom_to_list(TypeSpec), "_lit"])),
     {FormSpec, #{spec => Spec,
                  type => make_inferred_type(TypeSpec, Line),
+                 line => Line}}.
+
+-spec make_literal(list | literal(), type_form(), atom() | list(), term()) -> literal_form().
+make_literal(list, ElementType, Elements, Line) ->
+    TypeForm = make_type(list, ElementType, Line),
+    {list_lit, #{elements => Elements,
+                 type => TypeForm,
                  line => Line}}.
 
 %% binary_op form builder API

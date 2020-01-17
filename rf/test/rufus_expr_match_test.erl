@@ -219,6 +219,49 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_string_literal_test() 
                          spec => 'Ping'}}],
     ?assertEqual(Expected, AnnotatedForms).
 
+typecheck_and_annotate_function_with_a_match_that_binds_a_list_of_int_literal_test() ->
+    RufusText = "
+    module example
+    func FortyTwo() list[int] {
+        response = list[int]{42}
+        response
+    }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{match, #{left => {identifier, #{line => 4,
+                                                                    locals => #{response => {type, #{line => 4,
+                                                                                                     source => inferred,
+                                                                                                     spec => int}}},
+                                                                    spec => response,
+                                                                    type => {type, #{line => 4,
+                                                                                     source => inferred,
+                                                                                     spec => int}}}},
+                                             line => 4,
+                                             right => {int_lit, #{line => 4,
+                                                                  spec => 42,
+                                                                  type => {type, #{line => 4,
+                                                                                   source => inferred,
+                                                                                   spec => int}}}},
+                                             type => {type, #{line => 4,
+                                                              source => inferred,
+                                                              spec => int}}}},
+                                   {identifier, #{line => 5,
+                                                  spec => response,
+                                                  type => {type, #{line => 4,
+                                                                   source => inferred,
+                                                                   spec => int}}}}],
+                         line => 3,
+                         params => [],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => int}},
+                         spec => 'FortyTwo'}}],
+    ?assertEqual(Expected, AnnotatedForms).
+
 typecheck_and_annotate_function_with_a_match_that_has_left_and_right_operands_with_mismatched_types_test() ->
     RufusText = "
     module example

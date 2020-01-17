@@ -166,6 +166,10 @@ resolve_identifier_type(Globals, Form = {identifier, #{spec := Spec, locals := L
 %% list_lit form helpers
 
 -spec resolve_list_lit_type(globals(), list_lit_form()) -> {ok, type_form()} | no_return().
+resolve_list_lit_type(_Globals, {list_lit, #{elements := [], line := Line}}) ->
+    ElementType = rufus_form:make_inferred_type(any, Line),
+    Type = rufus_form:make_type(list, ElementType, Line),
+    {ok, Type};
 resolve_list_lit_type(Globals, {list_lit, #{elements := Elements, line := Line}}) ->
     ElementTypes = lists:map(fun(Form) ->
         {ok, Type} = resolve_type(Globals, Form),
