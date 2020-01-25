@@ -3,7 +3,7 @@
 -include_lib("eunit/include/eunit.hrl").
 
 parse_function_returning_empty_list_of_ints_test() ->
-    RufusText = "func EmptyNumbers() list[int] { [] }",
+    RufusText = "func EmptyNumbers() list[int] { list[int]{} }",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [{func, #{exprs => [{list_lit, #{elements => [],
@@ -21,7 +21,7 @@ parse_function_returning_empty_list_of_ints_test() ->
     ?assertEqual(Expected, Forms).
 
 parse_function_returning_list_of_int_with_one_element_test() ->
-    RufusText = "func OneNumber() list[int] { [10] }",
+    RufusText = "func OneNumber() list[int] { list[int]{10} }",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [{func, #{exprs => [{list_lit, #{elements => [{int_lit, #{line => 1,
@@ -43,7 +43,7 @@ parse_function_returning_list_of_int_with_one_element_test() ->
     ?assertEqual(Expected, Forms).
 
 parse_function_returning_list_of_many_ints_test() ->
-    RufusText = "func ManyNumbers() list[int] { [10, 2] }",
+    RufusText = "func ManyNumbers() list[int] { list[int]{10, 2} }",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [{func, #{exprs => [{list_lit, #{elements => [{int_lit, #{line => 1,
@@ -70,7 +70,7 @@ parse_function_returning_list_of_many_ints_test() ->
     ?assertEqual(Expected, Forms).
 
 parse_function_returning_nested_list_of_list_of_ints_test() ->
-    RufusText = "func NestedNumbers() list[list[int]] { [[1], [2, 3]] }",
+    RufusText = "func NestedNumbers() list[list[int]] { list[list[int]]{list[int]{1}, list[int]{2, 3}} }",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [{func, #{exprs => [{list_lit, #{elements => [{list_lit, #{elements => [{int_lit, #{line => 1,

@@ -18,8 +18,7 @@ BoolType      = bool
 FloatType     = float
 IntType       = int
 StringType    = string
-
-ListType      = list
+ListType      = list\[Identifier\]
 
 AtomLiteral   = {Colon}({UnicodeLetter}+({Digit}|{UnicodeLetter})?|\'({Digit}|{UnicodeLetter}|{Whitespace})+\')
 BoolLiteral   = (true|false)
@@ -62,7 +61,6 @@ Rules.
 {FloatType}     : {token, {float, TokenLine}}.
 {IntType}       : {token, {int, TokenLine}}.
 {StringType}    : {token, {string, TokenLine}}.
-
 {ListType}      : {token, {list, TokenLine}}.
 
 {AtomLiteral}   : A = trim_atom_markup(TokenChars, TokenLen),
