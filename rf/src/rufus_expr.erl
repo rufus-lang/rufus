@@ -169,23 +169,18 @@ typecheck_and_annotate_func(Globals, Locals, {func, Context = #{params := Params
 -spec typecheck_func_return_type(globals(), func_form()) -> ok | no_return().
 typecheck_func_return_type(Globals, {func, #{return_type := ReturnType, exprs := Exprs}}) ->
     LastExpr = lists:last(Exprs),
-    case LastExpr of
-        {list_lit, #{elements := []}} ->
-            ok;
-        _ ->
-            case rufus_type:resolve(Globals, LastExpr) of
-                {ok, {type, #{spec := ActualSpec}}} ->
-                    {type, #{spec := ExpectedSpec}} = ReturnType,
-                    case ExpectedSpec == ActualSpec of
-                        true ->
-                            ok;
-                        false ->
-                            Data = #{return_type => ReturnType, expr => LastExpr},
-                            throw({error, unmatched_return_type, Data})
-                    end;
-                Error ->
-                    throw(Error)
-            end
+    case rufus_type:resolve(Globals, LastExpr) of
+        {ok, {type, #{spec := ActualSpec}}} ->
+            {type, #{spec := ExpectedSpec}} = ReturnType,
+            case ExpectedSpec == ActualSpec of
+                true ->
+                    ok;
+                false ->
+                    Data = #{return_type => ReturnType, expr => LastExpr},
+                    throw({error, unmatched_return_type, Data})
+            end;
+        Error ->
+            throw(Error)
     end.
 
 %% identifier helpers
