@@ -217,7 +217,7 @@ typecheck_and_annotate_for_function_taking_a_string_and_returning_a_string_liter
 typecheck_and_annotate_for_function_taking_a_list_and_returning_a_list_literal_test() ->
     RufusText = "
     module example
-    func MaybeEcho(n list[int]) list[int] { [42] }
+    func MaybeEcho(n list[int]) list[int] { list[int]{42} }
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
@@ -231,10 +231,9 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_a_list_literal_t
                                                                                           spec => int}}}}],
                                                 line => 3,
                                                 type => {type, #{collection_type => list,
-                                                                 element_type =>
-                                                                     {type, #{line => 3,
-                                                                              source => inferred,
-                                                                              spec => int}},
+                                                                 element_type => {type, #{line => 3,
+                                                                                          source => rufus_text,
+                                                                                          spec => int}},
                                                                  line => 3,
                                                                  source => rufus_text,
                                                                  spec => 'list[int]'}}}}],
