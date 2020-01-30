@@ -13,6 +13,7 @@
     make_import/2,
     make_inferred_type/2,
     make_literal/3,
+    make_literal/4,
     make_match/3,
     make_module/2,
     make_param/3,
@@ -142,6 +143,13 @@ make_type_with_source(list, ElementType = {type, #{spec := Spec}}, Source, Line)
              element_type => ElementType,
              spec => TypeSpec,
              source => Source,
+             line => Line}};
+make_type_with_source(list_lit, ElementType = {type, #{spec := Spec}}, Source, Line) ->
+    TypeSpec = list_to_atom(unicode:characters_to_list(["list[", atom_to_list(Spec), "]"])),
+    {type, #{collection_type => list,
+             element_type => ElementType,
+             spec => TypeSpec,
+             source => Source,
              line => Line}}.
 
 %% Function form builder API
@@ -171,14 +179,18 @@ make_identifier(Spec, Line) ->
 %% Literal form builder API
 
 %% make_literal returns a form for a literal value.
--spec make_literal(list | literal(), atom() | list(), term()) -> literal_form().
-make_literal(list, Elements, Line) ->
-    {list_lit, #{elements => Elements,
-                 line => Line}};
+-spec make_literal(literal(), atom(), term()) -> literal_form().
 make_literal(TypeSpec, Spec, Line) ->
     FormSpec = list_to_atom(unicode:characters_to_list([atom_to_list(TypeSpec), "_lit"])),
     {FormSpec, #{spec => Spec,
                  type => make_inferred_type(TypeSpec, Line),
+                 line => Line}}.
+
+-spec make_literal(list, type_form(), list(), term()) -> literal_form().
+make_literal(list, Type, Elements, Line) ->
+    ListType = make_type_with_source(list_lit, Type, rufus_text, Line),
+    {list_lit, #{elements => Elements,
+                 type => ListType,
                  line => Line}}.
 
 %% binary_op form builder API

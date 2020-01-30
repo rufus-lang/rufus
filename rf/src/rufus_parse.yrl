@@ -70,12 +70,13 @@ params -> '$empty'               : [].
 param -> identifier type ','     : rufus_form:make_param(list_to_atom(text('$1')), '$2', line('$1')).
 param -> identifier type         : rufus_form:make_param(list_to_atom(text('$1')), '$2', line('$1')).
 
-block -> '{' exprs '}'           : '$2'.
+block -> '{' exprs '}' ';'       : '$2'.
 
 args  -> expr ',' args           : ['$1'|'$3'].
 args  -> expr                    : ['$1'].
 args  -> '$empty'                : [].
 exprs -> expr ';' exprs          : ['$1'|'$3'].
+exprs -> expr                    : ['$1'].
 exprs -> '$empty'                : [].
 expr  -> atom_lit                : rufus_form:make_literal(atom, text('$1'), line('$1')).
 expr  -> bool_lit                : rufus_form:make_literal(bool, text('$1'), line('$1')).
@@ -86,8 +87,8 @@ expr  -> identifier              : rufus_form:make_identifier(list_to_atom(text(
 expr  -> binary_op               : '$1'.
 expr  -> match                   : '$1'.
 expr  -> identifier '(' args ')' : rufus_form:make_call(list_to_atom(text('$1')), '$3', line('$1')).
-expr  -> '[' args ']'            : rufus_form:make_literal(list, '$2', line('$1')).
-
+expr  -> list '[' type ']' '{' args '}' :
+                                   rufus_form:make_literal(list, '$3', '$6', line('$1')).
 binary_op -> expr '+' expr       : rufus_form:make_binary_op('+', '$1', '$3', line('$2')).
 binary_op -> expr '-' expr       : rufus_form:make_binary_op('-', '$1', '$3', line('$2')).
 binary_op -> expr '*' expr       : rufus_form:make_binary_op('*', '$1', '$3', line('$2')).
