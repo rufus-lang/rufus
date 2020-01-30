@@ -53,47 +53,45 @@ insert_semicolons(Tokens) ->
     {ok, SemicolonTerminatedTokens}.
 
 %% insert_semicolons inserts a semicolon when the following tokens are the last
-%% on a line. The `eol` token is always discarded.
+%% on a line or the last in the source text. The `eol` token is always discarded.
 insert_semicolons(Acc, {identifier, TokenLine, _TokenChars}, [Token = {eol, _TokenLine}|T]) ->
     insert_semicolons(terminate(Acc, TokenLine), Token, T);
+insert_semicolons(Acc, {identifier, TokenLine, _TokenChars}, []) ->
+    insert_semicolons(terminate(Acc, TokenLine), undefined, []);
 insert_semicolons(Acc, {atom_lit, TokenLine, _TokenChars}, [Token = {eol, _TokenLine}|T]) ->
     insert_semicolons(terminate(Acc, TokenLine), Token, T);
+insert_semicolons(Acc, {atom_lit, TokenLine, _TokenChars}, []) ->
+    insert_semicolons(terminate(Acc, TokenLine), undefined, []);
 insert_semicolons(Acc, {bool_lit, TokenLine, _TokenChars}, [Token = {eol, _TokenLine}|T]) ->
     insert_semicolons(terminate(Acc, TokenLine), Token, T);
+insert_semicolons(Acc, {bool_lit, TokenLine, _TokenChars}, []) ->
+    insert_semicolons(terminate(Acc, TokenLine), undefined, []);
 insert_semicolons(Acc, {float_lit, TokenLine, _TokenChars}, [Token = {eol, _TokenLine}|T]) ->
     insert_semicolons(terminate(Acc, TokenLine), Token, T);
+insert_semicolons(Acc, {float_lit, TokenLine, _TokenChars}, []) ->
+    insert_semicolons(terminate(Acc, TokenLine), undefined, []);
 insert_semicolons(Acc, {int_lit, TokenLine, _TokenChars}, [Token = {eol, _TokenLine}|T]) ->
     insert_semicolons(terminate(Acc, TokenLine), Token, T);
+insert_semicolons(Acc, {int_lit, TokenLine, _TokenChars}, []) ->
+    insert_semicolons(terminate(Acc, TokenLine), undefined, []);
 insert_semicolons(Acc, {string_lit, TokenLine, _TokenChars}, [Token = {eol, _TokenLine}|T]) ->
     insert_semicolons(terminate(Acc, TokenLine), Token, T);
+insert_semicolons(Acc, {string_lit, TokenLine, _TokenChars}, []) ->
+    insert_semicolons(terminate(Acc, TokenLine), undefined, []);
 insert_semicolons(Acc, {')', TokenLine}, [Token = {eol, _TokenLine}|T]) ->
     insert_semicolons(terminate(Acc, TokenLine), Token, T);
+insert_semicolons(Acc, {')', TokenLine}, []) ->
+    insert_semicolons(terminate(Acc, TokenLine), undefined, []);
 insert_semicolons(Acc, {'}', TokenLine}, [Token = {eol, _TokenLine}|T]) ->
     insert_semicolons(terminate(Acc, TokenLine), Token, T);
+insert_semicolons(Acc, {'}', TokenLine}, []) ->
+    insert_semicolons(terminate(Acc, TokenLine), undefined, []);
 %% insert_semicolons discards `eol` tokens.
 insert_semicolons(Acc, _LastToken, [Token = {eol, _TokenLine}|T]) ->
     insert_semicolons(Acc, Token, T);
 %% insert_semicolons keeps all other tokens.
 insert_semicolons(Acc, _LastToken, [Token|T]) ->
     insert_semicolons([Token|Acc], Token, T);
-%% insert_semicolons inserts a semicolon when the following tokens are the last
-%% in the source text.
-insert_semicolons(Acc, {identifier, TokenLine, _TokenChars}, []) ->
-    insert_semicolons(terminate(Acc, TokenLine), undefined, []);
-insert_semicolons(Acc, {atom_lit, TokenLine, _TokenChars}, []) ->
-    insert_semicolons(terminate(Acc, TokenLine), undefined, []);
-insert_semicolons(Acc, {bool_lit, TokenLine, _TokenChars}, []) ->
-    insert_semicolons(terminate(Acc, TokenLine), undefined, []);
-insert_semicolons(Acc, {float_lit, TokenLine, _TokenChars}, []) ->
-    insert_semicolons(terminate(Acc, TokenLine), undefined, []);
-insert_semicolons(Acc, {int_lit, TokenLine, _TokenChars}, []) ->
-    insert_semicolons(terminate(Acc, TokenLine), undefined, []);
-insert_semicolons(Acc, {string_lit, TokenLine, _TokenChars}, []) ->
-    insert_semicolons(terminate(Acc, TokenLine), undefined, []);
-insert_semicolons(Acc, {')', TokenLine}, []) ->
-    insert_semicolons(terminate(Acc, TokenLine), undefined, []);
-insert_semicolons(Acc, {'}', TokenLine}, []) ->
-    insert_semicolons(terminate(Acc, TokenLine), undefined, []);
 %% insert_semicolons terminates when all tokens have been processed.
 insert_semicolons(Acc, _LastToken, []) ->
     lists:reverse(Acc).
