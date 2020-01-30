@@ -14,5 +14,4 @@ resolve_list_with_one_element_test() ->
     IntTypeForm = rufus_form:make_type(int, 3),
     Form = rufus_form:make_literal(list, IntTypeForm, [Element], 3),
     Expected = rufus_form:make_type(list, IntTypeForm, 3),
-    io:format("Test Form => ~p~n", [Form]),
     ?assertEqual({ok, Expected}, rufus_type:resolve(Globals, Form)).

@@ -5,7 +5,6 @@
 parse_function_returning_empty_list_of_ints_test() ->
     RufusText = "func EmptyNumbers() list[int] { list[int]{} }",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
-    io:format("Tokens =>~n~n~p~n", [Tokens]),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [{func, #{exprs => [{list_lit, #{elements => [],
                                                 line => 1,
