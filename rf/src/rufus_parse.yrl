@@ -70,12 +70,13 @@ params -> '$empty'               : [].
 param -> identifier type ','     : rufus_form:make_param(list_to_atom(text('$1')), '$2', line('$1')).
 param -> identifier type         : rufus_form:make_param(list_to_atom(text('$1')), '$2', line('$1')).
 
-block -> '{' exprs '}'           : '$2'.
+block -> '{' exprs '}' ';'       : '$2'.
 
 args  -> expr ',' args           : ['$1'|'$3'].
 args  -> expr                    : ['$1'].
 args  -> '$empty'                : [].
 exprs -> expr ';' exprs          : ['$1'|'$3'].
+exprs -> expr                    : ['$1'].
 exprs -> '$empty'                : [].
 expr  -> atom_lit                : rufus_form:make_literal(atom, text('$1'), line('$1')).
 expr  -> bool_lit                : rufus_form:make_literal(bool, text('$1'), line('$1')).

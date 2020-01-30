@@ -13,12 +13,14 @@ Import        = import
 Const         = const
 Func          = func
 
+List          = list
+
 AtomType      = atom
 BoolType      = bool
 FloatType     = float
 IntType       = int
 StringType    = string
-ListType      = list\[Identifier\]
+ListType      = {List}\[Identifier\]
 
 AtomLiteral   = {Colon}({UnicodeLetter}+({Digit}|{UnicodeLetter})?|\'({Digit}|{UnicodeLetter}|{Whitespace})+\')
 BoolLiteral   = (true|false)
@@ -55,6 +57,8 @@ Rules.
 {Import}        : {token, {import, TokenLine}}.
 {Const}         : {token, {const, TokenLine}}.
 {Func}          : {token, {func, TokenLine}}.
+
+{List}          : {token, {list, TokenLine}}.
 
 {AtomType}      : {token, {atom, TokenLine}}.
 {BoolType}      : {token, {bool, TokenLine}}.

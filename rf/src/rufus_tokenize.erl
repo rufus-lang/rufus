@@ -20,8 +20,8 @@
 
 %% API
 
-%% string tokenizes RufusText and inserts expression terminators based on a set
-%% of rules. Return values:
+%% string tokenizes RufusText and inserts semicolon expression terminators based
+%% on a set of rules. Return values:
 %% - `{ok, Tokens}` with `Tokens` as a list of tokens, if tokenization is
 %%   successful.
 %% - `{error, Reason}` if an error occurs.
@@ -68,12 +68,8 @@ insert_semicolons(Acc, {string_lit, TokenLine, _TokenChars}, [Token = {eol, _Tok
     insert_semicolons(terminate(Acc, TokenLine), Token, T);
 insert_semicolons(Acc, {')', TokenLine}, [Token = {eol, _TokenLine}|T]) ->
     insert_semicolons(terminate(Acc, TokenLine), Token, T);
-insert_semicolons(Acc, {_TokenType, TokenLine}, [Token = {'}', _TokenLine}|[{eol, _TokenLine}|T]]) ->
-    Acc1 = terminate(Acc, TokenLine),
-    insert_semicolons([Token|Acc1], Token, T);
-insert_semicolons(Acc, {_TokenType, TokenLine, _TokenChars}, [Token = {'}', _TokenLine}|[{eol, _TokenLine}|T]]) ->
-    Acc1 = terminate(Acc, TokenLine),
-    insert_semicolons([Token|Acc1], Token, T);
+insert_semicolons(Acc, {'}', TokenLine}, [Token = {eol, _TokenLine}|T]) ->
+    insert_semicolons(terminate(Acc, TokenLine), Token, T);
 %% insert_semicolons discards `eol` tokens.
 insert_semicolons(Acc, _LastToken, [Token = {eol, _TokenLine}|T]) ->
     insert_semicolons(Acc, Token, T);
