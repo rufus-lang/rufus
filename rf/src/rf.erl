@@ -105,6 +105,34 @@ run("help", ["debug:erlang-forms"]) ->
     io:format("abstract forms.~n"),
     io:format("~n"),
     0;
+run("help", ["debug:parse"]) ->
+    io:format("Usage:~n"),
+    io:format("~n"),
+    io:format("    rf debug:parse FILE~n"),
+    io:format("~n"),
+    io:format("Parse Rufus source code from a file and print it to the screen as Rufus~n"),
+    io:format("abstract forms.~n"),
+    io:format("~n"),
+    0;
+run("help", ["debug:rufus-forms"]) ->
+    io:format("Usage:~n"),
+    io:format("~n"),
+    io:format("    rf debug:rufus-forms FILE~n"),
+    io:format("~n"),
+    io:format("Read Rufus source code from a file and print it to the screen as Rufus~n"),
+    io:format("abstract forms.~n"),
+    io:format("~n"),
+    0;
+run("help", ["debug:tokenize"]) ->
+    io:format("Usage:~n"),
+    io:format("~n"),
+    io:format("    rf debug:tokenize FILE~n"),
+    io:format("~n"),
+    io:format("Scan Rufus source code from a file and print tokens to the screen.~n"),
+    io:format("~n"),
+    0;
+run("help", ["version"]) ->
+    run("version", undefined);
 run("help", Args) ->
     help(Args);
 run(Command, Args) ->
@@ -123,6 +151,7 @@ help(_Args) ->
     io:format("    compile             Compile source code and then run it and print its output~n"),
     io:format("    debug:erlang-forms  Print Erlang source code from a file as abstract forms~n"),
     io:format("    debug:parse         Parse source code and print parse forms~n"),
+    io:format("    debug:rufus-forms   Print Rufus source code from a file as abstract forms~n"),
     io:format("    debug:tokenize      Scan source code and print parse tokens~n"),
     io:format("    version             Print Rufus version~n"),
     io:format("~n"),
