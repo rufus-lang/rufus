@@ -132,7 +132,7 @@ run("help", ["debug:tokenize"]) ->
     io:format("~n"),
     0;
 run("help", ["version"]) ->
-    run("version", undefined);
+    run("version", []);
 run("help", Args) ->
     help(Args);
 run(Command, Args) ->

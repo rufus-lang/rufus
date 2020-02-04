@@ -23,6 +23,8 @@ resolve(Globals, Form) ->
 %% Private API
 
 -spec resolve_type(#{atom() => list(rufus_form())}, rufus_form()) -> {ok, type_form()} | no_return().
+resolve_type(Globals, Form = {list_lit, _Context}) ->
+    resolve_list_lit_type(Globals, Form);
 resolve_type(_Globals, {_Form, #{type := Type}}) ->
     {ok, Type};
 resolve_type(Globals, Form = {binary_op, _Context}) ->
@@ -32,9 +34,7 @@ resolve_type(Globals, Form = {call, _Context}) ->
 resolve_type(_Globals, {func, #{return_type := Type}}) ->
     {ok, Type};
 resolve_type(Globals, Form = {identifier, _Context}) ->
-    resolve_identifier_type(Globals, Form);
-resolve_type(Globals, Form = {list_lit, _Context}) ->
-    resolve_list_lit_type(Globals, Form).
+    resolve_identifier_type(Globals, Form).
 
 %% call form helpers
 
@@ -166,15 +166,21 @@ resolve_identifier_type(Globals, Form = {identifier, #{spec := Spec, locals := L
 %% list_lit form helpers
 
 -spec resolve_list_lit_type(globals(), list_lit_form()) -> {ok, type_form()} | no_return().
-resolve_list_lit_type(_Globals, {list_lit, #{elements := [], type := _ListType, line := Line}}) ->
-    ElementType = rufus_form:make_inferred_type(any, Line),
+resolve_list_lit_type(_Globals, {list_lit, #{elements := [], type := {list_lit, #{element_type := ElementType}}, line := Line}}) ->
+    ElementType = rufus_form:make_inferred_type(list, ElementType, Line),
     Type = rufus_form:make_type(list, ElementType, Line),
     {ok, Type};
-resolve_list_lit_type(Globals, {list_lit, #{elements := Elements, type := _ListType, line := Line}}) ->
-    ElementTypes = lists:map(fun(Form) ->
-        {ok, Type} = resolve_type(Globals, Form),
-        Type
+resolve_list_lit_type(Globals, Form = {list_lit, #{elements := Elements, type := Type}}) ->
+    {type, #{element_type := {type, #{spec := ElementTypeSpec}}}} = Type,
+    ElementTypes = lists:map(fun(ElementForm) ->
+        {ok, ElementType} = resolve_type(Globals, ElementForm),
+        ElementType
     end, Elements),
-    ElementType = hd(ElementTypes),
-    Type = rufus_form:make_type(list, ElementType, Line),
-    {ok, Type}.
+
+    case lists:all(fun({type, #{spec := TypeSpec}}) -> TypeSpec == ElementTypeSpec end, ElementTypes) of
+        true ->
+            {ok, Type};
+        false ->
+            Data = #{form => Form},
+            throw({error, unexpected_element_type, Data})
+    end.

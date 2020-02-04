@@ -12,6 +12,7 @@
     make_identifier/2,
     make_import/2,
     make_inferred_type/2,
+    make_inferred_type/3,
     make_literal/3,
     make_literal/4,
     make_match/3,
@@ -115,6 +116,13 @@ make_import(Spec, Line) ->
 -spec make_inferred_type(type_spec(), integer()) -> {type, #{spec => atom(), source => type_source(), line => integer()}}.
 make_inferred_type(Spec, Line) ->
     make_type_with_source(Spec, inferred, Line).
+
+%% make_inferred_type creates a list type form with 'inferred' as the 'source'
+%% value, to indicate that the type of the list has been inferred by the
+%% compiler.
+-spec make_inferred_type(list, type_form(), integer()) -> {type, #{collection_type => list, element_type => {type, map()}, line => integer(), source => type_source(), spec => atom()}}.
+make_inferred_type(list, ElementType, Line) ->
+    make_type_with_source(list, ElementType, inferred, Line).
 
 %% make_type returns a type form with 'rufus_text' as the 'source' value, to
 %% indicate that the type came from source code.
