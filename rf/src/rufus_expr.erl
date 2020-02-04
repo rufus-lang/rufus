@@ -281,8 +281,8 @@ typecheck_and_annotate_match_with_bound_left_operand(Globals, Locals, {match, Co
 %% typecheck_and_annotate_match_with_unbound_left_operand typechecks match
 %% expressions with a left operand that does not have a known type. Return
 %% values:
-%% - `{ok, Locals, AnnotatedForm}` if no issues are found. The match form and
-%%   its operands are annotated with type information.
+%% - `{ok, NewLocals, AnnotatedForm}` if no issues are found. The match form
+%%   and its operands are annotated with type information.
 %% - `{error, unbound_variables, Data}` is thrown if both the left and right
 %%   operands are unbound.
 -spec typecheck_and_annotate_match_with_unbound_left_operand(globals(), locals(), match_form()) -> {ok, locals(), match_form()} | no_return().
