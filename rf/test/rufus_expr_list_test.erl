@@ -112,3 +112,35 @@ typecheck_and_annotate_with_function_returning_a_list_of_one_int_binary_op_test(
                                                  spec => 'list[int]'}},
                          spec => 'Numbers'}}],
     ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_with_function_returning_a_list_of_int_with_mismatched_element_type_test() ->
+    RufusText = "
+    module example
+    func Numbers() list[int] { list[int]{1, 42.0, 6} }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{form => {list_lit, #{elements => [{int_lit, #{line => 3,
+                                                           spec => 1,
+                                                           type => {type, #{line => 3,
+                                                                            source => inferred,
+                                                                            spec => int}}}},
+                                               {float_lit, #{line => 3,
+                                                             spec => 42.0,
+                                                             type => {type, #{line => 3,
+                                                                              source => inferred,
+                                                                              spec => float}}}},
+                                               {int_lit, #{line => 3,
+                                                           spec => 6,
+                                                           type => {type, #{line => 3,
+                                                                            source => inferred,
+                                                                            spec => int}}}}],
+                                  line => 3,
+                                  type => {type, #{collection_type => list,
+                                                   element_type => {type, #{line => 3,
+                                                                            source => rufus_text,
+                                                                            spec => int}},
+                                                   line => 3,
+                                                   source => rufus_text,
+                                                   spec => 'list[int]'}}}}},
+    ?assertEqual({error, unexpected_element_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
