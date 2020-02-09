@@ -144,3 +144,42 @@ typecheck_and_annotate_with_function_returning_a_list_of_int_with_mismatched_ele
                                                    source => rufus_text,
                                                    spec => 'list[int]'}}}}},
     ?assertEqual({error, unexpected_element_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
+
+typecheck_and_annotate_with_function_taking_a_list_and_returning_a_list_test() ->
+    RufusText = "
+    module example
+    func Echo(numbers list[int]) list[int] { numbers }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{identifier, #{line => 3,
+                                                  spec => numbers,
+                                                  type => {type, #{collection_type => list,
+                                                                   element_type => {type, #{line => 3,
+                                                                                            source => rufus_text,
+                                                                                            spec => int}},
+                                                                   line => 3,
+                                                                   source => rufus_text,
+                                                                   spec => 'list[int]'}}}}],
+                         line => 3,
+                         params => [{param, #{line => 3,
+                                              spec => numbers,
+                                              type => {type, #{collection_type => list,
+                                                               element_type => {type, #{line => 3,
+                                                                                        source => rufus_text,
+                                                                                        spec => int}},
+                                                               line => 3,
+                                                               source => rufus_text,
+                                                               spec => 'list[int]'}}}}],
+                         return_type => {type, #{collection_type => list,
+                                                 element_type => {type, #{line => 3,
+                                                                          source => rufus_text,
+                                                                          spec => int}},
+                                                 line => 3,
+                                                 source => rufus_text,
+                                                 spec => 'list[int]'}},
+                         spec => 'Echo'}}],
+    ?assertEqual(Expected, AnnotatedForms).
