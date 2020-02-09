@@ -197,12 +197,13 @@ typecheck_and_annotate_identifier(Locals, Form = {identifier, Context = #{spec :
 
 %% list_lit helpers
 
-typecheck_and_annotate_list_lit(Globals, Locals, Form = {list_lit, Context = #{elements := Elements}}) ->
+typecheck_and_annotate_list_lit(Globals, Locals, {list_lit, Context = #{elements := Elements}}) ->
     {ok, NewLocals, AnnotatedElements} = typecheck_and_annotate([], Globals, Locals, Elements),
-    case rufus_type:resolve(Globals, Form) of
+    AnnotatedForm1 = {list_lit, Context#{elements => AnnotatedElements}},
+    case rufus_type:resolve(Globals, AnnotatedForm1) of
         {ok, TypeForm} ->
-            AnnotatedForm = {list_lit, Context#{elements => AnnotatedElements, type => TypeForm}},
-            {ok, NewLocals, AnnotatedForm};
+            AnnotatedForm2 = {list_lit, Context#{elements => AnnotatedElements, type => TypeForm}},
+            {ok, NewLocals, AnnotatedForm2};
         Error ->
             throw(Error)
     end.

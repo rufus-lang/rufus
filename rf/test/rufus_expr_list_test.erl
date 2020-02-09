@@ -183,3 +183,42 @@ typecheck_and_annotate_with_function_taking_a_list_and_returning_a_list_test() -
                                                  spec => 'list[int]'}},
                          spec => 'Echo'}}],
     ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_with_function_taking_an_int_and_returning_a_list_of_int_test() ->
+    RufusText = "
+    module example
+    func ToList(n int) list[int] { list[int]{n} }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{list_lit, #{elements => [{identifier, #{line => 3,
+                                                                            spec => n,
+                                                                            type => {type, #{line => 3,
+                                                                                             source => rufus_text,
+                                                                                             spec => int}}}}],
+                                                line => 3,
+                                                type => {type, #{collection_type => list,
+                                                                 element_type => {type, #{line => 3,
+                                                                                          source => rufus_text,
+                                                                                          spec => int}},
+                                                                 line => 3,
+                                                                 source => rufus_text,
+                                                                 spec => 'list[int]'}}}}],
+                         line => 3,
+                         params => [{param, #{line => 3,
+                                              spec => n,
+                                              type => {type, #{line => 3,
+                                                               source => rufus_text,
+                                                               spec => int}}}}],
+                         return_type => {type, #{collection_type => list,
+                                                 element_type => {type, #{line => 3,
+                                                                          source => rufus_text,
+                                                                          spec => int}},
+                                                 line => 3,
+                                                 source => rufus_text,
+                                                 spec => 'list[int]'}},
+                         spec => 'ToList'}}],
+    ?assertEqual(Expected, AnnotatedForms).
