@@ -41,31 +41,34 @@ typecheck_and_annotate(RufusForms) ->
 %% from the current scope to each form. An `{error, Reason, Data}` error triple
 %% is thrown at the first error.
 -spec typecheck_and_annotate(list(rufus_form()), globals(), locals(), list(rufus_form())) -> {ok, locals(), list(rufus_form())}.
-typecheck_and_annotate(Acc, Globals, Locals, [Form = {func, _Context}|T]) ->
-    {ok, AnnotatedForm} = typecheck_and_annotate_func(Globals, Locals, Form),
-    typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
-typecheck_and_annotate(Acc, Globals, Locals, [Form = {param, _Context}|T]) ->
-    {ok, NewLocals} = push_local(Locals, Form),
-    typecheck_and_annotate([Form|Acc], Globals, NewLocals, T);
 typecheck_and_annotate(Acc, Globals, Locals, [Form = {binary_op, _Context}|T]) ->
     {ok, AnnotatedForm} = typecheck_and_annotate_binary_op(Globals, Locals, Form),
-    typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
-typecheck_and_annotate(Acc, Globals, Locals, [Form = {identifier, _Context}|T]) ->
-    {ok, AnnotatedForm} = typecheck_and_annotate_identifier(Locals, Form),
     typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
 typecheck_and_annotate(Acc, Globals, Locals, [Form = {call, _Context}|T]) ->
     {ok, AnnotatedForm} = typecheck_and_annotate_call(Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
+typecheck_and_annotate(Acc, Globals, Locals, [Form = {func, _Context}|T]) ->
+    {ok, AnnotatedForm} = typecheck_and_annotate_func(Globals, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
+typecheck_and_annotate(Acc, Globals, Locals, [Form = {identifier, _Context}|T]) ->
+    {ok, AnnotatedForm} = typecheck_and_annotate_identifier(Locals, Form),
+    typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
+typecheck_and_annotate(Acc, Globals, Locals, [Form = {list_lit, _Context}|T]) ->
+    {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_list_lit(Globals, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm|Acc], Globals, NewLocals, T);
 typecheck_and_annotate(Acc, Globals, Locals, [Form = {match, _Context}|T]) ->
     {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_match(Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm|Acc], Globals, NewLocals, T);
+typecheck_and_annotate(Acc, Globals, Locals, [Form = {param, _Context}|T]) ->
+    {ok, NewLocals} = push_local(Locals, Form),
+    typecheck_and_annotate([Form|Acc], Globals, NewLocals, T);
 typecheck_and_annotate(Acc, Globals, Locals, [H|T]) ->
     typecheck_and_annotate([H|Acc], Globals, Locals, T);
 typecheck_and_annotate(Acc, _Globals, Locals, []) ->
     {ok, Locals, lists:reverse(Acc)}.
 
 %% sanity_check ensures that every form has type information. An `{error,
-%% sanity_check, Data}` error tripe is thrown if a form doesn't have type
+%% sanity_check, Data}` error triple is thrown if a form doesn't have type
 %% information, otherwise `ok` is returned.
 -spec sanity_check(list(rufus_form())) -> ok | no_return().
 sanity_check([{module, _Context}|T]) ->
@@ -192,6 +195,19 @@ typecheck_and_annotate_identifier(Locals, Form = {identifier, Context = #{spec :
             {ok, AnnotatedForm2}
     end.
 
+%% list_lit helpers
+
+typecheck_and_annotate_list_lit(Globals, Locals, {list_lit, Context = #{elements := Elements}}) ->
+    {ok, NewLocals, AnnotatedElements} = typecheck_and_annotate([], Globals, Locals, Elements),
+    AnnotatedForm1 = {list_lit, Context#{elements => AnnotatedElements}},
+    case rufus_type:resolve(Globals, AnnotatedForm1) of
+        {ok, TypeForm} ->
+            AnnotatedForm2 = {list_lit, Context#{elements => AnnotatedElements, type => TypeForm}},
+            {ok, NewLocals, AnnotatedForm2};
+        Error ->
+            throw(Error)
+    end.
+
 %% match helpers
 
 %% typecheck_and_annotate_match ensures that match operands have matching types.
@@ -266,8 +282,8 @@ typecheck_and_annotate_match_with_bound_left_operand(Globals, Locals, {match, Co
 %% typecheck_and_annotate_match_with_unbound_left_operand typechecks match
 %% expressions with a left operand that does not have a known type. Return
 %% values:
-%% - `{ok, Locals, AnnotatedForm}` if no issues are found. The match form and
-%%   its operands are annotated with type information.
+%% - `{ok, NewLocals, AnnotatedForm}` if no issues are found. The match form
+%%   and its operands are annotated with type information.
 %% - `{error, unbound_variables, Data}` is thrown if both the left and right
 %%   operands are unbound.
 -spec typecheck_and_annotate_match_with_unbound_left_operand(globals(), locals(), match_form()) -> {ok, locals(), match_form()} | no_return().

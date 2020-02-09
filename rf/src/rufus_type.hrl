@@ -74,6 +74,7 @@
       | float_lit_form()
       | int_lit_form()
       | string_lit_form()
+      | list_lit_form()
       | module_form()
       | func_form()
       | param_form()

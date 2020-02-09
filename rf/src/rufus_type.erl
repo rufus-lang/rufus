@@ -23,20 +23,24 @@ resolve(Globals, Form) ->
 %% Private API
 
 -spec resolve_type(#{atom() => list(rufus_form())}, rufus_form()) -> {ok, type_form()} | no_return().
+resolve_type(Globals, Form = {list_lit, _Context}) ->
+    resolve_list_lit_type(Globals, Form);
 resolve_type(_Globals, {_Form, #{type := Type}}) ->
     {ok, Type};
-resolve_type(Globals, Form = {identifier, #{spec := Spec, locals := Locals}}) ->
-    case maps:get(Spec, Locals, undefined) of
-        {type, _Context} = Type ->
-            {ok, Type};
-        undefined ->
-            Data = #{globals => Globals, locals => Locals, form => Form},
-            throw({error, unknown_identifier, Data})
-    end;
+resolve_type(Globals, Form = {binary_op, _Context}) ->
+    resolve_binary_op_type(Globals, Form);
+resolve_type(Globals, Form = {call, _Context}) ->
+    resolve_call_type(Globals, Form);
 resolve_type(_Globals, {func, #{return_type := Type}}) ->
     {ok, Type};
-resolve_type(Globals, Form = {call, #{spec := Spec, args := Args}}) ->
-    case maps:get(Spec, Globals, undefined) of
+resolve_type(Globals, Form = {identifier, _Context}) ->
+    resolve_identifier_type(Globals, Form).
+
+%% call form helpers
+
+-spec resolve_call_type(globals(), call_form()) -> {ok, type_form()} | no_return().
+resolve_call_type(Globals, Form = {call, #{spec := Spec, args := Args}}) ->
+        case maps:get(Spec, Globals, undefined) of
         undefined ->
             throw({error, unknown_func, #{spec => Spec, args => Args}});
         Funcs ->
@@ -61,11 +65,7 @@ resolve_type(Globals, Form = {call, #{spec := Spec, args := Args}}) ->
                     [Func] = MatchingFuncs,
                     {ok, rufus_form:return_type(Func)}
             end
-    end;
-resolve_type(Globals, Form = {binary_op, _Context}) ->
-    resolve_binary_op_type(Globals, Form).
-
-%% call form helpers
+    end.
 
 -spec find_matching_funcs(list(func_form()), list(rufus_form())) -> {ok, list(func_form())} | error_triple().
 find_matching_funcs(Funcs, Args) ->
@@ -150,3 +150,38 @@ allow_type_with_boolean_binary_op(_, _) -> false.
 -spec allow_type_pair_with_boolean_binary_op(bool | atom(), bool | atom()) -> boolean().
 allow_type_pair_with_boolean_binary_op(bool, bool) -> true;
 allow_type_pair_with_boolean_binary_op(_, _) -> false.
+
+%% identifier form helpers
+
+-spec resolve_identifier_type(globals(), identifier_form()) -> {ok, type_form()} | no_return().
+resolve_identifier_type(Globals, Form = {identifier, #{spec := Spec, locals := Locals}}) ->
+    case maps:get(Spec, Locals, undefined) of
+        {type, _Context} = Type ->
+            {ok, Type};
+        undefined ->
+            Data = #{globals => Globals, locals => Locals, form => Form},
+            throw({error, unknown_identifier, Data})
+    end.
+
+%% list_lit form helpers
+
+-spec resolve_list_lit_type(globals(), list_lit_form()) -> {ok, type_form()} | no_return().
+resolve_list_lit_type(Globals, Form = {list_lit, #{elements := Elements, type := Type}}) ->
+    {type, #{element_type := {type, #{spec := ElementTypeSpec}}}} = Type,
+    ElementTypes = lists:map(fun(ElementForm) ->
+        {ok, ElementType} = resolve_type(Globals, ElementForm),
+        ElementType
+    end, Elements),
+
+    case element_types_match_list_type(ElementTypeSpec, ElementTypes) of
+        true ->
+            {ok, Type};
+        false ->
+            Data = #{form => Form},
+            throw({error, unexpected_element_type, Data})
+    end.
+
+-spec element_types_match_list_type(type_spec(), list(rufus_form())) -> boolean().
+element_types_match_list_type(Expected, ElementTypes) ->
+    TypesMatch = fun({type, #{spec := Actual}}) -> Actual == Expected end,
+    lists:all(TypesMatch, ElementTypes).
