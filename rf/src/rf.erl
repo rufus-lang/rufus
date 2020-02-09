@@ -108,9 +108,9 @@ run("help", ["debug:erlang-forms"]) ->
 run("help", ["debug:parse"]) ->
     io:format("Usage:~n"),
     io:format("~n"),
-    io:format("    rf debug:parse FILE~n"),
+    io:format("    rf debug:parse~n"),
     io:format("~n"),
-    io:format("Parse Rufus source code from a file and print it to the screen as Rufus~n"),
+    io:format("Parse hardcoded Rufus source code and print it to the screen as Rufus~n"),
     io:format("abstract forms.~n"),
     io:format("~n"),
     0;
