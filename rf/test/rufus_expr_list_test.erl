@@ -222,3 +222,36 @@ typecheck_and_annotate_with_function_taking_an_int_and_returning_a_list_of_int_t
                                                  spec => 'list[int]'}},
                          spec => 'ToList'}}],
     ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_with_function_returning_a_list_of_int_with_an_unknown_variable_as_an_element_test() ->
+    RufusText = "
+    module example
+    func Numbers() list[int] { list[int]{unknown} }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{form => {identifier, #{line => 3,
+                                    locals => #{},
+                                    spec => unknown}},
+             globals => #{'Numbers' => [{func, #{exprs => [{list_lit, #{elements => [{identifier, #{line => 3,
+                                                                                                    spec => unknown}}],
+                                                                        line => 3,
+                                                                        type => {type, #{collection_type => list,
+                                                                                         element_type => {type, #{line => 3,
+                                                                                                                  source => rufus_text,
+                                                                                                                  spec => int}},
+                                                                                         line => 3,
+                                                                                         source => rufus_text,
+                                                                                         spec => 'list[int]'}}}}],
+                                                 line => 3,
+                                                 params => [],
+                                                 return_type => {type, #{collection_type => list,
+                                                                         element_type => {type, #{line => 3,
+                                                                                                  source => rufus_text,
+                                                                                                  spec => int}},
+                                                                         line => 3,
+                                                                         source => rufus_text,
+                                                                         spec => 'list[int]'}},
+                                                 spec => 'Numbers'}}]},
+             locals => #{}},
+    ?assertEqual({error, unknown_identifier, Data}, rufus_expr:typecheck_and_annotate(Forms)).
