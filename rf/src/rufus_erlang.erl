@@ -179,7 +179,7 @@ guard_forms(Acc, []) ->
 %% box converts a Rufus literal to its representation in Erlang. atom, bool,
 %% float and int are all represented as scalar values in Erlang, while string is
 %% represented as an annotated {string, BinaryValue} tuple.
--spec box(atom_lit_form() | bool_lit_form() | float_lit_form() | int_lit_form() | string_lit_form()) -> erlang3_form().
+-spec box(atom_lit_form() | bool_lit_form() | float_lit_form() | int_lit_form() | list_lit_form() | string_lit_form()) -> (erlang3_form() | erlang4_form()).
 box({atom_lit, #{spec := Value, line := Line}}) ->
     {atom, Line, Value};
 box({bool_lit, #{spec := Value, line := Line}}) ->
@@ -245,7 +245,7 @@ is_private(LeadingChar) ->
 
 %% list_to_cons transforms a list of Rufus form elements in a list_lit form into
 %% an Erlang cons form.
--spec list_to_cons(list(rufus_form()), integer()) -> erlang_form().
+-spec list_to_cons(list(rufus_form()), integer()) -> term().
 list_to_cons([Form|[]], Line) ->
     {ok, [Head|_]} = forms([], [Form]),
     {cons, Line, Head, {nil, Line}};
