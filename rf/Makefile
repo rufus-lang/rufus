@@ -4,6 +4,7 @@ ci:		clean check prime-dialyzer dialyzer build
 
 clean:
 	@rebar3 clean
+	@-rm -rf _build
 
 check:
 	@rebar3 eunit
