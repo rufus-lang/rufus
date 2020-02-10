@@ -59,17 +59,31 @@ forms(Acc, [{module, #{line := Line, spec := Name}}|T]) ->
 forms(Acc, [{atom_lit, _Context} = AtomLit|T]) ->
     Form = box(AtomLit),
     forms([Form|Acc], T);
+forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}|T]) ->
+    {ok, [LeftForm]} = forms([], [Left]),
+    {ok, [RightForm]} = forms([], [Right]),
+    ErlangOp = rufus_operator_to_erlang_operator(Op, rufus_form:type_spec(Left)),
+    Form = {op, Line, ErlangOp, LeftForm, RightForm},
+    forms([Form|Acc], T);
 forms(Acc, [{bool_lit, _Context} = BoolLit|T]) ->
     Form = box(BoolLit),
+    forms([Form|Acc], T);
+forms(Acc, [{call, #{spec := Spec, args := Args, line := Line}}|T]) ->
+    {ok, ArgsForms} = forms([], Args),
+    Form = {call, Line, {atom, Line, Spec}, ArgsForms},
     forms([Form|Acc], T);
 forms(Acc, [{float_lit, _Context} = FloatLit|T]) ->
     Form = box(FloatLit),
     forms([Form|Acc], T);
-forms(Acc, [{int_lit, _Context} = IntLit|T]) ->
-    Form = box(IntLit),
-    forms([Form|Acc], T);
-forms(Acc, [{string_lit, _Context} = StringLit|T]) ->
-    Form = box(StringLit),
+forms(Acc, [{func_group, #{line := Line1, spec := Spec, arity := Arity, forms := Forms}}|T]) ->
+    FuncClauses = lists:map(fun(Form) ->
+        {func, #{line := Line2, spec := Spec, params := Params, exprs := Exprs}} = Form,
+        {ok, ParamForms} = forms([], Params),
+        {ok, GuardForms} = guard_forms([], Params),
+        {ok, ExprForms} = forms([], Exprs),
+        {clause, Line2, ParamForms, GuardForms, ExprForms}
+    end, Forms),
+    Form = {function, Line1, Spec, Arity, FuncClauses},
     forms([Form|Acc], T);
 forms(Acc, [{identifier, #{line := Line, spec := Name, type := Type}}|T]) ->
     TypeSpec = rufus_form:spec(Type),
@@ -86,15 +100,11 @@ forms(Acc, [{identifier, #{line := Line, spec := Name, type := Type}}|T]) ->
             {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Name}]}
     end,
     forms([Form|Acc], T);
-forms(Acc, [{func_group, #{line := Line1, spec := Spec, arity := Arity, forms := Forms}}|T]) ->
-    FuncClauses = lists:map(fun(Form) ->
-        {func, #{line := Line2, spec := Spec, params := Params, exprs := Exprs}} = Form,
-        {ok, ParamForms} = forms([], Params),
-        {ok, GuardForms} = guard_forms([], Params),
-        {ok, ExprForms} = forms([], Exprs),
-        {clause, Line2, ParamForms, GuardForms, ExprForms}
-    end, Forms),
-    Form = {function, Line1, Spec, Arity, FuncClauses},
+forms(Acc, [{int_lit, _Context} = IntLit|T]) ->
+    Form = box(IntLit),
+    forms([Form|Acc], T);
+forms(Acc, [{list_lit, _Context} = ListLit|T]) ->
+    Form = box(ListLit),
     forms([Form|Acc], T);
 forms(Acc, [Form = {param, #{line := Line, spec := Name}}|T]) ->
     TypeSpec = rufus_form:type_spec(Form),
@@ -111,20 +121,13 @@ forms(Acc, [Form = {param, #{line := Line, spec := Name}}|T]) ->
             {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Name}]}
     end,
     forms([ErlangForm|Acc], T);
-forms(Acc, [{call, #{spec := Spec, args := Args, line := Line}}|T]) ->
-    {ok, ArgsForms} = forms([], Args),
-    Form = {call, Line, {atom, Line, Spec}, ArgsForms},
-    forms([Form|Acc], T);
-forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}|T]) ->
-    {ok, [LeftForm]} = forms([], [Left]),
-    {ok, [RightForm]} = forms([], [Right]),
-    ErlangOp = rufus_operator_to_erlang_operator(Op, rufus_form:type_spec(Left)),
-    Form = {op, Line, ErlangOp, LeftForm, RightForm},
-    forms([Form|Acc], T);
 forms(Acc, [{match, #{line := Line, left := Left, right := Right}}|T]) ->
     {ok, [LeftForm]} = forms([], [Left]),
     {ok, [RightForm]} = forms([], [Right]),
     Form = {match, Line, LeftForm, RightForm},
+    forms([Form|Acc], T);
+forms(Acc, [{string_lit, _Context} = StringLit|T]) ->
+    Form = box(StringLit),
     forms([Form|Acc], T);
 forms(Acc, [{type, _Context}|T]) ->
     forms(Acc, T); %% no-op to satisfy Dialyzer
@@ -176,15 +179,17 @@ guard_forms(Acc, []) ->
 %% box converts a Rufus literal to its representation in Erlang. atom, bool,
 %% float and int are all represented as scalar values in Erlang, while string is
 %% represented as an annotated {string, BinaryValue} tuple.
--spec box(atom_lit_form() | bool_lit_form() | float_lit_form() | int_lit_form() | string_lit_form()) -> erlang3_form().
-box({atom_lit, #{line := Line, spec := Value}}) ->
+-spec box(atom_lit_form() | bool_lit_form() | float_lit_form() | int_lit_form() | list_lit_form() | string_lit_form()) -> (erlang3_form() | erlang4_form()).
+box({atom_lit, #{spec := Value, line := Line}}) ->
     {atom, Line, Value};
-box({bool_lit, #{line := Line, spec := Value}}) ->
+box({bool_lit, #{spec := Value, line := Line}}) ->
     {atom, Line, Value};
-box({float_lit, #{line := Line, spec := Value}}) ->
+box({float_lit, #{spec := Value, line := Line}}) ->
     {float, Line, Value};
-box({int_lit, #{line := Line, spec := Value}}) ->
+box({int_lit, #{spec := Value, line := Line}}) ->
     {integer, Line, Value};
+box({list_lit, #{elements := Elements, line := Line}}) ->
+    list_to_cons(Elements, Line);
 box({string_lit, #{line := Line, spec := Value}}) ->
     StringExpr = {bin_element, Line, {string, Line, binary_to_list(Value)}, default, default},
     {tuple, Line, [{atom, Line, string}, {bin, Line, [StringExpr]}]}.
@@ -237,3 +242,15 @@ is_public(Name) ->
 -spec is_private(integer()) -> boolean().
 is_private(LeadingChar) ->
     (LeadingChar >= $a) and (LeadingChar =< $z).
+
+%% list_to_cons transforms a list of Rufus form elements in a list_lit form into
+%% an Erlang cons form.
+-spec list_to_cons(list(rufus_form()), integer()) -> term().
+list_to_cons([Form|[]], Line) ->
+    {ok, [Head|_]} = forms([], [Form]),
+    {cons, Line, Head, {nil, Line}};
+list_to_cons([Form|T], Line) ->
+    {ok, [Head|_]} = forms([], [Form]),
+    {cons, Line, Head, list_to_cons(T, Line)};
+list_to_cons([], Line) ->
+    {nil, Line}.
