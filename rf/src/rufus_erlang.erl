@@ -243,6 +243,9 @@ is_public(Name) ->
 is_private(LeadingChar) ->
     (LeadingChar >= $a) and (LeadingChar =< $z).
 
+%% list_to_cons transforms a list of Rufus form elements in a list_lit form into
+%% an Erlang cons form.
+-spec list_to_cons(list(rufus_form()), integer()) -> erlang_form().
 list_to_cons([Form|[]], Line) ->
     {ok, [Head|_]} = forms([], [Form]),
     {cons, Line, Head, {nil, Line}};
