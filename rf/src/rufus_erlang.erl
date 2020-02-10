@@ -103,6 +103,9 @@ forms(Acc, [{identifier, #{line := Line, spec := Name, type := Type}}|T]) ->
 forms(Acc, [{int_lit, _Context} = IntLit|T]) ->
     Form = box(IntLit),
     forms([Form|Acc], T);
+forms(Acc, [{list_lit, _Context} = ListLit|T]) ->
+    Form = box(ListLit),
+    forms([Form|Acc], T);
 forms(Acc, [Form = {param, #{line := Line, spec := Name}}|T]) ->
     TypeSpec = rufus_form:type_spec(Form),
     ErlangForm = case TypeSpec of
@@ -177,14 +180,16 @@ guard_forms(Acc, []) ->
 %% float and int are all represented as scalar values in Erlang, while string is
 %% represented as an annotated {string, BinaryValue} tuple.
 -spec box(atom_lit_form() | bool_lit_form() | float_lit_form() | int_lit_form() | string_lit_form()) -> erlang3_form().
-box({atom_lit, #{line := Line, spec := Value}}) ->
+box({atom_lit, #{spec := Value, line := Line}}) ->
     {atom, Line, Value};
-box({bool_lit, #{line := Line, spec := Value}}) ->
+box({bool_lit, #{spec := Value, line := Line}}) ->
     {atom, Line, Value};
-box({float_lit, #{line := Line, spec := Value}}) ->
+box({float_lit, #{spec := Value, line := Line}}) ->
     {float, Line, Value};
-box({int_lit, #{line := Line, spec := Value}}) ->
+box({int_lit, #{spec := Value, line := Line}}) ->
     {integer, Line, Value};
+box({list_lit, #{elements := Elements, line := Line}}) ->
+    list_to_cons(Elements, Line);
 box({string_lit, #{line := Line, spec := Value}}) ->
     StringExpr = {bin_element, Line, {string, Line, binary_to_list(Value)}, default, default},
     {tuple, Line, [{atom, Line, string}, {bin, Line, [StringExpr]}]}.
@@ -237,3 +242,12 @@ is_public(Name) ->
 -spec is_private(integer()) -> boolean().
 is_private(LeadingChar) ->
     (LeadingChar >= $a) and (LeadingChar =< $z).
+
+list_to_cons([Form|[]], Line) ->
+    {ok, [Head|_]} = forms([], [Form]),
+    {cons, Line, Head, {nil, Line}};
+list_to_cons([Form|T], Line) ->
+    {ok, [Head|_]} = forms([], [Form]),
+    {cons, Line, Head, list_to_cons(T, Line)};
+list_to_cons([], Line) ->
+    {nil, Line}.
