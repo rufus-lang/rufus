@@ -79,10 +79,12 @@ module example
 
 import "Math"
 
+type Dimensions tuple[float,float]
+
 func Area(:radius, r float) float {
     Math.Pow(Math.Pi * r, 2)
 }
-func Area(:rectangle, tuple{length, width float}) float {
+func Area(:rectangle, Dimensions{length, width}) float {
     length * width
 }
 func Area(:square, side float) float {
