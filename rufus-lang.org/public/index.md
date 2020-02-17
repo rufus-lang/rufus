@@ -10,7 +10,7 @@ func main() {
 }
 ```
 
-Rufus is for teams building and operating fault tolerant distributed systems.
+Rufus is for teams that build and operate fault tolerant distributed systems.
 
 ## Design goals
 

@@ -8,6 +8,7 @@
     line/1,
     make_binary_op/4,
     make_call/3,
+    make_cons/4,
     make_func/5,
     make_identifier/2,
     make_import/2,
@@ -172,10 +173,14 @@ make_func(Spec, Params, ReturnType, Exprs, Line) ->
 make_param(Spec, Type, Line) ->
     {param, #{spec => Spec, type => Type, line => Line}}.
 
-%% make_call returns a form a function call.
+%% make_call returns a form for a function call.
 -spec make_call(atom(), list(), integer()) -> {call, #{spec => atom(), args => list(), line => integer()}}.
 make_call(Spec, Args, Line) ->
     {call, #{spec => Spec, args => Args, line => Line}}.
+
+%% make_cons returns a form for a cons expression.
+make_cons(Type, Head, Tail, Line) ->
+    {cons, #{type => Type, head => Head, tail => Tail, line => Line}}.
 
 %% Identifier form builder API
 

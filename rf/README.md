@@ -28,16 +28,18 @@ Usage:
 
 The commands are:
 
-    compile:core-erlang   parse source code and print Core Erlang translation
-    compile:parse         parse source code and print AST
-    compile:scan          scan source code and print tokens
-    version               print Rufus version
+    compile             Compile source code and then run it and print its output
+    debug:erlang-forms  Print Erlang source code from a file as abstract forms
+    debug:parse         Parse source code and print parse forms
+    debug:rufus-forms   Print Rufus source code from a file as abstract forms
+    debug:tokenize      Scan source code and print parse tokens
+    version             Print Rufus version
 
 Use "rf help [command]" for more information about that command
 
 Additional help topics:
 
-    spec            language specification
+    spec                Language specification
 
 Use "rf help [topic]" for more information about that topic
 ```

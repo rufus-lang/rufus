@@ -158,6 +158,14 @@ make_binary_op_test() ->
     ?assertEqual({binary_op, #{op => '+', left => Operand, right => Operand, line => 4}},
                  rufus_form:make_binary_op('+', Operand, Operand, 4)).
 
+make_cons_test() ->
+    Line = 3,
+    Type = rufus_form:make_type(list, rufus_form:make_type(int, Line), Line),
+    Head = 1,
+    Tail = [],
+    Expected = {cons, #{type => Type, head => Head, tail => Tail, line => Line}},
+    ?assertEqual(Expected, rufus_form:make_cons(Type, Head, Tail, Line)).
+
 make_func_test() ->
     Type = rufus_form:make_type(bool, 81),
     ?assertEqual({func, #{spec => 'True', params => [], return_type => Type, exprs => [], line => 81}},

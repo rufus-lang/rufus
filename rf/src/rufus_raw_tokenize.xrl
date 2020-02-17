@@ -37,6 +37,7 @@ LeftParen     = \(
 RightParen    = \)
 Comma         = ,
 Match         = =
+Cons          = \|
 Plus          = \+
 Minus         = \-
 Multiply      = \*
@@ -83,6 +84,7 @@ Rules.
 {RightParen}    : {token, {')', TokenLine}}.
 {Comma}         : {token, {',', TokenLine}}.
 {Match}         : {token, {'=', TokenLine}}.
+{Cons}          : {token, {'|', TokenLine}}.
 {Plus}          : {token, {'+', TokenLine}}.
 {Minus}         : {token, {'-', TokenLine}}.
 {Multiply}      : {token, {'*', TokenLine}}.
