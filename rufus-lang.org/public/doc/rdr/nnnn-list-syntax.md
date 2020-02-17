@@ -57,7 +57,7 @@ func LossyCopy(numbers list[int]) {
 }
 
 func Multidimensional() list[list[string]] {
-    ["hotdog"], ["milk", "coffee"]]
+    [["hotdog"], ["milk", "coffee"]]
 }
 
 type Numbers list[int]
@@ -65,13 +65,14 @@ type Numbers list[int]
 func Echo(numbers Numbers) Numbers { numbers }
 func Empty() Numbers { [] }
 func Numbers() Numbers { [1, 2, 3, 4] }
+func Numbers([head|tail] Numbers) Numbers { [head|[1|tail]] }
 ```
 
 This syntax has some nice properties. It's regular, and it's also familiar, but
 it also has some downsides. Notably, assigning a type to `[]` is difficult. The
 compiler could treat this type as `list[<any>]` until the first time an element
-is added to it, but that is complex and breaks the current assumption that
-expressions always have a well-defined type.
+is added to it, but that would break the current assumption that expressions
+_always_ have a well-defined type.
 
 ### Option 2
 
@@ -102,6 +103,7 @@ type Numbers list[int]
 func Echo(numbers Numbers) Numbers { numbers }
 func Empty() Numbers { Numbers{} }
 func Numbers() Numbers { Numbers{1, 2, 3, 4} }
+func Numbers(Numbers{head|tail}) Numbers { Numbers{head|{1|tail}} }
 ```
 
 This syntax is a bit more verbose, with `list[int]{}` for an empty list vs `[]`

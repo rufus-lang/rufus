@@ -8,10 +8,10 @@ Nonterminals
     type
     block
     func_decl param params expr exprs args
-    binary_op match.
+    binary_op call cons match.
 
 Terminals
-    '[' ']' '{' '}' '(' ')'
+    '[' ']' '{' '}' '(' ')' '|'
     '+' '-' '*' '/' '%'
     ',' ';' '='
     'and' 'or'
@@ -84,8 +84,9 @@ expr  -> int_lit                 : rufus_form:make_literal(int, text('$1'), line
 expr  -> string_lit              : rufus_form:make_literal(string, list_to_binary(text('$1')), line('$1')).
 expr  -> identifier              : rufus_form:make_identifier(list_to_atom(text('$1')), line('$1')).
 expr  -> binary_op               : '$1'.
+expr  -> cons                    : '$1'.
 expr  -> match                   : '$1'.
-expr  -> identifier '(' args ')' : rufus_form:make_call(list_to_atom(text('$1')), '$3', line('$1')).
+expr  -> call                    : '$1'.
 expr  -> list '[' type ']' '{' args '}' :
                                    rufus_form:make_literal(list, '$3', '$6', line('$1')).
 
@@ -96,6 +97,13 @@ binary_op -> expr '/' expr       : rufus_form:make_binary_op('/', '$1', '$3', li
 binary_op -> expr '%' expr       : rufus_form:make_binary_op('%', '$1', '$3', line('$2')).
 binary_op -> expr 'and' expr     : rufus_form:make_binary_op('and', '$1', '$3', line('$2')).
 binary_op -> expr 'or' expr      : rufus_form:make_binary_op('or', '$1', '$3', line('$2')).
+
+call -> identifier '(' args ')'  : rufus_form:make_call(list_to_atom(text('$1')), '$3', line('$1')).
+
+cons -> list '[' type ']' '{' expr '|' expr '}' :
+                                   rufus_form:make_cons('$3', '$6', '$8', line('$1')).
+cons -> list '[' type ']' '{' expr '|' '{' args '}' '}' :
+                                   rufus_form:make_cons('$3', '$6', rufus_form:make_literal(list, '$3', '$9', line('$1')), line('$1')).
 
 match -> expr '=' expr           : rufus_form:make_match('$1', '$3', line('$2')).
 

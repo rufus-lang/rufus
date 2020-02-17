@@ -77,7 +77,7 @@ string_with_multiline_function_returning_a_cons_of_int_with_an_empty_tail_test()
         {']', 3},
         {'{', 3},
         {int_lit, 3, 1},
-        {cons, 3},
+        {'|', 3},
         {'[', 3},
         {']', 3},
         {'}', 3},
@@ -88,7 +88,7 @@ string_with_multiline_function_returning_a_cons_of_int_with_an_empty_tail_test()
 string_with_multiline_function_returning_a_cons_of_int_with_a_nonempty_tail_test() ->
     {ok, Tokens, _} = rufus_raw_tokenize:string("
     func Numbers() list[int] {
-        list[int]{1|[2]}
+        list[int]{1|{2}}
     }"
     ),
     ?assertEqual([
@@ -109,10 +109,10 @@ string_with_multiline_function_returning_a_cons_of_int_with_a_nonempty_tail_test
         {']', 3},
         {'{', 3},
         {int_lit, 3, 1},
-        {cons, 3},
-        {'[', 3},
+        {'|', 3},
+        {'{', 3},
         {int_lit, 3, 2},
-        {']', 3},
+        {'}', 3},
         {'}', 3},
         {eol, 3},
         {'}', 4}
