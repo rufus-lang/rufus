@@ -36,6 +36,7 @@
 -type int_lit_form() :: {int_lit, context()}.
 -type string_lit_form() :: {string_lit, context()}.
 -type list_lit_form() :: {list_lit, context()}.
+-type cons_form() :: {cons, context()}.
 
 -type literal_form() ::
         atom_lit_form()
@@ -43,7 +44,8 @@
       | float_lit_form()
       | int_lit_form()
       | string_lit_form()
-      | list_lit_form().
+      | list_lit_form()
+      | cons_form().
 
 - type literal() ::
          atom
@@ -75,6 +77,7 @@
       | int_lit_form()
       | string_lit_form()
       | list_lit_form()
+      | cons_form()
       | module_form()
       | func_form()
       | param_form()
