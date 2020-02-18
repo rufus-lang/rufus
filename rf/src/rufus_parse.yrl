@@ -5,7 +5,7 @@
 Nonterminals
     root
     decl
-    type
+    type list_lit
     block
     func_decl param params expr exprs args
     binary_op call cons match.
@@ -54,29 +54,27 @@ decl -> module identifier ';'    : rufus_form:make_module(list_to_atom(text('$2'
 decl -> import string_lit ';'    : rufus_form:make_import(text('$2'), line('$2')).
 decl -> func_decl                : '$1'.
 
-type -> atom                     : rufus_form:make_type(atom, line('$1')).
-type -> bool                     : rufus_form:make_type(bool, line('$1')).
-type -> float                    : rufus_form:make_type(float, line('$1')).
-type -> int                      : rufus_form:make_type(int, line('$1')).
-type -> string                   : rufus_form:make_type(string, line('$1')).
-type -> list '[' type ']'        : rufus_form:make_type(list, '$3', line('$1')).
-
-func_decl -> func identifier '(' params ')' type block :
-                                   rufus_form:make_func(list_to_atom(text('$2')), '$4', '$6', '$7', line('$1')).
-
-params -> param params           : ['$1'|'$2'].
-params -> '$empty'               : [].
-param -> identifier type ','     : rufus_form:make_param(list_to_atom(text('$1')), '$2', line('$1')).
-param -> identifier type         : rufus_form:make_param(list_to_atom(text('$1')), '$2', line('$1')).
-
-block -> '{' exprs '}' ';'       : '$2'.
-
 args  -> expr ',' args           : ['$1'|'$3'].
 args  -> expr                    : ['$1'].
 args  -> '$empty'                : [].
-exprs -> expr ';' exprs          : ['$1'|'$3'].
-exprs -> expr                    : ['$1'].
-exprs -> '$empty'                : [].
+
+binary_op -> expr '+' expr       : rufus_form:make_binary_op('+', '$1', '$3', line('$2')).
+binary_op -> expr '-' expr       : rufus_form:make_binary_op('-', '$1', '$3', line('$2')).
+binary_op -> expr '*' expr       : rufus_form:make_binary_op('*', '$1', '$3', line('$2')).
+binary_op -> expr '/' expr       : rufus_form:make_binary_op('/', '$1', '$3', line('$2')).
+binary_op -> expr '%' expr       : rufus_form:make_binary_op('%', '$1', '$3', line('$2')).
+binary_op -> expr 'and' expr     : rufus_form:make_binary_op('and', '$1', '$3', line('$2')).
+binary_op -> expr 'or' expr      : rufus_form:make_binary_op('or', '$1', '$3', line('$2')).
+
+block -> '{' exprs '}' ';'       : '$2'.
+
+call -> identifier '(' args ')'  : rufus_form:make_call(list_to_atom(text('$1')), '$3', line('$1')).
+
+cons -> list '[' type ']' '{' expr '|' expr '}' :
+                                   rufus_form:make_cons('$3', '$6', '$8', line('$1')).
+cons -> list '[' type ']' '{' expr '|' '{' args '}' '}' :
+                                   rufus_form:make_cons('$3', '$6', rufus_form:make_literal(list, '$3', '$9', line('$1')), line('$1')).
+
 expr  -> atom_lit                : rufus_form:make_literal(atom, text('$1'), line('$1')).
 expr  -> bool_lit                : rufus_form:make_literal(bool, text('$1'), line('$1')).
 expr  -> float_lit               : rufus_form:make_literal(float, text('$1'), line('$1')).
@@ -87,25 +85,31 @@ expr  -> binary_op               : '$1'.
 expr  -> cons                    : '$1'.
 expr  -> match                   : '$1'.
 expr  -> call                    : '$1'.
-expr  -> list '[' type ']' '{' args '}' :
+expr  -> list_lit                : '$1'.
+
+exprs -> expr ';' exprs          : ['$1'|'$3'].
+exprs -> expr                    : ['$1'].
+exprs -> '$empty'                : [].
+
+func_decl -> func identifier '(' params ')' type block :
+                                   rufus_form:make_func(list_to_atom(text('$2')), '$4', '$6', '$7', line('$1')).
+
+list_lit -> list '[' type ']' '{' args '}' :
                                    rufus_form:make_literal(list, '$3', '$6', line('$1')).
 
-binary_op -> expr '+' expr       : rufus_form:make_binary_op('+', '$1', '$3', line('$2')).
-binary_op -> expr '-' expr       : rufus_form:make_binary_op('-', '$1', '$3', line('$2')).
-binary_op -> expr '*' expr       : rufus_form:make_binary_op('*', '$1', '$3', line('$2')).
-binary_op -> expr '/' expr       : rufus_form:make_binary_op('/', '$1', '$3', line('$2')).
-binary_op -> expr '%' expr       : rufus_form:make_binary_op('%', '$1', '$3', line('$2')).
-binary_op -> expr 'and' expr     : rufus_form:make_binary_op('and', '$1', '$3', line('$2')).
-binary_op -> expr 'or' expr      : rufus_form:make_binary_op('or', '$1', '$3', line('$2')).
-
-call -> identifier '(' args ')'  : rufus_form:make_call(list_to_atom(text('$1')), '$3', line('$1')).
-
-cons -> list '[' type ']' '{' expr '|' expr '}' :
-                                   rufus_form:make_cons('$3', '$6', '$8', line('$1')).
-cons -> list '[' type ']' '{' expr '|' '{' args '}' '}' :
-                                   rufus_form:make_cons('$3', '$6', rufus_form:make_literal(list, '$3', '$9', line('$1')), line('$1')).
-
 match -> expr '=' expr           : rufus_form:make_match('$1', '$3', line('$2')).
+
+params -> param params           : ['$1'|'$2'].
+params -> '$empty'               : [].
+param -> identifier type ','     : rufus_form:make_param(list_to_atom(text('$1')), '$2', line('$1')).
+param -> identifier type         : rufus_form:make_param(list_to_atom(text('$1')), '$2', line('$1')).
+
+type -> atom                     : rufus_form:make_type(atom, line('$1')).
+type -> bool                     : rufus_form:make_type(bool, line('$1')).
+type -> float                    : rufus_form:make_type(float, line('$1')).
+type -> int                      : rufus_form:make_type(int, line('$1')).
+type -> string                   : rufus_form:make_type(string, line('$1')).
+type -> list '[' type ']'        : rufus_form:make_type(list, '$3', line('$1')).
 
 Erlang code.
 
