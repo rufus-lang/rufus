@@ -144,16 +144,9 @@ make_type(list, ElementType, Line) ->
 make_type_with_source(Spec, Source, Line) ->
     {type, #{spec => Spec, source => Source, line => Line}}.
 
-%% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
-%% -spec make_type_with_source(list, type_spec(), type_source(), integer()) -> type_form().
-make_type_with_source(list, ElementType = {type, #{spec := Spec}}, Source, Line) ->
-    TypeSpec = list_to_atom(unicode:characters_to_list(["list[", atom_to_list(Spec), "]"])),
-    {type, #{collection_type => list,
-             element_type => ElementType,
-             spec => TypeSpec,
-             source => Source,
-             line => Line}};
-make_type_with_source(list_lit, ElementType = {type, #{spec := Spec}}, Source, Line) ->
+-spec make_type_with_source(list | list_lit, type_form(), type_source(), integer()) -> type_form().
+make_type_with_source(_CollectionSpec, ElementType, Source, Line) ->
+    {type, #{spec := Spec}} = ElementType,
     TypeSpec = list_to_atom(unicode:characters_to_list(["list[", atom_to_list(Spec), "]"])),
     {type, #{collection_type => list,
              element_type => ElementType,
@@ -178,10 +171,6 @@ make_param(Spec, Type, Line) ->
 make_call(Spec, Args, Line) ->
     {call, #{spec => Spec, args => Args, line => Line}}.
 
-%% make_cons returns a form for a cons expression.
-make_cons(Type, Head, Tail, Line) ->
-    {cons, #{type => Type, head => Head, tail => Tail, line => Line}}.
-
 %% Identifier form builder API
 
 %% make_identifier returns a form for an identifier.
@@ -201,10 +190,14 @@ make_literal(TypeSpec, Spec, Line) ->
 
 -spec make_literal(list, type_form(), list(), term()) -> literal_form().
 make_literal(list, Type, Elements, Line) ->
-    ListType = make_type_with_source(list_lit, Type, rufus_text, Line),
     {list_lit, #{elements => Elements,
-                 type => ListType,
+                 type => Type,
                  line => Line}}.
+
+%% make_cons returns a form for a cons expression.
+-spec make_cons(type_form(), rufus_form(), list_lit_form(), integer()) -> cons_form().
+make_cons(Type, Head, Tail, Line) ->
+    {cons, #{type => Type, head => Head, tail => Tail, line => Line}}.
 
 %% binary_op form builder API
 
