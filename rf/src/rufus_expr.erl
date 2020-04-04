@@ -71,19 +71,26 @@ typecheck_and_annotate(Acc, _Globals, Locals, []) ->
 %% sanity_check, Data}` error triple is thrown if a form doesn't have type
 %% information, otherwise `ok` is returned.
 -spec sanity_check(list(rufus_form())) -> ok | no_return().
-sanity_check([{module, _Context}|T]) ->
+sanity_check([{binary_op, #{left := Left, right := Right, type := _Type}}|T]) ->
+    ok = sanity_check([Left]),
+    ok = sanity_check([Right]),
+    sanity_check(T);
+sanity_check([{cons, #{head := Head, tail := Tail, type := _Type}}|T]) ->
+    ok = sanity_check([Head]),
+    ok = sanity_check([Tail]),
     sanity_check(T);
 sanity_check([{func, #{params := Params, exprs := Exprs}}|T]) ->
     ok = sanity_check(Params),
     ok = sanity_check(Exprs),
     sanity_check(T);
-sanity_check([{binary_op, #{left := Left, right := Right}}|T]) ->
+sanity_check([{list, #{elements := Elements, type := _Type}}|T]) ->
+    lists:foreach(fun(Element) -> ok = sanity_check(Element) end, Elements),
+    sanity_check(T);
+sanity_check([{match, #{left := Left, right := Right, type := _Type}}|T]) ->
     ok = sanity_check([Left]),
     ok = sanity_check([Right]),
     sanity_check(T);
-sanity_check([{match, #{left := Left, right := Right}}|T]) ->
-    ok = sanity_check([Left]),
-    ok = sanity_check([Right]),
+sanity_check([{module, _Context}|T]) ->
     sanity_check(T);
 sanity_check([{_FormType, #{type := _Type}}|T]) ->
     sanity_check(T);
