@@ -23,6 +23,8 @@ resolve(Globals, Form) ->
 %% Private API
 
 -spec resolve_type(#{atom() => list(rufus_form())}, rufus_form()) -> {ok, type_form()} | no_return().
+resolve_type(Globals, Form = {cons, _Context}) ->
+    resolve_cons_type(Globals, Form);
 resolve_type(Globals, Form = {list_lit, _Context}) ->
     resolve_list_lit_type(Globals, Form);
 resolve_type(_Globals, {_Form, #{type := Type}}) ->
@@ -35,62 +37,6 @@ resolve_type(_Globals, {func, #{return_type := Type}}) ->
     {ok, Type};
 resolve_type(Globals, Form = {identifier, _Context}) ->
     resolve_identifier_type(Globals, Form).
-
-%% call form helpers
-
--spec resolve_call_type(globals(), call_form()) -> {ok, type_form()} | no_return().
-resolve_call_type(Globals, Form = {call, #{spec := Spec, args := Args}}) ->
-        case maps:get(Spec, Globals, undefined) of
-        undefined ->
-            throw({error, unknown_func, #{spec => Spec, args => Args}});
-        Funcs ->
-            case find_matching_funcs(Funcs, Args) of
-                {error, Reason, Data} ->
-                    throw({error, Reason, Data});
-                {ok, MatchingFuncs} when length(MatchingFuncs) > 1 ->
-                    %% TODO(jkakar): We need to handle cases where more than one
-                    %% function matches a given set of parameters. For example,
-                    %% consider two functions:
-                    %%
-                    %% func Echo(:hello) atom { :hello }
-                    %% func Echo(:goodbye) string { "goodbye" }
-                    %%
-                    %% These both match an args list with a single atom arg
-                    %% type, but they have different return types. We need to
-                    %% account for all possible return types. When a callsite
-                    %% specifies a literal value such as :hello or :goodbye we
-                    %% should select the correct singular return type.
-                    erlang:error({not_implemented, [Globals, Form]});
-                {ok, MatchingFuncs} when length(MatchingFuncs) =:= 1 ->
-                    [Func] = MatchingFuncs,
-                    {ok, rufus_form:return_type(Func)}
-            end
-    end.
-
--spec find_matching_funcs(list(func_form()), list(rufus_form())) -> {ok, list(func_form())} | error_triple().
-find_matching_funcs(Funcs, Args) ->
-    FuncsWithMatchingArity = lists:filter(fun({func, #{params := Params}}) ->
-        length(Params) =:= length(Args)
-    end, Funcs),
-
-    case length(FuncsWithMatchingArity) of
-        Length when Length > 0 ->
-            Result = lists:filter(fun({func, #{params := Params}}) ->
-                Zipped = lists:zip(Params, Args),
-                lists:all(fun({{param, #{type := {type, #{spec := ParamTypeSpec}}}},
-                               {_, #{type := {type, #{spec := ArgTypeSpec}}}}}) ->
-                        ParamTypeSpec =:= ArgTypeSpec
-                end, Zipped)
-            end, FuncsWithMatchingArity),
-            case Result of
-                Result when length(Result) =:= 0 ->
-                    {error, unmatched_args, #{funcs => FuncsWithMatchingArity, args => Args}};
-                _ ->
-                    {ok, Result}
-            end;
-        _ ->
-            {error, unknown_arity, #{funcs => Funcs, args => Args}}
-    end.
 
 %% binary_op form helpers
 
@@ -150,6 +96,85 @@ allow_type_with_boolean_binary_op(_, _) -> false.
 -spec allow_type_pair_with_boolean_binary_op(bool | atom(), bool | atom()) -> boolean().
 allow_type_pair_with_boolean_binary_op(bool, bool) -> true;
 allow_type_pair_with_boolean_binary_op(_, _) -> false.
+
+%% call form helpers
+
+-spec resolve_call_type(globals(), call_form()) -> {ok, type_form()} | no_return().
+resolve_call_type(Globals, Form = {call, #{spec := Spec, args := Args}}) ->
+        case maps:get(Spec, Globals, undefined) of
+        undefined ->
+            throw({error, unknown_func, #{spec => Spec, args => Args}});
+        Funcs ->
+            case find_matching_funcs(Funcs, Args) of
+                {error, Reason, Data} ->
+                    throw({error, Reason, Data});
+                {ok, MatchingFuncs} when length(MatchingFuncs) > 1 ->
+                    %% TODO(jkakar): We need to handle cases where more than one
+                    %% function matches a given set of parameters. For example,
+                    %% consider two functions:
+                    %%
+                    %% func Echo(:hello) atom { :hello }
+                    %% func Echo(:goodbye) string { "goodbye" }
+                    %%
+                    %% These both match an args list with a single atom arg
+                    %% type, but they have different return types. We need to
+                    %% account for all possible return types. When a callsite
+                    %% specifies a literal value such as :hello or :goodbye we
+                    %% should select the correct singular return type.
+                    erlang:error({not_implemented, [Globals, Form]});
+                {ok, MatchingFuncs} when length(MatchingFuncs) =:= 1 ->
+                    [Func] = MatchingFuncs,
+                    {ok, rufus_form:return_type(Func)}
+            end
+    end.
+
+-spec find_matching_funcs(list(func_form()), list(rufus_form())) -> {ok, list(func_form())} | error_triple().
+find_matching_funcs(Funcs, Args) ->
+    FuncsWithMatchingArity = lists:filter(fun({func, #{params := Params}}) ->
+        length(Params) =:= length(Args)
+    end, Funcs),
+
+    case length(FuncsWithMatchingArity) of
+        Length when Length > 0 ->
+            Result = lists:filter(fun({func, #{params := Params}}) ->
+                Zipped = lists:zip(Params, Args),
+                lists:all(fun({{param, #{type := {type, #{spec := ParamTypeSpec}}}},
+                               {_, #{type := {type, #{spec := ArgTypeSpec}}}}}) ->
+                        ParamTypeSpec =:= ArgTypeSpec
+                end, Zipped)
+            end, FuncsWithMatchingArity),
+            case Result of
+                Result when length(Result) =:= 0 ->
+                    {error, unmatched_args, #{funcs => FuncsWithMatchingArity, args => Args}};
+                _ ->
+                    {ok, Result}
+            end;
+        _ ->
+            {error, unknown_arity, #{funcs => Funcs, args => Args}}
+    end.
+
+%% cons form helpers
+
+-spec resolve_cons_type(globals(), cons_form()) -> {ok, type_form()} | no_return().
+resolve_cons_type(Globals, Form = {cons, #{head := Head, tail := Tail, type := Type}}) ->
+    {type, #{element_type := ElementType}} = Type,
+    {ok, HeadType} = resolve_type(Globals, Head),
+    {ok, TailElementType} = resolve_type(Globals, Tail),
+    case pair_types_match_cons_type(ElementType, HeadType, TailElementType) of
+        true ->
+            {ok, Type};
+        false ->
+            Data = #{form => Form,
+                     element_type => ElementType,
+                     head_type => HeadType,
+                     tail_element_type => TailElementType},
+            throw({error, unexpected_element_type, Data})
+    end.
+
+pair_types_match_cons_type({type, #{spec := Spec}}, {type, #{spec := Spec}}, {type, #{spec := Spec}}) ->
+    true;
+pair_types_match_cons_type(_, _, _) ->
+    false.
 
 %% identifier form helpers
 

@@ -47,6 +47,9 @@ typecheck_and_annotate(Acc, Globals, Locals, [Form = {binary_op, _Context}|T]) -
 typecheck_and_annotate(Acc, Globals, Locals, [Form = {call, _Context}|T]) ->
     {ok, AnnotatedForm} = typecheck_and_annotate_call(Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
+typecheck_and_annotate(Acc, Globals, Locals, [Form = {cons, _Context}|T]) ->
+    {ok, AnnotatedForm} = typecheck_and_annotate_cons(Globals, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
 typecheck_and_annotate(Acc, Globals, Locals, [Form = {func, _Context}|T]) ->
     {ok, AnnotatedForm} = typecheck_and_annotate_func(Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
@@ -152,6 +155,22 @@ typecheck_and_annotate_call(Globals, Locals, {call, Context1 = #{args := Args}})
         {ok, TypeForm} ->
             AnnotatedForm = {call, Context2#{type => TypeForm}},
             {ok, AnnotatedForm};
+        Error ->
+            throw(Error)
+    end.
+
+%% cons helpers
+
+typecheck_and_annotate_cons(Globals, Locals, {cons, Context = #{head := Head, tail := Tail}}) ->
+    {ok, NewLocals1, [AnnotatedHead]} = typecheck_and_annotate([], Globals, Locals, [Head]),
+    {ok, _NewLocals2, [AnnotatedTail]} = typecheck_and_annotate([], Globals, NewLocals1, [Tail]),
+    AnnotatedForm1 = {cons, Context#{head => AnnotatedHead, tail => AnnotatedTail}},
+    case rufus_type:resolve(Globals, AnnotatedForm1) of
+        {ok, TypeForm} ->
+            AnnotatedForm2 = {cons, Context#{head => AnnotatedHead,
+                                             tail => AnnotatedTail,
+                                             type => TypeForm}},
+            {ok, AnnotatedForm2};
         Error ->
             throw(Error)
     end.
