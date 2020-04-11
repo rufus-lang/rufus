@@ -159,7 +159,7 @@ find_matching_funcs(Funcs, Args) ->
 resolve_cons_type(Globals, Form = {cons, #{head := Head, tail := Tail, type := Type}}) ->
     {type, #{element_type := ElementType}} = Type,
     {ok, HeadType} = resolve_type(Globals, Head),
-    {ok, TailElementType} = resolve_type(Globals, Tail),
+    {ok, {type, #{element_type := TailElementType}}} = resolve_type(Globals, Tail),
     case pair_types_match_cons_type(ElementType, HeadType, TailElementType) of
         true ->
             {ok, Type};

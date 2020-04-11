@@ -486,12 +486,6 @@ typecheck_and_annotate_with_function_returning_a_cons_literal_with_an_unexpected
     Data = #{element_type => {type, #{line => 3,
                                       source => rufus_text,
                                       spec => int}},
-             head_type => {type, #{line => 3,
-                                   source => inferred,
-                                   spec => atom}},
-             tail_element_type => {type, #{line => 3,
-                                           source => rufus_text,
-                                           spec => int}},
              form => {cons, #{head => {atom_lit, #{line => 3,
                                                    spec => unexpected,
                                                    type => {type, #{line => 3,
@@ -527,7 +521,13 @@ typecheck_and_annotate_with_function_returning_a_cons_literal_with_an_unexpected
                                                                         spec => int}},
                                                line => 3,
                                                source => rufus_text,
-                                               spec => 'list[int]'}}}}},
+                                               spec => 'list[int]'}}}},
+             head_type => {type, #{line => 3,
+                                   source => inferred,
+                                   spec => atom}},
+             tail_element_type => {type, #{line => 3,
+                                           source => rufus_text,
+                                           spec => int}}},
     ?assertEqual({error, unexpected_element_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
 typecheck_and_annotate_with_function_returning_a_cons_literal_with_an_unexpected_tail_element_value_type_test() ->
