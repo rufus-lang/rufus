@@ -24,6 +24,7 @@
 %% - `{error, invalid_arg_type, Data}` with `Data` containing `actual` and
 %%   `expected` atom keys pointing to Rufus types if return value types are
 %%   unmatched.
+-spec typecheck_and_annotate(list(rufus_form())) -> {ok, list(rufus_form())} | error_triple().
 typecheck_and_annotate(RufusForms) ->
     {ok, Globals} = rufus_form:globals(RufusForms),
     try
@@ -46,6 +47,9 @@ typecheck_and_annotate(Acc, Globals, Locals, [Form = {binary_op, _Context}|T]) -
     typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
 typecheck_and_annotate(Acc, Globals, Locals, [Form = {call, _Context}|T]) ->
     {ok, AnnotatedForm} = typecheck_and_annotate_call(Globals, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
+typecheck_and_annotate(Acc, Globals, Locals, [Form = {cons, _Context}|T]) ->
+    {ok, AnnotatedForm} = typecheck_and_annotate_cons(Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);
 typecheck_and_annotate(Acc, Globals, Locals, [Form = {func, _Context}|T]) ->
     {ok, AnnotatedForm} = typecheck_and_annotate_func(Globals, Locals, Form),
@@ -71,19 +75,26 @@ typecheck_and_annotate(Acc, _Globals, Locals, []) ->
 %% sanity_check, Data}` error triple is thrown if a form doesn't have type
 %% information, otherwise `ok` is returned.
 -spec sanity_check(list(rufus_form())) -> ok | no_return().
-sanity_check([{module, _Context}|T]) ->
+sanity_check([{binary_op, #{left := Left, right := Right, type := _Type}}|T]) ->
+    ok = sanity_check([Left]),
+    ok = sanity_check([Right]),
+    sanity_check(T);
+sanity_check([{cons, #{head := Head, tail := Tail, type := _Type}}|T]) ->
+    ok = sanity_check([Head]),
+    ok = sanity_check([Tail]),
     sanity_check(T);
 sanity_check([{func, #{params := Params, exprs := Exprs}}|T]) ->
     ok = sanity_check(Params),
     ok = sanity_check(Exprs),
     sanity_check(T);
-sanity_check([{binary_op, #{left := Left, right := Right}}|T]) ->
+sanity_check([{list, #{elements := Elements, type := _Type}}|T]) ->
+    lists:foreach(fun(Element) -> ok = sanity_check(Element) end, Elements),
+    sanity_check(T);
+sanity_check([{match, #{left := Left, right := Right, type := _Type}}|T]) ->
     ok = sanity_check([Left]),
     ok = sanity_check([Right]),
     sanity_check(T);
-sanity_check([{match, #{left := Left, right := Right}}|T]) ->
-    ok = sanity_check([Left]),
-    ok = sanity_check([Right]),
+sanity_check([{module, _Context}|T]) ->
     sanity_check(T);
 sanity_check([{_FormType, #{type := _Type}}|T]) ->
     sanity_check(T);
@@ -135,9 +146,7 @@ typecheck_and_annotate_binary_op(Globals, Locals, {binary_op, Context = #{left :
 
 %% typecheck_and_annotate_call resolves the return type for a function call and
 %% returns a call form annotated with type information.
-%%
-%% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
-%% -spec typecheck_and_annotate_call(globals(), call_form()) -> {ok, call_form()} | no_return().
+-spec typecheck_and_annotate_call(globals(), locals(), call_form()) -> {ok, call_form()} | no_return().
 typecheck_and_annotate_call(Globals, Locals, {call, Context1 = #{args := Args}}) ->
     {ok, _NewLocals, AnnotatedArgs} = typecheck_and_annotate([], Globals, Locals, Args),
     Form = {call, Context2 = Context1#{args => AnnotatedArgs}},
@@ -145,6 +154,28 @@ typecheck_and_annotate_call(Globals, Locals, {call, Context1 = #{args := Args}})
         {ok, TypeForm} ->
             AnnotatedForm = {call, Context2#{type => TypeForm}},
             {ok, AnnotatedForm};
+        Error ->
+            throw(Error)
+    end.
+
+%% cons helpers
+
+%% typecheck_and_annotate_cons enforces the constraint that the head and tail
+%% elements are of the expected type. Return values:
+%% - `{ok, AnnotatedForm}` if no issues are found.
+%% - `{error, unexpected_element_type, Data}` is thrown if either the head or
+%%   tail elements have type issues.
+-spec typecheck_and_annotate_cons(globals(), locals(), cons_form()) -> {ok, cons_form()} | no_return().
+typecheck_and_annotate_cons(Globals, Locals, {cons, Context = #{head := Head, tail := Tail}}) ->
+    {ok, NewLocals1, [AnnotatedHead]} = typecheck_and_annotate([], Globals, Locals, [Head]),
+    {ok, _NewLocals2, [AnnotatedTail]} = typecheck_and_annotate([], Globals, NewLocals1, [Tail]),
+    AnnotatedForm1 = {cons, Context#{head => AnnotatedHead, tail => AnnotatedTail}},
+    case rufus_type:resolve(Globals, AnnotatedForm1) of
+        {ok, TypeForm} ->
+            AnnotatedForm2 = {cons, Context#{head => AnnotatedHead,
+                                             tail => AnnotatedTail,
+                                             type => TypeForm}},
+            {ok, AnnotatedForm2};
         Error ->
             throw(Error)
     end.
@@ -185,6 +216,12 @@ typecheck_func_return_type(Globals, {func, #{return_type := ReturnType, exprs :=
 
 %% identifier helpers
 
+%% typecheck_and_annotate_identifier adds a locals key/value pair to the
+%% identifier with information about local variables that are in scope. Type
+%% information is also added to tge identifier form if present in Locals. Return
+%% values:
+%% - `{ok, AnnotatedForm}` with locals and type information..
+-spec typecheck_and_annotate_identifier(locals(), identifier_form()) -> {ok, identifier_form()}.
 typecheck_and_annotate_identifier(Locals, Form = {identifier, Context = #{spec := Spec}}) ->
     {ok, AnnotatedForm1} = annotate_locals(Locals, Form),
     case maps:get(Spec, Locals, undefined) of
@@ -197,6 +234,13 @@ typecheck_and_annotate_identifier(Locals, Form = {identifier, Context = #{spec :
 
 %% list_lit helpers
 
+%% typecheck_and_annotate_list_lit enforces the constraint that each list
+%% element matches the collection type. Returns values:
+%% - `{ok, Locals, AnnotatedForm}` if no issues are found. The list_lit form and
+%%   its elements are annotated with type information.
+%% - `{error, unexpected_element_type, Data}` is thrown if an element is found
+%%   with a differing type.
+-spec typecheck_and_annotate_list_lit(globals(), locals(), list_lit_form()) -> {ok, locals(), list_lit_form()} | no_return().
 typecheck_and_annotate_list_lit(Globals, Locals, {list_lit, Context = #{elements := Elements}}) ->
     {ok, NewLocals, AnnotatedElements} = typecheck_and_annotate([], Globals, Locals, Elements),
     AnnotatedForm1 = {list_lit, Context#{elements => AnnotatedElements}},
