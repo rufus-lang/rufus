@@ -69,6 +69,9 @@ forms(Acc, [{call, #{spec := Spec, args := Args, line := Line}}|T]) ->
     {ok, ArgsForms} = forms([], Args),
     Form = {call, Line, {atom, Line, Spec}, ArgsForms},
     forms([Form|Acc], T);
+forms(Acc, [{cons, _Context} = Cons|T]) ->
+    Form = box(Cons),
+    forms([Form|Acc], T);
 forms(Acc, [{float_lit, _Context} = FloatLit|T]) ->
     Form = box(FloatLit),
     forms([Form|Acc], T);
@@ -136,8 +139,6 @@ forms(Acc, []) ->
 forms(Acc, Form) ->
     erlang:error(unhandled_form, [Acc, Form]).
 
-%% Erlang form helpers
-
 %% rufus_operator_to_erlang_operator converts a Rufus operator to the Erlang
 %% equivalent.
 -spec rufus_operator_to_erlang_operator(atom(), atom()) -> atom().
@@ -186,6 +187,8 @@ box({atom_lit, #{spec := Value, line := Line}}) ->
     {atom, Line, Value};
 box({bool_lit, #{spec := Value, line := Line}}) ->
     {atom, Line, Value};
+box({cons, #{head := Head, tail := {list_lit, #{elements := Tail}}, line := Line}}) ->
+    list_to_cons([Head|Tail], Line);
 box({float_lit, #{spec := Value, line := Line}}) ->
     {float, Line, Value};
 box({int_lit, #{spec := Value, line := Line}}) ->
