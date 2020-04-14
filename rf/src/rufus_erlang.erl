@@ -53,9 +53,6 @@ group_forms_by_func(Forms) ->
     {ok, [ModuleForm|lists:reverse(SortedFuncForms)]}.
 
 -spec forms(list(erlang_form()), list(rufus_form() | {func_group, context()})) -> {ok, list(erlang_form())}.
-forms(Acc, [{module, #{line := Line, spec := Name}}|T]) ->
-    Form = {attribute, Line, module, Name},
-    forms([Form|Acc], T);
 forms(Acc, [{atom_lit, _Context} = AtomLit|T]) ->
     Form = box(AtomLit),
     forms([Form|Acc], T);
@@ -106,6 +103,14 @@ forms(Acc, [{int_lit, _Context} = IntLit|T]) ->
 forms(Acc, [{list_lit, _Context} = ListLit|T]) ->
     Form = box(ListLit),
     forms([Form|Acc], T);
+forms(Acc, [{match, #{line := Line, left := Left, right := Right}}|T]) ->
+    {ok, [LeftForm]} = forms([], [Left]),
+    {ok, [RightForm]} = forms([], [Right]),
+    Form = {match, Line, LeftForm, RightForm},
+    forms([Form|Acc], T);
+forms(Acc, [{module, #{line := Line, spec := Name}}|T]) ->
+    Form = {attribute, Line, module, Name},
+    forms([Form|Acc], T);
 forms(Acc, [Form = {param, #{line := Line, spec := Name}}|T]) ->
     TypeSpec = rufus_form:type_spec(Form),
     ErlangForm = case TypeSpec of
@@ -121,11 +126,6 @@ forms(Acc, [Form = {param, #{line := Line, spec := Name}}|T]) ->
             {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Name}]}
     end,
     forms([ErlangForm|Acc], T);
-forms(Acc, [{match, #{line := Line, left := Left, right := Right}}|T]) ->
-    {ok, [LeftForm]} = forms([], [Left]),
-    {ok, [RightForm]} = forms([], [Right]),
-    Form = {match, Line, LeftForm, RightForm},
-    forms([Form|Acc], T);
 forms(Acc, [{string_lit, _Context} = StringLit|T]) ->
     Form = box(StringLit),
     forms([Form|Acc], T);
@@ -135,6 +135,8 @@ forms(Acc, []) ->
     {ok, lists:reverse(Acc)};
 forms(Acc, Form) ->
     erlang:error(unhandled_form, [Acc, Form]).
+
+%% Erlang form helpers
 
 %% rufus_operator_to_erlang_operator converts a Rufus operator to the Erlang
 %% equivalent.
@@ -194,6 +196,8 @@ box({string_lit, #{line := Line, spec := Value}}) ->
     StringExpr = {bin_element, Line, {string, Line, binary_to_list(Value)}, default, default},
     {tuple, Line, [{atom, Line, string}, {bin, Line, [StringExpr]}]}.
 
+%% Visibility helpers
+
 %% annotate_exports creates export attributes for all exported functions and
 %% injects them into the sequence of Erlang forms. They're defined before
 %% function definitions to avoid crashing the Erlang compiler.
@@ -242,6 +246,8 @@ is_public(Name) ->
 -spec is_private(integer()) -> boolean().
 is_private(LeadingChar) ->
     (LeadingChar >= $a) and (LeadingChar =< $z).
+
+%% list and cons helpers
 
 %% list_to_cons transforms a list of Rufus form elements in a list_lit form into
 %% an Erlang cons form.
