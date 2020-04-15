@@ -58,3 +58,52 @@ eval_for_function_returning_a_list_with_expressions_as_elements_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertEqual([7, 5, 3], example:'Numbers'()).
+
+eval_for_function_returning_a_cons_literal_with_literal_pair_values_test() ->
+    RufusText = "
+    module example
+    func Numbers() list[int] { list[int]{1|{2}} }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual([1, 2], example:'Numbers'()).
+
+eval_for_function_returning_a_cons_literal_with_multiple_literal_pair_values_test() ->
+    RufusText = "
+    module example
+    func Numbers() list[int] { list[int]{1|{2, 3, 4}} }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual([1, 2, 3, 4], example:'Numbers'()).
+
+eval_for_function_returning_a_cons_literal_with_variable_pair_values_test() ->
+    RufusText = "
+    module example
+    func Numbers() list[int] {
+        head = 1
+        tail = list[int]{2, 3, 4}
+        list[int]{head|tail}
+    }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual([1, 2, 3, 4], example:'Numbers'()).
+
+eval_for_function_taking_a_list_lit_form_and_returning_it_test() ->
+    RufusText = "
+    module example
+    func Echo(numbers list[int]) list[int] { numbers }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual([1, 2, 3, 4], example:'Echo'([1, 2, 3, 4])).
+
+eval_for_function_that_prepends_a_number_to_a_list_test() ->
+    RufusText = "
+    module example
+    func Prepend(n int, numbers list[int]) list[int] { list[int]{n|numbers} }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual([1, 2, 3, 4], example:'Prepend'(1, [2, 3, 4])).
