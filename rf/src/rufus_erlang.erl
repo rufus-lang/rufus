@@ -69,8 +69,10 @@ forms(Acc, [{call, #{spec := Spec, args := Args, line := Line}}|T]) ->
     {ok, ArgsForms} = forms([], Args),
     Form = {call, Line, {atom, Line, Spec}, ArgsForms},
     forms([Form|Acc], T);
-forms(Acc, [{cons, _Context} = Cons|T]) ->
-    Form = box(Cons),
+forms(Acc, [{cons, #{head := Head, tail := Tail, line := Line}}|T]) ->
+    {ok, [HeadForm]} = forms([], [Head]),
+    {ok, [TailForm]} = forms([], [Tail]),
+    Form = {cons, Line, HeadForm, TailForm},
     forms([Form|Acc], T);
 forms(Acc, [{float_lit, _Context} = FloatLit|T]) ->
     Form = box(FloatLit),
@@ -85,19 +87,21 @@ forms(Acc, [{func_group, #{line := Line1, spec := Spec, arity := Arity, forms :=
     end, Forms),
     Form = {function, Line1, Spec, Arity, FuncClauses},
     forms([Form|Acc], T);
-forms(Acc, [{identifier, #{line := Line, spec := Name, type := Type}}|T]) ->
-    TypeSpec = rufus_form:spec(Type),
-    Form = case TypeSpec of
-        atom ->
-            {var, Line, Name};
-        bool ->
-            {var, Line, Name};
-        float ->
-            {var, Line, Name};
-        int ->
-            {var, Line, Name};
+forms(Acc, [{identifier, #{line := Line, spec := Spec, type := Type}}|T]) ->
+    Form = case Type of
+        {type, #{spec := atom}} ->
+            {var, Line, Spec};
+        {type, #{spec := bool}} ->
+            {var, Line, Spec};
+        {type, #{spec := float}} ->
+            {var, Line, Spec};
+        {type, #{spec := int}} ->
+            {var, Line, Spec};
+        {type, #{collection_type := list}} ->
+            {var, Line, Spec};
         _ ->
-            {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Name}]}
+            TypeSpec = rufus_form:spec(Type),
+            {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Spec}]}
     end,
     forms([Form|Acc], T);
 forms(Acc, [{int_lit, _Context} = IntLit|T]) ->
@@ -111,22 +115,22 @@ forms(Acc, [{match, #{line := Line, left := Left, right := Right}}|T]) ->
     {ok, [RightForm]} = forms([], [Right]),
     Form = {match, Line, LeftForm, RightForm},
     forms([Form|Acc], T);
-forms(Acc, [{module, #{line := Line, spec := Name}}|T]) ->
-    Form = {attribute, Line, module, Name},
+forms(Acc, [{module, #{line := Line, spec := Spec}}|T]) ->
+    Form = {attribute, Line, module, Spec},
     forms([Form|Acc], T);
-forms(Acc, [Form = {param, #{line := Line, spec := Name}}|T]) ->
+forms(Acc, [Form = {param, #{line := Line, spec := Spec}}|T]) ->
     TypeSpec = rufus_form:type_spec(Form),
     ErlangForm = case TypeSpec of
         atom ->
-            {var, Line, Name};
+            {var, Line, Spec};
         bool ->
-            {var, Line, Name};
+            {var, Line, Spec};
         float ->
-            {var, Line, Name};
+            {var, Line, Spec};
         int ->
-            {var, Line, Name};
+            {var, Line, Spec};
         _ ->
-            {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Name}]}
+            {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Spec}]}
     end,
     forms([ErlangForm|Acc], T);
 forms(Acc, [{string_lit, _Context} = StringLit|T]) ->
@@ -187,8 +191,6 @@ box({atom_lit, #{spec := Value, line := Line}}) ->
     {atom, Line, Value};
 box({bool_lit, #{spec := Value, line := Line}}) ->
     {atom, Line, Value};
-box({cons, #{head := Head, tail := {list_lit, #{elements := Tail}}, line := Line}}) ->
-    list_to_cons([Head|Tail], Line);
 box({float_lit, #{spec := Value, line := Line}}) ->
     {float, Line, Value};
 box({int_lit, #{spec := Value, line := Line}}) ->
