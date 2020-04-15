@@ -88,5 +88,13 @@ eval_for_function_returning_a_cons_literal_with_variable_pair_values_test() ->
     ",
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
-    io:format("example:'Numbers'() => ~p~n", [example:'Numbers'()]),
     ?assertEqual([1, 2, 3, 4], example:'Numbers'()).
+
+eval_for_function_taking_a_list_lit_form_and_returning_it_test() ->
+    RufusText = "
+    module example
+    func Echo(numbers list[int]) list[int] { numbers }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual([1, 2, 3, 4], example:'Echo'([1, 2, 3, 4])).
