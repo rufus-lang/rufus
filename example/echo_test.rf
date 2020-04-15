@@ -1,6 +1,6 @@
 module example
 
-import t "testing"
+import t "Testing"
 
 func TestEcho(c t.C) {
     t.AssertEqual(c, "Hello, world!", Echo("Hello, world!"))
