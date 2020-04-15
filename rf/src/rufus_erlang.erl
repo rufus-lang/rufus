@@ -254,7 +254,7 @@ is_public(Name) ->
 is_private(LeadingChar) ->
     (LeadingChar >= $a) and (LeadingChar =< $z).
 
-%% list and cons helpers
+%% list helpers
 
 %% list_to_cons transforms a list of Rufus form elements in a list_lit form into
 %% an Erlang cons form.
