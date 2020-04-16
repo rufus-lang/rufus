@@ -188,3 +188,59 @@ forms_for_function_returning_a_boolean_from_a_nested_boolean_operation_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(false, example:'Falsy'()),
     ?assertEqual(true, example:'Truthy'()).
+
+%% Comparison operators
+
+forms_for_function_with_an_equality_comparison_operation_test() ->
+    RufusText = "
+    module example
+    func Truthy() bool { :truth == :truth }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(true, example:'Truthy'()).
+
+forms_for_function_with_an_inequality_comparison_operation_test() ->
+    RufusText = "
+    module example
+    func Truthy() bool { :truth != :fiction }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(true, example:'Truthy'()).
+
+forms_for_function_with_a_less_than_comparison_operation_test() ->
+    RufusText = "
+    module example
+    func Truthy() bool { 1 < 2 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(true, example:'Truthy'()).
+
+forms_for_function_with_a_less_than_or_greater_comparison_operation_test() ->
+    RufusText = "
+    module example
+    func Truthy() bool { 1 <= 2 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(true, example:'Truthy'()).
+
+forms_for_function_with_a_greater_than_comparison_operation_test() ->
+    RufusText = "
+    module example
+    func Truthy() bool { 2 > 1 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(true, example:'Truthy'()).
+
+forms_for_function_with_a_greater_than_or_greater_comparison_operation_test() ->
+    RufusText = "
+    module example
+    func Truthy() bool { 2 >= 1 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(true, example:'Truthy'()).

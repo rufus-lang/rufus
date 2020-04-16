@@ -336,3 +336,95 @@ forms_for_function_returning_a_boolean_from_a_nested_boolean_operation_test() ->
         {function, 3, 'Truthy', 0, [{clause, 3, [], [], [OrBinaryOp]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
+
+%% Comparison operators
+
+forms_for_function_with_an_equality_comparison_operation_test() ->
+    RufusText = "
+    module example
+    func Truthy() bool { :truth == :truth }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Truthy', 0}]},
+        {function, 3, 'Truthy', 0,  [{clause, 3, [], [],  [{op, 3, '=:=', {atom, 3, truth}, {atom, 3, truth}}]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_with_an_inequality_comparison_operation_test() ->
+    RufusText = "
+    module example
+    func Truthy() bool { :truth != :fiction }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Truthy', 0}]},
+        {function, 3, 'Truthy', 0,  [{clause, 3, [], [],  [{op, 3, '=/=', {atom, 3, truth}, {atom, 3, fiction}}]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_with_a_less_than_comparison_operation_test() ->
+    RufusText = "
+    module example
+    func Truthy() bool { 1 < 2 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Truthy', 0}]},
+        {function, 3, 'Truthy', 0,  [{clause, 3, [], [],  [{op, 3, '<', {integer, 3, 1}, {integer, 3, 2}}]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_with_a_less_than_or_equal_comparison_operation_test() ->
+    RufusText = "
+    module example
+    func Truthy() bool { 1 <= 2 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Truthy', 0}]},
+        {function, 3, 'Truthy', 0,  [{clause, 3, [], [],  [{op, 3, '=<', {integer, 3, 1}, {integer, 3, 2}}]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_with_a_greater_than_comparison_operation_test() ->
+    RufusText = "
+    module example
+    func Truthy() bool { 2 > 1 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Truthy', 0}]},
+        {function, 3, 'Truthy', 0,  [{clause, 3, [], [],  [{op, 3, '>', {integer, 3, 2}, {integer, 3, 1}}]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_with_a_greater_than_or_equal_comparison_operation_test() ->
+    RufusText = "
+    module example
+    func Truthy() bool { 2 >= 1 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Truthy', 0}]},
+        {function, 3, 'Truthy', 0,  [{clause, 3, [], [],  [{op, 3, '>=', {integer, 3, 2}, {integer, 3, 1}}]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
