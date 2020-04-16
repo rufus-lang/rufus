@@ -47,19 +47,19 @@ resolve_binary_op_type(Globals, Form = {binary_op, #{op := Op, left := Left, rig
     LeftTypeSpec = rufus_form:type_spec(LeftType),
     RightTypeSpec = rufus_form:type_spec(RightType),
     {AllowType, AllowTypePair} = case Op of
-        '+'   -> {fun allow_type_with_arithmetic_binary_op/2, fun allow_type_pair_with_arithmetic_binary_op/2};
-        '-'   -> {fun allow_type_with_arithmetic_binary_op/2, fun allow_type_pair_with_arithmetic_binary_op/2};
-        '*'   -> {fun allow_type_with_arithmetic_binary_op/2, fun allow_type_pair_with_arithmetic_binary_op/2};
-        '/'   -> {fun allow_type_with_arithmetic_binary_op/2, fun allow_type_pair_with_arithmetic_binary_op/2};
-        '%'   -> {fun allow_type_with_arithmetic_binary_op/2, fun allow_type_pair_with_arithmetic_binary_op/2};
-        'and' -> {fun allow_type_with_boolean_binary_op/2,    fun allow_type_pair_with_boolean_binary_op/2};
-        'or'  -> {fun allow_type_with_boolean_binary_op/2,    fun allow_type_pair_with_boolean_binary_op/2};
-        '=='  -> {fun allow_type_with_comparison_operator/2,  fun allow_type_pair_with_comparison_operator/2};
-        '!='  -> {fun allow_type_with_comparison_operator/2,  fun allow_type_pair_with_comparison_operator/2};
-        '<'  -> {fun allow_type_with_comparison_operator/2,  fun allow_type_pair_with_comparison_operator/2};
-        '<='  -> {fun allow_type_with_comparison_operator/2,  fun allow_type_pair_with_comparison_operator/2};
-        '>'  -> {fun allow_type_with_comparison_operator/2,  fun allow_type_pair_with_comparison_operator/2};
-        '>='  -> {fun allow_type_with_comparison_operator/2,  fun allow_type_pair_with_comparison_operator/2}
+        '+'   -> {fun allow_type_with_mathematical_operator/2, fun allow_type_pair_with_mathematical_operator/2};
+        '-'   -> {fun allow_type_with_mathematical_operator/2, fun allow_type_pair_with_mathematical_operator/2};
+        '*'   -> {fun allow_type_with_mathematical_operator/2, fun allow_type_pair_with_mathematical_operator/2};
+        '/'   -> {fun allow_type_with_mathematical_operator/2, fun allow_type_pair_with_mathematical_operator/2};
+        '%'   -> {fun allow_type_with_mathematical_operator/2, fun allow_type_pair_with_mathematical_operator/2};
+        'and' -> {fun allow_type_with_conditional_operator/2,  fun allow_type_pair_with_conditional_operator/2};
+        'or'  -> {fun allow_type_with_conditional_operator/2,  fun allow_type_pair_with_conditional_operator/2};
+        '=='  -> {fun allow_type_with_comparison_operator/2,   fun allow_type_pair_with_comparison_operator/2};
+        '!='  -> {fun allow_type_with_comparison_operator/2,   fun allow_type_pair_with_comparison_operator/2};
+        '<'   -> {fun allow_type_with_comparison_operator/2,   fun allow_type_pair_with_comparison_operator/2};
+        '<='  -> {fun allow_type_with_comparison_operator/2,   fun allow_type_pair_with_comparison_operator/2};
+        '>'   -> {fun allow_type_with_comparison_operator/2,   fun allow_type_pair_with_comparison_operator/2};
+        '>='  -> {fun allow_type_with_comparison_operator/2,   fun allow_type_pair_with_comparison_operator/2}
     end,
 
     ok = case AllowType(Op, LeftTypeSpec) and AllowType(Op, RightTypeSpec) of
@@ -91,34 +91,34 @@ binary_op_type('>', Line) -> rufus_form:make_inferred_type(bool, Line);
 binary_op_type('>=', Line) -> rufus_form:make_inferred_type(bool, Line);
 binary_op_type(_, _) -> default.
 
-%% allow_type_with_arithmetic_binary_op returns true if the specified type may
+%% allow_type_with_mathematical_operator returns true if the specified type may
 %% be used with the specified arithmetic operator, otherwise false.
--spec allow_type_with_arithmetic_binary_op(arithmetic_operator(), float | int | atom()) -> boolean().
-allow_type_with_arithmetic_binary_op('%', float) -> false;
-allow_type_with_arithmetic_binary_op(_, float) -> true;
-allow_type_with_arithmetic_binary_op(_, int) -> true;
-allow_type_with_arithmetic_binary_op(_, _) -> false.
+-spec allow_type_with_mathematical_operator(arithmetic_operator(), float | int | atom()) -> boolean().
+allow_type_with_mathematical_operator('%', float) -> false;
+allow_type_with_mathematical_operator(_, float) -> true;
+allow_type_with_mathematical_operator(_, int) -> true;
+allow_type_with_mathematical_operator(_, _) -> false.
 
-%% allow_type_pair_with_arithmetic_binary_op returns true if the specified pair
+%% allow_type_pair_with_mathematical_operator returns true if the specified pair
 %% of types are either both of type float, or both of type int, which are the
 %% only types that may be used with an arithmetic operator.
--spec allow_type_pair_with_arithmetic_binary_op(float | int | atom(), float | int | atom()) -> boolean().
-allow_type_pair_with_arithmetic_binary_op(float, float) -> true;
-allow_type_pair_with_arithmetic_binary_op(int, int) -> true;
-allow_type_pair_with_arithmetic_binary_op(_, _) -> false.
+-spec allow_type_pair_with_mathematical_operator(float | int | atom(), float | int | atom()) -> boolean().
+allow_type_pair_with_mathematical_operator(float, float) -> true;
+allow_type_pair_with_mathematical_operator(int, int) -> true;
+allow_type_pair_with_mathematical_operator(_, _) -> false.
 
-%% allow_type_with_boolean_binary_op returns true if the specified type may be
-%% used with the specified boolean operator, otherwise false.
--spec allow_type_with_boolean_binary_op(boolean_operator(), bool | atom()) -> boolean().
-allow_type_with_boolean_binary_op(_, bool) -> true;
-allow_type_with_boolean_binary_op(_, _) -> false.
+%% allow_type_with_conditional_operator returns true if the specified type may
+%% be used with the specified boolean operator, otherwise false.
+-spec allow_type_with_conditional_operator(boolean_operator(), bool | atom()) -> boolean().
+allow_type_with_conditional_operator(_, bool) -> true;
+allow_type_with_conditional_operator(_, _) -> false.
 
-%% allow_type_pair_with_boolean_binary_op returns true if the specified pair of
-%% types are both of type bool, which is the only type that may be used with a
-%% boolean operator.
--spec allow_type_pair_with_boolean_binary_op(bool | atom(), bool | atom()) -> boolean().
-allow_type_pair_with_boolean_binary_op(bool, bool) -> true;
-allow_type_pair_with_boolean_binary_op(_, _) -> false.
+%% allow_type_pair_with_conditional_operator returns true if the specified pair
+%% of types are both of type bool, which is the only type that may be used with
+%% a boolean operator.
+-spec allow_type_pair_with_conditional_operator(bool | atom(), bool | atom()) -> boolean().
+allow_type_pair_with_conditional_operator(bool, bool) -> true;
+allow_type_pair_with_conditional_operator(_, _) -> false.
 
 %% allow_type_with_comparison_operator returns true if the specified type may be
 %% used with the specified comparison operator, otherwise false.

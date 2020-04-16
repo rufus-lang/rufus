@@ -4,7 +4,7 @@
 
 %% Mathematical operators
 
-typecheck_and_annotate_arithmetic_binary_op_with_ints_test() ->
+typecheck_and_annotate_mathematical_operator_with_ints_test() ->
     RufusText = "
     module example
     func FortyTwo() int { 19 + 23 }
@@ -37,7 +37,7 @@ typecheck_and_annotate_arithmetic_binary_op_with_ints_test() ->
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
-typecheck_and_annotate_arithmetic_binary_op_with_floats_test() ->
+typecheck_and_annotate_mathematical_operator_with_floats_test() ->
     RufusText = "
     module example
     func Pi() float { 1.0 + 2.14159265359 }
@@ -70,7 +70,7 @@ typecheck_and_annotate_arithmetic_binary_op_with_floats_test() ->
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
-typecheck_and_annotate_arithmetic_binary_op_with_float_and_int_test() ->
+typecheck_and_annotate_mathematical_operator_with_float_and_int_test() ->
     RufusText = "
     module example
     func FortyTwo() int { 19.0 + 23 }
@@ -93,7 +93,7 @@ typecheck_and_annotate_arithmetic_binary_op_with_float_and_int_test() ->
     {error, unmatched_operand_type, Data} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, Data).
 
-typecheck_and_annotate_arithmetic_binary_op_with_float_and_float_and_int_test() ->
+typecheck_and_annotate_mathematical_operator_with_float_and_float_and_int_test() ->
     RufusText = "
     module example
     func FortyTwo() int { 13.0 + 6.0 + 23 }
@@ -126,7 +126,7 @@ typecheck_and_annotate_arithmetic_binary_op_with_float_and_float_and_int_test() 
     {error, unmatched_operand_type, Data} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, Data).
 
-typecheck_and_annotate_arithmetic_binary_op_with_bools_test() ->
+typecheck_and_annotate_mathematical_operator_with_bools_test() ->
     RufusText = "
     module example
     func Concat() bool { true + false }
@@ -149,7 +149,7 @@ typecheck_and_annotate_arithmetic_binary_op_with_bools_test() ->
     {error, unsupported_operand_type, Data} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, Data).
 
-typecheck_and_annotate_arithmetic_binary_op_with_strings_test() ->
+typecheck_and_annotate_mathematical_operator_with_strings_test() ->
     RufusText = "
     module example
     func Concat() string { \"port\" + \"manteau\" }
@@ -172,7 +172,7 @@ typecheck_and_annotate_arithmetic_binary_op_with_strings_test() ->
     {error, unsupported_operand_type, Data} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, Data).
 
-typecheck_and_annotate_remainder_arithmetic_binary_op_with_ints_test() ->
+typecheck_and_annotate_remainder_mathematical_operator_with_ints_test() ->
     RufusText = "
     module example
     func Six() int { 27 % 7 }
@@ -205,7 +205,7 @@ typecheck_and_annotate_remainder_arithmetic_binary_op_with_ints_test() ->
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
-typecheck_and_annotate_remainder_arithmetic_binary_op_with_floats_test() ->
+typecheck_and_annotate_remainder_mathematical_operator_with_floats_test() ->
     RufusText = "
     module example
     func Six() int { 27.0 % 7.0 }
@@ -230,7 +230,7 @@ typecheck_and_annotate_remainder_arithmetic_binary_op_with_floats_test() ->
 
 %% Conditional operators
 
-typecheck_and_annotate_boolean_binary_op_with_bools_test() ->
+typecheck_and_annotate_conditional_operator_with_bools_test() ->
     RufusText = "
     module example
     func Falsy() bool { true and false }
@@ -263,7 +263,7 @@ typecheck_and_annotate_boolean_binary_op_with_bools_test() ->
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
-typecheck_and_annotate_boolean_binary_op_with_nested_bools_test() ->
+typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
     RufusText = "
     module example
     func Falsy() bool { false or true and true }
@@ -338,7 +338,7 @@ typecheck_and_annotate_boolean_binary_op_with_nested_bools_test() ->
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
-typecheck_and_annotate_boolean_binary_op_with_bool_and_int_test() ->
+typecheck_and_annotate_conditional_operator_with_bool_and_int_test() ->
     RufusText = "
     module example
     func Falsy() bool { true and 0 }
@@ -363,7 +363,7 @@ typecheck_and_annotate_boolean_binary_op_with_bool_and_int_test() ->
 
 %% Comparison operators
 
-typecheck_and_annotate_equal_binary_op_with_ints_test() ->
+typecheck_and_annotate_equality_comparison_operator_with_ints_test() ->
     RufusText = "
     module example
     func Falsy() bool { 1 == 2 }
@@ -396,7 +396,7 @@ typecheck_and_annotate_equal_binary_op_with_ints_test() ->
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
-typecheck_and_annotate_equal_binary_op_with_mismatched_operands_test() ->
+typecheck_and_annotate_equality_comparison_operator_with_mismatched_operands_test() ->
     RufusText = "
     module example
     func Broken() bool { 1 == 2.0 }
@@ -418,7 +418,7 @@ typecheck_and_annotate_equal_binary_op_with_mismatched_operands_test() ->
                                                                            spec => float}}}}}}},
     ?assertEqual({error, unmatched_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
-typecheck_and_annotate_inequal_binary_op_with_ints_test() ->
+typecheck_and_annotate_inequality_comparison_operator_with_ints_test() ->
     RufusText = "
     module example
     func Falsy() bool { 1 != 1 }
@@ -451,7 +451,7 @@ typecheck_and_annotate_inequal_binary_op_with_ints_test() ->
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
-typecheck_and_annotate_inequal_binary_op_with_mismatched_operands_test() ->
+typecheck_and_annotate_inequality_comparison_operator_with_mismatched_operands_test() ->
     RufusText = "
     module example
     func Broken() bool { :two != 2.0 }
@@ -473,7 +473,7 @@ typecheck_and_annotate_inequal_binary_op_with_mismatched_operands_test() ->
                                                                            spec => float}}}}}}},
     ?assertEqual({error, unmatched_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
-typecheck_and_annotate_less_than_binary_op_with_ints_test() ->
+typecheck_and_annotate_less_than_comparison_operator_with_ints_test() ->
     RufusText = "
     module example
     func Falsy() bool { 2 < 1 }
@@ -506,7 +506,7 @@ typecheck_and_annotate_less_than_binary_op_with_ints_test() ->
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
-typecheck_and_annotate_less_than_binary_op_with_mismatched_operands_test() ->
+typecheck_and_annotate_less_than_comparison_operator_with_mismatched_operands_test() ->
     RufusText = "
     module example
     func Broken() bool { 2 < 1.0 }
@@ -528,7 +528,7 @@ typecheck_and_annotate_less_than_binary_op_with_mismatched_operands_test() ->
                                                                            spec => float}}}}}}},
     ?assertEqual({error, unmatched_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
-typecheck_and_annotate_less_than_binary_op_with_unsupported_operand_type_test() ->
+typecheck_and_annotate_less_than_comparison_operator_with_unsupported_operand_type_test() ->
     RufusText = "
     module example
     func Broken() bool { :two < :one }
@@ -550,7 +550,7 @@ typecheck_and_annotate_less_than_binary_op_with_unsupported_operand_type_test() 
                                                                           spec => atom}}}}}}},
     ?assertEqual({error, unsupported_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
-typecheck_and_annotate_less_than_or_equal_binary_op_with_ints_test() ->
+typecheck_and_annotate_less_than_or_equal_comparison_operator_with_ints_test() ->
     RufusText = "
     module example
     func Falsy() bool { 2 <= 1 }
@@ -583,7 +583,7 @@ typecheck_and_annotate_less_than_or_equal_binary_op_with_ints_test() ->
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
-typecheck_and_annotate_less_than_or_equal_binary_op_with_mismatched_operands_test() ->
+typecheck_and_annotate_less_than_or_equal_comparison_operator_with_mismatched_operands_test() ->
     RufusText = "
     module example
     func Broken() bool { 2 <= 1.0 }
@@ -605,7 +605,7 @@ typecheck_and_annotate_less_than_or_equal_binary_op_with_mismatched_operands_tes
                                                                            spec => float}}}}}}},
     ?assertEqual({error, unmatched_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
-typecheck_and_annotate_less_than_or_equal_binary_op_with_unsupported_operand_type_test() ->
+typecheck_and_annotate_less_than_or_equal_comparison_operator_with_unsupported_operand_type_test() ->
     RufusText = "
     module example
     func Broken() bool { :two <= :one }
@@ -627,7 +627,7 @@ typecheck_and_annotate_less_than_or_equal_binary_op_with_unsupported_operand_typ
                                                                           spec => atom}}}}}}},
     ?assertEqual({error, unsupported_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
-typecheck_and_annotate_greater_than_binary_op_with_ints_test() ->
+typecheck_and_annotate_greater_than_comparison_operator_with_ints_test() ->
     RufusText = "
     module example
     func Falsy() bool { 1 > 2 }
@@ -660,7 +660,7 @@ typecheck_and_annotate_greater_than_binary_op_with_ints_test() ->
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
-typecheck_and_annotate_greater_than_binary_op_with_mismatched_operands_test() ->
+typecheck_and_annotate_greater_than_comparison_operator_with_mismatched_operands_test() ->
     RufusText = "
     module example
     func Broken() bool { 2 > 1.0 }
@@ -682,7 +682,7 @@ typecheck_and_annotate_greater_than_binary_op_with_mismatched_operands_test() ->
                                                                            spec => float}}}}}}},
     ?assertEqual({error, unmatched_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
-typecheck_and_annotate_greater_than_binary_op_with_unsupported_operand_type_test() ->
+typecheck_and_annotate_greater_than_comparison_operator_with_unsupported_operand_type_test() ->
     RufusText = "
     module example
     func Broken() bool { :two > :one }
@@ -704,7 +704,7 @@ typecheck_and_annotate_greater_than_binary_op_with_unsupported_operand_type_test
                                                                           spec => atom}}}}}}},
     ?assertEqual({error, unsupported_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
-typecheck_and_annotate_greater_than_or_equal_binary_op_with_ints_test() ->
+typecheck_and_annotate_greater_than_or_equal_comparison_operator_with_ints_test() ->
     RufusText = "
     module example
     func Falsy() bool { 1 >= 2 }
@@ -738,7 +738,7 @@ typecheck_and_annotate_greater_than_or_equal_binary_op_with_ints_test() ->
     ?assertEqual(Expected, AnnotatedForms).
 
 
-typecheck_and_annotate_greater_than_or_equal_binary_op_with_mismatched_operands_test() ->
+typecheck_and_annotate_greater_than_or_equal_comparison_operator_with_mismatched_operands_test() ->
     RufusText = "
     module example
     func Broken() bool { 2 >= 1.0 }
@@ -760,7 +760,7 @@ typecheck_and_annotate_greater_than_or_equal_binary_op_with_mismatched_operands_
                                                                            spec => float}}}}}}},
     ?assertEqual({error, unmatched_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
-typecheck_and_annotate_greater_than_or_equal_binary_op_with_unsupported_operand_type_test() ->
+typecheck_and_annotate_greater_than_or_equal_comparison_operator_with_unsupported_operand_type_test() ->
     RufusText = "
     module example
     func Broken() bool { :two >= :one }
