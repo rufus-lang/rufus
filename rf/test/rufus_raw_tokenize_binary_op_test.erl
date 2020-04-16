@@ -57,3 +57,51 @@ string_with_binary_op_expression_using_or_operator_test() ->
         {'or', 1},
         {bool_lit, 1, false}
     ], Tokens).
+
+string_with_binary_op_expression_using_equal_operator_test() ->
+    {ok, Tokens, _} = rufus_raw_tokenize:string("true == false"),
+    ?assertEqual([
+        {bool_lit, 1, true},
+        {'==', 1},
+        {bool_lit, 1, false}
+    ], Tokens).
+
+string_with_binary_op_expression_using_not_equal_operator_test() ->
+    {ok, Tokens, _} = rufus_raw_tokenize:string("true != false"),
+    ?assertEqual([
+        {bool_lit, 1, true},
+        {'!=', 1},
+        {bool_lit, 1, false}
+    ], Tokens).
+
+string_with_binary_op_expression_using_less_than_operator_test() ->
+    {ok, Tokens, _} = rufus_raw_tokenize:string("3 < 5"),
+    ?assertEqual([
+        {int_lit, 1, 3},
+        {'<', 1},
+        {int_lit, 1, 5}
+    ], Tokens).
+
+string_with_binary_op_expression_using_less_than_or_equal_operator_test() ->
+    {ok, Tokens, _} = rufus_raw_tokenize:string("3 <= 5"),
+    ?assertEqual([
+        {int_lit, 1, 3},
+        {'<=', 1},
+        {int_lit, 1, 5}
+    ], Tokens).
+
+string_with_binary_op_expression_using_greater_than_operator_test() ->
+    {ok, Tokens, _} = rufus_raw_tokenize:string("3 > 5"),
+    ?assertEqual([
+        {int_lit, 1, 3},
+        {'>', 1},
+        {int_lit, 1, 5}
+    ], Tokens).
+
+string_with_binary_op_expression_using_greater_than_or_equal_operator_test() ->
+    {ok, Tokens, _} = rufus_raw_tokenize:string("3 >= 5"),
+    ?assertEqual([
+        {int_lit, 1, 3},
+        {'>=', 1},
+        {int_lit, 1, 5}
+    ], Tokens).

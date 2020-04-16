@@ -13,6 +13,8 @@ Terminals
     '+' '-' '*' '/' '%'
     ',' ';' '='
     'and' 'or'
+    '==' '!='
+    '<' '<=' '>' '>='
     module import
     func identifier
     atom atom_lit
@@ -32,14 +34,20 @@ Rootsymbol root.
 %% Operator precedence
 %%
 
-Left 100 '+'.
-Left 100 '-'.
-Left 100 '*'.
-Left 100 '/'.
-Left 100 '%'.
-Left 90  'and'.
-Left 80  'or'.
-Left 50  '='.
+Left     70 '*'.
+Left     70 '/'.
+Left     70 '%'.
+Left     60 '+'.
+Left     60 '-'.
+Nonassoc 50 '=='.
+Nonassoc 50 '!='.
+Nonassoc 50 '<'.
+Nonassoc 50 '<='.
+Nonassoc 50 '>'.
+Nonassoc 50 '>='.
+Left     40 'and'.
+Left     30 'or'.
+Left     20 '='.
 
 %%
 %% Grammar rules
@@ -64,6 +72,12 @@ binary_op -> expr '/' expr       : rufus_form:make_binary_op('/', '$1', '$3', li
 binary_op -> expr '%' expr       : rufus_form:make_binary_op('%', '$1', '$3', line('$2')).
 binary_op -> expr 'and' expr     : rufus_form:make_binary_op('and', '$1', '$3', line('$2')).
 binary_op -> expr 'or' expr      : rufus_form:make_binary_op('or', '$1', '$3', line('$2')).
+binary_op -> expr '==' expr      : rufus_form:make_binary_op('==', '$1', '$3', line('$2')).
+binary_op -> expr '!=' expr      : rufus_form:make_binary_op('!=', '$1', '$3', line('$2')).
+binary_op -> expr '<' expr       : rufus_form:make_binary_op('<', '$1', '$3', line('$2')).
+binary_op -> expr '<=' expr      : rufus_form:make_binary_op('<=', '$1', '$3', line('$2')).
+binary_op -> expr '>' expr       : rufus_form:make_binary_op('>', '$1', '$3', line('$2')).
+binary_op -> expr '>=' expr      : rufus_form:make_binary_op('>=', '$1', '$3', line('$2')).
 
 block -> '{' exprs '}' ';'       : '$2'.
 
