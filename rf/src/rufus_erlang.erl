@@ -160,6 +160,12 @@ rufus_operator_to_erlang_operator('and', bool) ->
     'andalso';
 rufus_operator_to_erlang_operator('or', bool) ->
     'orelse';
+rufus_operator_to_erlang_operator('==', _) ->
+    '=:=';
+rufus_operator_to_erlang_operator('!=', _) ->
+    '=/=';
+rufus_operator_to_erlang_operator('<=', _) ->
+    '=<';
 rufus_operator_to_erlang_operator(Op, _) ->
     Op.
 
