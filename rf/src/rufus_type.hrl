@@ -47,17 +47,18 @@
       | list_lit_form()
       | cons_form().
 
-- type literal() ::
-         atom
-       | bool
-       | float
-       | int
-       | string.
+-type literal() ::
+        atom
+      | bool
+      | float
+      | int
+      | string.
 
 %% Operators
 
 -type arithmetic_operator() :: '+' | '-' | '*' | '/' | '%'.
 -type boolean_operator() :: 'and' | 'or'.
+-type comparison_operator() :: '==' | '!=' | '<' | '<=' | '>' | '>='.
 
 %% Expressions
 

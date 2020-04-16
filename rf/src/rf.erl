@@ -25,14 +25,11 @@ main(Args) ->
 run("compile", _Args) ->
     RufusText ="
     module example
-
-    func Number() int {
-        42
-    }
-",
+    func Numbers() list[int] { list[int]{17, 9, 31, 48} }
+    ",
     io:format("RufusText =>~n    ~s~n", [RufusText]),
     {ok, example} = rufus_compile:eval(RufusText),
-    io:format("example:Number() =>~n~n    ~p~n", [example:'Number'()]),
+    io:format("example:Numbers() =>~n~n    ~p~n", [example:'Numbers'()]),
     0;
 run("debug:erlang-forms", [Filename]) ->
     {ok, BinaryContents} = file:read_file(Filename),
