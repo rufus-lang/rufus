@@ -2,6 +2,8 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
+%% Mathematical operators
+
 string_with_binary_op_expression_using_plus_operator_test() ->
     {ok, Tokens, _} = rufus_raw_tokenize:string("3 + 5"),
     ?assertEqual([
@@ -42,6 +44,8 @@ string_with_binary_op_expression_using_remainder_operator_test() ->
         {int_lit, 1, 5}
     ], Tokens).
 
+%% Conditional operators
+
 string_with_binary_op_expression_using_and_operator_test() ->
     {ok, Tokens, _} = rufus_raw_tokenize:string("true and false"),
     ?assertEqual([
@@ -57,6 +61,8 @@ string_with_binary_op_expression_using_or_operator_test() ->
         {'or', 1},
         {bool_lit, 1, false}
     ], Tokens).
+
+%% Comparison operators
 
 string_with_binary_op_expression_using_equal_operator_test() ->
     {ok, Tokens, _} = rufus_raw_tokenize:string("true == false"),

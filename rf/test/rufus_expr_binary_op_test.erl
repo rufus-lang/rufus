@@ -2,7 +2,7 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-%% arithmetic binary_op expressions
+%% Mathematical operators
 
 typecheck_and_annotate_arithmetic_binary_op_with_ints_test() ->
     RufusText = "
@@ -172,8 +172,6 @@ typecheck_and_annotate_arithmetic_binary_op_with_strings_test() ->
     {error, unsupported_operand_type, Data} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, Data).
 
-%% arithmetic binary_op expressions with the remainder operator
-
 typecheck_and_annotate_remainder_arithmetic_binary_op_with_ints_test() ->
     RufusText = "
     module example
@@ -230,7 +228,7 @@ typecheck_and_annotate_remainder_arithmetic_binary_op_with_floats_test() ->
     {error, unsupported_operand_type, Data} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, Data).
 
-%% boolean binary_op expressions
+%% Conditional operators
 
 typecheck_and_annotate_boolean_binary_op_with_bools_test() ->
     RufusText = "
@@ -362,3 +360,38 @@ typecheck_and_annotate_boolean_binary_op_with_bool_and_int_test() ->
                                                                              spec => int}}}}}}},
     {error, unsupported_operand_type, Data} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, Data).
+
+%% Comparison operators
+
+typecheck_and_annotate_equal_binary_op_with_ints_test() ->
+    RufusText = "
+    module example
+    func Falsy() bool { 1 == 2 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{binary_op, #{left => {int_lit, #{line => 3,
+                                                                     spec => 1,
+                                                                     type => {type, #{line => 3,
+                                                                                      source => inferred,
+                                                                                      spec => int}}}},
+                                                 line => 3,
+                                                 op => '==',
+                                                 right => {int_lit, #{line => 3,
+                                                                      spec => 2,
+                                                                      type => {type, #{line => 3,
+                                                                                       source => inferred,
+                                                                                       spec => int}}}},
+                                                 type => {type, #{line => 3,
+                                                                  source => inferred,
+                                                                  spec => bool}}}}],
+                         line => 3,
+                         params => [],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => bool}},
+                         spec => 'Falsy'}}],
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    ?assertEqual(Expected, AnnotatedForms).

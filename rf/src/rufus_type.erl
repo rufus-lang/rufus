@@ -41,7 +41,7 @@ resolve_type(Globals, Form = {identifier, _Context}) ->
 %% binary_op form helpers
 
 -spec resolve_binary_op_type(globals(), binary_op_form()) -> {ok, type_form()} | no_return().
-resolve_binary_op_type(Globals, Form = {binary_op, #{op := Op, left := Left, right := Right}}) ->
+resolve_binary_op_type(Globals, Form = {binary_op, #{op := Op, left := Left, right := Right, line := Line}}) ->
     {ok, LeftType} = resolve_type(Globals, Left),
     {ok, RightType} = resolve_type(Globals, Right),
     LeftTypeSpec = rufus_form:type_spec(LeftType),
@@ -53,20 +53,33 @@ resolve_binary_op_type(Globals, Form = {binary_op, #{op := Op, left := Left, rig
         '/'   -> {fun allow_type_with_arithmetic_binary_op/2, fun allow_type_pair_with_arithmetic_binary_op/2};
         '%'   -> {fun allow_type_with_arithmetic_binary_op/2, fun allow_type_pair_with_arithmetic_binary_op/2};
         'and' -> {fun allow_type_with_boolean_binary_op/2,    fun allow_type_pair_with_boolean_binary_op/2};
-        'or'  -> {fun allow_type_with_boolean_binary_op/2,    fun allow_type_pair_with_boolean_binary_op/2}
+        'or'  -> {fun allow_type_with_boolean_binary_op/2,    fun allow_type_pair_with_boolean_binary_op/2};
+        '=='  -> {fun allow_type_with_comparison_operator/2,  fun allow_type_pair_with_comparison_operator/2}
     end,
 
-    case AllowType(Op, LeftTypeSpec) and AllowType(Op, RightTypeSpec) of
+    ok = case AllowType(Op, LeftTypeSpec) and AllowType(Op, RightTypeSpec) of
         true ->
-            case AllowTypePair(LeftTypeSpec, RightTypeSpec) of
-                true ->
-                    {ok, LeftType};
-                false ->
-                    throw({error, unmatched_operand_type, #{form => Form}})
-            end;
+            ok;
         false ->
             throw({error, unsupported_operand_type, #{form => Form}})
+    end,
+
+    {ok, LeftType} = case AllowTypePair(LeftTypeSpec, RightTypeSpec) of
+        true ->
+            {ok, LeftType};
+        false ->
+            throw({error, unmatched_operand_type, #{form => Form}})
+    end,
+
+    case binary_op_type(Op, Line) of
+        default ->
+            {ok, LeftType};
+        Type ->
+            {ok, Type}
     end.
+
+binary_op_type('==', Line) -> rufus_form:make_inferred_type(bool, Line);
+binary_op_type(_, _) -> default.
 
 %% allow_type_with_arithmetic_binary_op returns true if the specified type may
 %% be used with the specified arithmetic operator, otherwise false.
@@ -96,6 +109,13 @@ allow_type_with_boolean_binary_op(_, _) -> false.
 -spec allow_type_pair_with_boolean_binary_op(bool | atom(), bool | atom()) -> boolean().
 allow_type_pair_with_boolean_binary_op(bool, bool) -> true;
 allow_type_pair_with_boolean_binary_op(_, _) -> false.
+
+-spec allow_type_with_comparison_operator(comparison_operator(), bool | atom()) -> boolean().
+allow_type_with_comparison_operator('==', _) -> true.
+
+-spec allow_type_pair_with_comparison_operator(type_spec(), type_spec()) -> boolean().
+allow_type_pair_with_comparison_operator(Spec, Spec) -> true;
+allow_type_pair_with_comparison_operator(_, _) -> false.
 
 %% call form helpers
 
