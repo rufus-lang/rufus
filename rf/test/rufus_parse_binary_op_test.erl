@@ -2,6 +2,8 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
+%% Mathematical operators
+
 parse_function_adding_two_ints_test() ->
     RufusText = "func Three() int { 1 + 2 }",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
@@ -277,6 +279,8 @@ parse_function_remaindering_three_ints_test() ->
                          spec => 'Four'}}],
     ?assertEqual(Expected, Forms).
 
+%% Conditional operators
+
 parse_function_anding_two_bools_test() ->
     RufusText = "func Falsy() bool { true and false }",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
@@ -323,4 +327,150 @@ parse_function_oring_two_bools_test() ->
                                                  source => rufus_text,
                                                  spec => bool}},
                          spec => 'Truthy'}}],
+    ?assertEqual(Expected, Forms).
+
+%% Comparison operators
+
+parse_function_comparing_two_bools_for_equality_test() ->
+    RufusText = "func Falsy() bool { true == false }",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [{func, #{exprs => [{binary_op, #{left => {bool_lit, #{line => 1,
+                                                                      spec => true,
+                                                                      type => {type, #{line => 1,
+                                                                                       source => inferred,
+                                                                                       spec => bool}}}},
+                                                 line => 1,
+                                                 op => '==',
+                                                 right => {bool_lit, #{line => 1,
+                                                                       spec => false,
+                                                                       type => {type, #{line => 1,
+                                                                                        source => inferred,
+                                                                                        spec => bool}}}}}}],
+                         line => 1,
+                         params => [],
+                         return_type => {type, #{line => 1,
+                                                 source => rufus_text,
+                                                 spec => bool}},
+                         spec => 'Falsy'}}],
+    ?assertEqual(Expected, Forms).
+
+parse_function_comparing_two_bools_for_inequality_test() ->
+    RufusText = "func Falsy() bool { true != true }",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [{func, #{exprs => [{binary_op, #{left => {bool_lit, #{line => 1,
+                                                                      spec => true,
+                                                                      type => {type, #{line => 1,
+                                                                                       source => inferred,
+                                                                                       spec => bool}}}},
+                                                 line => 1,
+                                                 op => '!=',
+                                                 right => {bool_lit, #{line => 1,
+                                                                       spec => true,
+                                                                       type => {type, #{line => 1,
+                                                                                        source => inferred,
+                                                                                        spec => bool}}}}}}],
+                         line => 1,
+                         params => [],
+                         return_type => {type, #{line => 1,
+                                                 source => rufus_text,
+                                                 spec => bool}},
+                         spec => 'Falsy'}}],
+    ?assertEqual(Expected, Forms).
+
+parse_function_comparing_two_ints_to_determine_which_is_lesser_test() ->
+    RufusText = "func Falsy() bool { 5 < 3 }",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [{func, #{exprs => [{binary_op, #{left => {int_lit, #{line => 1,
+                                                                     spec => 5,
+                                                                     type => {type, #{line => 1,
+                                                                                      source => inferred,
+                                                                                      spec => int}}}},
+                                                 line => 1,
+                                                 op => '<',
+                                                 right => {int_lit, #{line => 1,
+                                                                      spec => 3,
+                                                                      type => {type, #{line => 1,
+                                                                                       source => inferred,
+                                                                                       spec => int}}}}}}],
+                         line => 1,
+                         params => [],
+                         return_type => {type, #{line => 1,
+                                                 source => rufus_text,
+                                                 spec => bool}},
+                         spec => 'Falsy'}}],
+    ?assertEqual(Expected, Forms).
+
+parse_function_comparing_two_ints_to_determine_which_is_lesser_or_equal_test() ->
+    RufusText = "func Falsy() bool { 5 <= 3 }",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [{func, #{exprs => [{binary_op, #{left => {int_lit, #{line => 1,
+                                                                     spec => 5,
+                                                                     type => {type, #{line => 1,
+                                                                                      source => inferred,
+                                                                                      spec => int}}}},
+                                                 line => 1,
+                                                 op => '<=',
+                                                 right => {int_lit, #{line => 1,
+                                                                      spec => 3,
+                                                                      type => {type, #{line => 1,
+                                                                                       source => inferred,
+                                                                                       spec => int}}}}}}],
+                         line => 1,
+                         params => [],
+                         return_type => {type, #{line => 1,
+                                                 source => rufus_text,
+                                                 spec => bool}},
+                         spec => 'Falsy'}}],
+    ?assertEqual(Expected, Forms).
+
+parse_function_comparing_two_ints_to_determine_which_is_greater_test() ->
+    RufusText = "func Falsy() bool { 3 > 5 }",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [{func, #{exprs => [{binary_op, #{left => {int_lit, #{line => 1,
+                                                                     spec => 3,
+                                                                     type => {type, #{line => 1,
+                                                                                      source => inferred,
+                                                                                      spec => int}}}},
+                                                 line => 1,
+                                                 op => '>',
+                                                 right => {int_lit, #{line => 1,
+                                                                      spec => 5,
+                                                                      type => {type, #{line => 1,
+                                                                                       source => inferred,
+                                                                                       spec => int}}}}}}],
+                         line => 1,
+                         params => [],
+                         return_type => {type, #{line => 1,
+                                                 source => rufus_text,
+                                                 spec => bool}},
+                         spec => 'Falsy'}}],
+    ?assertEqual(Expected, Forms).
+
+parse_function_comparing_two_ints_to_determine_which_is_greater_or_equal_test() ->
+    RufusText = "func Falsy() bool { 3 >= 5 }",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [{func, #{exprs => [{binary_op, #{left => {int_lit, #{line => 1,
+                                                                     spec => 3,
+                                                                     type => {type, #{line => 1,
+                                                                                      source => inferred,
+                                                                                      spec => int}}}},
+                                                 line => 1,
+                                                 op => '>=',
+                                                 right => {int_lit, #{line => 1,
+                                                                      spec => 5,
+                                                                      type => {type, #{line => 1,
+                                                                                       source => inferred,
+                                                                                       spec => int}}}}}}],
+                         line => 1,
+                         params => [],
+                         return_type => {type, #{line => 1,
+                                                 source => rufus_text,
+                                                 spec => bool}},
+                         spec => 'Falsy'}}],
     ?assertEqual(Expected, Forms).
