@@ -1,99 +1,111 @@
 Definitions.
 
-Newline       = \n
-Colon         = \:
-Semicolon     = \;
-UnicodeLetter = [A-Za-z]
-Digit         = [0-9]
-Letter        = ({UnicodeLetter}|'_')
-Whitespace    = [\s\t]
+Newline            = \n
+Colon              = \:
+Semicolon          = \;
+UnicodeLetter      = [A-Za-z]
+Digit              = [0-9]
+Letter             = ({UnicodeLetter}|'_')
+Whitespace         = [\s\t]
 
-Module        = module
-Import        = import
-Const         = const
-Func          = func
+Module             = module
+Import             = import
+Const              = const
+Func               = func
 
-List          = list
+List               = list
 
-AtomType      = atom
-BoolType      = bool
-FloatType     = float
-IntType       = int
-StringType    = string
-ListType      = {List}\[Identifier\]
+AtomType           = atom
+BoolType           = bool
+FloatType          = float
+IntType            = int
+StringType         = string
+ListType           = {List}\[Identifier\]
 
-AtomLiteral   = {Colon}({UnicodeLetter}+({Digit}|{UnicodeLetter})?|\'({Digit}|{UnicodeLetter}|{Whitespace})+\')
-BoolLiteral   = (true|false)
-Exponent      = (e|E)?(\+|\-)?{Digit}+
-FloatLiteral  = (\+|\-)?{Digit}+\.{Digit}+{Exponent}?
-IntLiteral    = (\+|\-)?{Digit}+
-StringLiteral = \"({Digit}|{UnicodeLetter}|{Whitespace})+\"
+AtomLiteral        = {Colon}({UnicodeLetter}+({Digit}|{UnicodeLetter})?|\'({Digit}|{UnicodeLetter}|{Whitespace})+\')
+BoolLiteral        = (true|false)
+Exponent           = (e|E)?(\+|\-)?{Digit}+
+FloatLiteral       = (\+|\-)?{Digit}+\.{Digit}+{Exponent}?
+IntLiteral         = (\+|\-)?{Digit}+
+StringLiteral      = \"({Digit}|{UnicodeLetter}|{Whitespace})+\"
 
-LeftBrace     = \{
-RightBrace    = \}
-LeftBracket   = \[
-RightBracket  = \]
-LeftParen     = \(
-RightParen    = \)
-Comma         = ,
-Match         = =
-Cons          = \|
-Plus          = \+
-Minus         = \-
-Multiply      = \*
-Divide        = \/
-Remainder     = \%
-And           = and
-Or            = or
+LeftBrace          = \{
+RightBrace         = \}
+LeftBracket        = \[
+RightBracket       = \]
+LeftParen          = \(
+RightParen         = \)
+Comma              = ,
+Match              = =
+Cons               = \|
+Plus               = \+
+Minus              = \-
+Multiply           = \*
+Divide             = \/
+Remainder          = \%
+And                = and
+Or                 = or
+Equal              = ==
+NotEqual           = !=
+LessThan           = <
+LessThanOrEqual    = <=
+GreaterThan        = >
+GreaterThanOrEqual = >=
 
-Identifier    = {Letter}({Letter}|{Digit})*
+Identifier         = {Letter}({Letter}|{Digit})*
 
 Rules.
 
-{Whitespace}+   : skip_token.
-{Newline}+      : {token, {eol, TokenLine}}.
-{Semicolon}+    : {token, {';', TokenLine}}.
+{Whitespace}+        : skip_token.
+{Newline}+           : {token, {eol, TokenLine}}.
+{Semicolon}+         : {token, {';', TokenLine}}.
 
-{Module}        : {token, {module, TokenLine}}.
-{Import}        : {token, {import, TokenLine}}.
-{Const}         : {token, {const, TokenLine}}.
-{Func}          : {token, {func, TokenLine}}.
+{Module}             : {token, {module, TokenLine}}.
+{Import}             : {token, {import, TokenLine}}.
+{Const}              : {token, {const, TokenLine}}.
+{Func}               : {token, {func, TokenLine}}.
 
-{List}          : {token, {list, TokenLine}}.
+{List}               : {token, {list, TokenLine}}.
 
-{AtomType}      : {token, {atom, TokenLine}}.
-{BoolType}      : {token, {bool, TokenLine}}.
-{FloatType}     : {token, {float, TokenLine}}.
-{IntType}       : {token, {int, TokenLine}}.
-{StringType}    : {token, {string, TokenLine}}.
-{ListType}      : {token, {list, TokenLine}}.
+{AtomType}           : {token, {atom, TokenLine}}.
+{BoolType}           : {token, {bool, TokenLine}}.
+{FloatType}          : {token, {float, TokenLine}}.
+{IntType}            : {token, {int, TokenLine}}.
+{StringType}         : {token, {string, TokenLine}}.
+{ListType}           : {token, {list, TokenLine}}.
 
-{AtomLiteral}   : A = trim_atom_markup(TokenChars, TokenLen),
-                  {token, {atom_lit, TokenLine, A}}.
-{BoolLiteral}   : {token, {bool_lit, TokenLine, list_to_atom(TokenChars)}}.
-{FloatLiteral}  : {token, {float_lit, TokenLine, list_to_float(TokenChars)}}.
-{IntLiteral}    : {token, {int_lit, TokenLine, list_to_integer(TokenChars)}}.
-{StringLiteral} : S = trim_quotes(TokenChars, TokenLen),
-                  {token, {string_lit, TokenLine, S}}.
+{AtomLiteral}        : A = trim_atom_markup(TokenChars, TokenLen),
+                       {token, {atom_lit, TokenLine, A}}.
+{BoolLiteral}        : {token, {bool_lit, TokenLine, list_to_atom(TokenChars)}}.
+{FloatLiteral}       : {token, {float_lit, TokenLine, list_to_float(TokenChars)}}.
+{IntLiteral}         : {token, {int_lit, TokenLine, list_to_integer(TokenChars)}}.
+{StringLiteral}      : S = trim_quotes(TokenChars, TokenLen),
+                       {token, {string_lit, TokenLine, S}}.
 
-{LeftBrace}     : {token, {'{', TokenLine}}.
-{RightBrace}    : {token, {'}', TokenLine}}.
-{LeftBracket}   : {token, {'[', TokenLine}}.
-{RightBracket}  : {token, {']', TokenLine}}.
-{LeftParen}     : {token, {'(', TokenLine}}.
-{RightParen}    : {token, {')', TokenLine}}.
-{Comma}         : {token, {',', TokenLine}}.
-{Match}         : {token, {'=', TokenLine}}.
-{Cons}          : {token, {'|', TokenLine}}.
-{Plus}          : {token, {'+', TokenLine}}.
-{Minus}         : {token, {'-', TokenLine}}.
-{Multiply}      : {token, {'*', TokenLine}}.
-{Divide}        : {token, {'/', TokenLine}}.
-{Remainder}     : {token, {'%', TokenLine}}.
-{And}           : {token, {'and', TokenLine}}.
-{Or}            : {token, {'or', TokenLine}}.
+{LeftBrace}          : {token, {'{', TokenLine}}.
+{RightBrace}         : {token, {'}', TokenLine}}.
+{LeftBracket}        : {token, {'[', TokenLine}}.
+{RightBracket}       : {token, {']', TokenLine}}.
+{LeftParen}          : {token, {'(', TokenLine}}.
+{RightParen}         : {token, {')', TokenLine}}.
+{Comma}              : {token, {',', TokenLine}}.
+{Match}              : {token, {'=', TokenLine}}.
+{Cons}               : {token, {'|', TokenLine}}.
+{Plus}               : {token, {'+', TokenLine}}.
+{Minus}              : {token, {'-', TokenLine}}.
+{Multiply}           : {token, {'*', TokenLine}}.
+{Divide}             : {token, {'/', TokenLine}}.
+{Remainder}          : {token, {'%', TokenLine}}.
+{And}                : {token, {'and', TokenLine}}.
+{Or}                 : {token, {'or', TokenLine}}.
+{Equal}              : {token, {'==', TokenLine}}.
+{NotEqual}           : {token, {'!=', TokenLine}}.
+{LessThan}           : {token, {'<', TokenLine}}.
+{LessThanOrEqual}    : {token, {'<=', TokenLine}}.
+{GreaterThan}        : {token, {'>', TokenLine}}.
+{GreaterThanOrEqual} : {token, {'>=', TokenLine}}.
 
-{Identifier}    : {token, {identifier, TokenLine, TokenChars}}.
+{Identifier}         : {token, {identifier, TokenLine, TokenChars}}.
 
 Erlang code.
 
