@@ -395,3 +395,389 @@ typecheck_and_annotate_equal_binary_op_with_ints_test() ->
                          spec => 'Falsy'}}],
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_equal_binary_op_with_mismatched_operands_test() ->
+    RufusText = "
+    module example
+    func Broken() bool { 1 == 2.0 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{form => {binary_op, #{left => {int_lit, #{line => 3,
+                                                       spec => 1,
+                                                       type => {type, #{line => 3,
+                                                                        source => inferred,
+                                                                        spec => int}}}},
+                                   line => 3,
+                                   locals => #{},
+                                   op => '==',
+                                   right => {float_lit, #{line => 3,
+                                                          spec => 2.0,
+                                                          type => {type, #{line => 3,
+                                                                           source => inferred,
+                                                                           spec => float}}}}}}},
+    ?assertEqual({error, unmatched_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
+
+typecheck_and_annotate_inequal_binary_op_with_ints_test() ->
+    RufusText = "
+    module example
+    func Falsy() bool { 1 != 1 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{binary_op, #{left => {int_lit, #{line => 3,
+                                                                     spec => 1,
+                                                                     type => {type, #{line => 3,
+                                                                                      source => inferred,
+                                                                                      spec => int}}}},
+                                                 line => 3,
+                                                 op => '!=',
+                                                 right => {int_lit, #{line => 3,
+                                                                      spec => 1,
+                                                                      type => {type, #{line => 3,
+                                                                                       source => inferred,
+                                                                                       spec => int}}}},
+                                                 type => {type, #{line => 3,
+                                                                  source => inferred,
+                                                                  spec => bool}}}}],
+                         line => 3,
+                         params => [],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => bool}},
+                         spec => 'Falsy'}}],
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_inequal_binary_op_with_mismatched_operands_test() ->
+    RufusText = "
+    module example
+    func Broken() bool { :two != 2.0 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{form => {binary_op, #{left => {atom_lit, #{line => 3,
+                                                        spec => two,
+                                                        type => {type, #{line => 3,
+                                                                         source => inferred,
+                                                                         spec => atom}}}},
+                                   line => 3,
+                                   locals => #{},
+                                   op => '!=',
+                                   right => {float_lit, #{line => 3,
+                                                          spec => 2.0,
+                                                          type => {type, #{line => 3,
+                                                                           source => inferred,
+                                                                           spec => float}}}}}}},
+    ?assertEqual({error, unmatched_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
+
+typecheck_and_annotate_less_than_binary_op_with_ints_test() ->
+    RufusText = "
+    module example
+    func Falsy() bool { 2 < 1 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{binary_op, #{left => {int_lit, #{line => 3,
+                                                                     spec => 2,
+                                                                     type => {type, #{line => 3,
+                                                                                      source => inferred,
+                                                                                      spec => int}}}},
+                                                 line => 3,
+                                                 op => '<',
+                                                 right => {int_lit, #{line => 3,
+                                                                      spec => 1,
+                                                                      type => {type, #{line => 3,
+                                                                                       source => inferred,
+                                                                                       spec => int}}}},
+                                                 type => {type, #{line => 3,
+                                                                  source => inferred,
+                                                                  spec => bool}}}}],
+                         line => 3,
+                         params => [],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => bool}},
+                         spec => 'Falsy'}}],
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_less_than_binary_op_with_mismatched_operands_test() ->
+    RufusText = "
+    module example
+    func Broken() bool { 2 < 1.0 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{form => {binary_op, #{left => {int_lit, #{line => 3,
+                                                       spec => 2,
+                                                       type => {type, #{line => 3,
+                                                                        source => inferred,
+                                                                        spec => int}}}},
+                                   line => 3,
+                                   locals => #{},
+                                   op => '<',
+                                   right => {float_lit, #{line => 3,
+                                                          spec => 1.0,
+                                                          type => {type, #{line => 3,
+                                                                           source => inferred,
+                                                                           spec => float}}}}}}},
+    ?assertEqual({error, unmatched_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
+
+typecheck_and_annotate_less_than_binary_op_with_unsupported_operand_type_test() ->
+    RufusText = "
+    module example
+    func Broken() bool { :two < :one }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{form => {binary_op, #{left => {atom_lit, #{line => 3,
+                                                        spec => two,
+                                                        type => {type, #{line => 3,
+                                                                         source => inferred,
+                                                                         spec => atom}}}},
+                                   line => 3,
+                                   locals => #{},
+                                   op => '<',
+                                   right => {atom_lit, #{line => 3,
+                                                         spec => one,
+                                                         type => {type, #{line => 3,
+                                                                          source => inferred,
+                                                                          spec => atom}}}}}}},
+    ?assertEqual({error, unsupported_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
+
+typecheck_and_annotate_less_than_or_equal_binary_op_with_ints_test() ->
+    RufusText = "
+    module example
+    func Falsy() bool { 2 <= 1 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{binary_op, #{left => {int_lit, #{line => 3,
+                                                                     spec => 2,
+                                                                     type => {type, #{line => 3,
+                                                                                      source => inferred,
+                                                                                      spec => int}}}},
+                                                 line => 3,
+                                                 op => '<=',
+                                                 right => {int_lit, #{line => 3,
+                                                                      spec => 1,
+                                                                      type => {type, #{line => 3,
+                                                                                       source => inferred,
+                                                                                       spec => int}}}},
+                                                 type => {type, #{line => 3,
+                                                                  source => inferred,
+                                                                  spec => bool}}}}],
+                         line => 3,
+                         params => [],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => bool}},
+                         spec => 'Falsy'}}],
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_less_than_or_equal_binary_op_with_mismatched_operands_test() ->
+    RufusText = "
+    module example
+    func Broken() bool { 2 <= 1.0 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{form => {binary_op, #{left => {int_lit, #{line => 3,
+                                                       spec => 2,
+                                                       type => {type, #{line => 3,
+                                                                        source => inferred,
+                                                                        spec => int}}}},
+                                   line => 3,
+                                   locals => #{},
+                                   op => '<=',
+                                   right => {float_lit, #{line => 3,
+                                                          spec => 1.0,
+                                                          type => {type, #{line => 3,
+                                                                           source => inferred,
+                                                                           spec => float}}}}}}},
+    ?assertEqual({error, unmatched_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
+
+typecheck_and_annotate_less_than_or_equal_binary_op_with_unsupported_operand_type_test() ->
+    RufusText = "
+    module example
+    func Broken() bool { :two <= :one }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{form => {binary_op, #{left => {atom_lit, #{line => 3,
+                                                        spec => two,
+                                                        type => {type, #{line => 3,
+                                                                         source => inferred,
+                                                                         spec => atom}}}},
+                                   line => 3,
+                                   locals => #{},
+                                   op => '<=',
+                                   right => {atom_lit, #{line => 3,
+                                                         spec => one,
+                                                         type => {type, #{line => 3,
+                                                                          source => inferred,
+                                                                          spec => atom}}}}}}},
+    ?assertEqual({error, unsupported_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
+
+typecheck_and_annotate_greater_than_binary_op_with_ints_test() ->
+    RufusText = "
+    module example
+    func Falsy() bool { 1 > 2 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{binary_op, #{left => {int_lit, #{line => 3,
+                                                                     spec => 1,
+                                                                     type => {type, #{line => 3,
+                                                                                      source => inferred,
+                                                                                      spec => int}}}},
+                                                 line => 3,
+                                                 op => '>',
+                                                 right => {int_lit, #{line => 3,
+                                                                      spec => 2,
+                                                                      type => {type, #{line => 3,
+                                                                                       source => inferred,
+                                                                                       spec => int}}}},
+                                                 type => {type, #{line => 3,
+                                                                  source => inferred,
+                                                                  spec => bool}}}}],
+                         line => 3,
+                         params => [],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => bool}},
+                         spec => 'Falsy'}}],
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_greater_than_binary_op_with_mismatched_operands_test() ->
+    RufusText = "
+    module example
+    func Broken() bool { 2 > 1.0 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{form => {binary_op, #{left => {int_lit, #{line => 3,
+                                                       spec => 2,
+                                                       type => {type, #{line => 3,
+                                                                        source => inferred,
+                                                                        spec => int}}}},
+                                   line => 3,
+                                   locals => #{},
+                                   op => '>',
+                                   right => {float_lit, #{line => 3,
+                                                          spec => 1.0,
+                                                          type => {type, #{line => 3,
+                                                                           source => inferred,
+                                                                           spec => float}}}}}}},
+    ?assertEqual({error, unmatched_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
+
+typecheck_and_annotate_greater_than_binary_op_with_unsupported_operand_type_test() ->
+    RufusText = "
+    module example
+    func Broken() bool { :two > :one }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{form => {binary_op, #{left => {atom_lit, #{line => 3,
+                                                        spec => two,
+                                                        type => {type, #{line => 3,
+                                                                         source => inferred,
+                                                                         spec => atom}}}},
+                                   line => 3,
+                                   locals => #{},
+                                   op => '>',
+                                   right => {atom_lit, #{line => 3,
+                                                         spec => one,
+                                                         type => {type, #{line => 3,
+                                                                          source => inferred,
+                                                                          spec => atom}}}}}}},
+    ?assertEqual({error, unsupported_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
+
+typecheck_and_annotate_greater_than_or_equal_binary_op_with_ints_test() ->
+    RufusText = "
+    module example
+    func Falsy() bool { 1 >= 2 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [{module, #{line => 2,
+                           spec => example}},
+                {func, #{exprs => [{binary_op, #{left => {int_lit, #{line => 3,
+                                                                     spec => 1,
+                                                                     type => {type, #{line => 3,
+                                                                                      source => inferred,
+                                                                                      spec => int}}}},
+                                                 line => 3,
+                                                 op => '>=',
+                                                 right => {int_lit, #{line => 3,
+                                                                      spec => 2,
+                                                                      type => {type, #{line => 3,
+                                                                                       source => inferred,
+                                                                                       spec => int}}}},
+                                                 type => {type, #{line => 3,
+                                                                  source => inferred,
+                                                                  spec => bool}}}}],
+                         line => 3,
+                         params => [],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => bool}},
+                         spec => 'Falsy'}}],
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    ?assertEqual(Expected, AnnotatedForms).
+
+
+typecheck_and_annotate_greater_than_or_equal_binary_op_with_mismatched_operands_test() ->
+    RufusText = "
+    module example
+    func Broken() bool { 2 >= 1.0 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{form => {binary_op, #{left => {int_lit, #{line => 3,
+                                                       spec => 2,
+                                                       type => {type, #{line => 3,
+                                                                        source => inferred,
+                                                                        spec => int}}}},
+                                   line => 3,
+                                   locals => #{},
+                                   op => '>=',
+                                   right => {float_lit, #{line => 3,
+                                                          spec => 1.0,
+                                                          type => {type, #{line => 3,
+                                                                           source => inferred,
+                                                                           spec => float}}}}}}},
+    ?assertEqual({error, unmatched_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
+
+typecheck_and_annotate_greater_than_or_equal_binary_op_with_unsupported_operand_type_test() ->
+    RufusText = "
+    module example
+    func Broken() bool { :two >= :one }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{form => {binary_op, #{left => {atom_lit, #{line => 3,
+                                                        spec => two,
+                                                        type => {type, #{line => 3,
+                                                                         source => inferred,
+                                                                         spec => atom}}}},
+                                   line => 3,
+                                   locals => #{},
+                                   op => '>=',
+                                   right => {atom_lit, #{line => 3,
+                                                         spec => one,
+                                                         type => {type, #{line => 3,
+                                                                          source => inferred,
+                                                                          spec => atom}}}}}}},
+    ?assertEqual({error, unsupported_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
