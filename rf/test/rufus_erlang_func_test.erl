@@ -333,3 +333,88 @@ forms_for_private_functions_with_leading_lowercase_character_are_not_exported_te
                          [{tuple, 3, [{atom, 3, string}, {var, 3, s}]}]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
+
+%% Functions with parameter patterns containing literal values
+
+forms_for_function_taking_an_atom_literal_test() ->
+    RufusText = "
+    module example
+    func Echo(:ok) atom { :ok }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Echo', 1}]},
+        {function, 3, 'Echo', 1, [{clause, 3, [{atom, 3, ok}], [], [{atom, 3, ok}]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_taking_a_bool_literal_test() ->
+    RufusText = "
+    module example
+    func Echo(true) bool { true }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Echo', 1}]},
+        {function, 3, 'Echo', 1, [{clause, 3, [{atom, 3, true}], [], [{atom, 3, true}]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_taking_a_float_literal_test() ->
+    RufusText = "
+    module example
+    func Echo(1.0) float { 1.0 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Echo', 1}]},
+        {function, 3, 'Echo', 1, [{clause, 3, [{float, 3, 1.0}], [], [{float, 3, 1.0}]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_taking_an_int_literal_test() ->
+    RufusText = "
+    module example
+    func Echo(1) int { 1 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Echo', 1}]},
+        {function, 3, 'Echo', 1, [{clause, 3, [{integer, 3, 1}], [], [{integer, 3, 1}]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_taking_a_string_literal_test() ->
+    RufusText = "
+    module example
+    func Echo(\"ok\") string { \"ok\" }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Echo', 1}]},
+        {function, 3, 'Echo', 1,
+         [{clause, 3, [{tuple, 3, [{atom, 3, string}, {bin, 3, [{bin_element, 3, {string, 3, "ok"}, default, default}]}]}],
+           [],
+           [{tuple, 3, [{atom, 3, string}, {bin, 3, [{bin_element, 3, {string, 3, "ok"}, default, default}]}]}]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
