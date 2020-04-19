@@ -466,3 +466,135 @@ typecheck_and_annotate_function_with_unmatched_return_types_test() ->
                                                                         source => rufus_text,
                                                                         spec => int}}}},
     ?assertEqual(Expected, rufus_expr:typecheck_and_annotate(Forms)).
+
+%% Functions with parameter patterns containing literal values
+
+typecheck_and_annotate_for_function_taking_an_atom_literal_test() ->
+    RufusText = "
+    module example
+    func Echo(:ok) atom { :ok }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [{module, #{line => 2, spec => example}},
+                {func, #{exprs => [{atom_lit, #{line => 3,
+                                                spec => ok,
+                                                type => {type, #{line => 3,
+                                                                 source => inferred,
+                                                                 spec => atom}}}}],
+                         line => 3,
+                         params => [{atom_lit, #{line => 3,
+                                                 spec => ok,
+                                                 type => {type, #{line => 3,
+                                                                  source => inferred,
+                                                                  spec => atom}}}}],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => atom}},
+                         spec => 'Echo'}}],
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_for_function_taking_a_bool_literal_test() ->
+    RufusText = "
+    module example
+    func Echo(true) bool { true }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [{module, #{line => 2, spec => example}},
+                {func, #{exprs => [{bool_lit, #{line => 3,
+                                                spec => true,
+                                                type => {type, #{line => 3,
+                                                                 source => inferred,
+                                                                 spec => bool}}}}],
+                         line => 3,
+                         params => [{bool_lit, #{line => 3,
+                                                 spec => true,
+                                                 type => {type, #{line => 3,
+                                                                  source => inferred,
+                                                                  spec => bool}}}}],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => bool}},
+                         spec => 'Echo'}}],
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_for_function_taking_a_float_literal_test() ->
+    RufusText = "
+    module example
+    func Echo(1.0) float { 1.0 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [{module, #{line => 2, spec => example}},
+                {func, #{exprs => [{float_lit, #{line => 3,
+                                                 spec => 1.0,
+                                                 type => {type, #{line => 3,
+                                                                  source => inferred,
+                                                                  spec => float}}}}],
+                         line => 3,
+                         params => [{float_lit, #{line => 3,
+                                                  spec => 1.0,
+                                                  type => {type, #{line => 3,
+                                                                   source => inferred,
+                                                                   spec => float}}}}],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => float}},
+                         spec => 'Echo'}}],
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_for_function_taking_an_int_literal_test() ->
+    RufusText = "
+    module example
+    func Echo(1) int { 1 }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [{module, #{line => 2, spec => example}},
+                {func, #{exprs => [{int_lit, #{line => 3,
+                                               spec => 1,
+                                               type => {type, #{line => 3,
+                                                                source => inferred,
+                                                                spec => int}}}}],
+                         line => 3,
+                         params => [{int_lit, #{line => 3,
+                                                spec => 1,
+                                                type => {type, #{line => 3,
+                                                                 source => inferred,
+                                                                 spec => int}}}}],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => int}},
+                         spec => 'Echo'}}],
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_for_function_taking_a_string_literal_test() ->
+    RufusText = "
+    module example
+    func Echo(\"ok\") string { \"ok\" }
+    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [{module, #{line => 2, spec => example}},
+                {func, #{exprs => [{string_lit, #{line => 3,
+                                                  spec => <<"ok">>,
+                                                  type => {type, #{line => 3,
+                                                                   source => inferred,
+                                                                   spec => string}}}}],
+                         line => 3,
+                         params => [{string_lit, #{line => 3,
+                                                   spec => <<"ok">>,
+                                                   type => {type, #{line => 3,
+                                                                    source => inferred,
+                                                                    spec => string}}}}],
+                         return_type => {type, #{line => 3,
+                                                 source => rufus_text,
+                                                 spec => string}},
+                         spec => 'Echo'}}],
+    ?assertEqual(Expected, AnnotatedForms).
