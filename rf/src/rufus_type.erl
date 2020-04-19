@@ -228,7 +228,7 @@ resolve_identifier_type(Globals, Form = {identifier, #{spec := Spec, locals := L
         {type, _Context} = Type ->
             {ok, Type};
         undefined ->
-            Data = #{globals => Globals, locals => Locals, form => Form},
+            Data = #{globals => Globals, locals => Locals, form => Form, stacktrace => erlang:process_info(self(), current_stacktrace)},
             throw({error, unknown_identifier, Data})
     end.
 

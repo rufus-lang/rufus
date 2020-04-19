@@ -115,6 +115,7 @@ params -> param params           : ['$1'|'$2'].
 params -> '$empty'               : [].
 param -> identifier type ','     : rufus_form:make_param(list_to_atom(text('$1')), '$2', line('$1')).
 param -> identifier type         : rufus_form:make_param(list_to_atom(text('$1')), '$2', line('$1')).
+param -> cons                    : '$1'.
 
 type -> atom                     : rufus_form:make_type(atom, line('$1')).
 type -> bool                     : rufus_form:make_type(bool, line('$1')).
