@@ -197,3 +197,70 @@ eval_with_private_function_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertError(undef, example:echo({string, <<"Hello">>})).
+
+%% Functions with parameter patterns containing literal values
+
+eval_with_function_taking_an_atom_literal_test() ->
+    RufusText = "
+    module example
+    func Echo(:ok) atom { :ok }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(ok, example:'Echo'(ok)).
+
+eval_with_function_taking_a_bool_literal_test() ->
+    RufusText = "
+    module example
+    func Echo(true) bool { true }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(true, example:'Echo'(true)).
+
+eval_with_function_taking_a_float_literal_test() ->
+    RufusText = "
+    module example
+    func Echo(1.0) float { 1.0 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(1.0, example:'Echo'(1.0)).
+
+eval_with_function_taking_an_int_literal_test() ->
+    RufusText = "
+    module example
+    func Echo(1) int { 1 }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(1, example:'Echo'(1)).
+
+eval_with_function_taking_a_string_literal_test() ->
+    RufusText = "
+    module example
+    func Echo(\"ok\") string { \"ok\" }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual({string, <<"ok">>}, example:'Echo'({string, <<"ok">>})).
+
+eval_with_function_taking_an_atom_literal_in_multiple_function_heads_test() ->
+    RufusText = "
+    module example
+    func Echo(:alright) atom { :alright }
+    func Echo(:ok) atom { :ok }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(alright, example:'Echo'(alright)),
+    ?assertEqual(ok, example:'Echo'(ok)).
+
+eval_with_function_taking_an_atom_literal_and_passing_an_invalid_value_test() ->
+    RufusText = "
+    module example
+    func Echo(:ok) atom { :ok }
+    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertError(function_clause, example:'Echo'(fine)).
