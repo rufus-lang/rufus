@@ -21,6 +21,7 @@
     make_param/3,
     make_type/2,
     make_type/3,
+    map/2,
     return_type/1,
     source/1,
     spec/1,
@@ -212,6 +213,48 @@ make_binary_op(Op, Left, Right, Line) ->
 -spec make_match(rufus_form(), rufus_form(), integer()) -> {match, #{left => rufus_form(), right => rufus_form(), line => integer()}}.
 make_match(Left, Right, Line) ->
     {match, #{left => Left, right => Right, line => Line}}.
+
+%% Map API
+
+%% map applies Fun to each form in Forms to build and return a new tree.
+-spec map(list(rufus_form()), fun((rufus_form()) -> rufus_form())) -> list(rufus_form()).
+map(Forms, Fun) ->
+    map([], Forms, Fun).
+
+-spec map(list(rufus_form()), list(rufus_form()), fun((rufus_form()) -> rufus_form())) -> list(rufus_form()).
+map(Acc, [{binary_op, Context = #{left := Left, right := Right}}|T], Fun) ->
+    AnnotatedLeft = Fun(Left),
+    AnnotatedRight = Fun(Right),
+    AnnotatedForm = Fun({binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight}}),
+    map([AnnotatedForm|Acc], T, Fun);
+map(Acc, [{call, Context = #{args := Args}}|T], Fun) ->
+    AnnotatedArgs = map(Args, Fun),
+    AnnotatedForm = Fun({call, Context#{args => AnnotatedArgs}}),
+    map([AnnotatedForm|Acc], T, Fun);
+map(Acc, [{cons, Context = #{head := Head, tail := Tail}}|T], Fun) ->
+    AnnotatedHead = Fun(Head),
+    AnnotatedTail = map(Tail, Fun),
+    AnnotatedForm = Fun({cons, Context#{head => AnnotatedHead, tail => AnnotatedTail}}),
+    map([AnnotatedForm|Acc], T, Fun);
+map(Acc, [{func, Context = #{params := Params, exprs := Exprs}}|T], Fun) ->
+    AnnotatedParams = map(Params, Fun),
+    AnnotatedExprs = map(Exprs, Fun),
+    AnnotatedForm = Fun({func, Context#{params => AnnotatedParams, exprs => AnnotatedExprs}}),
+    map([AnnotatedForm|Acc], T, Fun);
+map(Acc, [{list_lit, Context = #{elements := Elements}}|T], Fun) ->
+    AnnotatedElements = map(Elements, Fun),
+    AnnotatedForm = Fun({list_lit, Context#{elements => AnnotatedElements}}),
+    map([AnnotatedForm|Acc], T, Fun);
+map(Acc, [{match, Context = #{left := Left, right := Right}}|T], Fun) ->
+    AnnotatedLeft = Fun(Left),
+    AnnotatedRight = Fun(Right),
+    AnnotatedForm = Fun({match, Context#{left => AnnotatedLeft, right => AnnotatedRight}}),
+    map([AnnotatedForm|Acc], T, Fun);
+map(Acc, [Form|T], Fun) ->
+    AnnotatedForm = Fun(Form),
+    map([AnnotatedForm|Acc], T, Fun);
+map(Acc, [], _Fun) ->
+    lists:reverse(Acc).
 
 %% Private API
 
