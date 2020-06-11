@@ -236,6 +236,16 @@ map_with_cons_test() ->
                            annotated := true}}],
                  rufus_form:map([Form], fun annotate/1)).
 
+map_with_cons_and_tail_identifier_test() ->
+    Line = 17,
+    Type = rufus_form:make_type(list, rufus_form:make_type(int, Line), Line),
+    TailForm = rufus_form:make_identifier('tail', 3),
+    Form = rufus_form:make_cons(Type, rufus_form:make_literal(int, 3, Line), TailForm, Line),
+    ?assertMatch([{cons, #{head := {_, #{annotated := true}},
+                           tail := {identifier, #{spec := tail}},
+                           annotated := true}}],
+                 rufus_form:map([Form], fun annotate/1)).
+
 map_with_func_test() ->
     Type = rufus_form:make_type(bool, 81),
     Param = rufus_form:make_literal(bool, true, 81),

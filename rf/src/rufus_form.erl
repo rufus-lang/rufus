@@ -233,7 +233,12 @@ map(Acc, [{call, Context = #{args := Args}}|T], Fun) ->
     map([AnnotatedForm|Acc], T, Fun);
 map(Acc, [{cons, Context = #{head := Head, tail := Tail}}|T], Fun) ->
     AnnotatedHead = Fun(Head),
-    AnnotatedTail = map(Tail, Fun),
+    AnnotatedTail = case Tail of
+        Tail when is_list(Tail) ->
+            map(Tail, Fun);
+        Tail ->
+            Fun(Tail)
+    end,
     AnnotatedForm = Fun({cons, Context#{head => AnnotatedHead, tail => AnnotatedTail}}),
     map([AnnotatedForm|Acc], T, Fun);
 map(Acc, [{func, Context = #{params := Params, exprs := Exprs}}|T], Fun) ->
