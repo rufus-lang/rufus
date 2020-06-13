@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/rufus-lang/rufus.svg?branch=master)](https://travis-ci.com/rufus-lang/rufus)
+[![Build Status](https://travis-ci.com/rufus-lang/rufus.svg?branch=main)](https://travis-ci.com/rufus-lang/rufus)
 # rf
 
 `rf` provides tools for working with Rufus programs.
