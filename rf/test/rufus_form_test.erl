@@ -154,22 +154,32 @@ make_literal_test() ->
                  rufus_form:make_literal(string, <<"hello">>, 9)).
 
 make_binary_op_test() ->
-    Operand = {int_lit, #{spec => 2, line => 4}},
-    ?assertEqual({binary_op, #{op => '+', left => Operand, right => Operand, line => 4}},
-                 rufus_form:make_binary_op('+', Operand, Operand, 4)).
+    Left = rufus_form:make_literal(int, 2, 13),
+    Right = rufus_form:make_literal(int, 3, 13),
+    Form = rufus_form:make_binary_op('+', Left, Right, 13),
+    ?assertEqual({binary_op, #{op => '+', left => Left, right => Right, line => 13}}, Form).
+
+make_call_test() ->
+    Line = 3,
+    Spec = 'Echo',
+    Args = [rufus_form:make_literal(string, <<"hello">>, 3)],
+    Expected = {call, #{spec => Spec, args => Args, line => Line}},
+    ?assertEqual(Expected, rufus_form:make_call(Spec, Args, Line)).
 
 make_cons_test() ->
     Line = 3,
     Type = rufus_form:make_type(list, rufus_form:make_type(int, Line), Line),
-    Head = 1,
+    Head = rufus_form:make_literal(int, 5, 3),
     Tail = [],
     Expected = {cons, #{type => Type, head => Head, tail => Tail, line => Line}},
     ?assertEqual(Expected, rufus_form:make_cons(Type, Head, Tail, Line)).
 
 make_func_test() ->
     Type = rufus_form:make_type(bool, 81),
-    ?assertEqual({func, #{spec => 'True', params => [], return_type => Type, exprs => [], line => 81}},
-                 rufus_form:make_func('True', [], Type, [], 81)).
+    Param = rufus_form:make_literal(bool, true, 81),
+    Value = rufus_form:make_literal(bool, true, 81),
+    ?assertEqual({func, #{spec => 'True', params => [Param], return_type => Type, exprs => [Value], line => 81}},
+                 rufus_form:make_func('True', [Param], Type, [Value], 81)).
 
 make_param_test() ->
     Type = rufus_form:make_type(int, 52),
@@ -186,3 +196,83 @@ make_match_test() ->
     Right = rufus_form:make_identifier(m, 3),
     ?assertEqual({match, #{left => Left, right => Right, line => 3}},
                  rufus_form:make_match(Left, Right, 3)).
+
+map_with_empty_input_test() ->
+    ?assertEqual([], rufus_form:map([], fun annotate/1)).
+
+map_with_noop_function_test() ->
+    Form = rufus_form:make_literal(bool, true, 7),
+    ?assertEqual([Form], rufus_form:map([Form], fun(F) -> F end)).
+
+map_test() ->
+    Form = rufus_form:make_literal(bool, true, 7),
+    Expected1 = {bool_lit, Context = #{spec => true, line => 7, type => rufus_form:make_inferred_type(bool, 7)}},
+    ?assertEqual(Expected1, Form),
+    [AnnotatedForm] = rufus_form:map([Form], fun annotate/1),
+    Expected2 = {bool_lit, Context#{annotated => true}},
+    ?assertEqual(Expected2, AnnotatedForm).
+
+map_with_binary_op_test() ->
+    Left = rufus_form:make_literal(int, 2, 13),
+    Right = rufus_form:make_literal(int, 3, 13),
+    Form = rufus_form:make_binary_op('+', Left, Right, 13),
+    ?assertMatch([{binary_op, #{left := {_, #{annotated := true}}, right := {_, #{annotated := true}}, annotated := true}}],
+                 rufus_form:map([Form], fun annotate/1)).
+
+map_with_call_test() ->
+    Args = [rufus_form:make_literal(string, <<"hello">>, 3)],
+    Form = rufus_form:make_call('Echo', Args, 13),
+    ?assertMatch([{call, #{args := [{_, #{annotated := true}}], annotated := true}}],
+                 rufus_form:map([Form], fun annotate/1)).
+
+map_with_cons_test() ->
+    Line = 17,
+    Type = rufus_form:make_type(list, rufus_form:make_type(int, Line), Line),
+    TailForm = rufus_form:make_cons(Type, rufus_form:make_literal(int, 3, Line), [], Line),
+    Form = rufus_form:make_cons(Type, rufus_form:make_literal(int, 3, Line), [TailForm], Line),
+    ?assertMatch([{cons, #{head := {_, #{annotated := true}},
+                           tail := [{cons, #{head := {_, #{annotated := true}},
+                                             tail := [], annotated := true}}],
+                           annotated := true}}],
+                 rufus_form:map([Form], fun annotate/1)).
+
+map_with_cons_and_tail_identifier_test() ->
+    Line = 17,
+    Type = rufus_form:make_type(list, rufus_form:make_type(int, Line), Line),
+    TailForm = rufus_form:make_identifier('tail', 3),
+    Form = rufus_form:make_cons(Type, rufus_form:make_literal(int, 3, Line), TailForm, Line),
+    ?assertMatch([{cons, #{head := {_, #{annotated := true}},
+                           tail := {identifier, #{spec := tail}},
+                           annotated := true}}],
+                 rufus_form:map([Form], fun annotate/1)).
+
+map_with_func_test() ->
+    Type = rufus_form:make_type(bool, 81),
+    Param = rufus_form:make_literal(bool, true, 81),
+    Value = rufus_form:make_literal(bool, true, 81),
+    Form = rufus_form:make_func('True', [Param], Type, [Value], 81),
+    ?assertMatch([{func, #{params := [{bool_lit, #{annotated := true}}],
+                           exprs := [{bool_lit, #{annotated := true}}],
+                           annotated := true}}],
+                 rufus_form:map([Form], fun annotate/1)).
+
+map_with_list_lit_test() ->
+    ElementType = rufus_form:make_type(bool, 81),
+    Type = rufus_form:make_type(list, ElementType, 81),
+    Value = rufus_form:make_literal(bool, true, 81),
+    Form = rufus_form:make_literal(list, Type, [Value], 81),
+    ?assertMatch([{list_lit, #{elements := [{bool_lit, #{annotated := true}}],
+                               annotated := true}}],
+                 rufus_form:map([Form], fun annotate/1)).
+
+map_with_match_test() ->
+    Left = rufus_form:make_identifier(n, 3),
+    Right = rufus_form:make_identifier(m, 3),
+    Form = rufus_form:make_match(Left, Right, 3),
+    ?assertMatch([{match, #{left := {_, #{annotated := true}},
+                            right := {_, #{annotated := true}},
+                            annotated := true}}],
+                 rufus_form:map([Form], fun annotate/1)).
+
+annotate({FormType, Context}) ->
+    {FormType, Context#{annotated => true}}.
