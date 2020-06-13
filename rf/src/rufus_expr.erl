@@ -29,7 +29,7 @@ typecheck_and_annotate(RufusForms) ->
     {ok, Globals} = rufus_form:globals(RufusForms),
     try
         {ok, _Locals, AnnotatedForms} = typecheck_and_annotate([], Globals, #{}, RufusForms),
-        rufus_form:map(AnnotatedForms, fun sanity_check/1),
+        ok = rufus_form:each(AnnotatedForms, fun sanity_check/1),
         {ok, AnnotatedForms}
     catch
         {error, Code, Data} ->
@@ -42,12 +42,12 @@ typecheck_and_annotate(RufusForms) ->
 %% sanity_check, Data}` error triple is thrown if a form doesn't have type
 %% information, otherwise `ok` is returned.
 -spec sanity_check(rufus_form()) -> ok | no_return().
-sanity_check(Form = {func, _Context}) ->
-    Form;
-sanity_check(Form = {module, _Context}) ->
-    Form;
-sanity_check(Form = {_FormType, #{type := _Type}}) ->
-    Form;
+sanity_check({func, _Context}) ->
+    ok;
+sanity_check({module, _Context}) ->
+    ok;
+sanity_check({_FormType, #{type := _Type}}) ->
+    ok;
 sanity_check(Form) ->
     Data = #{form => Form,
              error => missing_type_information},

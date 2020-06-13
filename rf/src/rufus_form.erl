@@ -3,6 +3,7 @@
 -include_lib("rufus_type.hrl").
 
 -export([
+    each/2,
     globals/1,
     has_type/1,
     line/1,
@@ -214,7 +215,48 @@ make_binary_op(Op, Left, Right, Line) ->
 make_match(Left, Right, Line) ->
     {match, #{left => Left, right => Right, line => Line}}.
 
-%% Map API
+%% Enumeration API
+
+%% each invokes Fun with each form in Forms. It always returns ok.
+-spec each(list(rufus_form()), fun((rufus_form()) -> any())) -> ok | no_return().
+each([Form = {binary_op, #{left := Left, right := Right}}|T], Fun) ->
+    Fun(Left),
+    Fun(Right),
+    Fun(Form),
+    each(T, Fun);
+each([Form = {call, #{args := Args}}|T], Fun) ->
+    each(Args, Fun),
+    Fun(Form),
+    each(T, Fun);
+each([Form = {cons, #{head := Head, tail := Tail}}|T], Fun) ->
+    Fun(Head),
+    case Tail of
+        Tail when is_list(Tail) ->
+            each(Tail, Fun);
+        Tail ->
+            Fun(Tail)
+    end,
+    Fun(Form),
+    each(T, Fun);
+each([Form = {func, #{params := Params, exprs := Exprs}}|T], Fun) ->
+    each(Params, Fun),
+    each(Exprs, Fun),
+    Fun(Form),
+    each(T, Fun);
+each([Form = {list_lit, #{elements := Elements}}|T], Fun) ->
+    each(Elements, Fun),
+    Fun(Form),
+    each(T, Fun);
+each([Form = {match, #{left := Left, right := Right}}|T], Fun) ->
+    Fun(Left),
+    Fun(Right),
+    Fun(Form),
+    each(T, Fun);
+each([Form|T], Fun) ->
+    Fun(Form),
+    each(T, Fun);
+each([], _Fun) ->
+    ok.
 
 %% map applies Fun to each form in Forms to build and return a new tree.
 -spec map(list(rufus_form()), fun((rufus_form()) -> rufus_form())) -> list(rufus_form()).
