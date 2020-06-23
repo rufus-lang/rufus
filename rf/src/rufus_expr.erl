@@ -208,6 +208,10 @@ typecheck_and_annotate_identifier(Locals, Form = {identifier, Context = #{spec :
     {ok, AnnotatedForm1} = annotate_locals(Locals, Form),
     case maps:get(Spec, Locals, undefined) of
         undefined ->
+            case maps:get(allow_pattern, Context, false) of
+                true ->
+
+            end
             {ok, AnnotatedForm1};
         Type ->
             AnnotatedForm2 = {identifier, Context#{type => Type}},
