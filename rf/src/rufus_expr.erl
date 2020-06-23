@@ -29,7 +29,7 @@ typecheck_and_annotate(RufusForms) ->
     {ok, Globals} = rufus_form:globals(RufusForms),
     try
         {ok, _Locals, AnnotatedForms} = typecheck_and_annotate([], Globals, #{}, RufusForms),
-        ok = rufus_form:each(AnnotatedForms, fun sanity_check/1),
+        ok = rufus_form:each(AnnotatedForms, fun safety_check/1),
         {ok, AnnotatedForms}
     catch
         {error, Code, Data} ->
@@ -38,20 +38,20 @@ typecheck_and_annotate(RufusForms) ->
 
 %% Private API
 
-%% sanity_check ensures that every form has type information. An `{error,
-%% sanity_check, Data}` error triple is thrown if a form doesn't have type
+%% safety_check ensures that every form has type information. An `{error,
+%% safety_check, Data}` error triple is thrown if a form doesn't have type
 %% information, otherwise `ok` is returned.
--spec sanity_check(rufus_form()) -> ok | no_return().
-sanity_check({func, _Context}) ->
+-spec safety_check(rufus_form()) -> ok | no_return().
+safety_check({func, _Context}) ->
     ok;
-sanity_check({module, _Context}) ->
+safety_check({module, _Context}) ->
     ok;
-sanity_check({_FormType, #{type := _Type}}) ->
+safety_check({_FormType, #{type := _Type}}) ->
     ok;
-sanity_check(Form) ->
+safety_check(Form) ->
     Data = #{form => Form,
              error => missing_type_information},
-    throw({error, sanity_check, Data}).
+    throw({error, safety_check, Data}).
 
 %% typecheck_and_annotate iterates over RufusForms and adds type information
 %% from the current scope to each form. An `{error, Reason, Data}` error triple
