@@ -11,6 +11,51 @@
 What syntax should Rufus use to call into Erlang? How should type checking work
 with Erlang libraries?
 
+Some Erlang functions have straightforward types. For example, the `math` module
+defines functions with well-defined types, such as:
+
+```erlang
+-spec acos(X) -> float() when
+      X :: number().
+acos(_) ->
+    erlang:nif_error(undef).
+```
+
+In Rufus, `acos` can be represented as a function with two heads:
+
+```rufus
+func acos(x float) float
+func acos(x int) float
+```
+
+On the other hand, many functions have more dynamic type signatures. For
+example, the `maps` module defines functions with dynamic types:
+
+```erlang
+-spec get(Key, Map, Default) -> Value | Default when
+    Map :: #{Key => Value, _ => _}.
+get(Key, Map, Default) when is_map(Map) ->
+    case Map of
+        #{Key := Value} -> Value;
+        #{} -> Default
+    end;
+get(Key, Map, Default) ->
+    erlang:error({badmap, Map}, [Key, Map, Default]).
+```
+
+In Rufus, `get` can be represented as a generic function:
+
+```rufus
+func get[type K, V](key K, collection map[K]V, default V) V
+```
+
+Once Rufus has a type signature, code like this can be typechecked:
+
+```rufus
+items = map[string]int{"a": 1, "b": 2}
+value = :maps.get("a", items, -1)
+```
+    
 ## Decision drivers
 
 * It's possible to integrate Erlang libraries, including behaviors they define,
