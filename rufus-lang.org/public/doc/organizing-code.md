@@ -64,7 +64,7 @@ The `rufus.config` file contains important details about the package:
 [package]
 name = example
 version = 0.8.3
-package_root = github.com/rufus-lang/example
+path = github.com/rufus-lang/example
 authors = ["Jamu Kakar <jkakar@kakar.ca>"]
 ```
 
@@ -76,11 +76,12 @@ Dependencies are declared in the `rufus.config` file.
 [package]
 name = example
 version = 0.8.3
-package_root = github.com/rufus-lang/example
+path = github.com/rufus-lang/example
 authors = ["Jamu Kakar <jkakar@kakar.ca>"]
 
 [dependencies]
-"github.com/aws/aws-sdk-rufus" = 4.3
+"github.com/jkakar/logfmt" = 1.3.7
+"github.com/jkakar/postgres" = 4.3
 ```
 
 Running `rf build` will fetch new dependencies and all other transitive
@@ -89,8 +90,8 @@ into the `pkg/` directory:
 
 ```
 pkg/
-    github.com/aws/aws-sdk-rufus/
     github.com/jkakar/logfmt/
+    github.com/jkakar/postgres/
 ```
 
 Each of these directories contains the entire contents of the packages at those
