@@ -34,8 +34,7 @@ eval(RufusText) ->
 %% eval_stages runs each compilation stage H as H(Input), in order. Each
 %% compilation stage must return {ok, Output} on success. Any other response is
 %% treated as an error. The output from one compilation stage is provided as
-%% input to the next. Processing stops when a compilation stage returns an
-%% error.
+%% input to the next. Processing stops if a compilation stage returns an error.
 -spec eval_stages(any(), list(fun((_) -> any()))) -> ok_tuple() | error_tuple() | error_triple().
 eval_stages(Input, [H|T]) ->
     case H(Input) of
