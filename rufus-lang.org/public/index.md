@@ -5,12 +5,12 @@ module main
 
 import "Fmt"
 
-func main() {
+func main(args list[string]) {
     Fmt.Println("Hello, world!")
 }
 ```
 
-Rufus is for teams that build and operate fault tolerant distributed systems.
+Rufus is for people that build and operate fault tolerant distributed systems.
 
 ## Design goals
 
