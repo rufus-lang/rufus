@@ -29,7 +29,7 @@ typecheck_and_annotate(RufusForms) ->
     {ok, Globals} = rufus_form:globals(RufusForms),
     try
         {ok, _Locals, AnnotatedForms} = typecheck_and_annotate([], Globals, #{}, RufusForms),
-        ok = sanity_check(AnnotatedForms),
+        ok = rufus_form:each(AnnotatedForms, fun safety_check/1),
         {ok, AnnotatedForms}
     catch
         {error, Code, Data} ->
@@ -37,6 +37,21 @@ typecheck_and_annotate(RufusForms) ->
     end.
 
 %% Private API
+
+%% safety_check ensures that every form has type information. An `{error,
+%% safety_check, Data}` error triple is thrown if a form doesn't have type
+%% information, otherwise `ok` is returned.
+-spec safety_check(rufus_form()) -> ok | no_return().
+safety_check({func, _Context}) ->
+    ok;
+safety_check({module, _Context}) ->
+    ok;
+safety_check({_FormType, #{type := _Type}}) ->
+    ok;
+safety_check(Form) ->
+    Data = #{form => Form,
+             error => missing_type_information},
+    throw({error, safety_check, Data}).
 
 %% typecheck_and_annotate iterates over RufusForms and adds type information
 %% from the current scope to each form. An `{error, Reason, Data}` error triple
@@ -70,39 +85,6 @@ typecheck_and_annotate(Acc, Globals, Locals, [H|T]) ->
     typecheck_and_annotate([H|Acc], Globals, Locals, T);
 typecheck_and_annotate(Acc, _Globals, Locals, []) ->
     {ok, Locals, lists:reverse(Acc)}.
-
-%% sanity_check ensures that every form has type information. An `{error,
-%% sanity_check, Data}` error triple is thrown if a form doesn't have type
-%% information, otherwise `ok` is returned.
--spec sanity_check(list(rufus_form())) -> ok | no_return().
-sanity_check([{binary_op, #{left := Left, right := Right, type := _Type}}|T]) ->
-    ok = sanity_check([Left]),
-    ok = sanity_check([Right]),
-    sanity_check(T);
-sanity_check([{cons, #{head := Head, tail := Tail, type := _Type}}|T]) ->
-    ok = sanity_check([Head]),
-    ok = sanity_check([Tail]),
-    sanity_check(T);
-sanity_check([{func, #{params := Params, exprs := Exprs}}|T]) ->
-    ok = sanity_check(Params),
-    ok = sanity_check(Exprs),
-    sanity_check(T);
-sanity_check([{list, #{elements := Elements, type := _Type}}|T]) ->
-    lists:foreach(fun(Element) -> ok = sanity_check(Element) end, Elements),
-    sanity_check(T);
-sanity_check([{match, #{left := Left, right := Right, type := _Type}}|T]) ->
-    ok = sanity_check([Left]),
-    ok = sanity_check([Right]),
-    sanity_check(T);
-sanity_check([{module, _Context}|T]) ->
-    sanity_check(T);
-sanity_check([{_FormType, #{type := _Type}}|T]) ->
-    sanity_check(T);
-sanity_check([Form|_T]) ->
-    Data = #{form => Form},
-    throw({error, sanity_check, Data});
-sanity_check([]) ->
-    ok.
 
 %% scope helpers
 
@@ -218,7 +200,7 @@ typecheck_func_return_type(Globals, {func, #{return_type := ReturnType, exprs :=
 
 %% typecheck_and_annotate_identifier adds a locals key/value pair to the
 %% identifier with information about local variables that are in scope. Type
-%% information is also added to tge identifier form if present in Locals. Return
+%% information is also added to the identifier form if present in Locals. Return
 %% values:
 %% - `{ok, AnnotatedForm}` with locals and type information..
 -spec typecheck_and_annotate_identifier(locals(), identifier_form()) -> {ok, identifier_form()}.
