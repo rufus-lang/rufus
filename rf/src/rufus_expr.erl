@@ -200,7 +200,7 @@ typecheck_func_return_type(Globals, {func, #{return_type := ReturnType, exprs :=
 
 %% typecheck_and_annotate_identifier adds a locals key/value pair to the
 %% identifier with information about local variables that are in scope. Type
-%% information is also added to tge identifier form if present in Locals. Return
+%% information is also added to the identifier form if present in Locals. Return
 %% values:
 %% - `{ok, AnnotatedForm}` with locals and type information..
 -spec typecheck_and_annotate_identifier(locals(), identifier_form()) -> {ok, identifier_form()}.
