@@ -3,6 +3,7 @@
 -include_lib("rufus_type.hrl").
 
 -export([
+    annotate_pattern/1,
     each/2,
     globals/1,
     has_type/1,
@@ -82,7 +83,7 @@ type(Form = {identifier, #{spec := Spec, locals := Locals}}) ->
 
 %% globals creates a map of function names to func forms for all top-level
 %% functions in RufusForms.
--spec globals(list(rufus_form())) -> {ok, #{atom() => list(rufus_form())}}.
+-spec globals(rufus_forms()) -> {ok, #{atom() => rufus_forms()}}.
 globals(RufusForms) ->
     globals(#{}, RufusForms).
 
@@ -201,6 +202,11 @@ make_literal(list, Type, Elements, Line) ->
 make_cons(Type, Head, Tail, Line) ->
     {cons, #{type => Type, head => Head, tail => Tail, line => Line}}.
 
+%% annotate_pattern returns a form annotated as a pattern expression.
+-spec annotate_pattern(cons_form()) -> cons_form().
+annotate_pattern({cons, Context}) ->
+    {cons, Context#{allow_pattern => true}}.
+
 %% binary_op form builder API
 
 %% make_binary_op returns a form for a binary operation.
@@ -218,7 +224,7 @@ make_match(Left, Right, Line) ->
 %% Enumeration API
 
 %% each invokes Fun with each form in Forms. It always returns ok.
--spec each(list(rufus_form()), fun((rufus_form()) -> any())) -> ok | no_return().
+-spec each(rufus_forms(), fun((rufus_form()) -> any())) -> ok | no_return().
 each([Form = {binary_op, #{left := Left, right := Right}}|T], Fun) ->
     Fun(Left),
     Fun(Right),
@@ -259,11 +265,11 @@ each([], _Fun) ->
     ok.
 
 %% map applies Fun to each form in Forms to build and return a new tree.
--spec map(list(rufus_form()), fun((rufus_form()) -> rufus_form())) -> list(rufus_form()).
+-spec map(rufus_forms(), fun((rufus_form()) -> rufus_form())) -> rufus_forms().
 map(Forms, Fun) ->
     map([], Forms, Fun).
 
--spec map(list(rufus_form()), list(rufus_form()), fun((rufus_form()) -> rufus_form())) -> list(rufus_form()).
+-spec map(rufus_forms(), rufus_forms(), fun((rufus_form()) -> rufus_form())) -> rufus_forms().
 map(Acc, [{binary_op, Context = #{left := Left, right := Right}}|T], Fun) ->
     AnnotatedLeft = Fun(Left),
     AnnotatedRight = Fun(Right),
@@ -305,7 +311,7 @@ map(Acc, [], _Fun) ->
 
 %% Private API
 
--spec globals(map(), list(rufus_form())) -> {ok, #{atom() => list(rufus_form())}}.
+-spec globals(map(), rufus_forms()) -> {ok, #{atom() => rufus_forms()}}.
 globals(Acc, [Form = {func, #{spec := Spec}}|T]) ->
     Forms = maps:get(Spec, Acc, []),
     globals(Acc#{Spec => Forms ++ [Form]}, T);

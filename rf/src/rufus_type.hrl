@@ -87,6 +87,8 @@
       | binary_op_form()
       | match_form()
       | call_form().
+-type rufus_forms() :: list(rufus_form()).
+-type rufus_stack() :: list(rufus_form()).
 
 %% Errors
 
@@ -109,5 +111,6 @@
         erlang3_form()
       | erlang4_form()
       | erlang5_form().
+-type erlang_forms() :: list(erlang_form()).
 
 -type export_attribute_erlang_form() :: {attribute, integer(), export, list()}.

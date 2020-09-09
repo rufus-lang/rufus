@@ -11,7 +11,7 @@
 
 %% forms transforms RufusForms into Erlang forms that can be compiled with
 %% compile:forms/1 and then loaded with code:load_binary/3.
--spec forms(list(rufus_form())) -> {ok, list(erlang_form())}.
+-spec forms(rufus_forms()) -> {ok, erlang_forms()}.
 forms(RufusForms) ->
     {ok, GroupedRufusForms} = group_forms_by_func(RufusForms),
     {ok, ErlangForms} = forms([], GroupedRufusForms),
@@ -23,7 +23,7 @@ forms(RufusForms) ->
 %% for func expressions of the same name and arity into a list of Rufus forms
 %% with a single func expression for each name/arity pair, with form details
 %% represented as a list instead of a context map.
--spec group_forms_by_func(list(rufus_form())) -> {ok, list(rufus_form() | {func_group, context()})}.
+-spec group_forms_by_func(rufus_forms()) -> {ok, list(rufus_form() | {func_group, context()})}.
 group_forms_by_func(Forms) ->
     MatchModuleForm = fun({module, _Context}) ->
         true;
@@ -52,7 +52,7 @@ group_forms_by_func(Forms) ->
 
     {ok, [ModuleForm|lists:reverse(SortedFuncForms)]}.
 
--spec forms(list(erlang_form()), list(rufus_form() | {func_group, context()})) -> {ok, list(erlang_form())}.
+-spec forms(erlang_forms(), list(rufus_form() | {func_group, context()})) -> {ok, erlang_forms()}.
 forms(Acc, [{atom_lit, _Context} = AtomLit|T]) ->
     Form = box(AtomLit),
     forms([Form|Acc], T);
@@ -171,7 +171,7 @@ rufus_operator_to_erlang_operator(Op, _) ->
 
 %% guard_forms generates function guard forms for various scalar parameter
 %% types.
--spec guard_forms(list(erlang_form()) | list(list()), list(param_form())) -> {ok, list(erlang_form())}.
+-spec guard_forms(erlang_forms() | list(list()), list(param_form())) -> {ok, erlang_forms()}.
 guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := atom}}}}|T]) ->
     GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_atom}}, [{var, Line, Name}]}],
     guard_forms([GuardExpr|Acc], T);
@@ -214,11 +214,11 @@ box({string_lit, #{line := Line, spec := Value}}) ->
 %% annotate_exports creates export attributes for all exported functions and
 %% injects them into the sequence of Erlang forms. They're defined before
 %% function definitions to avoid crashing the Erlang compiler.
--spec annotate_exports(list(erlang_form())) -> {ok, list(erlang_form())}.
+-spec annotate_exports(erlang_forms()) -> {ok, erlang_forms()}.
 annotate_exports(Forms) ->
     annotate_exports([], Forms).
 
--spec annotate_exports(list(erlang_form()), list(erlang_form())) -> {ok, list(erlang_form())}.
+-spec annotate_exports(erlang_forms(), erlang_forms()) -> {ok, erlang_forms()}.
 annotate_exports(Acc, [Form = {attribute, _Line, module, _Name}|T]) ->
     {ok, ExportForms} = make_export_forms(T),
     %% Inject export forms directly after the module declaration.
@@ -229,11 +229,11 @@ annotate_exports(Acc, []) ->
     {ok, lists:reverse(Acc)}.
 
 %% make_export_forms generates export attributes for all public functions.
--spec make_export_forms(list(erlang_form())) -> {ok, list(export_attribute_erlang_form())}.
+-spec make_export_forms(erlang_forms()) -> {ok, list(export_attribute_erlang_form())}.
 make_export_forms(Forms) ->
     make_export_forms([], Forms).
 
--spec make_export_forms(list(erlang_form()), list(erlang_form())) -> {ok, list(export_attribute_erlang_form())}.
+-spec make_export_forms(erlang_forms(), erlang_forms()) -> {ok, list(export_attribute_erlang_form())}.
 make_export_forms(Acc, [{function, Line, Spec, Arity, _Forms}|T]) ->
     case is_public(Spec) of
         true ->
@@ -264,7 +264,7 @@ is_private(LeadingChar) ->
 
 %% list_to_cons transforms a list of Rufus form elements in a list_lit form into
 %% an Erlang cons form.
--spec list_to_cons(list(rufus_form()), integer()) -> term().
+-spec list_to_cons(rufus_forms(), integer()) -> term().
 list_to_cons([Form|[]], Line) ->
     {ok, [Head|_]} = forms([], [Form]),
     {cons, Line, Head, {nil, Line}};
