@@ -162,7 +162,12 @@ make_type_with_source(_CollectionSpec, ElementType, Source, Line) ->
 %% make_func returns a form for a function declaration.
 -spec make_func(atom(), list(param_form()), type_form(), list(), integer()) -> {func, #{spec => atom(), params => list(param_form), return_type => type_form(), exprs => list(), line => integer()}}.
 make_func(Spec, Params, ReturnType, Exprs, Line) ->
-    {func, #{spec => Spec, params => Params, return_type => ReturnType, exprs => Exprs, line => Line}}.
+    ParamsForm = make_params(Params, Line),
+    {func, #{spec => Spec, params => ParamsForm, return_type => ReturnType, exprs => Exprs, line => Line}}.
+
+-spec make_params(list(param_form), integer()) -> {params, #{params => list(param_form), line => integer()}}.
+make_params(Params, Line) ->
+    {params, #{params => Params, line => Line}}.
 
 %% make_param returns a form for a function parameter declaration.
 -spec make_param(atom(), type_form(), integer()) -> {param, #{spec => atom(), type => type_form(), line => integer()}}.

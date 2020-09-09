@@ -86,6 +86,9 @@ typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {module, _Context}|T
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {param, _Context}|T]) ->
     {ok, NewLocals} = push_local(Locals, Form),
     typecheck_and_annotate([Form|Acc], Stack, Globals, NewLocals, T);
+typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {params, _Context}|T]) ->
+    {ok, AnnotatedForm} = typecheck_and_annotate_params(Stack, Globals, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm|Acc], Stack, Globals, Locals, T);
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [H|T]) ->
     typecheck_and_annotate([H|Acc], Stack, Globals, Locals, T);
 typecheck_and_annotate(Acc, _Stack, _Globals, Locals, []) ->
@@ -178,6 +181,12 @@ typecheck_and_annotate_func(Stack, Globals, Locals, Form = {func, Context = #{pa
     {ok, _NewLocals2, AnnotatedExprs} = typecheck_and_annotate([], [Form|Stack], Globals, NewLocals1, Exprs),
     AnnotatedForm = {func, Context#{params => AnnotatedParams, exprs => AnnotatedExprs}},
     ok = typecheck_func_return_type(Globals, AnnotatedForm),
+    {ok, AnnotatedForm}.
+
+-spec typecheck_and_annotate_params(rufus_stack(), globals(), locals(), params_form()) -> {ok, params_form()} | no_return().
+typecheck_and_annotate_params(Stack, Globals, Locals, Form = {params, Context = #{params := Params}}) ->
+    {ok, _NewLocals, AnnotatedParams} = typecheck_and_annotate([], [Form|Stack], Globals, Locals, Params),
+    AnnotatedForm = {params, Context#{params => AnnotatedParams}},
     {ok, AnnotatedForm}.
 
 %% typecheck_func_return_type enforces the constraint that the type of the final

@@ -174,13 +174,13 @@ resolve_call_type(Globals, Form = {call, #{spec := Spec, args := Args}}) ->
 
 -spec find_matching_funcs(list(func_form()), rufus_forms()) -> {ok, list(func_form())} | error_triple().
 find_matching_funcs(Funcs, Args) ->
-    FuncsWithMatchingArity = lists:filter(fun({func, #{params := Params}}) ->
+    FuncsWithMatchingArity = lists:filter(fun({func, #{params := {params, #{params := Params}}}}) ->
         length(Params) =:= length(Args)
     end, Funcs),
 
     case length(FuncsWithMatchingArity) of
         Length when Length > 0 ->
-            Result = lists:filter(fun({func, #{params := Params}}) ->
+            Result = lists:filter(fun({func, #{params := {params, #{params := Params}}}}) ->
                 Zipped = lists:zip(Params, Args),
                 lists:all(fun({{param, #{type := {type, #{spec := ParamTypeSpec}}}},
                                {_, #{type := {type, #{spec := ArgTypeSpec}}}}}) ->

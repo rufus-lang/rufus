@@ -64,6 +64,7 @@
 
 -type func_form() :: {func, context()}.
 -type param_form() :: {param, context()}.
+-type params_form() :: {params, context()}.
 -type identifier_form() :: {identifier, context()}.
 -type binary_op_form() :: {binary_op, context()}.
 -type match_form() :: {match, context()}.
