@@ -73,7 +73,7 @@ typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {func, _Context}|T])
     {ok, AnnotatedForm} = typecheck_and_annotate_func(Stack, Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm|Acc], Stack, Globals, Locals, T);
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {identifier, _Context}|T]) ->
-    {ok, AnnotatedForm} = typecheck_and_annotate_identifier(Locals, Form),
+    {ok, AnnotatedForm} = typecheck_and_annotate_identifier(Stack, Locals, Form),
     typecheck_and_annotate([AnnotatedForm|Acc], Stack, Globals, Locals, T);
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {list_lit, _Context}|T]) ->
     {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_list_lit(Stack, Globals, Locals, Form),
@@ -208,8 +208,8 @@ typecheck_func_return_type(Globals, {func, #{return_type := ReturnType, exprs :=
 %% information is also added to the identifier form if present in Locals. Return
 %% values:
 %% - `{ok, AnnotatedForm}` with locals and type information..
--spec typecheck_and_annotate_identifier(locals(), identifier_form()) -> {ok, identifier_form()}.
-typecheck_and_annotate_identifier(Locals, Form = {identifier, Context = #{spec := Spec}}) ->
+-spec typecheck_and_annotate_identifier(rufus_stack(), locals(), identifier_form()) -> {ok, identifier_form()}.
+typecheck_and_annotate_identifier(_Stack, Locals, Form = {identifier, Context = #{spec := Spec}}) ->
     {ok, AnnotatedForm1} = annotate_locals(Locals, Form),
     case maps:get(Spec, Locals, undefined) of
         undefined ->
