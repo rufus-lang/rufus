@@ -250,7 +250,7 @@ each([Form = {cons, #{head := Head, tail := Tail}}|T], Fun) ->
     Fun(Form),
     each(T, Fun);
 each([Form = {func, #{params := Params, exprs := Exprs}}|T], Fun) ->
-    each(Params, Fun),
+    each([Params], Fun),
     each(Exprs, Fun),
     Fun(Form),
     each(T, Fun);

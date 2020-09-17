@@ -49,6 +49,8 @@ safety_check({func, _Context}) ->
     ok;
 safety_check({module, _Context}) ->
     ok;
+safety_check({params, _Context}) ->
+    ok;
 safety_check({_FormType, #{type := _Type}}) ->
     ok;
 safety_check(Form) ->
@@ -177,7 +179,7 @@ typecheck_and_annotate_cons(Stack, Globals, Locals, Form = {cons, Context = #{he
 %% ensure they satisfy type constraints.
 -spec typecheck_and_annotate_func(rufus_stack(), globals(), locals(), func_form()) -> {ok, func_form()} | no_return().
 typecheck_and_annotate_func(Stack, Globals, Locals, Form = {func, Context = #{params := Params, exprs := Exprs}}) ->
-    {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate([], [Form|Stack], Globals, Locals, Params),
+    {ok, NewLocals1, [AnnotatedParams]} = typecheck_and_annotate([], [Form|Stack], Globals, Locals, [Params]),
     {ok, _NewLocals2, AnnotatedExprs} = typecheck_and_annotate([], [Form|Stack], Globals, NewLocals1, Exprs),
     AnnotatedForm = {func, Context#{params => AnnotatedParams, exprs => AnnotatedExprs}},
     ok = typecheck_func_return_type(Globals, AnnotatedForm),
