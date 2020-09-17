@@ -34,7 +34,7 @@ group_forms_by_func(Forms) ->
     {ok, Globals} = rufus_form:globals(Forms),
 
     GroupBy = fun(Name, FuncForms, Acc) ->
-        {func, #{line := Line, params := Params}} = hd(FuncForms),
+        {func, #{line := Line, params := {params, #{params := Params}}}} = hd(FuncForms),
         Form = {func_group, #{line => Line, spec => Name, arity => length(Params), forms => FuncForms}},
         [Form|Acc]
     end,
@@ -79,7 +79,7 @@ forms(Acc, [{float_lit, _Context} = FloatLit|T]) ->
     forms([Form|Acc], T);
 forms(Acc, [{func_group, #{line := Line1, spec := Spec, arity := Arity, forms := Forms}}|T]) ->
     FuncClauses = lists:map(fun(Form) ->
-        {func, #{line := Line2, spec := Spec, params := Params, exprs := Exprs}} = Form,
+        {func, #{line := Line2, spec := Spec, params := {params, #{params := Params}}, exprs := Exprs}} = Form,
         {ok, ParamForms} = forms([], Params),
         {ok, GuardForms} = guard_forms([], Params),
         {ok, ExprForms} = forms([], Exprs),
