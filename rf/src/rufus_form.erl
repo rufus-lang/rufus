@@ -295,7 +295,7 @@ map(Acc, [{cons, Context = #{head := Head, tail := Tail}}|T], Fun) ->
     AnnotatedForm = Fun({cons, Context#{head => AnnotatedHead, tail => AnnotatedTail}}),
     map([AnnotatedForm|Acc], T, Fun);
 map(Acc, [{func, Context = #{params := Params, exprs := Exprs}}|T], Fun) ->
-    AnnotatedParams = map(Params, Fun),
+    [AnnotatedParams] = map([Params], Fun),
     AnnotatedExprs = map(Exprs, Fun),
     AnnotatedForm = Fun({func, Context#{params => AnnotatedParams, exprs => AnnotatedExprs}}),
     map([AnnotatedForm|Acc], T, Fun);
@@ -307,6 +307,10 @@ map(Acc, [{match, Context = #{left := Left, right := Right}}|T], Fun) ->
     AnnotatedLeft = Fun(Left),
     AnnotatedRight = Fun(Right),
     AnnotatedForm = Fun({match, Context#{left => AnnotatedLeft, right => AnnotatedRight}}),
+    map([AnnotatedForm|Acc], T, Fun);
+map(Acc, [{params, Context = #{params := Params}}|T], Fun) ->
+    AnnotatedParams = map(Params, Fun),
+    AnnotatedForm = Fun({params, Context#{params => AnnotatedParams}}),
     map([AnnotatedForm|Acc], T, Fun);
 map(Acc, [Form|T], Fun) ->
     AnnotatedForm = Fun(Form),

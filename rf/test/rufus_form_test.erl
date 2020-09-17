@@ -16,11 +16,12 @@ globals_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    Echo1 = {func, #{params => [{param, #{line => 3,
-                                          spec => n,
-                                          type => {type, #{line => 3,
-                                                           source => rufus_text,
-                                                           spec => string}}}}],
+    Echo1 = {func, #{params => {params, #{params => [{param, #{line => 3,
+                                                               spec => n,
+                                                               type => {type, #{line => 3,
+                                                                                source => rufus_text,
+                                                                                spec => string}}}}],
+                                          line => 3}},
                      exprs => [{identifier, #{line => 3,
                                               spec => n}}],
                      line => 3,
@@ -28,7 +29,8 @@ globals_test() ->
                                              source => rufus_text,
                                              spec => string}},
                      spec => 'Echo'}},
-    Number0 = {func, #{params => [],
+    Number0 = {func, #{params => {params, #{params => [],
+                                            line => 4}},
                        exprs => [{int_lit, #{line => 4,
                                              spec => 42,
                                              type => {type, #{line => 4,
@@ -49,11 +51,12 @@ globals_with_multiple_function_heads_test() ->
     ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    EchoString = {func, #{params => [{param, #{line => 3,
-                                               spec => n,
-                                               type => {type, #{line => 3,
-                                                                source => rufus_text,
-                                                                spec => string}}}}],
+    EchoString = {func, #{params => {params, #{params => [{param, #{line => 3,
+                                                                    spec => n,
+                                                                    type => {type, #{line => 3,
+                                                                                     source => rufus_text,
+                                                                                     spec => string}}}}],
+                                              line => 3}},
                           exprs => [{identifier, #{line => 3,
                                                    spec => n}}],
                           line => 3,
@@ -61,11 +64,12 @@ globals_with_multiple_function_heads_test() ->
                                                   source => rufus_text,
                                                   spec => string}},
                           spec => 'Echo'}},
-    EchoInt = {func, #{params => [{param, #{line => 4,
-                                            spec => n,
-                                            type => {type, #{line => 4,
-                                                             source => rufus_text,
-                                                             spec => int}}}}],
+    EchoInt = {func, #{params => {params, #{params => [{param, #{line => 4,
+                                                                 spec => n,
+                                                                 type => {type, #{line => 4,
+                                                                                  source => rufus_text,
+                                                                                  spec => int}}}}],
+                                            line => 4}},
                        exprs => [{identifier, #{line => 4,
                                                 spec => n}}],
                        line => 4,
@@ -178,23 +182,39 @@ make_func_test() ->
     Type = rufus_form:make_type(bool, 81),
     Param = rufus_form:make_literal(bool, true, 81),
     Value = rufus_form:make_literal(bool, true, 81),
-    ?assertEqual({func, #{spec => 'True', params => [Param], return_type => Type, exprs => [Value], line => 81}},
+    ?assertEqual({func, #{spec => 'True',
+                          params => {params, #{params => [Param],
+                                               line => 81}},
+                          return_type => Type,
+                          exprs => [Value],
+                          line => 81}},
                  rufus_form:make_func('True', [Param], Type, [Value], 81)).
 
 make_param_test() ->
     Type = rufus_form:make_type(int, 52),
-    ?assertEqual({param, #{spec => n, type => Type, line => 52}}, rufus_form:make_param(n, Type, 52)).
+    ?assertEqual({param, #{spec => n,
+                           type => Type,
+                           line => 52}},
+                 rufus_form:make_param(n, Type, 52)).
 
 make_inferred_type_test() ->
-    ?assertEqual({type, #{spec => int, source => inferred, line => 4}}, rufus_form:make_inferred_type(int, 4)).
+    ?assertEqual({type, #{spec => int,
+                          source => inferred,
+                          line => 4}},
+                 rufus_form:make_inferred_type(int, 4)).
 
 make_type_test() ->
-    ?assertEqual({type, #{spec => float, source => rufus_text, line => 37}}, rufus_form:make_type(float, 37)).
+    ?assertEqual({type, #{spec => float,
+                          source => rufus_text,
+                          line => 37}},
+                 rufus_form:make_type(float, 37)).
 
 make_match_test() ->
     Left = rufus_form:make_identifier(n, 3),
     Right = rufus_form:make_identifier(m, 3),
-    ?assertEqual({match, #{left => Left, right => Right, line => 3}},
+    ?assertEqual({match, #{left => Left,
+                           right => Right,
+                           line => 3}},
                  rufus_form:make_match(Left, Right, 3)).
 
 map_with_empty_input_test() ->
@@ -251,7 +271,8 @@ map_with_func_test() ->
     Param = rufus_form:make_literal(bool, true, 81),
     Value = rufus_form:make_literal(bool, true, 81),
     Form = rufus_form:make_func('True', [Param], Type, [Value], 81),
-    ?assertMatch([{func, #{params := [{bool_lit, #{annotated := true}}],
+    io:format("Form => ~p~n", [Form]),
+    ?assertMatch([{func, #{params := {params, #{params := [{bool_lit, #{annotated := true}}]}},
                            exprs := [{bool_lit, #{annotated := true}}],
                            annotated := true}}],
                  rufus_form:map([Form], fun annotate/1)).
