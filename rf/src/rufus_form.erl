@@ -21,6 +21,7 @@
     make_match/3,
     make_module/2,
     make_param/3,
+    make_params/2,
     make_type/2,
     make_type/3,
     map/2,
@@ -70,16 +71,9 @@ has_type(_Form) ->
     false.
 
 %% type returns type information for the form.
--spec type(rufus_form()) -> context().
+-spec type(rufus_form()) -> type_form().
 type({_, #{type := Type}}) ->
-    Type;
-type(Form = {identifier, #{spec := Spec, locals := Locals}}) ->
-    case maps:get(Spec, Locals, undefined) of
-        {type, Context} ->
-            {type, Context};
-        undefined ->
-            {error, unknown_form, #{form => Form}}
-    end.
+    Type.
 
 %% globals creates a map of function names to func forms for all top-level
 %% functions in RufusForms.
@@ -160,7 +154,7 @@ make_type_with_source(_CollectionSpec, ElementType, Source, Line) ->
 %% Function form builder API
 
 %% make_func returns a form for a function declaration.
--spec make_func(atom(), list(param_form()), type_form(), list(), integer()) -> {func, #{spec => atom(), params => list(param_form), return_type => type_form(), exprs => list(), line => integer()}}.
+-spec make_func(atom(), list(param_form()), type_form(), list(), integer()) -> {func, #{spec => atom(), params => params_form(), return_type => type_form(), exprs => list(), line => integer()}}.
 make_func(Spec, Params, ReturnType, Exprs, Line) ->
     ParamsForm = make_params(Params, Line),
     {func, #{spec => Spec, params => ParamsForm, return_type => ReturnType, exprs => Exprs, line => Line}}.
