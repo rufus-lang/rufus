@@ -10,12 +10,13 @@
 -spec main(list()) -> no_return().
 main(Args) ->
     ok = application:start(rf),
-    ExitCode = case Args of
-        [Command|CommandArgs] ->
-            run(Command, CommandArgs);
-        [] ->
-            run("help", [])
-    end,
+    ExitCode =
+        case Args of
+            [Command | CommandArgs] ->
+                run(Command, CommandArgs);
+            [] ->
+                run("help", [])
+        end,
     ok = application:stop(rf),
     erlang:halt(ExitCode).
 
@@ -23,10 +24,11 @@ main(Args) ->
 
 -spec run(string(), list(string())) -> integer().
 run("compile", _Args) ->
-    RufusText ="
-    module example
-    func Numbers() list[int] { list[int]{17, 9, 31, 48} }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Numbers() list[int] { list[int]{17, 9, 31, 48} }\n"
+        "    ",
     io:format("RufusText =>~n    ~s~n", [RufusText]),
     {ok, example} = rufus_compile:eval(RufusText),
     io:format("example:Numbers() =>~n~n    ~p~n", [example:'Numbers'()]),
@@ -35,7 +37,10 @@ run("debug:erlang-forms", [Filename]) ->
     {ok, BinaryContents} = file:read_file(Filename),
     io:format("ErlangText =>~n~n~s~n", [binary_to_list(BinaryContents)]),
     Tokens = scan(erl_scan:tokens([], binary_to_list(BinaryContents), 1), []),
-    Parse = fun(X) -> {ok,Y} = erl_parse:parse_form(X), Y end,
+    Parse = fun(X) ->
+        {ok, Y} = erl_parse:parse_form(X),
+        Y
+    end,
     Forms = [Parse(X) || X <- Tokens],
     io:format("ErlangForms =>~n~n    ~p~n", [Forms]),
     0;
@@ -44,18 +49,21 @@ run("debug:rufus-forms", [Filename]) ->
     io:format("RufusText =>~n~n~s~n", [binary_to_list(BinaryContents)]),
 
     Tokens = scan(erl_scan:tokens([], binary_to_list(BinaryContents), 1), []),
-    Parse = fun(X) -> {ok,Y} = erl_parse:parse_form(X), Y end,
+    Parse = fun(X) ->
+        {ok, Y} = erl_parse:parse_form(X),
+        Y
+    end,
     Forms = [Parse(X) || X <- Tokens],
     io:format("RufusForms =>~n~n    ~p~n", [Forms]),
     0;
 run("debug:parse", _Args) ->
-    RufusText = "
-    module rand
-
-    func Int() int {
-        42
-    }
-",
+    RufusText =
+        "\n"
+        "    module rand\n"
+        "\n"
+        "    func Int() int {\n"
+        "        42\n"
+        "    }\n",
     io:format("RufusText =>~n    ~s~n", [RufusText]),
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     io:format("Tokens =>~n~n    ~p~n~n", [Tokens]),
@@ -73,13 +81,13 @@ run("debug:parse", _Args) ->
             -1
     end;
 run("debug:tokenize", _Args) ->
-    RufusText = "
-    module example
-
-    func Greet(name string) string {
-        \"Hello \" + name
-    }
-",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "\n"
+        "    func Greet(name string) string {\n"
+        "        \"Hello \" + name\n"
+        "    }\n",
     io:format("RufusText =>~n    ~s~n", [RufusText]),
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     io:format("Tokens =>~n~n    ~p~n", [Tokens]),
@@ -166,6 +174,6 @@ warn(Command, _Args) ->
     io:format("Unknown command: ~s~n", [Command]).
 
 scan({done, {ok, Token, Line}, CharSpec}, Rest) ->
-    scan(erl_scan:tokens([], CharSpec, Line), [Token|Rest]);
+    scan(erl_scan:tokens([], CharSpec, Line), [Token | Rest]);
 scan(_, Res) ->
     lists:reverse(Res).

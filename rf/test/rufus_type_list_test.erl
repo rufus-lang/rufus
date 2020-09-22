@@ -15,17 +15,35 @@ resolve_list_with_mismatched_element_type_test() ->
     IntTypeForm = rufus_form:make_type(int, 3),
     IntListTypeForm = rufus_form:make_type(list, IntTypeForm, 3),
     Form = rufus_form:make_literal(list, IntListTypeForm, [MismatchedElement], 3),
-    Data = #{form => {list_lit, #{elements => [{float_lit, #{line => 3,
-                                                             spec => 42.0,
-                                                             type => {type, #{line => 3,
-                                                                              source => inferred,
-                                                                              spec => float}}}}],
-                                  line => 3,
-                                  type => {type, #{collection_type => list,
-                                                   element_type => {type, #{line => 3,
-                                                                            source => rufus_text,
-                                                                            spec => int}},
-                                                   line => 3,
-                                                   source => rufus_text,
-                                                   spec => 'list[int]'}}}}},
+    Data = #{
+        form =>
+            {list_lit, #{
+                elements => [
+                    {float_lit, #{
+                        line => 3,
+                        spec => 42.0,
+                        type =>
+                            {type, #{
+                                line => 3,
+                                source => inferred,
+                                spec => float
+                            }}
+                    }}
+                ],
+                line => 3,
+                type =>
+                    {type, #{
+                        collection_type => list,
+                        element_type =>
+                            {type, #{
+                                line => 3,
+                                source => rufus_text,
+                                spec => int
+                            }},
+                        line => 3,
+                        source => rufus_text,
+                        spec => 'list[int]'
+                    }}
+            }}
+    },
     ?assertEqual({error, unexpected_element_type, Data}, rufus_type:resolve(#{}, Form)).

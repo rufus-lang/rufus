@@ -36,7 +36,7 @@ eval(RufusText) ->
 %% treated as an error. The output from one compilation stage is provided as
 %% input to the next. Processing stops if a compilation stage returns an error.
 -spec eval_stages(any(), list(fun((_) -> any()))) -> ok_tuple() | error_tuple() | error_triple().
-eval_stages(Input, [H|T]) ->
+eval_stages(Input, [H | T]) ->
     case H(Input) of
         {ok, Forms} ->
             eval_stages(Forms, T);
@@ -63,7 +63,9 @@ compile(ErlangForms) ->
     end.
 
 %% load creates or overwrites a module with a code binary.
--spec load(atom(), binary()) -> {ok, atom()} | {error, badarg | badfile | nofile | not_purged | on_load_failure | sticky_directory}.
+-spec load(atom(), binary()) ->
+    {ok, atom()} |
+    {error, badarg | badfile | nofile | not_purged | on_load_failure | sticky_directory}.
 load(Module, BinaryOrCode) ->
     case code:load_binary(Module, "nofile", BinaryOrCode) of
         {module, Module} ->

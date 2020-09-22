@@ -22,7 +22,8 @@ resolve(Globals, Form) ->
 
 %% Private API
 
--spec resolve_type(#{atom() => list(rufus_form())}, rufus_form()) -> {ok, type_form()} | no_return().
+-spec resolve_type(#{atom() => list(rufus_form())}, rufus_form()) ->
+    {ok, type_form()} | no_return().
 resolve_type(Globals, Form = {cons, _Context}) ->
     resolve_cons_type(Globals, Form);
 resolve_type(Globals, Form = {list_lit, _Context}) ->
@@ -41,40 +42,72 @@ resolve_type(Globals, Form = {identifier, _Context}) ->
 %% binary_op form helpers
 
 -spec resolve_binary_op_type(globals(), binary_op_form()) -> {ok, type_form()} | no_return().
-resolve_binary_op_type(Globals, Form = {binary_op, #{op := Op, left := Left, right := Right, line := Line}}) ->
+resolve_binary_op_type(
+    Globals,
+    Form = {binary_op, #{op := Op, left := Left, right := Right, line := Line}}
+) ->
     {ok, LeftType} = resolve_type(Globals, Left),
     {ok, RightType} = resolve_type(Globals, Right),
     LeftTypeSpec = rufus_form:type_spec(LeftType),
     RightTypeSpec = rufus_form:type_spec(RightType),
-    {AllowType, AllowTypePair} = case Op of
-        '+'   -> {fun allow_type_with_mathematical_operator/2, fun allow_type_pair_with_mathematical_operator/2};
-        '-'   -> {fun allow_type_with_mathematical_operator/2, fun allow_type_pair_with_mathematical_operator/2};
-        '*'   -> {fun allow_type_with_mathematical_operator/2, fun allow_type_pair_with_mathematical_operator/2};
-        '/'   -> {fun allow_type_with_mathematical_operator/2, fun allow_type_pair_with_mathematical_operator/2};
-        '%'   -> {fun allow_type_with_mathematical_operator/2, fun allow_type_pair_with_mathematical_operator/2};
-        'and' -> {fun allow_type_with_conditional_operator/2,  fun allow_type_pair_with_conditional_operator/2};
-        'or'  -> {fun allow_type_with_conditional_operator/2,  fun allow_type_pair_with_conditional_operator/2};
-        '=='  -> {fun allow_type_with_comparison_operator/2,   fun allow_type_pair_with_comparison_operator/2};
-        '!='  -> {fun allow_type_with_comparison_operator/2,   fun allow_type_pair_with_comparison_operator/2};
-        '<'   -> {fun allow_type_with_comparison_operator/2,   fun allow_type_pair_with_comparison_operator/2};
-        '<='  -> {fun allow_type_with_comparison_operator/2,   fun allow_type_pair_with_comparison_operator/2};
-        '>'   -> {fun allow_type_with_comparison_operator/2,   fun allow_type_pair_with_comparison_operator/2};
-        '>='  -> {fun allow_type_with_comparison_operator/2,   fun allow_type_pair_with_comparison_operator/2}
-    end,
+    {AllowType, AllowTypePair} =
+        case Op of
+            '+' ->
+                {fun allow_type_with_mathematical_operator/2,
+                    fun allow_type_pair_with_mathematical_operator/2};
+            '-' ->
+                {fun allow_type_with_mathematical_operator/2,
+                    fun allow_type_pair_with_mathematical_operator/2};
+            '*' ->
+                {fun allow_type_with_mathematical_operator/2,
+                    fun allow_type_pair_with_mathematical_operator/2};
+            '/' ->
+                {fun allow_type_with_mathematical_operator/2,
+                    fun allow_type_pair_with_mathematical_operator/2};
+            '%' ->
+                {fun allow_type_with_mathematical_operator/2,
+                    fun allow_type_pair_with_mathematical_operator/2};
+            'and' ->
+                {fun allow_type_with_conditional_operator/2,
+                    fun allow_type_pair_with_conditional_operator/2};
+            'or' ->
+                {fun allow_type_with_conditional_operator/2,
+                    fun allow_type_pair_with_conditional_operator/2};
+            '==' ->
+                {fun allow_type_with_comparison_operator/2,
+                    fun allow_type_pair_with_comparison_operator/2};
+            '!=' ->
+                {fun allow_type_with_comparison_operator/2,
+                    fun allow_type_pair_with_comparison_operator/2};
+            '<' ->
+                {fun allow_type_with_comparison_operator/2,
+                    fun allow_type_pair_with_comparison_operator/2};
+            '<=' ->
+                {fun allow_type_with_comparison_operator/2,
+                    fun allow_type_pair_with_comparison_operator/2};
+            '>' ->
+                {fun allow_type_with_comparison_operator/2,
+                    fun allow_type_pair_with_comparison_operator/2};
+            '>=' ->
+                {fun allow_type_with_comparison_operator/2,
+                    fun allow_type_pair_with_comparison_operator/2}
+        end,
 
-    ok = case AllowType(Op, LeftTypeSpec) and AllowType(Op, RightTypeSpec) of
-        true ->
-            ok;
-        false ->
-            throw({error, unsupported_operand_type, #{form => Form}})
-    end,
+    ok =
+        case AllowType(Op, LeftTypeSpec) and AllowType(Op, RightTypeSpec) of
+            true ->
+                ok;
+            false ->
+                throw({error, unsupported_operand_type, #{form => Form}})
+        end,
 
-    {ok, LeftType} = case AllowTypePair(LeftTypeSpec, RightTypeSpec) of
-        true ->
-            {ok, LeftType};
-        false ->
-            throw({error, unmatched_operand_type, #{form => Form}})
-    end,
+    {ok, LeftType} =
+        case AllowTypePair(LeftTypeSpec, RightTypeSpec) of
+            true ->
+                {ok, LeftType};
+            false ->
+                throw({error, unmatched_operand_type, #{form => Form}})
+        end,
 
     case binary_op_type(Op, Line) of
         default ->
@@ -93,7 +126,8 @@ binary_op_type(_, _) -> default.
 
 %% allow_type_with_mathematical_operator returns true if the specified type may
 %% be used with the specified arithmetic operator, otherwise false.
--spec allow_type_with_mathematical_operator(arithmetic_operator(), float | int | atom()) -> boolean().
+-spec allow_type_with_mathematical_operator(arithmetic_operator(), float | int | atom()) ->
+    boolean().
 allow_type_with_mathematical_operator('%', float) -> false;
 allow_type_with_mathematical_operator(_, float) -> true;
 allow_type_with_mathematical_operator(_, int) -> true;
@@ -102,7 +136,8 @@ allow_type_with_mathematical_operator(_, _) -> false.
 %% allow_type_pair_with_mathematical_operator returns true if the specified pair
 %% of types are either both of type float, or both of type int, which are the
 %% only types that may be used with an arithmetic operator.
--spec allow_type_pair_with_mathematical_operator(float | int | atom(), float | int | atom()) -> boolean().
+-spec allow_type_pair_with_mathematical_operator(float | int | atom(), float | int | atom()) ->
+    boolean().
 allow_type_pair_with_mathematical_operator(float, float) -> true;
 allow_type_pair_with_mathematical_operator(int, int) -> true;
 allow_type_pair_with_mathematical_operator(_, _) -> false.
@@ -145,7 +180,7 @@ allow_type_pair_with_comparison_operator(_, _) -> false.
 
 -spec resolve_call_type(globals(), call_form()) -> {ok, type_form()} | no_return().
 resolve_call_type(Globals, Form = {call, #{spec := Spec, args := Args}}) ->
-        case maps:get(Spec, Globals, undefined) of
+    case maps:get(Spec, Globals, undefined) of
         undefined ->
             throw({error, unknown_func, #{spec => Spec, args => Args}});
         Funcs ->
@@ -172,21 +207,33 @@ resolve_call_type(Globals, Form = {call, #{spec := Spec, args := Args}}) ->
             end
     end.
 
--spec find_matching_funcs(list(func_form()), list(rufus_form())) -> {ok, list(func_form())} | error_triple().
+-spec find_matching_funcs(list(func_form()), list(rufus_form())) ->
+    {ok, list(func_form())} | error_triple().
 find_matching_funcs(Funcs, Args) ->
-    FuncsWithMatchingArity = lists:filter(fun({func, #{params := Params}}) ->
-        length(Params) =:= length(Args)
-    end, Funcs),
+    FuncsWithMatchingArity = lists:filter(
+        fun({func, #{params := Params}}) ->
+            length(Params) =:= length(Args)
+        end,
+        Funcs
+    ),
 
     case length(FuncsWithMatchingArity) of
         Length when Length > 0 ->
-            Result = lists:filter(fun({func, #{params := Params}}) ->
-                Zipped = lists:zip(Params, Args),
-                lists:all(fun({{param, #{type := {type, #{spec := ParamTypeSpec}}}},
-                               {_, #{type := {type, #{spec := ArgTypeSpec}}}}}) ->
-                        ParamTypeSpec =:= ArgTypeSpec
-                end, Zipped)
-            end, FuncsWithMatchingArity),
+            Result = lists:filter(
+                fun({func, #{params := Params}}) ->
+                    Zipped = lists:zip(Params, Args),
+                    lists:all(
+                        fun(
+                            {{param, #{type := {type, #{spec := ParamTypeSpec}}}},
+                                {_, #{type := {type, #{spec := ArgTypeSpec}}}}}
+                        ) ->
+                            ParamTypeSpec =:= ArgTypeSpec
+                        end,
+                        Zipped
+                    )
+                end,
+                FuncsWithMatchingArity
+            ),
             case Result of
                 Result when length(Result) =:= 0 ->
                     {error, unmatched_args, #{funcs => FuncsWithMatchingArity, args => Args}};
@@ -208,14 +255,20 @@ resolve_cons_type(Globals, Form = {cons, #{head := Head, tail := Tail, type := T
         true ->
             {ok, Type};
         false ->
-            Data = #{form => Form,
-                     element_type => ElementType,
-                     head_type => HeadType,
-                     tail_element_type => TailElementType},
+            Data = #{
+                form => Form,
+                element_type => ElementType,
+                head_type => HeadType,
+                tail_element_type => TailElementType
+            },
             throw({error, unexpected_element_type, Data})
     end.
 
-pair_types_match_cons_type({type, #{spec := Spec}}, {type, #{spec := Spec}}, {type, #{spec := Spec}}) ->
+pair_types_match_cons_type(
+    {type, #{spec := Spec}},
+    {type, #{spec := Spec}},
+    {type, #{spec := Spec}}
+) ->
     true;
 pair_types_match_cons_type(_, _, _) ->
     false.
@@ -237,10 +290,13 @@ resolve_identifier_type(Globals, Form = {identifier, #{spec := Spec, locals := L
 -spec resolve_list_lit_type(globals(), list_lit_form()) -> {ok, type_form()} | no_return().
 resolve_list_lit_type(Globals, Form = {list_lit, #{elements := Elements, type := Type}}) ->
     {type, #{element_type := {type, #{spec := ElementTypeSpec}}}} = Type,
-    ElementTypes = lists:map(fun(ElementForm) ->
-        {ok, ElementType} = resolve_type(Globals, ElementForm),
-        ElementType
-    end, Elements),
+    ElementTypes = lists:map(
+        fun(ElementForm) ->
+            {ok, ElementType} = resolve_type(Globals, ElementForm),
+            ElementType
+        end,
+        Elements
+    ),
 
     case element_types_match_list_type(ElementTypeSpec, ElementTypes) of
         true ->
