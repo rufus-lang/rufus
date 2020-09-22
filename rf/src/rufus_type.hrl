@@ -71,6 +71,7 @@
 
 %% Rufus forms
 
+%% rufus_form represents a node in the parse tree.
 -type rufus_form() ::
         atom_lit_form()
       | bool_lit_form()
@@ -87,6 +88,9 @@
       | binary_op_form()
       | match_form()
       | call_form().
+%% rufus_forms is a list of rufus_form instances and typically represents an
+%% entire module.
+-type rufus_forms() :: list(rufus_form()).
 
 %% Errors
 

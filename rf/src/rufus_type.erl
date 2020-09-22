@@ -12,7 +12,7 @@
 
 %% resolve returns a type form for Form. If Form already has a type form
 %% associated with it, it will be returned. Otherwise, the type is inferred.
--spec resolve(#{atom() => list(rufus_form())}, rufus_form()) -> {ok, type_form()} | error_triple().
+-spec resolve(#{atom() => rufus_forms()}, rufus_form()) -> {ok, type_form()} | error_triple().
 resolve(Globals, Form) ->
     try
         resolve_type(Globals, Form)
@@ -22,7 +22,7 @@ resolve(Globals, Form) ->
 
 %% Private API
 
--spec resolve_type(#{atom() => list(rufus_form())}, rufus_form()) -> {ok, type_form()} | no_return().
+-spec resolve_type(#{atom() => rufus_forms()}, rufus_form()) -> {ok, type_form()} | no_return().
 resolve_type(Globals, Form = {cons, _Context}) ->
     resolve_cons_type(Globals, Form);
 resolve_type(Globals, Form = {list_lit, _Context}) ->
@@ -172,7 +172,7 @@ resolve_call_type(Globals, Form = {call, #{spec := Spec, args := Args}}) ->
             end
     end.
 
--spec find_matching_funcs(list(func_form()), list(rufus_form())) -> {ok, list(func_form())} | error_triple().
+-spec find_matching_funcs(list(func_form()), rufus_forms()) -> {ok, list(func_form())} | error_triple().
 find_matching_funcs(Funcs, Args) ->
     FuncsWithMatchingArity = lists:filter(fun({func, #{params := Params}}) ->
         length(Params) =:= length(Args)
@@ -250,7 +250,7 @@ resolve_list_lit_type(Globals, Form = {list_lit, #{elements := Elements, type :=
             throw({error, unexpected_element_type, Data})
     end.
 
--spec element_types_match_list_type(type_spec(), list(rufus_form())) -> boolean().
+-spec element_types_match_list_type(type_spec(), rufus_forms()) -> boolean().
 element_types_match_list_type(Expected, ElementTypes) ->
     TypesMatch = fun({type, #{spec := Actual}}) -> Actual == Expected end,
     lists:all(TypesMatch, ElementTypes).

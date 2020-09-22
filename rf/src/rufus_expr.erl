@@ -24,7 +24,7 @@
 %% - `{error, invalid_arg_type, Data}` with `Data` containing `actual` and
 %%   `expected` atom keys pointing to Rufus types if return value types are
 %%   unmatched.
--spec typecheck_and_annotate(list(rufus_form())) -> {ok, list(rufus_form())} | error_triple().
+-spec typecheck_and_annotate(rufus_forms()) -> {ok, rufus_forms()} | error_triple().
 typecheck_and_annotate(RufusForms) ->
     {ok, Globals} = rufus_form:globals(RufusForms),
     try
@@ -56,7 +56,7 @@ safety_check(Form) ->
 %% typecheck_and_annotate iterates over RufusForms and adds type information
 %% from the current scope to each form. An `{error, Reason, Data}` error triple
 %% is thrown at the first error.
--spec typecheck_and_annotate(list(rufus_form()), globals(), locals(), list(rufus_form())) -> {ok, locals(), list(rufus_form())}.
+-spec typecheck_and_annotate(rufus_forms(), globals(), locals(), rufus_forms()) -> {ok, locals(), rufus_forms()}.
 typecheck_and_annotate(Acc, Globals, Locals, [Form = {binary_op, _Context}|T]) ->
     {ok, AnnotatedForm} = typecheck_and_annotate_binary_op(Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm|Acc], Globals, Locals, T);

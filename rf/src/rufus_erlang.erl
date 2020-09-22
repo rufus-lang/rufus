@@ -11,7 +11,7 @@
 
 %% forms transforms RufusForms into Erlang forms that can be compiled with
 %% compile:forms/1 and then loaded with code:load_binary/3.
--spec forms(list(rufus_form())) -> {ok, list(erlang_form())}.
+-spec forms(rufus_forms()) -> {ok, list(erlang_form())}.
 forms(RufusForms) ->
     {ok, GroupedRufusForms} = group_forms_by_func(RufusForms),
     {ok, ErlangForms} = forms([], GroupedRufusForms),
@@ -23,7 +23,7 @@ forms(RufusForms) ->
 %% for func expressions of the same name and arity into a list of Rufus forms
 %% with a single func expression for each name/arity pair, with form details
 %% represented as a list instead of a context map.
--spec group_forms_by_func(list(rufus_form())) -> {ok, list(rufus_form() | {func_group, context()})}.
+-spec group_forms_by_func(rufus_forms()) -> {ok, list(rufus_form() | {func_group, context()})}.
 group_forms_by_func(Forms) ->
     MatchModuleForm = fun({module, _Context}) ->
         true;
@@ -264,7 +264,7 @@ is_private(LeadingChar) ->
 
 %% list_to_cons transforms a list of Rufus form elements in a list_lit form into
 %% an Erlang cons form.
--spec list_to_cons(list(rufus_form()), integer()) -> term().
+-spec list_to_cons(rufus_forms(), integer()) -> term().
 list_to_cons([Form|[]], Line) ->
     {ok, [Head|_]} = forms([], [Form]),
     {cons, Line, Head, {nil, Line}};
