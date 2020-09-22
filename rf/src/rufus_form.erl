@@ -295,8 +295,7 @@ each([], _Fun) ->
 map(Forms, Fun) ->
     map([], Forms, Fun).
 
--spec map(rufus_forms(), rufus_forms(), fun((rufus_form()) -> rufus_form())) ->
-    list(rufus_form()).
+-spec map(rufus_forms(), rufus_forms(), fun((rufus_form()) -> rufus_form())) -> list(rufus_form()).
 map(Acc, [{binary_op, Context = #{left := Left, right := Right}} | T], Fun) ->
     AnnotatedLeft = Fun(Left),
     AnnotatedRight = Fun(Right),
