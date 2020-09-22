@@ -5,10 +5,11 @@
 %% Arity-0 functions returning a sum of literal values for scalar types
 
 forms_for_function_returning_a_sum_of_int_literals_test() ->
-    RufusText = "
-    module example
-    func FortyTwo() int { 19 + 23 }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func FortyTwo() int { 19 + 23 }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
@@ -21,10 +22,11 @@ forms_for_function_returning_a_sum_of_int_literals_test() ->
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_returning_a_sum_of_three_int_literals_test() ->
-    RufusText = "
-    module example
-    func FiftyNine() int { 19 + 23 + 17 }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func FiftyNine() int { 19 + 23 + 17 }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
@@ -39,10 +41,11 @@ forms_for_function_returning_a_sum_of_three_int_literals_test() ->
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_returning_a_sum_of_float_literals_test() ->
-    RufusText = "
-    module example
-    func Pi() float { 1.0 + 2.14159265359 }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Pi() float { 1.0 + 2.14159265359 }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
@@ -57,10 +60,11 @@ forms_for_function_returning_a_sum_of_float_literals_test() ->
 %% Arity-0 functions returning a difference of literal values for scalar types
 
 forms_for_function_returning_a_difference_of_int_literals_test() ->
-    RufusText = "
-    module example
-    func FortyTwo() int { 55 - 13 }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func FortyTwo() int { 55 - 13 }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
@@ -73,10 +77,11 @@ forms_for_function_returning_a_difference_of_int_literals_test() ->
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_returning_a_difference_of_three_int_literals_test() ->
-    RufusText = "
-    module example
-    func ThirteenThirtyFive() int { 1500 - 150 - 15 }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func ThirteenThirtyFive() int { 1500 - 150 - 15 }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
@@ -91,10 +96,11 @@ forms_for_function_returning_a_difference_of_three_int_literals_test() ->
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_returning_a_difference_of_float_literals_test() ->
-    RufusText = "
-    module example
-    func Pi() float { 4.14159265359 - 1.0 }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Pi() float { 4.14159265359 - 1.0 }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
@@ -109,10 +115,11 @@ forms_for_function_returning_a_difference_of_float_literals_test() ->
 %% Arity-0 functions returning a product of literal values for scalar types
 
 forms_for_function_returning_a_product_of_int_literals_test() ->
-    RufusText = "
-    module example
-    func FortyTwo() int { 3 * 14 }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func FortyTwo() int { 3 * 14 }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
@@ -125,10 +132,11 @@ forms_for_function_returning_a_product_of_int_literals_test() ->
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_returning_a_product_of_three_int_literals_test() ->
-    RufusText = "
-    module example
-    func ThirteenThirtyFive() int { 3 * 5 * 89 }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func ThirteenThirtyFive() int { 3 * 5 * 89 }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
@@ -143,10 +151,11 @@ forms_for_function_returning_a_product_of_three_int_literals_test() ->
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_returning_a_product_of_float_literals_test() ->
-    RufusText = "
-    module example
-    func Pi() float { 1.0 * 3.14159265359 }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Pi() float { 1.0 * 3.14159265359 }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
@@ -161,10 +170,11 @@ forms_for_function_returning_a_product_of_float_literals_test() ->
 %% Arity-0 functions returning a division of literal values for scalar types
 
 forms_for_function_returning_a_division_of_int_literals_test() ->
-    RufusText = "
-    module example
-    func FortyTwo() int { 84 / 2 }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func FortyTwo() int { 84 / 2 }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
@@ -177,10 +187,11 @@ forms_for_function_returning_a_division_of_int_literals_test() ->
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_returning_a_division_of_three_int_literals_test() ->
-    RufusText = "
-    module example
-    func Five() int { 100 / 10 / 2 }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Five() int { 100 / 10 / 2 }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
@@ -195,10 +206,11 @@ forms_for_function_returning_a_division_of_three_int_literals_test() ->
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_returning_a_division_of_float_literals_test() ->
-    RufusText = "
-    module example
-    func TwoPointSevenFive() float { 5.5 / 2.0 }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func TwoPointSevenFive() float { 5.5 / 2.0 }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
@@ -213,10 +225,11 @@ forms_for_function_returning_a_division_of_float_literals_test() ->
 %% Arity-0 functions returning a remainder after dividing literal values
 
 forms_for_function_returning_a_remainder_of_int_literals_test() ->
-    RufusText = "
-    module example
-    func Six() int { 27 % 7 }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Six() int { 27 % 7 }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
@@ -229,10 +242,11 @@ forms_for_function_returning_a_remainder_of_int_literals_test() ->
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_returning_a_remainder_of_three_int_literals_test() ->
-    RufusText = "
-    module example
-    func Four() int { 100 % 13 % 5 }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Four() int { 100 % 13 % 5 }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
@@ -249,10 +263,11 @@ forms_for_function_returning_a_remainder_of_three_int_literals_test() ->
 %% Arity-0 functions returning the result of a boolean operation
 
 forms_for_function_returning_a_boolean_from_an_and_operation_test() ->
-    RufusText = "
-    module example
-    func Falsy() bool { true and false }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Falsy() bool { true and false }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
@@ -265,15 +280,16 @@ forms_for_function_returning_a_boolean_from_an_and_operation_test() ->
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_returning_a_boolean_from_an_and_operation_with_a_call_operand_test() ->
-    RufusText = "
-    module example
-    func False() bool { false }
-    func Falsy() bool { true and False() }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func False() bool { false }\n"
+        "    func Falsy() bool { true and False() }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
-    BinaryOpExpr = {op, 4, 'andalso',  {atom, 4, true}, {call, 4, {atom, 4, 'False'}, []}},
+    BinaryOpExpr = {op, 4, 'andalso', {atom, 4, true}, {call, 4, {atom, 4, 'False'}, []}},
     Expected = [
         {attribute, 2, module, example},
         {attribute, 4, export, [{'Falsy', 0}]},
@@ -284,10 +300,11 @@ forms_for_function_returning_a_boolean_from_an_and_operation_with_a_call_operand
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_returning_a_boolean_from_an_or_operation_test() ->
-    RufusText = "
-    module example
-    func Truthy() bool { true or false }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Truthy() bool { true or false }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
@@ -300,11 +317,12 @@ forms_for_function_returning_a_boolean_from_an_or_operation_test() ->
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_returning_a_boolean_from_an_or_operation_with_a_call_test() ->
-    RufusText = "
-    module example
-    func True() bool { true }
-    func Truthy() bool { True() or false }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func True() bool { true }\n"
+        "    func Truthy() bool { True() or false }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
@@ -320,10 +338,11 @@ forms_for_function_returning_a_boolean_from_an_or_operation_with_a_call_test() -
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_returning_a_boolean_from_a_nested_boolean_operation_test() ->
-    RufusText = "
-    module example
-    func Truthy() bool { true and true or false }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Truthy() bool { true and true or false }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
@@ -340,91 +359,109 @@ forms_for_function_returning_a_boolean_from_a_nested_boolean_operation_test() ->
 %% Comparison operators
 
 forms_for_function_with_an_equality_comparison_operation_test() ->
-    RufusText = "
-    module example
-    func Truthy() bool { :truth == :truth }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Truthy() bool { :truth == :truth }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Truthy', 0}]},
-        {function, 3, 'Truthy', 0,  [{clause, 3, [], [],  [{op, 3, '=:=', {atom, 3, truth}, {atom, 3, truth}}]}]}
+        {function, 3, 'Truthy', 0, [
+            {clause, 3, [], [], [{op, 3, '=:=', {atom, 3, truth}, {atom, 3, truth}}]}
+        ]}
     ],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_with_an_inequality_comparison_operation_test() ->
-    RufusText = "
-    module example
-    func Truthy() bool { :truth != :fiction }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Truthy() bool { :truth != :fiction }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Truthy', 0}]},
-        {function, 3, 'Truthy', 0,  [{clause, 3, [], [],  [{op, 3, '=/=', {atom, 3, truth}, {atom, 3, fiction}}]}]}
+        {function, 3, 'Truthy', 0, [
+            {clause, 3, [], [], [{op, 3, '=/=', {atom, 3, truth}, {atom, 3, fiction}}]}
+        ]}
     ],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_with_a_less_than_comparison_operation_test() ->
-    RufusText = "
-    module example
-    func Truthy() bool { 1 < 2 }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Truthy() bool { 1 < 2 }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Truthy', 0}]},
-        {function, 3, 'Truthy', 0,  [{clause, 3, [], [],  [{op, 3, '<', {integer, 3, 1}, {integer, 3, 2}}]}]}
+        {function, 3, 'Truthy', 0, [
+            {clause, 3, [], [], [{op, 3, '<', {integer, 3, 1}, {integer, 3, 2}}]}
+        ]}
     ],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_with_a_less_than_or_equal_comparison_operation_test() ->
-    RufusText = "
-    module example
-    func Truthy() bool { 1 <= 2 }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Truthy() bool { 1 <= 2 }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Truthy', 0}]},
-        {function, 3, 'Truthy', 0,  [{clause, 3, [], [],  [{op, 3, '=<', {integer, 3, 1}, {integer, 3, 2}}]}]}
+        {function, 3, 'Truthy', 0, [
+            {clause, 3, [], [], [{op, 3, '=<', {integer, 3, 1}, {integer, 3, 2}}]}
+        ]}
     ],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_with_a_greater_than_comparison_operation_test() ->
-    RufusText = "
-    module example
-    func Truthy() bool { 2 > 1 }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Truthy() bool { 2 > 1 }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Truthy', 0}]},
-        {function, 3, 'Truthy', 0,  [{clause, 3, [], [],  [{op, 3, '>', {integer, 3, 2}, {integer, 3, 1}}]}]}
+        {function, 3, 'Truthy', 0, [
+            {clause, 3, [], [], [{op, 3, '>', {integer, 3, 2}, {integer, 3, 1}}]}
+        ]}
     ],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_with_a_greater_than_or_equal_comparison_operation_test() ->
-    RufusText = "
-    module example
-    func Truthy() bool { 2 >= 1 }
-    ",
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Truthy() bool { 2 >= 1 }\n"
+        "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Truthy', 0}]},
-        {function, 3, 'Truthy', 0,  [{clause, 3, [], [],  [{op, 3, '>=', {integer, 3, 2}, {integer, 3, 1}}]}]}
+        {function, 3, 'Truthy', 0, [
+            {clause, 3, [], [], [{op, 3, '>=', {integer, 3, 2}, {integer, 3, 1}}]}
+        ]}
     ],
     ?assertEqual(Expected, ErlangForms).

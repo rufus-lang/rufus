@@ -4,7 +4,10 @@
 
 string_with_import_test() ->
     {ok, Tokens, _} = rufus_raw_tokenize:string("import \"bar\""),
-    ?assertEqual([
-        {import, 1},
-        {string_lit, 1, "bar"}
-], Tokens).
+    ?assertEqual(
+        [
+            {import, 1},
+            {string_lit, 1, "bar"}
+        ],
+        Tokens
+    ).
