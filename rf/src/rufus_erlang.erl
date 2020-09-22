@@ -25,18 +25,20 @@ forms(RufusForms) ->
 %% represented as a list instead of a context map.
 -spec group_forms_by_func(list(rufus_form())) -> {ok, list(rufus_form() | {func_group, context()})}.
 group_forms_by_func(Forms) ->
-    MatchModuleForm = fun({module, _Context}) ->
-        true;
-    (_) ->
-        false
+    MatchModuleForm = fun
+        ({module, _Context}) ->
+            true;
+        (_) ->
+            false
     end,
     {value, ModuleForm} = lists:search(MatchModuleForm, Forms),
     {ok, Globals} = rufus_form:globals(Forms),
 
     GroupBy = fun(Name, FuncForms, Acc) ->
         {func, #{line := Line, params := Params}} = hd(FuncForms),
-        Form = {func_group, #{line => Line, spec => Name, arity => length(Params), forms => FuncForms}},
-        [Form|Acc]
+        Form =
+            {func_group, #{line => Line, spec => Name, arity => length(Params), forms => FuncForms}},
+        [Form | Acc]
     end,
     GroupedFuncForms = maps:fold(GroupBy, [], Globals),
 
@@ -50,96 +52,103 @@ group_forms_by_func(Forms) ->
     end,
     SortedFuncForms = lists:sort(SortBy, GroupedFuncForms),
 
-    {ok, [ModuleForm|lists:reverse(SortedFuncForms)]}.
+    {ok, [ModuleForm | lists:reverse(SortedFuncForms)]}.
 
--spec forms(list(erlang_form()), list(rufus_form() | {func_group, context()})) -> {ok, list(erlang_form())}.
-forms(Acc, [{atom_lit, _Context} = AtomLit|T]) ->
+-spec forms(list(erlang_form()), list(rufus_form() | {func_group, context()})) ->
+    {ok, list(erlang_form())}.
+forms(Acc, [{atom_lit, _Context} = AtomLit | T]) ->
     Form = box(AtomLit),
-    forms([Form|Acc], T);
-forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}|T]) ->
+    forms([Form | Acc], T);
+forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}} | T]) ->
     {ok, [LeftForm]} = forms([], [Left]),
     {ok, [RightForm]} = forms([], [Right]),
     ErlangOp = rufus_operator_to_erlang_operator(Op, rufus_form:type_spec(Left)),
     Form = {op, Line, ErlangOp, LeftForm, RightForm},
-    forms([Form|Acc], T);
-forms(Acc, [{bool_lit, _Context} = BoolLit|T]) ->
+    forms([Form | Acc], T);
+forms(Acc, [{bool_lit, _Context} = BoolLit | T]) ->
     Form = box(BoolLit),
-    forms([Form|Acc], T);
-forms(Acc, [{call, #{spec := Spec, args := Args, line := Line}}|T]) ->
+    forms([Form | Acc], T);
+forms(Acc, [{call, #{spec := Spec, args := Args, line := Line}} | T]) ->
     {ok, ArgsForms} = forms([], Args),
     Form = {call, Line, {atom, Line, Spec}, ArgsForms},
-    forms([Form|Acc], T);
-forms(Acc, [{cons, #{head := Head, tail := Tail, line := Line}}|T]) ->
+    forms([Form | Acc], T);
+forms(Acc, [{cons, #{head := Head, tail := Tail, line := Line}} | T]) ->
     {ok, [HeadForm]} = forms([], [Head]),
     {ok, [TailForm]} = forms([], [Tail]),
     Form = {cons, Line, HeadForm, TailForm},
-    forms([Form|Acc], T);
-forms(Acc, [{float_lit, _Context} = FloatLit|T]) ->
+    forms([Form | Acc], T);
+forms(Acc, [{float_lit, _Context} = FloatLit | T]) ->
     Form = box(FloatLit),
-    forms([Form|Acc], T);
-forms(Acc, [{func_group, #{line := Line1, spec := Spec, arity := Arity, forms := Forms}}|T]) ->
-    FuncClauses = lists:map(fun(Form) ->
-        {func, #{line := Line2, spec := Spec, params := Params, exprs := Exprs}} = Form,
-        {ok, ParamForms} = forms([], Params),
-        {ok, GuardForms} = guard_forms([], Params),
-        {ok, ExprForms} = forms([], Exprs),
-        {clause, Line2, ParamForms, GuardForms, ExprForms}
-    end, Forms),
+    forms([Form | Acc], T);
+forms(Acc, [{func_group, #{line := Line1, spec := Spec, arity := Arity, forms := Forms}} | T]) ->
+    FuncClauses = lists:map(
+        fun(Form) ->
+            {func, #{line := Line2, spec := Spec, params := Params, exprs := Exprs}} = Form,
+            {ok, ParamForms} = forms([], Params),
+            {ok, GuardForms} = guard_forms([], Params),
+            {ok, ExprForms} = forms([], Exprs),
+            {clause, Line2, ParamForms, GuardForms, ExprForms}
+        end,
+        Forms
+    ),
     Form = {function, Line1, Spec, Arity, FuncClauses},
-    forms([Form|Acc], T);
-forms(Acc, [{identifier, #{line := Line, spec := Spec, type := Type}}|T]) ->
-    Form = case Type of
-        {type, #{spec := atom}} ->
-            {var, Line, Spec};
-        {type, #{spec := bool}} ->
-            {var, Line, Spec};
-        {type, #{spec := float}} ->
-            {var, Line, Spec};
-        {type, #{spec := int}} ->
-            {var, Line, Spec};
-        {type, #{collection_type := list}} ->
-            {var, Line, Spec};
-        _ ->
-            TypeSpec = rufus_form:spec(Type),
-            {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Spec}]}
-    end,
-    forms([Form|Acc], T);
-forms(Acc, [{int_lit, _Context} = IntLit|T]) ->
+    forms([Form | Acc], T);
+forms(Acc, [{identifier, #{line := Line, spec := Spec, type := Type}} | T]) ->
+    Form =
+        case Type of
+            {type, #{spec := atom}} ->
+                {var, Line, Spec};
+            {type, #{spec := bool}} ->
+                {var, Line, Spec};
+            {type, #{spec := float}} ->
+                {var, Line, Spec};
+            {type, #{spec := int}} ->
+                {var, Line, Spec};
+            {type, #{collection_type := list}} ->
+                {var, Line, Spec};
+            _ ->
+                TypeSpec = rufus_form:spec(Type),
+                {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Spec}]}
+        end,
+    forms([Form | Acc], T);
+forms(Acc, [{int_lit, _Context} = IntLit | T]) ->
     Form = box(IntLit),
-    forms([Form|Acc], T);
-forms(Acc, [{list_lit, _Context} = ListLit|T]) ->
+    forms([Form | Acc], T);
+forms(Acc, [{list_lit, _Context} = ListLit | T]) ->
     Form = box(ListLit),
-    forms([Form|Acc], T);
-forms(Acc, [{match, #{line := Line, left := Left, right := Right}}|T]) ->
+    forms([Form | Acc], T);
+forms(Acc, [{match, #{line := Line, left := Left, right := Right}} | T]) ->
     {ok, [LeftForm]} = forms([], [Left]),
     {ok, [RightForm]} = forms([], [Right]),
     Form = {match, Line, LeftForm, RightForm},
-    forms([Form|Acc], T);
-forms(Acc, [{module, #{line := Line, spec := Spec}}|T]) ->
+    forms([Form | Acc], T);
+forms(Acc, [{module, #{line := Line, spec := Spec}} | T]) ->
     Form = {attribute, Line, module, Spec},
-    forms([Form|Acc], T);
-forms(Acc, [{param, #{line := Line, spec := Spec, type := Type}}|T]) ->
-    Form = case Type of
-        {type, #{spec := atom}} ->
-            {var, Line, Spec};
-        {type, #{spec := bool}} ->
-            {var, Line, Spec};
-        {type, #{spec := float}} ->
-            {var, Line, Spec};
-        {type, #{spec := int}} ->
-            {var, Line, Spec};
-        {type, #{collection_type := list}} ->
-            {var, Line, Spec};
-        _ ->
-            TypeSpec = rufus_form:spec(Type),
-            {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Spec}]}
-    end,
-    forms([Form|Acc], T);
-forms(Acc, [{string_lit, _Context} = StringLit|T]) ->
+    forms([Form | Acc], T);
+forms(Acc, [{param, #{line := Line, spec := Spec, type := Type}} | T]) ->
+    Form =
+        case Type of
+            {type, #{spec := atom}} ->
+                {var, Line, Spec};
+            {type, #{spec := bool}} ->
+                {var, Line, Spec};
+            {type, #{spec := float}} ->
+                {var, Line, Spec};
+            {type, #{spec := int}} ->
+                {var, Line, Spec};
+            {type, #{collection_type := list}} ->
+                {var, Line, Spec};
+            _ ->
+                TypeSpec = rufus_form:spec(Type),
+                {tuple, Line, [{atom, Line, TypeSpec}, {var, Line, Spec}]}
+        end,
+    forms([Form | Acc], T);
+forms(Acc, [{string_lit, _Context} = StringLit | T]) ->
     Form = box(StringLit),
-    forms([Form|Acc], T);
-forms(Acc, [{type, _Context}|T]) ->
-    forms(Acc, T); %% no-op to satisfy Dialyzer
+    forms([Form | Acc], T);
+forms(Acc, [{type, _Context} | T]) ->
+    %% no-op to satisfy Dialyzer
+    forms(Acc, T);
 forms(Acc, []) ->
     {ok, lists:reverse(Acc)};
 forms(Acc, Form) ->
@@ -171,20 +180,37 @@ rufus_operator_to_erlang_operator(Op, _) ->
 
 %% guard_forms generates function guard forms for various scalar parameter
 %% types.
--spec guard_forms(list(erlang_form()) | list(list()), list(param_form())) -> {ok, list(erlang_form())}.
-guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := atom}}}}|T]) ->
-    GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_atom}}, [{var, Line, Name}]}],
-    guard_forms([GuardExpr|Acc], T);
-guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := bool}}}}|T]) ->
-    GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_boolean}}, [{var, Line, Name}]}],
-    guard_forms([GuardExpr|Acc], T);
-guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := float}}}}|T]) ->
-    GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_float}}, [{var, Line, Name}]}],
-    guard_forms([GuardExpr|Acc], T);
-guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := int}}}}|T]) ->
-    GuardExpr = [{call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_integer}}, [{var, Line, Name}]}],
-    guard_forms([GuardExpr|Acc], T);
-guard_forms(Acc, [_|T]) ->
+-spec guard_forms(list(erlang_form()) | list(list()), list(param_form())) ->
+    {ok, list(erlang_form())}.
+guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := atom}}}} | T]) ->
+    GuardExpr = [
+        {call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_atom}}, [
+            {var, Line, Name}
+        ]}
+    ],
+    guard_forms([GuardExpr | Acc], T);
+guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := bool}}}} | T]) ->
+    GuardExpr = [
+        {call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_boolean}}, [
+            {var, Line, Name}
+        ]}
+    ],
+    guard_forms([GuardExpr | Acc], T);
+guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := float}}}} | T]) ->
+    GuardExpr = [
+        {call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_float}}, [
+            {var, Line, Name}
+        ]}
+    ],
+    guard_forms([GuardExpr | Acc], T);
+guard_forms(Acc, [{param, #{line := Line, spec := Name, type := {type, #{spec := int}}}} | T]) ->
+    GuardExpr = [
+        {call, Line, {remote, Line, {atom, Line, erlang}, {atom, Line, is_integer}}, [
+            {var, Line, Name}
+        ]}
+    ],
+    guard_forms([GuardExpr | Acc], T);
+guard_forms(Acc, [_ | T]) ->
     guard_forms(Acc, T);
 guard_forms(Acc, []) ->
     %% TODO(jkakar): Should we be reversing Acc here? Does ordering affect guard
@@ -194,7 +220,14 @@ guard_forms(Acc, []) ->
 %% box converts a Rufus literal to its representation in Erlang. atom, bool,
 %% float and int are all represented as scalar values in Erlang, while string is
 %% represented as an annotated {string, BinaryValue} tuple.
--spec box(atom_lit_form() | bool_lit_form() | float_lit_form() | int_lit_form() | list_lit_form() | string_lit_form()) -> (erlang3_form() | erlang4_form()).
+-spec box(
+    atom_lit_form() |
+    bool_lit_form() |
+    float_lit_form() |
+    int_lit_form() |
+    list_lit_form() |
+    string_lit_form()
+) -> (erlang3_form() | erlang4_form()).
 box({atom_lit, #{spec := Value, line := Line}}) ->
     {atom, Line, Value};
 box({bool_lit, #{spec := Value, line := Line}}) ->
@@ -219,12 +252,12 @@ annotate_exports(Forms) ->
     annotate_exports([], Forms).
 
 -spec annotate_exports(list(erlang_form()), list(erlang_form())) -> {ok, list(erlang_form())}.
-annotate_exports(Acc, [Form = {attribute, _Line, module, _Name}|T]) ->
+annotate_exports(Acc, [Form = {attribute, _Line, module, _Name} | T]) ->
     {ok, ExportForms} = make_export_forms(T),
     %% Inject export forms directly after the module declaration.
     annotate_exports(Acc ++ ExportForms ++ [Form], T);
-annotate_exports(Acc, [Form|T]) ->
-    annotate_exports([Form|Acc], T);
+annotate_exports(Acc, [Form | T]) ->
+    annotate_exports([Form | Acc], T);
 annotate_exports(Acc, []) ->
     {ok, lists:reverse(Acc)}.
 
@@ -233,16 +266,17 @@ annotate_exports(Acc, []) ->
 make_export_forms(Forms) ->
     make_export_forms([], Forms).
 
--spec make_export_forms(list(erlang_form()), list(erlang_form())) -> {ok, list(export_attribute_erlang_form())}.
-make_export_forms(Acc, [{function, Line, Spec, Arity, _Forms}|T]) ->
+-spec make_export_forms(list(erlang_form()), list(erlang_form())) ->
+    {ok, list(export_attribute_erlang_form())}.
+make_export_forms(Acc, [{function, Line, Spec, Arity, _Forms} | T]) ->
     case is_public(Spec) of
         true ->
             Form = {attribute, Line, export, [{Spec, Arity}]},
-            make_export_forms([Form|Acc], T);
+            make_export_forms([Form | Acc], T);
         false ->
             make_export_forms(Acc, T)
     end;
-make_export_forms(Acc, [_Form|T]) ->
+make_export_forms(Acc, [_Form | T]) ->
     make_export_forms(Acc, T);
 make_export_forms(Acc, []) ->
     {ok, lists:reverse(Acc)}.
@@ -265,11 +299,11 @@ is_private(LeadingChar) ->
 %% list_to_cons transforms a list of Rufus form elements in a list_lit form into
 %% an Erlang cons form.
 -spec list_to_cons(list(rufus_form()), integer()) -> term().
-list_to_cons([Form|[]], Line) ->
-    {ok, [Head|_]} = forms([], [Form]),
+list_to_cons([Form | []], Line) ->
+    {ok, [Head | _]} = forms([], [Form]),
     {cons, Line, Head, {nil, Line}};
-list_to_cons([Form|T], Line) ->
-    {ok, [Head|_]} = forms([], [Form]),
+list_to_cons([Form | T], Line) ->
+    {ok, [Head | _]} = forms([], [Form]),
     {cons, Line, Head, list_to_cons(T, Line)};
 list_to_cons([], Line) ->
     {nil, Line}.

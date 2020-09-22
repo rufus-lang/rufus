@@ -6,6 +6,10 @@ parse_import_test() ->
     RufusText = "import \"bar\"",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    Expected = [{import, #{line => 1,
-                           spec => "bar"}}],
+    Expected = [
+        {import, #{
+            line => 1,
+            spec => "bar"
+        }}
+    ],
     ?assertEqual(Expected, Forms).

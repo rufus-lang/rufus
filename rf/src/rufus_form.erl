@@ -116,20 +116,29 @@ make_import(Spec, Line) ->
 
 %% make_inferred_type creates a type form with 'inferred' as the 'source' value,
 %% to indicate that the type has been inferred by the compiler.
--spec make_inferred_type(type_spec(), integer()) -> {type, #{spec => atom(), source => type_source(), line => integer()}}.
+-spec make_inferred_type(type_spec(), integer()) ->
+    {type, #{spec => atom(), source => type_source(), line => integer()}}.
 make_inferred_type(Spec, Line) ->
     make_type_with_source(Spec, inferred, Line).
 
 %% make_inferred_type creates a list type form with 'inferred' as the 'source'
 %% value, to indicate that the type of the list has been inferred by the
 %% compiler.
--spec make_inferred_type(list, type_form(), integer()) -> {type, #{collection_type => list, element_type => {type, map()}, line => integer(), source => type_source(), spec => atom()}}.
+-spec make_inferred_type(list, type_form(), integer()) ->
+    {type, #{
+        collection_type => list,
+        element_type => {type, map()},
+        line => integer(),
+        source => type_source(),
+        spec => atom()
+    }}.
 make_inferred_type(list, ElementType, Line) ->
     make_type_with_source(list, ElementType, inferred, Line).
 
 %% make_type returns a type form with 'rufus_text' as the 'source' value, to
 %% indicate that the type came from source code.
--spec make_type(atom(), integer()) -> {type, #{spec => atom(), source => type_source(), line => integer()}}.
+-spec make_type(atom(), integer()) ->
+    {type, #{spec => atom(), source => type_source(), line => integer()}}.
 make_type(Spec, Line) ->
     make_type_with_source(Spec, rufus_text, Line).
 
@@ -150,26 +159,43 @@ make_type_with_source(Spec, Source, Line) ->
 make_type_with_source(_CollectionSpec, ElementType, Source, Line) ->
     {type, #{spec := Spec}} = ElementType,
     TypeSpec = list_to_atom(unicode:characters_to_list(["list[", atom_to_list(Spec), "]"])),
-    {type, #{collection_type => list,
-             element_type => ElementType,
-             spec => TypeSpec,
-             source => Source,
-             line => Line}}.
+    {type, #{
+        collection_type => list,
+        element_type => ElementType,
+        spec => TypeSpec,
+        source => Source,
+        line => Line
+    }}.
 
 %% Function form builder API
 
 %% make_func returns a form for a function declaration.
--spec make_func(atom(), list(param_form()), type_form(), list(), integer()) -> {func, #{spec => atom(), params => list(param_form), return_type => type_form(), exprs => list(), line => integer()}}.
+-spec make_func(atom(), list(param_form()), type_form(), list(), integer()) ->
+    {func, #{
+        spec => atom(),
+        params => list(param_form),
+        return_type => type_form(),
+        exprs => list(),
+        line => integer()
+    }}.
 make_func(Spec, Params, ReturnType, Exprs, Line) ->
-    {func, #{spec => Spec, params => Params, return_type => ReturnType, exprs => Exprs, line => Line}}.
+    {func, #{
+        spec => Spec,
+        params => Params,
+        return_type => ReturnType,
+        exprs => Exprs,
+        line => Line
+    }}.
 
 %% make_param returns a form for a function parameter declaration.
--spec make_param(atom(), type_form(), integer()) -> {param, #{spec => atom(), type => type_form(), line => integer()}}.
+-spec make_param(atom(), type_form(), integer()) ->
+    {param, #{spec => atom(), type => type_form(), line => integer()}}.
 make_param(Spec, Type, Line) ->
     {param, #{spec => Spec, type => Type, line => Line}}.
 
 %% make_call returns a form for a function call.
--spec make_call(atom(), list(), integer()) -> {call, #{spec => atom(), args => list(), line => integer()}}.
+-spec make_call(atom(), list(), integer()) ->
+    {call, #{spec => atom(), args => list(), line => integer()}}.
 make_call(Spec, Args, Line) ->
     {call, #{spec => Spec, args => Args, line => Line}}.
 
@@ -186,15 +212,19 @@ make_identifier(Spec, Line) ->
 -spec make_literal(literal(), atom(), term()) -> literal_form().
 make_literal(TypeSpec, Spec, Line) ->
     FormSpec = list_to_atom(unicode:characters_to_list([atom_to_list(TypeSpec), "_lit"])),
-    {FormSpec, #{spec => Spec,
-                 type => make_inferred_type(TypeSpec, Line),
-                 line => Line}}.
+    {FormSpec, #{
+        spec => Spec,
+        type => make_inferred_type(TypeSpec, Line),
+        line => Line
+    }}.
 
 -spec make_literal(list, type_form(), list(), term()) -> literal_form().
 make_literal(list, Type, Elements, Line) ->
-    {list_lit, #{elements => Elements,
-                 type => Type,
-                 line => Line}}.
+    {list_lit, #{
+        elements => Elements,
+        type => Type,
+        line => Line
+    }}.
 
 %% make_cons returns a form for a cons expression.
 -spec make_cons(type_form(), rufus_form(), list_lit_form(), integer()) -> cons_form().
@@ -204,14 +234,16 @@ make_cons(Type, Head, Tail, Line) ->
 %% binary_op form builder API
 
 %% make_binary_op returns a form for a binary operation.
--spec make_binary_op(atom(), rufus_form(), rufus_form(), integer()) -> {binary_op, #{op => atom(), left => rufus_form(), right => rufus_form(), line => integer()}}.
+-spec make_binary_op(atom(), rufus_form(), rufus_form(), integer()) ->
+    {binary_op, #{op => atom(), left => rufus_form(), right => rufus_form(), line => integer()}}.
 make_binary_op(Op, Left, Right, Line) ->
     {binary_op, #{op => Op, left => Left, right => Right, line => Line}}.
 
 %% match form builder API
 
 %% make_match returns a form for a match expression.
--spec make_match(rufus_form(), rufus_form(), integer()) -> {match, #{left => rufus_form(), right => rufus_form(), line => integer()}}.
+-spec make_match(rufus_form(), rufus_form(), integer()) ->
+    {match, #{left => rufus_form(), right => rufus_form(), line => integer()}}.
 make_match(Left, Right, Line) ->
     {match, #{left => Left, right => Right, line => Line}}.
 
@@ -219,16 +251,16 @@ make_match(Left, Right, Line) ->
 
 %% each invokes Fun with each form in Forms. It always returns ok.
 -spec each(list(rufus_form()), fun((rufus_form()) -> any())) -> ok | no_return().
-each([Form = {binary_op, #{left := Left, right := Right}}|T], Fun) ->
+each([Form = {binary_op, #{left := Left, right := Right}} | T], Fun) ->
     Fun(Left),
     Fun(Right),
     Fun(Form),
     each(T, Fun);
-each([Form = {call, #{args := Args}}|T], Fun) ->
+each([Form = {call, #{args := Args}} | T], Fun) ->
     each(Args, Fun),
     Fun(Form),
     each(T, Fun);
-each([Form = {cons, #{head := Head, tail := Tail}}|T], Fun) ->
+each([Form = {cons, #{head := Head, tail := Tail}} | T], Fun) ->
     Fun(Head),
     case Tail of
         Tail when is_list(Tail) ->
@@ -238,21 +270,21 @@ each([Form = {cons, #{head := Head, tail := Tail}}|T], Fun) ->
     end,
     Fun(Form),
     each(T, Fun);
-each([Form = {func, #{params := Params, exprs := Exprs}}|T], Fun) ->
+each([Form = {func, #{params := Params, exprs := Exprs}} | T], Fun) ->
     each(Params, Fun),
     each(Exprs, Fun),
     Fun(Form),
     each(T, Fun);
-each([Form = {list_lit, #{elements := Elements}}|T], Fun) ->
+each([Form = {list_lit, #{elements := Elements}} | T], Fun) ->
     each(Elements, Fun),
     Fun(Form),
     each(T, Fun);
-each([Form = {match, #{left := Left, right := Right}}|T], Fun) ->
+each([Form = {match, #{left := Left, right := Right}} | T], Fun) ->
     Fun(Left),
     Fun(Right),
     Fun(Form),
     each(T, Fun);
-each([Form|T], Fun) ->
+each([Form | T], Fun) ->
     Fun(Form),
     each(T, Fun);
 each([], _Fun) ->
@@ -263,53 +295,55 @@ each([], _Fun) ->
 map(Forms, Fun) ->
     map([], Forms, Fun).
 
--spec map(list(rufus_form()), list(rufus_form()), fun((rufus_form()) -> rufus_form())) -> list(rufus_form()).
-map(Acc, [{binary_op, Context = #{left := Left, right := Right}}|T], Fun) ->
+-spec map(list(rufus_form()), list(rufus_form()), fun((rufus_form()) -> rufus_form())) ->
+    list(rufus_form()).
+map(Acc, [{binary_op, Context = #{left := Left, right := Right}} | T], Fun) ->
     AnnotatedLeft = Fun(Left),
     AnnotatedRight = Fun(Right),
     AnnotatedForm = Fun({binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight}}),
-    map([AnnotatedForm|Acc], T, Fun);
-map(Acc, [{call, Context = #{args := Args}}|T], Fun) ->
+    map([AnnotatedForm | Acc], T, Fun);
+map(Acc, [{call, Context = #{args := Args}} | T], Fun) ->
     AnnotatedArgs = map(Args, Fun),
     AnnotatedForm = Fun({call, Context#{args => AnnotatedArgs}}),
-    map([AnnotatedForm|Acc], T, Fun);
-map(Acc, [{cons, Context = #{head := Head, tail := Tail}}|T], Fun) ->
+    map([AnnotatedForm | Acc], T, Fun);
+map(Acc, [{cons, Context = #{head := Head, tail := Tail}} | T], Fun) ->
     AnnotatedHead = Fun(Head),
-    AnnotatedTail = case Tail of
-        Tail when is_list(Tail) ->
-            map(Tail, Fun);
-        Tail ->
-            Fun(Tail)
-    end,
+    AnnotatedTail =
+        case Tail of
+            Tail when is_list(Tail) ->
+                map(Tail, Fun);
+            Tail ->
+                Fun(Tail)
+        end,
     AnnotatedForm = Fun({cons, Context#{head => AnnotatedHead, tail => AnnotatedTail}}),
-    map([AnnotatedForm|Acc], T, Fun);
-map(Acc, [{func, Context = #{params := Params, exprs := Exprs}}|T], Fun) ->
+    map([AnnotatedForm | Acc], T, Fun);
+map(Acc, [{func, Context = #{params := Params, exprs := Exprs}} | T], Fun) ->
     AnnotatedParams = map(Params, Fun),
     AnnotatedExprs = map(Exprs, Fun),
     AnnotatedForm = Fun({func, Context#{params => AnnotatedParams, exprs => AnnotatedExprs}}),
-    map([AnnotatedForm|Acc], T, Fun);
-map(Acc, [{list_lit, Context = #{elements := Elements}}|T], Fun) ->
+    map([AnnotatedForm | Acc], T, Fun);
+map(Acc, [{list_lit, Context = #{elements := Elements}} | T], Fun) ->
     AnnotatedElements = map(Elements, Fun),
     AnnotatedForm = Fun({list_lit, Context#{elements => AnnotatedElements}}),
-    map([AnnotatedForm|Acc], T, Fun);
-map(Acc, [{match, Context = #{left := Left, right := Right}}|T], Fun) ->
+    map([AnnotatedForm | Acc], T, Fun);
+map(Acc, [{match, Context = #{left := Left, right := Right}} | T], Fun) ->
     AnnotatedLeft = Fun(Left),
     AnnotatedRight = Fun(Right),
     AnnotatedForm = Fun({match, Context#{left => AnnotatedLeft, right => AnnotatedRight}}),
-    map([AnnotatedForm|Acc], T, Fun);
-map(Acc, [Form|T], Fun) ->
+    map([AnnotatedForm | Acc], T, Fun);
+map(Acc, [Form | T], Fun) ->
     AnnotatedForm = Fun(Form),
-    map([AnnotatedForm|Acc], T, Fun);
+    map([AnnotatedForm | Acc], T, Fun);
 map(Acc, [], _Fun) ->
     lists:reverse(Acc).
 
 %% Private API
 
 -spec globals(map(), list(rufus_form())) -> {ok, #{atom() => list(rufus_form())}}.
-globals(Acc, [Form = {func, #{spec := Spec}}|T]) ->
+globals(Acc, [Form = {func, #{spec := Spec}} | T]) ->
     Forms = maps:get(Spec, Acc, []),
     globals(Acc#{Spec => Forms ++ [Form]}, T);
-globals(Acc, [_H|T]) ->
+globals(Acc, [_H | T]) ->
     globals(Acc, T);
 globals(Acc, []) ->
     {ok, Acc}.
