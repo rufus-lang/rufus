@@ -6,7 +6,10 @@
 
 %% API exports
 
--export([is_param/1]).
+-export([
+    is_param/1,
+    push/2
+]).
 
 %% API
 
@@ -20,3 +23,8 @@ is_param(Stack) ->
             false
     end,
     lists:any(Fun, Stack).
+
+%% push adds a form to the top of the stack.
+-spec push(rufus_stack(), rufus_form()) -> rufus_stack().
+push(Stack, Form) ->
+    [Form|Stack].

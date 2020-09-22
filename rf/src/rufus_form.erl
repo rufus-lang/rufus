@@ -3,8 +3,8 @@
 -include_lib("rufus_type.hrl").
 
 -export([
-    annotate_pattern/1,
     each/2,
+    element_type/1,
     globals/1,
     has_type/1,
     line/1,
@@ -12,6 +12,7 @@
     make_call/3,
     make_cons/4,
     make_func/5,
+    make_head/3,
     make_identifier/2,
     make_import/2,
     make_inferred_type/2,
@@ -22,6 +23,7 @@
     make_module/2,
     make_param/3,
     make_params/2,
+    make_tail/3,
     make_type/2,
     make_type/3,
     map/2,
@@ -70,16 +72,21 @@ has_type({identifier, #{spec := Spec, locals := Locals}}) ->
 has_type(_Form) ->
     false.
 
-%% type returns type information for the form.
--spec type(rufus_form()) -> type_form().
-type({_, #{type := Type}}) ->
-    Type.
-
 %% globals creates a map of function names to func forms for all top-level
 %% functions in RufusForms.
 -spec globals(rufus_forms()) -> {ok, #{atom() => rufus_forms()}}.
 globals(RufusForms) ->
     globals(#{}, RufusForms).
+
+%% type returns type information for the form.
+-spec type(rufus_form()) -> type_form().
+type({_, #{type := Type}}) ->
+    Type.
+
+%% element_type returns type information for a list element.
+-spec element_type({type, #{collection_type => list, element_type => {type, map()}}}) -> type_form().
+element_type({type, #{collection_type := list, element_type := Type}}) ->
+    Type.
 
 %% type_spec returns the spec for the type of the form.
 -spec type_spec({any(), context()}) -> atom() | error_triple().
@@ -199,12 +206,18 @@ make_literal(list, Type, Elements, Line) ->
 %% make_cons returns a form for a cons expression.
 -spec make_cons(type_form(), rufus_form(), list_lit_form(), integer()) -> cons_form().
 make_cons(Type, Head, Tail, Line) ->
-    {cons, #{type => Type, head => Head, tail => Tail, line => Line}}.
+    ElementType = element_type(Type),
+    HeadForm = make_head(ElementType, Head, Line),
+    TailForm = make_tail(Type, Tail, Line),
+    {cons, #{type => Type, head => HeadForm, tail => TailForm, line => Line}}.
 
-%% annotate_pattern returns a form annotated as a pattern expression.
--spec annotate_pattern(cons_form()) -> cons_form().
-annotate_pattern({cons, Context}) ->
-    {cons, Context#{allow_pattern => true}}.
+-spec make_head(type_form(), rufus_form(), integer()) -> head_form().
+make_head(Type, Head, Line) ->
+    {head, #{type => Type, head => Head, line => Line}}.
+
+-spec make_tail(type_form(), rufus_form(), integer()) -> tail_form().
+make_tail(Type, Tail, Line) ->
+    {tail, #{type => Type, tail => Tail, line => Line}}.
 
 %% binary_op form builder API
 

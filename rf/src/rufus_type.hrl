@@ -37,6 +37,8 @@
 -type string_lit_form() :: {string_lit, context()}.
 -type list_lit_form() :: {list_lit, context()}.
 -type cons_form() :: {cons, context()}.
+-type head_form() :: {head, context()}.
+-type tail_form() :: {tail, context()}.
 
 -type literal_form() ::
         atom_lit_form()
@@ -81,9 +83,12 @@
       | string_lit_form()
       | list_lit_form()
       | cons_form()
+      | head_form()
+      | tail_form()
       | module_form()
       | func_form()
       | param_form()
+      | params_form()
       | identifier_form()
       | type_form()
       | binary_op_form()

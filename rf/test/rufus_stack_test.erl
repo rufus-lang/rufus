@@ -15,3 +15,8 @@ is_param_without_params_in_stack_test() ->
     Form = rufus_form:make_func('Truthy', [rufus_form:make_param(value, Param, 81)], Type, [Value], 81),
     Stack = [Form],
     ?assertNot(rufus_stack:is_param(Stack)).
+
+push_test() ->
+    True = rufus_form:make_literal(bool, true, 7),
+    False = rufus_form:make_literal(bool, false, 8),
+    ?assertEqual([True, False], rufus_stack:push([False], True)).

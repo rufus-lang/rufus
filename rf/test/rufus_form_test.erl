@@ -119,6 +119,11 @@ type_test() ->
     Form = {int_lit, #{spec => 42, type => Type, line => 7}},
     ?assertEqual(Type, rufus_form:type(Form)).
 
+element_type_test() ->
+    ElementType = rufus_form:make_type(bool, 81),
+    Type = rufus_form:make_type(list, ElementType, 81),
+    ?assertEqual(ElementType, rufus_form:element_type(Type)).
+
 type_spec_with_rufus_form_test() ->
     Type = rufus_form:make_inferred_type(int, 27),
     Form = {int_lit, #{spec => 42, type => Type, line => 7}},
@@ -172,10 +177,13 @@ make_call_test() ->
 
 make_cons_test() ->
     Line = 3,
-    Type = rufus_form:make_type(list, rufus_form:make_type(int, Line), Line),
+    ElementType = rufus_form:make_type(int, Line),
+    Type = rufus_form:make_type(list, ElementType, Line),
     Head = rufus_form:make_literal(int, 5, 3),
     Tail = [],
-    Expected = {cons, #{type => Type, head => Head, tail => Tail, line => Line}},
+    HeadForm = rufus_form:make_head(ElementType, Head, Line),
+    TailForm = rufus_form:make_tail(Type, Tail, Line),
+    Expected = {cons, #{type => Type, head => HeadForm, tail => TailForm, line => Line}},
     ?assertEqual(Expected, rufus_form:make_cons(Type, Head, Tail, Line)).
 
 make_func_test() ->
@@ -250,10 +258,11 @@ map_with_cons_test() ->
     Type = rufus_form:make_type(list, rufus_form:make_type(int, Line), Line),
     TailForm = rufus_form:make_cons(Type, rufus_form:make_literal(int, 3, Line), [], Line),
     Form = rufus_form:make_cons(Type, rufus_form:make_literal(int, 3, Line), [TailForm], Line),
-    ?assertMatch([{cons, #{head := {_, #{annotated := true}},
-                           tail := [{cons, #{head := {_, #{annotated := true}},
-                                             tail := [], annotated := true}}],
-                           annotated := true}}],
+    ?assertMatch([{cons, #{annotated := true,
+                           head := {head, #{annotated := true,
+                                            line := 17}},
+                           tail := {tail, #{annotated := true,
+                                            line := 17}}}}],
                  rufus_form:map([Form], fun annotate/1)).
 
 map_with_cons_and_tail_identifier_test() ->
@@ -261,9 +270,12 @@ map_with_cons_and_tail_identifier_test() ->
     Type = rufus_form:make_type(list, rufus_form:make_type(int, Line), Line),
     TailForm = rufus_form:make_identifier('tail', 3),
     Form = rufus_form:make_cons(Type, rufus_form:make_literal(int, 3, Line), TailForm, Line),
-    ?assertMatch([{cons, #{head := {_, #{annotated := true}},
-                           tail := {identifier, #{spec := tail}},
-                           annotated := true}}],
+    ?assertMatch([{cons, #{annotated := true,
+                           head := {head, #{annotated := true,
+                                            line := 17}},
+                           tail := {tail, #{annotated := true,
+                                            line := 17,
+                                            tail := {identifier, #{spec := tail}}}}}}],
                  rufus_form:map([Form], fun annotate/1)).
 
 map_with_func_test() ->
