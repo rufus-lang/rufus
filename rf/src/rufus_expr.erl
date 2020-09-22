@@ -26,9 +26,18 @@
 %%   unmatched.
 -spec typecheck_and_annotate(rufus_forms()) -> {ok, rufus_forms()} | error_triple().
 typecheck_and_annotate(RufusForms) ->
+    Acc = [],
+    Stack = [],
     {ok, Globals} = rufus_form:globals(RufusForms),
+    Locals = #{},
     try
-        {ok, _Locals, AnnotatedForms} = typecheck_and_annotate([], Globals, #{}, RufusForms),
+        {ok, _Locals, AnnotatedForms} = typecheck_and_annotate(
+            Acc,
+            Stack,
+            Globals,
+            Locals,
+            RufusForms
+        ),
         ok = rufus_form:each(AnnotatedForms, fun safety_check/1),
         {ok, AnnotatedForms}
     catch
@@ -58,35 +67,35 @@ safety_check(Form) ->
 %% typecheck_and_annotate iterates over RufusForms and adds type information
 %% from the current scope to each form. An `{error, Reason, Data}` error triple
 %% is thrown at the first error.
--spec typecheck_and_annotate(rufus_forms(), globals(), locals(), rufus_forms()) ->
+-spec typecheck_and_annotate(rufus_forms(), rufus_stack(), globals(), locals(), rufus_forms()) ->
     {ok, locals(), rufus_forms()}.
-typecheck_and_annotate(Acc, Globals, Locals, [Form = {binary_op, _Context} | T]) ->
-    {ok, AnnotatedForm} = typecheck_and_annotate_binary_op(Globals, Locals, Form),
-    typecheck_and_annotate([AnnotatedForm | Acc], Globals, Locals, T);
-typecheck_and_annotate(Acc, Globals, Locals, [Form = {call, _Context} | T]) ->
-    {ok, AnnotatedForm} = typecheck_and_annotate_call(Globals, Locals, Form),
-    typecheck_and_annotate([AnnotatedForm | Acc], Globals, Locals, T);
-typecheck_and_annotate(Acc, Globals, Locals, [Form = {cons, _Context} | T]) ->
-    {ok, AnnotatedForm} = typecheck_and_annotate_cons(Globals, Locals, Form),
-    typecheck_and_annotate([AnnotatedForm | Acc], Globals, Locals, T);
-typecheck_and_annotate(Acc, Globals, Locals, [Form = {func, _Context} | T]) ->
-    {ok, AnnotatedForm} = typecheck_and_annotate_func(Globals, Locals, Form),
-    typecheck_and_annotate([AnnotatedForm | Acc], Globals, Locals, T);
-typecheck_and_annotate(Acc, Globals, Locals, [Form = {identifier, _Context} | T]) ->
-    {ok, AnnotatedForm} = typecheck_and_annotate_identifier(Locals, Form),
-    typecheck_and_annotate([AnnotatedForm | Acc], Globals, Locals, T);
-typecheck_and_annotate(Acc, Globals, Locals, [Form = {list_lit, _Context} | T]) ->
-    {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_list_lit(Globals, Locals, Form),
-    typecheck_and_annotate([AnnotatedForm | Acc], Globals, NewLocals, T);
-typecheck_and_annotate(Acc, Globals, Locals, [Form = {match, _Context} | T]) ->
-    {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_match(Globals, Locals, Form),
-    typecheck_and_annotate([AnnotatedForm | Acc], Globals, NewLocals, T);
-typecheck_and_annotate(Acc, Globals, Locals, [Form = {param, _Context} | T]) ->
+typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {binary_op, _Context} | T]) ->
+    {ok, AnnotatedForm} = typecheck_and_annotate_binary_op(Stack, Globals, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
+typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {call, _Context} | T]) ->
+    {ok, AnnotatedForm} = typecheck_and_annotate_call(Stack, Globals, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
+typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {cons, _Context} | T]) ->
+    {ok, AnnotatedForm} = typecheck_and_annotate_cons(Stack, Globals, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
+typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {func, _Context} | T]) ->
+    {ok, AnnotatedForm} = typecheck_and_annotate_func(Stack, Globals, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
+typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {identifier, _Context} | T]) ->
+    {ok, AnnotatedForm} = typecheck_and_annotate_identifier(Stack, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
+typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {list_lit, _Context} | T]) ->
+    {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_list_lit(Stack, Globals, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, NewLocals, T);
+typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {match, _Context} | T]) ->
+    {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_match(Stack, Globals, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, NewLocals, T);
+typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {param, _Context} | T]) ->
     {ok, NewLocals} = push_local(Locals, Form),
-    typecheck_and_annotate([Form | Acc], Globals, NewLocals, T);
-typecheck_and_annotate(Acc, Globals, Locals, [H | T]) ->
-    typecheck_and_annotate([H | Acc], Globals, Locals, T);
-typecheck_and_annotate(Acc, _Globals, Locals, []) ->
+    typecheck_and_annotate([Form | Acc], Stack, Globals, NewLocals, T);
+typecheck_and_annotate(Acc, Stack, Globals, Locals, [H | T]) ->
+    typecheck_and_annotate([H | Acc], Stack, Globals, Locals, T);
+typecheck_and_annotate(Acc, _Stack, _Globals, Locals, []) ->
     {ok, Locals, lists:reverse(Acc)}.
 
 %% scope helpers
@@ -112,15 +121,16 @@ push_local(Locals, {_FormType, #{spec := Spec, type := Type}}) ->
 %%   mixed with a `float` operand. `Form` contains the illegal operands.
 %% - `{error, unsupported_operand_type, Form}` is thrown if a type other than an
 %%   int is used as an operand. `Form` contains the illegal operands.
--spec typecheck_and_annotate_binary_op(globals(), locals(), binary_op_form()) ->
+-spec typecheck_and_annotate_binary_op(rufus_stack(), globals(), locals(), binary_op_form()) ->
     {ok, binary_op_form()} | no_return().
 typecheck_and_annotate_binary_op(
+    Stack,
     Globals,
     Locals,
     {binary_op, Context = #{left := Left, right := Right}}
 ) ->
-    {ok, Locals, [AnnotatedLeft]} = typecheck_and_annotate([], Globals, Locals, [Left]),
-    {ok, Locals, [AnnotatedRight]} = typecheck_and_annotate([], Globals, Locals, [Right]),
+    {ok, Locals, [AnnotatedLeft]} = typecheck_and_annotate([], Stack, Globals, Locals, [Left]),
+    {ok, Locals, [AnnotatedRight]} = typecheck_and_annotate([], Stack, Globals, Locals, [Right]),
     Form = {binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight, locals => Locals}},
     case rufus_type:resolve(Globals, Form) of
         {ok, TypeForm} ->
@@ -139,10 +149,10 @@ typecheck_and_annotate_binary_op(
 
 %% typecheck_and_annotate_call resolves the return type for a function call and
 %% returns a call form annotated with type information.
--spec typecheck_and_annotate_call(globals(), locals(), call_form()) ->
+-spec typecheck_and_annotate_call(rufus_stack(), globals(), locals(), call_form()) ->
     {ok, call_form()} | no_return().
-typecheck_and_annotate_call(Globals, Locals, {call, Context1 = #{args := Args}}) ->
-    {ok, _NewLocals, AnnotatedArgs} = typecheck_and_annotate([], Globals, Locals, Args),
+typecheck_and_annotate_call(Stack, Globals, Locals, {call, Context1 = #{args := Args}}) ->
+    {ok, _NewLocals, AnnotatedArgs} = typecheck_and_annotate([], Stack, Globals, Locals, Args),
     Form = {call, Context2 = Context1#{args => AnnotatedArgs}},
     case rufus_type:resolve(Globals, Form) of
         {ok, TypeForm} ->
@@ -159,11 +169,18 @@ typecheck_and_annotate_call(Globals, Locals, {call, Context1 = #{args := Args}})
 %% - `{ok, AnnotatedForm}` if no issues are found.
 %% - `{error, unexpected_element_type, Data}` is thrown if either the head or
 %%   tail elements have type issues.
--spec typecheck_and_annotate_cons(globals(), locals(), cons_form()) ->
+-spec typecheck_and_annotate_cons(rufus_stack(), globals(), locals(), cons_form()) ->
     {ok, cons_form()} | no_return().
-typecheck_and_annotate_cons(Globals, Locals, {cons, Context = #{head := Head, tail := Tail}}) ->
-    {ok, NewLocals1, [AnnotatedHead]} = typecheck_and_annotate([], Globals, Locals, [Head]),
-    {ok, _NewLocals2, [AnnotatedTail]} = typecheck_and_annotate([], Globals, NewLocals1, [Tail]),
+typecheck_and_annotate_cons(
+    Stack,
+    Globals,
+    Locals,
+    {cons, Context = #{head := Head, tail := Tail}}
+) ->
+    {ok, NewLocals1, [AnnotatedHead]} = typecheck_and_annotate([], Stack, Globals, Locals, [Head]),
+    {ok, _NewLocals2, [AnnotatedTail]} = typecheck_and_annotate([], Stack, Globals, NewLocals1, [
+        Tail
+    ]),
     AnnotatedForm1 = {cons, Context#{head => AnnotatedHead, tail => AnnotatedTail}},
     case rufus_type:resolve(Globals, AnnotatedForm1) of
         {ok, TypeForm} ->
@@ -183,11 +200,22 @@ typecheck_and_annotate_cons(Globals, Locals, {cons, Context = #{head := Head, ta
 %% typecheck_and_annotate_func adds all parameters to the local scope. It also
 %% resolves and annotates types for all expressions in the function body to
 %% ensure they satisfy type constraints.
--spec typecheck_and_annotate_func(globals(), locals(), func_form()) ->
+-spec typecheck_and_annotate_func(rufus_stack(), globals(), locals(), func_form()) ->
     {ok, func_form()} | no_return().
-typecheck_and_annotate_func(Globals, Locals, {func, Context = #{params := Params, exprs := Exprs}}) ->
-    {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate([], Globals, Locals, Params),
-    {ok, _NewLocals2, AnnotatedExprs} = typecheck_and_annotate([], Globals, NewLocals1, Exprs),
+typecheck_and_annotate_func(
+    Stack,
+    Globals,
+    Locals,
+    {func, Context = #{params := Params, exprs := Exprs}}
+) ->
+    {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate([], Stack, Globals, Locals, Params),
+    {ok, _NewLocals2, AnnotatedExprs} = typecheck_and_annotate(
+        [],
+        Stack,
+        Globals,
+        NewLocals1,
+        Exprs
+    ),
     AnnotatedForm = {func, Context#{params => AnnotatedParams, exprs => AnnotatedExprs}},
     ok = typecheck_func_return_type(Globals, AnnotatedForm),
     {ok, AnnotatedForm}.
@@ -220,8 +248,9 @@ typecheck_func_return_type(Globals, {func, #{return_type := ReturnType, exprs :=
 %% information is also added to the identifier form if present in Locals. Return
 %% values:
 %% - `{ok, AnnotatedForm}` with locals and type information..
--spec typecheck_and_annotate_identifier(locals(), identifier_form()) -> {ok, identifier_form()}.
-typecheck_and_annotate_identifier(Locals, Form = {identifier, Context = #{spec := Spec}}) ->
+-spec typecheck_and_annotate_identifier(rufus_stack(), locals(), identifier_form()) ->
+    {ok, identifier_form()}.
+typecheck_and_annotate_identifier(_Stack, Locals, Form = {identifier, Context = #{spec := Spec}}) ->
     {ok, AnnotatedForm1} = annotate_locals(Locals, Form),
     case maps:get(Spec, Locals, undefined) of
         undefined ->
@@ -239,10 +268,21 @@ typecheck_and_annotate_identifier(Locals, Form = {identifier, Context = #{spec :
 %%   its elements are annotated with type information.
 %% - `{error, unexpected_element_type, Data}` is thrown if an element is found
 %%   with a differing type.
--spec typecheck_and_annotate_list_lit(globals(), locals(), list_lit_form()) ->
+-spec typecheck_and_annotate_list_lit(rufus_stack(), globals(), locals(), list_lit_form()) ->
     {ok, locals(), list_lit_form()} | no_return().
-typecheck_and_annotate_list_lit(Globals, Locals, {list_lit, Context = #{elements := Elements}}) ->
-    {ok, NewLocals, AnnotatedElements} = typecheck_and_annotate([], Globals, Locals, Elements),
+typecheck_and_annotate_list_lit(
+    Stack,
+    Globals,
+    Locals,
+    {list_lit, Context = #{elements := Elements}}
+) ->
+    {ok, NewLocals, AnnotatedElements} = typecheck_and_annotate(
+        [],
+        Stack,
+        Globals,
+        Locals,
+        Elements
+    ),
     AnnotatedForm1 = {list_lit, Context#{elements => AnnotatedElements}},
     case rufus_type:resolve(Globals, AnnotatedForm1) of
         {ok, TypeForm} ->
@@ -266,21 +306,23 @@ typecheck_and_annotate_list_lit(Globals, Locals, {list_lit, Context = #{elements
 %%   operands are unbound.
 %% - `{error, unmarched_types, Data}` is thrown when the left and right operand
 %%   have differing types.
--spec typecheck_and_annotate_match(globals(), locals(), match_form()) ->
+-spec typecheck_and_annotate_match(rufus_stack(), globals(), locals(), match_form()) ->
     {ok, locals(), match_form()} | no_return().
-typecheck_and_annotate_match(Globals, Locals, {match, Context = #{left := Left}}) ->
-    {ok, NewLocals1, [AnnotatedLeft1]} = typecheck_and_annotate([], Globals, Locals, [Left]),
+typecheck_and_annotate_match(Stack, Globals, Locals, {match, Context = #{left := Left}}) ->
+    {ok, NewLocals1, [AnnotatedLeft1]} = typecheck_and_annotate([], Stack, Globals, Locals, [Left]),
     AnnotatedForm1 = {match, Context#{left => AnnotatedLeft1}},
     case rufus_form:has_type(AnnotatedLeft1) of
         true ->
             ok = validate_pattern(Globals, NewLocals1, AnnotatedForm1),
             typecheck_and_annotate_match_with_bound_left_operand(
+                Stack,
                 Globals,
                 NewLocals1,
                 AnnotatedForm1
             );
         false ->
             typecheck_and_annotate_match_with_unbound_left_operand(
+                Stack,
                 Globals,
                 NewLocals1,
                 AnnotatedForm1
@@ -295,15 +337,22 @@ typecheck_and_annotate_match(Globals, Locals, {match, Context = #{left := Left}}
 %%   unbound.
 %% - `{error, unmarched_types, Data}` is thrown when the left and right operand
 %%   have differing types.
--spec typecheck_and_annotate_match_with_bound_left_operand(globals(), locals(), match_form()) ->
-    {ok, locals(), match_form()} | no_return().
+-spec typecheck_and_annotate_match_with_bound_left_operand(
+    rufus_stack(),
+    globals(),
+    locals(),
+    match_form()
+) -> {ok, locals(), match_form()} | no_return().
 typecheck_and_annotate_match_with_bound_left_operand(
+    Stack,
     Globals,
     Locals,
     {match, Context = #{left := Left, right := Right}}
 ) ->
     try
-        {ok, NewLocals, [AnnotatedRight]} = typecheck_and_annotate([], Globals, Locals, [Right]),
+        {ok, NewLocals, [AnnotatedRight]} = typecheck_and_annotate([], Stack, Globals, Locals, [
+            Right
+        ]),
         case rufus_form:type_spec(Left) == rufus_form:type_spec(AnnotatedRight) of
             true ->
                 RightType = rufus_form:type(AnnotatedRight),
@@ -352,14 +401,19 @@ typecheck_and_annotate_match_with_bound_left_operand(
 %%   and its operands are annotated with type information.
 %% - `{error, unbound_variables, Data}` is thrown if both the left and right
 %%   operands are unbound.
--spec typecheck_and_annotate_match_with_unbound_left_operand(globals(), locals(), match_form()) ->
-    {ok, locals(), match_form()} | no_return().
+-spec typecheck_and_annotate_match_with_unbound_left_operand(
+    rufus_stack(),
+    globals(),
+    locals(),
+    match_form()
+) -> {ok, locals(), match_form()} | no_return().
 typecheck_and_annotate_match_with_unbound_left_operand(
+    Stack,
     Globals,
     Locals,
     {match, Context = #{left := Left, right := Right}}
 ) ->
-    {ok, NewLocals1, [AnnotatedRight]} = typecheck_and_annotate([], Globals, Locals, [Right]),
+    {ok, NewLocals1, [AnnotatedRight]} = typecheck_and_annotate([], Stack, Globals, Locals, [Right]),
     case rufus_form:has_type(AnnotatedRight) of
         true ->
             {LeftType, LeftContext} = Left,
