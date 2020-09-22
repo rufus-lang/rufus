@@ -6,7 +6,10 @@
 
 %% API exports
 
--export([resolve/2]).
+-export([
+    resolve/2,
+    resolve/3
+]).
 
 %% API
 
@@ -14,36 +17,40 @@
 %% associated with it, it will be returned. Otherwise, the type is inferred.
 -spec resolve(#{atom() => rufus_forms()}, rufus_form()) -> {ok, type_form()} | error_triple().
 resolve(Globals, Form) ->
+    resolve([], Globals, Form).
+
+-spec resolve(rufus_stack(), #{atom() => rufus_forms()}, rufus_form()) -> {ok, type_form()} | error_triple().
+resolve(Stack, Globals, Form) ->
     try
-        resolve_type(Globals, Form)
+        resolve_type(Stack, Globals, Form)
     catch
         {error, Code, Data} -> {error, Code, Data}
     end.
 
 %% Private API
 
--spec resolve_type(#{atom() => rufus_forms()}, rufus_form()) -> {ok, type_form()} | no_return().
-resolve_type(Globals, Form = {cons, _Context}) ->
-    resolve_cons_type(Globals, Form);
-resolve_type(Globals, Form = {list_lit, _Context}) ->
-    resolve_list_lit_type(Globals, Form);
-resolve_type(_Globals, {_Form, #{type := Type}}) ->
+-spec resolve_type(rufus_stack(), #{atom() => rufus_forms()}, rufus_form()) -> {ok, type_form()} | no_return().
+resolve_type(Stack, Globals, Form = {cons, _Context}) ->
+    resolve_cons_type(Stack, Globals, Form);
+resolve_type(Stack, Globals, Form = {list_lit, _Context}) ->
+    resolve_list_lit_type(Stack, Globals, Form);
+resolve_type(_Stack, _Globals, {_Form, #{type := Type}}) ->
     {ok, Type};
-resolve_type(Globals, Form = {binary_op, _Context}) ->
-    resolve_binary_op_type(Globals, Form);
-resolve_type(Globals, Form = {call, _Context}) ->
-    resolve_call_type(Globals, Form);
-resolve_type(_Globals, {func, #{return_type := Type}}) ->
+resolve_type(Stack, Globals, Form = {binary_op, _Context}) ->
+    resolve_binary_op_type(Stack, Globals, Form);
+resolve_type(Stack, Globals, Form = {call, _Context}) ->
+    resolve_call_type(Stack, Globals, Form);
+resolve_type(_Stack, _Globals, {func, #{return_type := Type}}) ->
     {ok, Type};
-resolve_type(Globals, Form = {identifier, _Context}) ->
-    resolve_identifier_type(Globals, Form).
+resolve_type(Stack, Globals, Form = {identifier, _Context}) ->
+    resolve_identifier_type(Stack, Globals, Form).
 
 %% binary_op form helpers
 
--spec resolve_binary_op_type(globals(), binary_op_form()) -> {ok, type_form()} | no_return().
-resolve_binary_op_type(Globals, Form = {binary_op, #{op := Op, left := Left, right := Right, line := Line}}) ->
-    {ok, LeftType} = resolve_type(Globals, Left),
-    {ok, RightType} = resolve_type(Globals, Right),
+-spec resolve_binary_op_type(rufus_stack(), globals(), binary_op_form()) -> {ok, type_form()} | no_return().
+resolve_binary_op_type(Stack, Globals, Form = {binary_op, #{op := Op, left := Left, right := Right, line := Line}}) ->
+    {ok, LeftType} = resolve_type(Stack, Globals, Left),
+    {ok, RightType} = resolve_type(Stack, Globals, Right),
     LeftTypeSpec = rufus_form:type_spec(LeftType),
     RightTypeSpec = rufus_form:type_spec(RightType),
     {AllowType, AllowTypePair} = case Op of
@@ -143,8 +150,8 @@ allow_type_pair_with_comparison_operator(_, _) -> false.
 
 %% call form helpers
 
--spec resolve_call_type(globals(), call_form()) -> {ok, type_form()} | no_return().
-resolve_call_type(Globals, Form = {call, #{spec := Spec, args := Args}}) ->
+-spec resolve_call_type(rufus_stack(), globals(), call_form()) -> {ok, type_form()} | no_return().
+resolve_call_type(_Stack, Globals, Form = {call, #{spec := Spec, args := Args}}) ->
         case maps:get(Spec, Globals, undefined) of
         undefined ->
             throw({error, unknown_func, #{spec => Spec, args => Args}});
@@ -199,11 +206,11 @@ find_matching_funcs(Funcs, Args) ->
 
 %% cons form helpers
 
--spec resolve_cons_type(globals(), cons_form()) -> {ok, type_form()} | no_return().
-resolve_cons_type(Globals, Form = {cons, #{head := Head, tail := Tail, type := Type}}) ->
+-spec resolve_cons_type(rufus_stack(), globals(), cons_form()) -> {ok, type_form()} | no_return().
+resolve_cons_type(Stack, Globals, Form = {cons, #{head := Head, tail := Tail, type := Type}}) ->
     {type, #{element_type := ElementType}} = Type,
-    {ok, HeadType} = resolve_type(Globals, Head),
-    {ok, {type, #{element_type := TailElementType}}} = resolve_type(Globals, Tail),
+    {ok, HeadType} = resolve_type(Stack, Globals, Head),
+    {ok, {type, #{element_type := TailElementType}}} = resolve_type(Stack, Globals, Tail),
     case pair_types_match_cons_type(ElementType, HeadType, TailElementType) of
         true ->
             {ok, Type};
@@ -222,8 +229,8 @@ pair_types_match_cons_type(_, _, _) ->
 
 %% identifier form helpers
 
--spec resolve_identifier_type(globals(), identifier_form()) -> {ok, type_form()} | no_return().
-resolve_identifier_type(Globals, Form = {identifier, #{spec := Spec, locals := Locals}}) ->
+-spec resolve_identifier_type(rufus_stack(), globals(), identifier_form()) -> {ok, type_form()} | no_return().
+resolve_identifier_type(_Stack, Globals, Form = {identifier, #{spec := Spec, locals := Locals}}) ->
     case maps:get(Spec, Locals, undefined) of
         {type, _Context} = Type ->
             {ok, Type};
@@ -234,11 +241,11 @@ resolve_identifier_type(Globals, Form = {identifier, #{spec := Spec, locals := L
 
 %% list_lit form helpers
 
--spec resolve_list_lit_type(globals(), list_lit_form()) -> {ok, type_form()} | no_return().
-resolve_list_lit_type(Globals, Form = {list_lit, #{elements := Elements, type := Type}}) ->
+-spec resolve_list_lit_type(rufus_stack(), globals(), list_lit_form()) -> {ok, type_form()} | no_return().
+resolve_list_lit_type(Stack, Globals, Form = {list_lit, #{elements := Elements, type := Type}}) ->
     {type, #{element_type := {type, #{spec := ElementTypeSpec}}}} = Type,
     ElementTypes = lists:map(fun(ElementForm) ->
-        {ok, ElementType} = resolve_type(Globals, ElementForm),
+        {ok, ElementType} = resolve_type(Stack, Globals, ElementForm),
         ElementType
     end, Elements),
 
