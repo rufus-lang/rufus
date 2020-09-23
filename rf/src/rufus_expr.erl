@@ -225,12 +225,20 @@ typecheck_and_annotate_func(
     Stack,
     Globals,
     Locals,
-    {func, Context = #{params := Params, exprs := Exprs}}
+    Form = {func, Context = #{params := Params, exprs := Exprs}}
 ) ->
-    {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate([], Stack, Globals, Locals, Params),
+    FuncStack = [Form | Stack],
+    ParamsStack = [rufus_form:make_params(Form) | FuncStack],
+    {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate(
+        [],
+        ParamsStack,
+        Globals,
+        Locals,
+        Params
+    ),
     {ok, _NewLocals2, AnnotatedExprs} = typecheck_and_annotate(
         [],
-        Stack,
+        FuncStack,
         Globals,
         NewLocals1,
         Exprs
