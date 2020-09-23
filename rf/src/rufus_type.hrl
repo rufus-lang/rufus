@@ -69,6 +69,14 @@
 -type match_form() :: {match, context()}.
 -type call_form() :: {call, context()}.
 
+%% Virtual forms
+
+-type head_form() :: {head, context()}.
+-type left_form() :: {left, context()}.
+-type params_form() :: {params, context()}.
+-type right_form() :: {right, context()}.
+-type tail_form() :: {tail, context()}.
+
 %% Rufus forms
 
 %% rufus_form represents a node in the parse tree.

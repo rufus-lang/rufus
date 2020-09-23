@@ -127,20 +127,28 @@ typecheck_and_annotate_binary_op(
     Stack,
     Globals,
     Locals,
-    {binary_op, Context = #{left := Left, right := Right}}
+    Form = {binary_op, Context = #{left := Left, right := Right}}
 ) ->
-    {ok, Locals, [AnnotatedLeft]} = typecheck_and_annotate([], Stack, Globals, Locals, [Left]),
-    {ok, Locals, [AnnotatedRight]} = typecheck_and_annotate([], Stack, Globals, Locals, [Right]),
-    Form = {binary_op, Context#{left => AnnotatedLeft, right => AnnotatedRight, locals => Locals}},
-    case rufus_type:resolve(Globals, Form) of
+    BinaryOpStack = [Form | Stack],
+    LeftStack = [rufus_form:make_left(Form) | BinaryOpStack],
+    {ok, Locals, [AnnotatedLeft]} = typecheck_and_annotate([], LeftStack, Globals, Locals, [Left]),
+    RightStack = [rufus_form:make_right(Form) | BinaryOpStack],
+    {ok, Locals, [AnnotatedRight]} = typecheck_and_annotate([], RightStack, Globals, Locals, [Right]),
+    AnnotatedForm1 =
+        {binary_op, Context#{
+            left => AnnotatedLeft,
+            right => AnnotatedRight,
+            locals => Locals
+        }},
+    case rufus_type:resolve(Globals, AnnotatedForm1) of
         {ok, TypeForm} ->
-            AnnotatedForm =
+            AnnotatedForm2 =
                 {binary_op, Context#{
                     left => AnnotatedLeft,
                     right => AnnotatedRight,
                     type => TypeForm
                 }},
-            {ok, AnnotatedForm};
+            {ok, AnnotatedForm2};
         Error ->
             throw(Error)
     end.
@@ -175,12 +183,23 @@ typecheck_and_annotate_cons(
     Stack,
     Globals,
     Locals,
-    {cons, Context = #{head := Head, tail := Tail}}
+    Form = {cons, Context = #{head := Head, tail := Tail}}
 ) ->
-    {ok, NewLocals1, [AnnotatedHead]} = typecheck_and_annotate([], Stack, Globals, Locals, [Head]),
-    {ok, _NewLocals2, [AnnotatedTail]} = typecheck_and_annotate([], Stack, Globals, NewLocals1, [
-        Tail
+    ConsStack = [Form | Stack],
+    HeadStack = [rufus_form:make_head(Form) | ConsStack],
+    {ok, NewLocals1, [AnnotatedHead]} = typecheck_and_annotate([], HeadStack, Globals, Locals, [
+        Head
     ]),
+    TailStack = [rufus_form:make_tail(Form) | ConsStack],
+    {ok, _NewLocals2, [AnnotatedTail]} = typecheck_and_annotate(
+        [],
+        TailStack,
+        Globals,
+        NewLocals1,
+        [
+            Tail
+        ]
+    ),
     AnnotatedForm1 = {cons, Context#{head => AnnotatedHead, tail => AnnotatedTail}},
     case rufus_type:resolve(Globals, AnnotatedForm1) of
         {ok, TypeForm} ->

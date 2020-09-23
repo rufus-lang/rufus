@@ -11,15 +11,20 @@
     make_call/3,
     make_cons/4,
     make_func/5,
+    make_head/1,
     make_identifier/2,
     make_import/2,
     make_inferred_type/2,
     make_inferred_type/3,
+    make_left/1,
     make_literal/3,
     make_literal/4,
     make_match/3,
     make_module/2,
     make_param/3,
+    make_params/1,
+    make_right/1,
+    make_tail/1,
     make_type/2,
     make_type/3,
     map/2,
@@ -167,7 +172,7 @@ make_type_with_source(_CollectionSpec, ElementType, Source, Line) ->
         line => Line
     }}.
 
-%% Function form builder API
+%% func form builder API
 
 %% make_func returns a form for a function declaration.
 -spec make_func(atom(), list(param_form()), type_form(), list(), integer()) ->
@@ -193,20 +198,27 @@ make_func(Spec, Params, ReturnType, Exprs, Line) ->
 make_param(Spec, Type, Line) ->
     {param, #{spec => Spec, type => Type, line => Line}}.
 
+%% make_params returns a form for a function parameter list.
+-spec make_params(func_form()) -> params_form().
+make_params({func, #{line := Line}}) ->
+    {params, #{line => Line}}.
+
+%% call form builder API
+
 %% make_call returns a form for a function call.
 -spec make_call(atom(), list(), integer()) ->
     {call, #{spec => atom(), args => list(), line => integer()}}.
 make_call(Spec, Args, Line) ->
     {call, #{spec => Spec, args => Args, line => Line}}.
 
-%% Identifier form builder API
+%% identifier form builder API
 
 %% make_identifier returns a form for an identifier.
 -spec make_identifier(atom(), integer()) -> {identifier, #{spec => atom(), line => integer()}}.
 make_identifier(Spec, Line) ->
     {identifier, #{spec => Spec, line => Line}}.
 
-%% Literal form builder API
+%% literal form builder API
 
 %% make_literal returns a form for a literal value.
 -spec make_literal(literal(), atom(), term()) -> literal_form().
@@ -226,10 +238,22 @@ make_literal(list, Type, Elements, Line) ->
         line => Line
     }}.
 
+%% cons form builder API
+
 %% make_cons returns a form for a cons expression.
 -spec make_cons(type_form(), rufus_form(), list_lit_form(), integer()) -> cons_form().
 make_cons(Type, Head, Tail, Line) ->
     {cons, #{type => Type, head => Head, tail => Tail, line => Line}}.
+
+%% make_head returns a head form from a cons expression.
+-spec make_head(cons_form()) -> head_form().
+make_head({cons, #{line := Line}}) ->
+    {head, #{line => Line}}.
+
+%% make_tail returns a tail form from a cons expression.
+-spec make_tail(cons_form()) -> tail_form().
+make_tail({cons, #{line := Line}}) ->
+    {tail, #{line => Line}}.
 
 %% binary_op form builder API
 
@@ -238,6 +262,16 @@ make_cons(Type, Head, Tail, Line) ->
     {binary_op, #{op => atom(), left => rufus_form(), right => rufus_form(), line => integer()}}.
 make_binary_op(Op, Left, Right, Line) ->
     {binary_op, #{op => Op, left => Left, right => Right, line => Line}}.
+
+%% make_left returns a left form from a binary_op expression.
+-spec make_left(binary_op_form()) -> {left, #{line => integer()}}.
+make_left({binary_op, #{line := Line}}) ->
+    {left, #{line => Line}}.
+
+%% make_right returns a right form from a binary_op expression.
+-spec make_right(binary_op_form()) -> {right, #{line => integer()}}.
+make_right({binary_op, #{line := Line}}) ->
+    {right, #{line => Line}}.
 
 %% match form builder API
 
