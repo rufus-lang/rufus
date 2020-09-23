@@ -1252,3 +1252,96 @@ typecheck_and_annotate_with_function_returning_a_cons_literal_with_an_unexpected
             }}
     },
     ?assertEqual({error, unexpected_element_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
+
+typecheck_and_annotate_with_function_taking_a_cons_pattern_and_returning_it_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Echo(list[int]{head|tail}) list[int] { list[int]{head|tail} }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{
+            line => 2,
+            spec => example
+        }},
+        {func, #{
+            exprs => [
+                {cons, #{
+                    head =>
+                        {int_lit, #{
+                            line => 3,
+                            spec => 1,
+                            type =>
+                                {type, #{
+                                    line => 3,
+                                    source => inferred,
+                                    spec => int
+                                }}
+                        }},
+                    line => 3,
+                    tail =>
+                        {list_lit, #{
+                            elements => [
+                                {int_lit, #{
+                                    line => 3,
+                                    spec => 2,
+                                    type =>
+                                        {type, #{
+                                            line => 3,
+                                            source => inferred,
+                                            spec => int
+                                        }}
+                                }}
+                            ],
+                            line => 3,
+                            type =>
+                                {type, #{
+                                    collection_type => list,
+                                    element_type =>
+                                        {type, #{
+                                            line => 3,
+                                            source => rufus_text,
+                                            spec => int
+                                        }},
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => 'list[int]'
+                                }}
+                        }},
+                    type =>
+                        {type, #{
+                            collection_type => list,
+                            element_type =>
+                                {type, #{
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => int
+                                }},
+                            line => 3,
+                            source => rufus_text,
+                            spec => 'list[int]'
+                        }}
+                }}
+            ],
+            line => 3,
+            params => [],
+            return_type =>
+                {type, #{
+                    collection_type => list,
+                    element_type =>
+                        {type, #{
+                            line => 3,
+                            source => rufus_text,
+                            spec => int
+                        }},
+                    line => 3,
+                    source => rufus_text,
+                    spec => 'list[int]'
+                }},
+            spec => 'Numbers'
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).

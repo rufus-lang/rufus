@@ -294,6 +294,27 @@ resolve_identifier_type(_Stack, Globals, Form = {identifier, #{spec := Spec, loc
         undefined ->
             Data = #{globals => Globals, locals => Locals, form => Form},
             throw({error, unknown_identifier, Data})
+    end;
+resolve_identifier_type(Stack, Globals, Form = {identifier, _Context}) ->
+    case rufus_stack:is_param(Stack) of
+        true ->
+            Fun = fun
+                ({_, #{type := _Type}}) ->
+                    true;
+                (_Form) ->
+                    false
+            end,
+            case lists:search(Fun, Stack) of
+                {value, ParentForm} ->
+                    TypeForm = rufus_form:type(ParentForm),
+                    {ok, TypeForm};
+                false ->
+                    Data = #{globals => Globals, form => Form},
+                    throw({error, unknown_identifier, Data})
+            end;
+        false ->
+            Data = #{globals => Globals, form => Form},
+            throw({error, unknown_identifier, Data})
     end.
 
 %% list_lit form helpers
