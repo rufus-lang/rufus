@@ -6,9 +6,7 @@
 
 %% API exports
 
--export([
-    typecheck_and_annotate/1
-]).
+-export([typecheck_and_annotate/1]).
 
 %% API
 
@@ -82,8 +80,13 @@ typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {func, _Context} | T
     {ok, AnnotatedForm} = typecheck_and_annotate_func(Stack, Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {identifier, _Context} | T]) ->
-    {ok, AnnotatedForm} = typecheck_and_annotate_identifier(Stack, Locals, Form),
-    typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
+    {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_identifier(
+        Stack,
+        Globals,
+        Locals,
+        Form
+    ),
+    typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, NewLocals, T);
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {list_lit, _Context} | T]) ->
     {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_list_lit(Stack, Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, NewLocals, T);
@@ -275,16 +278,32 @@ typecheck_func_return_type(Globals, {func, #{return_type := ReturnType, exprs :=
 %% information is also added to the identifier form if present in Locals. Return
 %% values:
 %% - `{ok, AnnotatedForm}` with locals and type information..
--spec typecheck_and_annotate_identifier(rufus_stack(), locals(), identifier_form()) ->
-    {ok, identifier_form()}.
-typecheck_and_annotate_identifier(_Stack, Locals, Form = {identifier, Context = #{spec := Spec}}) ->
+-spec typecheck_and_annotate_identifier(rufus_stack(), globals(), locals(), identifier_form()) ->
+    {ok, locals(), identifier_form()}.
+typecheck_and_annotate_identifier(
+    Stack,
+    Globals,
+    Locals,
+    Form = {identifier, Context1 = #{spec := Spec}}
+) ->
     {ok, AnnotatedForm1} = annotate_locals(Locals, Form),
     case maps:get(Spec, Locals, undefined) of
         undefined ->
-            {ok, AnnotatedForm1};
-        Type ->
-            AnnotatedForm2 = {identifier, Context#{type => Type}},
-            {ok, AnnotatedForm2}
+            case rufus_type:resolve(Stack, Globals, AnnotatedForm1) of
+                {ok, TypeForm} ->
+                    {identifier, Context2} = AnnotatedForm1,
+                    AnnotatedForm2 = {identifier, Context2#{type => TypeForm}},
+                    {ok, NewLocals} = push_local(Locals, AnnotatedForm2),
+                    {ok, NewLocals, AnnotatedForm2};
+                {error, unknown_identifer, _Data} ->
+                    %% We return the form, without type information, because the
+                    %% typechecking logic for match forms currently depends on
+                    %% this behavior.
+                    {ok, Locals, AnnotatedForm1}
+            end;
+        TypeForm ->
+            AnnotatedForm2 = {identifier, Context1#{type => TypeForm}},
+            {ok, Locals, AnnotatedForm2}
     end.
 
 %% list_lit helpers

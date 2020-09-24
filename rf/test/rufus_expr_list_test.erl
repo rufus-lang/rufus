@@ -1263,40 +1263,35 @@ typecheck_and_annotate_with_function_taking_a_cons_pattern_and_returning_it_test
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{
-            line => 2,
-            spec => example
-        }},
+        {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
                 {cons, #{
                     head =>
-                        {int_lit, #{
+                        {identifier, #{
                             line => 3,
-                            spec => 1,
+                            locals => #{},
+                            spec => head,
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => inferred,
+                                    source => rufus_text,
                                     spec => int
                                 }}
                         }},
                     line => 3,
                     tail =>
-                        {list_lit, #{
-                            elements => [
-                                {int_lit, #{
-                                    line => 3,
-                                    spec => 2,
-                                    type =>
-                                        {type, #{
-                                            line => 3,
-                                            source => inferred,
-                                            spec => int
-                                        }}
-                                }}
-                            ],
+                        {identifier, #{
                             line => 3,
+                            locals => #{
+                                head =>
+                                    {type, #{
+                                        line => 3,
+                                        source => rufus_text,
+                                        spec => int
+                                    }}
+                            },
+                            spec => tail,
                             type =>
                                 {type, #{
                                     collection_type => list,
@@ -1315,11 +1310,7 @@ typecheck_and_annotate_with_function_taking_a_cons_pattern_and_returning_it_test
                         {type, #{
                             collection_type => list,
                             element_type =>
-                                {type, #{
-                                    line => 3,
-                                    source => rufus_text,
-                                    spec => int
-                                }},
+                                {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
                             source => rufus_text,
                             spec => 'list[int]'
@@ -1327,21 +1318,68 @@ typecheck_and_annotate_with_function_taking_a_cons_pattern_and_returning_it_test
                 }}
             ],
             line => 3,
-            params => [],
+            params => [
+                {cons, #{
+                    head =>
+                        {identifier, #{
+                            line => 3,
+                            locals => #{},
+                            spec => head,
+                            type =>
+                                {type, #{
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => int
+                                }}
+                        }},
+                    line => 3,
+                    tail =>
+                        {identifier, #{
+                            line => 3,
+                            locals => #{
+                                head =>
+                                    {type, #{
+                                        line => 3,
+                                        source => rufus_text,
+                                        spec => int
+                                    }}
+                            },
+                            spec => tail,
+                            type =>
+                                {type, #{
+                                    collection_type => list,
+                                    element_type =>
+                                        {type, #{
+                                            line => 3,
+                                            source => rufus_text,
+                                            spec => int
+                                        }},
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => 'list[int]'
+                                }}
+                        }},
+                    type =>
+                        {type, #{
+                            collection_type => list,
+                            element_type =>
+                                {type, #{line => 3, source => rufus_text, spec => int}},
+                            line => 3,
+                            source => rufus_text,
+                            spec => 'list[int]'
+                        }}
+                }}
+            ],
             return_type =>
                 {type, #{
                     collection_type => list,
                     element_type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => int
-                        }},
+                        {type, #{line => 3, source => rufus_text, spec => int}},
                     line => 3,
                     source => rufus_text,
                     spec => 'list[int]'
                 }},
-            spec => 'Numbers'
+            spec => 'Echo'
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).

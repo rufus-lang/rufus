@@ -4,6 +4,7 @@
 
 -export([
     each/2,
+    element_type/1,
     globals/1,
     has_type/1,
     line/1,
@@ -72,6 +73,10 @@ has_type({identifier, #{spec := Spec, locals := Locals}}) ->
     end;
 has_type(_Form) ->
     false.
+
+-spec element_type(type_form()) -> type_form().
+element_type({type, #{element_type := ElementType}}) ->
+    {ok, ElementType}.
 
 %% type returns type information for the form.
 -spec type(rufus_form()) -> context().

@@ -287,34 +287,19 @@ pair_types_match_cons_type(_, _, _) ->
 
 -spec resolve_identifier_type(rufus_stack(), globals(), identifier_form()) ->
     {ok, type_form()} | no_return().
-resolve_identifier_type(_Stack, Globals, Form = {identifier, #{spec := Spec, locals := Locals}}) ->
+resolve_identifier_type(Stack, Globals, Form = {identifier, #{spec := Spec, locals := Locals}}) ->
     case maps:get(Spec, Locals, undefined) of
         {type, _Context} = Type ->
             {ok, Type};
         undefined ->
-            Data = #{globals => Globals, locals => Locals, form => Form},
-            throw({error, unknown_identifier, Data})
-    end;
-resolve_identifier_type(Stack, Globals, Form = {identifier, _Context}) ->
-    case rufus_stack:is_param(Stack) of
-        true ->
-            Fun = fun
-                ({_, #{type := _Type}}) ->
-                    true;
-                (_Form) ->
-                    false
-            end,
-            case lists:search(Fun, Stack) of
-                {value, ParentForm} ->
-                    TypeForm = rufus_form:type(ParentForm),
-                    {ok, TypeForm};
-                false ->
-                    Data = #{globals => Globals, form => Form},
+            case lookup_type(Stack) of
+                {ok, Type} ->
+                    {ok, Type};
+                _ ->
+                    io:format("true~n"),
+                    Data = #{globals => Globals, locals => Locals, form => Form},
                     throw({error, unknown_identifier, Data})
-            end;
-        false ->
-            Data = #{globals => Globals, form => Form},
-            throw({error, unknown_identifier, Data})
+            end
     end.
 
 %% list_lit form helpers
@@ -343,3 +328,36 @@ resolve_list_lit_type(Stack, Globals, Form = {list_lit, #{elements := Elements, 
 element_types_match_list_type(Expected, ElementTypes) ->
     TypesMatch = fun({type, #{spec := Actual}}) -> Actual == Expected end,
     lists:all(TypesMatch, ElementTypes).
+
+%% Stack helpers
+
+%% is_param returns true if Stack contains a params form, and therefore whether
+%% the current node is part of a function's parameter list.
+-spec is_param(rufus_stack()) -> boolean().
+is_param(Stack) ->
+    Fun = fun
+        ({params, _Context}) ->
+            true;
+        (_) ->
+            false
+    end,
+    lists:any(Fun, Stack).
+
+%% lookup_type walks up the stack, finds, and returns the first type it
+%% encounters.
+-spec lookup_type(rufus_stack()) -> {ok, type_form()} | error_triple().
+lookup_type(Stack) ->
+    lookup_type(Stack, Stack).
+
+-spec lookup_type(rufus_stack(), rufus_stack()) -> {ok, type_form()} | error_triple().
+lookup_type([{head, _} | [{cons, #{type := Type}} | _T]], _Stack) ->
+    rufus_form:element_type(Type);
+lookup_type([{tail, _} | [{cons, #{type := Type}} | _T]], _Stack) ->
+    {ok, Type};
+lookup_type([{_, #{type := Type}} | _T], _Stack) ->
+    {ok, Type};
+lookup_type([_H | T], Stack) ->
+    lookup_type(T, Stack);
+lookup_type([], Stack) ->
+    Data = #{stack => Stack},
+    {error, unknown_type, Data}.
