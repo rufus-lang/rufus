@@ -202,6 +202,70 @@ parse_function_with_a_match_that_binds_a_string_literal_test() ->
     ],
     ?assertEqual(Expected, Forms).
 
+parse_function_with_a_match_that_binds_a_list_literal_test() ->
+    RufusText =
+        "\n"
+        "    func Unbox(names list[string]) string {\n"
+        "        list[string]{name} = names\n"
+        "        name\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [
+        {func, #{
+            exprs => [
+                {match, #{
+                    left =>
+                        {list_lit, #{
+                            elements => [{identifier, #{line => 3, spec => name}}],
+                            line => 3,
+                            type =>
+                                {type, #{
+                                    collection_type => list,
+                                    element_type =>
+                                        {type, #{
+                                            line => 3,
+                                            source => rufus_text,
+                                            spec => string
+                                        }},
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => 'list[string]'
+                                }}
+                        }},
+                    line => 3,
+                    right => {identifier, #{line => 3, spec => names}}
+                }},
+                {identifier, #{line => 4, spec => name}}
+            ],
+            line => 2,
+            params => [
+                {param, #{
+                    line => 2,
+                    spec => names,
+                    type =>
+                        {type, #{
+                            collection_type => list,
+                            element_type =>
+                                {type, #{
+                                    line => 2,
+                                    source => rufus_text,
+                                    spec => string
+                                }},
+                            line => 2,
+                            source => rufus_text,
+                            spec => 'list[string]'
+                        }}
+                }}
+            ],
+            return_type =>
+                {type, #{line => 2, source => rufus_text, spec => string}},
+            spec => 'Unbox'
+        }}
+    ],
+    ?assertEqual(Expected, Forms).
+
 parse_function_with_a_match_that_binds_a_variable_test() ->
     RufusText =
         "\n"
