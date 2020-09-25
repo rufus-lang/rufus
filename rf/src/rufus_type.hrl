@@ -6,7 +6,7 @@
 
 -type ok_tuple() :: {ok, any()}.
 -type error_tuple() :: {error, any()}.
--type error_triple() :: {error, any(), context()}.
+-type error_triple() :: {error, atom(), context()}.
 
 %% Rufus source text
 
@@ -69,8 +69,18 @@
 -type match_form() :: {match, context()}.
 -type call_form() :: {call, context()}.
 
+%% Virtual forms
+
+-type exprs_form() :: {exprs, context()}.
+-type params_form() :: {params, context()}.
+-type head_form() :: {head, context()}.
+-type left_form() :: {left, context()}.
+-type right_form() :: {right, context()}.
+-type tail_form() :: {tail, context()}.
+
 %% Rufus forms
 
+%% rufus_form represents a node in the parse tree.
 -type rufus_form() ::
     atom_lit_form() |
     bool_lit_form() |
@@ -87,6 +97,13 @@
     binary_op_form() |
     match_form() |
     call_form().
+
+%% rufus_forms is a list of rufus_form instances and typically represents an
+%% entire module.
+-type rufus_forms() :: list(rufus_form()).
+%% rufus_stack is a list of rufus_form instances that represent the path from
+%% the current node up to the top-most root node.
+-type rufus_stack() :: list(rufus_form()).
 
 %% Errors
 
