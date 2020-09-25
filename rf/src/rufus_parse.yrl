@@ -120,6 +120,7 @@ param -> bool_lit                : rufus_form:make_literal(bool, text('$1'), lin
 param -> cons                    : '$1'.
 param -> float_lit               : rufus_form:make_literal(float, text('$1'), line('$1')).
 param -> int_lit                 : rufus_form:make_literal(int, text('$1'), line('$1')).
+param -> list_lit                : '$1'.
 param -> string_lit              : rufus_form:make_literal(string, list_to_binary(text('$1')), line('$1')).
 
 type -> atom                     : rufus_form:make_type(atom, line('$1')).

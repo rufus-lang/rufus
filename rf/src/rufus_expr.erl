@@ -321,11 +321,12 @@ typecheck_and_annotate_list_lit(
     Stack,
     Globals,
     Locals,
-    {list_lit, Context = #{elements := Elements}}
+    Form = {list_lit, Context = #{elements := Elements}}
 ) ->
+    ListLitStack = [Form | Stack],
     {ok, NewLocals, AnnotatedElements} = typecheck_and_annotate(
         [],
-        Stack,
+        ListLitStack,
         Globals,
         Locals,
         Elements

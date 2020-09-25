@@ -728,3 +728,69 @@ parse_function_taking_a_cons_pattern_test() ->
         }}
     ],
     ?assertEqual(Expected, Forms).
+
+parse_function_taking_a_list_pattern_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Reverse(list[int]{a, b, c}) list[int] {\n"
+        "        list[int]{c, b, a}\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            exprs => [
+                {list_lit, #{
+                    elements => [
+                        {identifier, #{line => 4, spec => c}},
+                        {identifier, #{line => 4, spec => b}},
+                        {identifier, #{line => 4, spec => a}}
+                    ],
+                    line => 4,
+                    type =>
+                        {type, #{
+                            collection_type => list,
+                            element_type =>
+                                {type, #{line => 4, source => rufus_text, spec => int}},
+                            line => 4,
+                            source => rufus_text,
+                            spec => 'list[int]'
+                        }}
+                }}
+            ],
+            line => 3,
+            params => [
+                {list_lit, #{
+                    elements => [
+                        {identifier, #{line => 3, spec => a}},
+                        {identifier, #{line => 3, spec => b}},
+                        {identifier, #{line => 3, spec => c}}
+                    ],
+                    line => 3,
+                    type =>
+                        {type, #{
+                            collection_type => list,
+                            element_type =>
+                                {type, #{line => 3, source => rufus_text, spec => int}},
+                            line => 3,
+                            source => rufus_text,
+                            spec => 'list[int]'
+                        }}
+                }}
+            ],
+            return_type =>
+                {type, #{
+                    collection_type => list,
+                    element_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
+                    line => 3,
+                    source => rufus_text,
+                    spec => 'list[int]'
+                }},
+            spec => 'Reverse'
+        }}
+    ],
+    ?assertEqual(Expected, Forms).
