@@ -137,3 +137,15 @@ eval_for_function_taking_a_cons_pattern_and_returning_the_tail_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertEqual([2, 3, 4], example:'Rest'([1, 2, 3, 4])).
+
+eval_for_function_taking_a_list_lit_pattern_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Reverse(list[int]{a, b, c}) list[int] {\n"
+        "        list[int]{c, b, a}\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual([3, 2, 1], example:'Reverse'([1, 2, 3])).

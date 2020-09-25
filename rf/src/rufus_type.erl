@@ -331,7 +331,7 @@ lookup_identifier_type([{head, _Context1} | [{cons, #{type := Type}} | _T]], Sta
             Data = #{stack => Stack},
             throw({error, unknown_identifier, Data})
     end;
-lookup_identifier_type([{tail, _} | [{cons, #{type := Type}} | _T]], Stack) ->
+lookup_identifier_type([{tail, _Context1} | [{cons, #{type := Type}} | _T]], Stack) ->
     case
         lists:any(
             fun
@@ -345,6 +345,24 @@ lookup_identifier_type([{tail, _} | [{cons, #{type := Type}} | _T]], Stack) ->
     of
         true ->
             {ok, Type};
+        false ->
+            Data = #{stack => Stack},
+            throw({error, unknown_identifier, Data})
+    end;
+lookup_identifier_type([{list_lit, #{type := Type}} | _T], Stack) ->
+    case
+        lists:any(
+            fun
+                ({params, _Context}) ->
+                    true;
+                (_Form) ->
+                    false
+            end,
+            Stack
+        )
+    of
+        true ->
+            {ok, rufus_form:element_type(Type)};
         false ->
             Data = #{stack => Stack},
             throw({error, unknown_identifier, Data})
