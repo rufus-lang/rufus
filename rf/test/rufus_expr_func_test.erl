@@ -88,7 +88,8 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_function_scope_test() ->
                 }}
             ]
         },
-        locals => #{}
+        locals => #{},
+        stack => []
     },
     ?assertEqual({error, unknown_identifier, Data}, Result).
 

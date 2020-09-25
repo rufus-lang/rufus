@@ -296,8 +296,7 @@ resolve_identifier_type(Stack, Globals, Form = {identifier, #{spec := Spec, loca
                 {ok, Type} ->
                     {ok, Type};
                 _ ->
-                    io:format("true~n"),
-                    Data = #{globals => Globals, locals => Locals, form => Form},
+                    Data = #{globals => Globals, locals => Locals, form => Form, stack => Stack},
                     throw({error, unknown_identifier, Data})
             end
     end.
@@ -313,11 +312,43 @@ lookup_identifier_type(Stack) ->
             {error, Error, Data}
     end.
 
--spec lookup_identifier_type(rufus_stack(), rufus_stack()) -> {ok, type_form()}.
-lookup_identifier_type([{head, _} | [{cons, #{type := Type}} | _T]], _Stack) ->
-    {ok, rufus_form:element_type(Type)};
-lookup_identifier_type([{tail, _} | [{cons, #{type := Type}} | _T]], _Stack) ->
-    {ok, Type};
+-spec lookup_identifier_type(rufus_stack(), rufus_stack()) -> {ok, type_form()} | no_return().
+lookup_identifier_type([{head, _Context1} | [{cons, #{type := Type}} | _T]], Stack) ->
+    case
+        lists:any(
+            fun
+                ({params, _Context2}) ->
+                    true;
+                (_Form) ->
+                    false
+            end,
+            Stack
+        )
+    of
+        true ->
+            {ok, rufus_form:element_type(Type)};
+        false ->
+            Data = #{stack => Stack},
+            throw({error, unknown_identifier, Data})
+    end;
+lookup_identifier_type([{tail, _} | [{cons, #{type := Type}} | _T]], Stack) ->
+    case
+        lists:any(
+            fun
+                ({params, _Context2}) ->
+                    true;
+                (_Form) ->
+                    false
+            end,
+            Stack
+        )
+    of
+        true ->
+            {ok, Type};
+        false ->
+            Data = #{stack => Stack},
+            throw({error, unknown_identifier, Data})
+    end;
 lookup_identifier_type([{_, #{type := Type}} | _T], _Stack) ->
     {ok, Type};
 lookup_identifier_type([_H | T], Stack) ->

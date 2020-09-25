@@ -71,9 +71,10 @@
 
 %% Virtual forms
 
+-type exprs_form() :: {exprs, context()}.
+-type params_form() :: {params, context()}.
 -type head_form() :: {head, context()}.
 -type left_form() :: {left, context()}.
--type params_form() :: {params, context()}.
 -type right_form() :: {right, context()}.
 -type tail_form() :: {tail, context()}.
 

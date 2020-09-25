@@ -11,6 +11,7 @@
     make_binary_op/4,
     make_call/3,
     make_cons/4,
+    make_exprs/1,
     make_func/5,
     make_head/1,
     make_identifier/2,
@@ -198,6 +199,10 @@ make_func(Spec, Params, ReturnType, Exprs, Line) ->
         exprs => Exprs,
         line => Line
     }}.
+
+-spec make_exprs(func_form()) -> exprs_form().
+make_exprs({func, #{line := Line}}) ->
+    {exprs, #{line => Line}}.
 
 %% make_param returns a form for a function parameter declaration.
 -spec make_param(atom(), type_form(), integer()) ->

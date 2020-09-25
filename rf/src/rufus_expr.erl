@@ -74,8 +74,8 @@ typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {call, _Context} | T
     {ok, AnnotatedForm} = typecheck_and_annotate_call(Stack, Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {cons, _Context} | T]) ->
-    {ok, AnnotatedForm} = typecheck_and_annotate_cons(Stack, Globals, Locals, Form),
-    typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
+    {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_cons(Stack, Globals, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, NewLocals, T);
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {func, _Context} | T]) ->
     {ok, AnnotatedForm} = typecheck_and_annotate_func(Stack, Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
@@ -181,7 +181,7 @@ typecheck_and_annotate_call(Stack, Globals, Locals, {call, Context1 = #{args := 
 %% - `{error, unexpected_element_type, Data}` is thrown if either the head or
 %%   tail elements have type issues.
 -spec typecheck_and_annotate_cons(rufus_stack(), globals(), locals(), cons_form()) ->
-    {ok, cons_form()} | no_return().
+    {ok, locals(), cons_form()} | no_return().
 typecheck_and_annotate_cons(
     Stack,
     Globals,
@@ -194,7 +194,7 @@ typecheck_and_annotate_cons(
         Head
     ]),
     TailStack = [rufus_form:make_tail(Form) | ConsStack],
-    {ok, _NewLocals2, [AnnotatedTail]} = typecheck_and_annotate(
+    {ok, NewLocals2, [AnnotatedTail]} = typecheck_and_annotate(
         [],
         TailStack,
         Globals,
@@ -212,7 +212,7 @@ typecheck_and_annotate_cons(
                     tail => AnnotatedTail,
                     type => TypeForm
                 }},
-            {ok, AnnotatedForm2};
+            {ok, NewLocals2, AnnotatedForm2};
         Error ->
             throw(Error)
     end.
@@ -239,9 +239,10 @@ typecheck_and_annotate_func(
         Locals,
         Params
     ),
+    ExprsStack = [rufus_form:make_exprs(Form) | FuncStack],
     {ok, _NewLocals2, AnnotatedExprs} = typecheck_and_annotate(
         [],
-        FuncStack,
+        ExprsStack,
         Globals,
         NewLocals1,
         Exprs

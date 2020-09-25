@@ -478,7 +478,8 @@ typecheck_and_annotate_with_function_returning_a_list_of_int_with_an_unknown_var
                 }}
             ]
         },
-        locals => #{}
+        locals => #{},
+        stack => []
     },
     ?assertEqual({error, unknown_identifier, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
@@ -1257,7 +1258,9 @@ typecheck_and_annotate_with_function_taking_a_cons_pattern_and_returning_it_test
     RufusText =
         "\n"
         "    module example\n"
-        "    func Echo(list[int]{head|tail}) list[int] { list[int]{head|tail} }\n"
+        "    func Echo(list[int]{head|tail}) list[int] {\n"
+        "        list[int]{head|tail}\n"
+        "    }\n"
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
@@ -1269,8 +1272,7 @@ typecheck_and_annotate_with_function_taking_a_cons_pattern_and_returning_it_test
                 {cons, #{
                     head =>
                         {identifier, #{
-                            line => 3,
-                            locals => #{},
+                            line => 4,
                             spec => head,
                             type =>
                                 {type, #{
@@ -1279,18 +1281,10 @@ typecheck_and_annotate_with_function_taking_a_cons_pattern_and_returning_it_test
                                     spec => int
                                 }}
                         }},
-                    line => 3,
+                    line => 4,
                     tail =>
                         {identifier, #{
-                            line => 3,
-                            locals => #{
-                                head =>
-                                    {type, #{
-                                        line => 3,
-                                        source => rufus_text,
-                                        spec => int
-                                    }}
-                            },
+                            line => 4,
                             spec => tail,
                             type =>
                                 {type, #{
@@ -1310,8 +1304,8 @@ typecheck_and_annotate_with_function_taking_a_cons_pattern_and_returning_it_test
                         {type, #{
                             collection_type => list,
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
-                            line => 3,
+                                {type, #{line => 4, source => rufus_text, spec => int}},
+                            line => 4,
                             source => rufus_text,
                             spec => 'list[int]'
                         }}
@@ -1383,3 +1377,63 @@ typecheck_and_annotate_with_function_taking_a_cons_pattern_and_returning_it_test
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_with_function_returning_a_cons_pattern_without_data_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Broken() list[int] { list[int]{head|tail} }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{
+        form =>
+            {identifier, #{line => 3, locals => #{}, spec => head}},
+        globals => #{
+            'Broken' => [
+                {func, #{
+                    exprs => [
+                        {cons, #{
+                            head =>
+                                {identifier, #{line => 3, spec => head}},
+                            line => 3,
+                            tail =>
+                                {identifier, #{line => 3, spec => tail}},
+                            type =>
+                                {type, #{
+                                    collection_type => list,
+                                    element_type =>
+                                        {type, #{
+                                            line => 3,
+                                            source => rufus_text,
+                                            spec => int
+                                        }},
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => 'list[int]'
+                                }}
+                        }}
+                    ],
+                    line => 3,
+                    params => [],
+                    return_type =>
+                        {type, #{
+                            collection_type => list,
+                            element_type =>
+                                {type, #{
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => int
+                                }},
+                            line => 3,
+                            source => rufus_text,
+                            spec => 'list[int]'
+                        }},
+                    spec => 'Broken'
+                }}
+            ]
+        },
+        locals => #{},
+        stack => []
+    },
+    ?assertEqual({error, unknown_identifier, Data}, rufus_expr:typecheck_and_annotate(Forms)).
