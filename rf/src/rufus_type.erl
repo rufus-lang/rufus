@@ -347,9 +347,14 @@ element_types_match_list_type(Expected, ElementTypes) ->
 %% encounters.
 -spec lookup_type(rufus_stack()) -> {ok, type_form()} | error_triple().
 lookup_type(Stack) ->
-    lookup_type(Stack, Stack).
+    try
+        lookup_type(Stack, Stack)
+    catch
+        {error, Error, Data} ->
+            {error, Error, Data}
+    end.
 
--spec lookup_type(rufus_stack(), rufus_stack()) -> {ok, type_form()} | error_triple().
+-spec lookup_type(rufus_stack(), rufus_stack()) -> {ok, type_form()}.
 lookup_type([{head, _} | [{cons, #{type := Type}} | _T]], _Stack) ->
     {ok, rufus_form:element_type(Type)};
 lookup_type([{tail, _} | [{cons, #{type := Type}} | _T]], _Stack) ->
@@ -360,4 +365,4 @@ lookup_type([_H | T], Stack) ->
     lookup_type(T, Stack);
 lookup_type([], Stack) ->
     Data = #{stack => Stack},
-    {error, unknown_type, Data}.
+    throw({error, unknown_type, Data}).

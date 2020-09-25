@@ -6,7 +6,7 @@
 
 -type ok_tuple() :: {ok, any()}.
 -type error_tuple() :: {error, any()}.
--type error_triple() :: {error, any(), context()}.
+-type error_triple() :: {error, atom(), context()}.
 
 %% Rufus source text
 
