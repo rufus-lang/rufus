@@ -76,7 +76,9 @@ has_type(_Form) ->
 
 -spec element_type(type_form()) -> type_form().
 element_type({type, #{element_type := ElementType}}) ->
-    {ok, ElementType}.
+    ElementType;
+element_type({_, #{type := {type, #{element_type := ElementType}}}}) ->
+    ElementType.
 
 %% type returns type information for the form.
 -spec type(rufus_form()) -> context().

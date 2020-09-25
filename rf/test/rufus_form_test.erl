@@ -176,6 +176,14 @@ has_type_without_identifier_type_test() ->
     Form = {identifier, #{spec => unknown, line => 7}},
     ?assertEqual(false, rufus_form:has_type(Form)).
 
+element_type_test() ->
+    ElementType = rufus_form:make_type(bool, 81),
+    Type = rufus_form:make_type(list, ElementType, 81),
+    Value = rufus_form:make_literal(bool, true, 81),
+    Form = rufus_form:make_literal(list, Type, [Value], 81),
+    ?assertEqual(ElementType, rufus_form:element_type(Type)),
+    ?assertEqual(ElementType, rufus_form:element_type(Form)).
+
 type_test() ->
     Type = rufus_form:make_inferred_type(int, 27),
     Form = {int_lit, #{spec => 42, type => Type, line => 7}},
