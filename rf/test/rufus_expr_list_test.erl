@@ -1464,7 +1464,7 @@ typecheck_and_annotate_with_function_taking_a_cons_pattern_and_returning_the_tai
     RufusText =
         "\n"
         "    module example\n"
-        "    func Rest(list[int]{head|tail}) list[int] {\n"
+        "    func Rest(list[int]{1|tail}) list[int] {\n"
         "        tail\n"
         "    }\n"
         "    ",
@@ -1493,29 +1493,17 @@ typecheck_and_annotate_with_function_taking_a_cons_pattern_and_returning_the_tai
             params => [
                 {cons, #{
                     head =>
-                        {identifier, #{
+                        {int_lit, #{
                             line => 3,
-                            locals => #{},
-                            spec => head,
+                            spec => 1,
                             type =>
-                                {type, #{
-                                    line => 3,
-                                    source => rufus_text,
-                                    spec => int
-                                }}
+                                {type, #{line => 3, source => inferred, spec => int}}
                         }},
                     line => 3,
                     tail =>
                         {identifier, #{
                             line => 3,
-                            locals => #{
-                                head =>
-                                    {type, #{
-                                        line => 3,
-                                        source => rufus_text,
-                                        spec => int
-                                    }}
-                            },
+                            locals => #{},
                             spec => tail,
                             type =>
                                 {type, #{
