@@ -1604,7 +1604,7 @@ typecheck_and_annotate_with_function_returning_a_cons_pattern_without_data_test(
     },
     ?assertEqual({error, unknown_identifier, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
-typecheck_and_annotate_with_function_taking_a_list_pattern_test() ->
+typecheck_and_annotate_with_function_taking_a_list_lit_pattern_test() ->
     RufusText =
         "\n"
         "    module example\n"
