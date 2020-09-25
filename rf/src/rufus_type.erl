@@ -292,7 +292,7 @@ resolve_identifier_type(Stack, Globals, Form = {identifier, #{spec := Spec, loca
         {type, _Context} = Type ->
             {ok, Type};
         undefined ->
-            case lookup_type(Stack) of
+            case lookup_identifier_type(Stack) of
                 {ok, Type} ->
                     {ok, Type};
                 _ ->
@@ -301,6 +301,30 @@ resolve_identifier_type(Stack, Globals, Form = {identifier, #{spec := Spec, loca
                     throw({error, unknown_identifier, Data})
             end
     end.
+
+%% lookup_identifier_type walks up the stack, finds, and returns the first type
+%% it encounters.
+-spec lookup_identifier_type(rufus_stack()) -> {ok, type_form()} | error_triple().
+lookup_identifier_type(Stack) ->
+    try
+        lookup_identifier_type(Stack, Stack)
+    catch
+        {error, Error, Data} ->
+            {error, Error, Data}
+    end.
+
+-spec lookup_identifier_type(rufus_stack(), rufus_stack()) -> {ok, type_form()}.
+lookup_identifier_type([{head, _} | [{cons, #{type := Type}} | _T]], _Stack) ->
+    {ok, rufus_form:element_type(Type)};
+lookup_identifier_type([{tail, _} | [{cons, #{type := Type}} | _T]], _Stack) ->
+    {ok, Type};
+lookup_identifier_type([{_, #{type := Type}} | _T], _Stack) ->
+    {ok, Type};
+lookup_identifier_type([_H | T], Stack) ->
+    lookup_identifier_type(T, Stack);
+lookup_identifier_type([], Stack) ->
+    Data = #{stack => Stack},
+    throw({error, unknown_type, Data}).
 
 %% list_lit form helpers
 
@@ -328,29 +352,3 @@ resolve_list_lit_type(Stack, Globals, Form = {list_lit, #{elements := Elements, 
 element_types_match_list_type(Expected, ElementTypes) ->
     TypesMatch = fun({type, #{spec := Actual}}) -> Actual == Expected end,
     lists:all(TypesMatch, ElementTypes).
-
-%% Stack helpers
-
-%% lookup_type walks up the stack, finds, and returns the first type it
-%% encounters.
--spec lookup_type(rufus_stack()) -> {ok, type_form()} | error_triple().
-lookup_type(Stack) ->
-    try
-        lookup_type(Stack, Stack)
-    catch
-        {error, Error, Data} ->
-            {error, Error, Data}
-    end.
-
--spec lookup_type(rufus_stack(), rufus_stack()) -> {ok, type_form()}.
-lookup_type([{head, _} | [{cons, #{type := Type}} | _T]], _Stack) ->
-    {ok, rufus_form:element_type(Type)};
-lookup_type([{tail, _} | [{cons, #{type := Type}} | _T]], _Stack) ->
-    {ok, Type};
-lookup_type([{_, #{type := Type}} | _T], _Stack) ->
-    {ok, Type};
-lookup_type([_H | T], Stack) ->
-    lookup_type(T, Stack);
-lookup_type([], Stack) ->
-    Data = #{stack => Stack},
-    throw({error, unknown_type, Data}).
