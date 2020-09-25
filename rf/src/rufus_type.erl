@@ -331,18 +331,6 @@ element_types_match_list_type(Expected, ElementTypes) ->
 
 %% Stack helpers
 
-%% %% is_param returns true if Stack contains a params form, and therefore whether
-%% %% the current node is part of a function's parameter list.
-%% -spec is_param(rufus_stack()) -> boolean().
-%% is_param(Stack) ->
-%%     Fun = fun
-%%         ({params, _Context}) ->
-%%             true;
-%%         (_) ->
-%%             false
-%%     end,
-%%     lists:any(Fun, Stack).
-
 %% lookup_type walks up the stack, finds, and returns the first type it
 %% encounters.
 -spec lookup_type(rufus_stack()) -> {ok, type_form()} | error_triple().
