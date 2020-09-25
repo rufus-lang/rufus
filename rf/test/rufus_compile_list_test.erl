@@ -117,3 +117,23 @@ eval_for_function_that_prepends_a_number_to_a_list_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertEqual([1, 2, 3, 4], example:'Prepend'(1, [2, 3, 4])).
+
+eval_for_function_taking_a_cons_pattern_and_returning_it_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Echo(list[int]{head|tail}) list[int] { list[int]{head|tail} }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual([1, 2, 3, 4], example:'Echo'([1, 2, 3, 4])).
+
+eval_for_function_taking_a_cons_pattern_and_returning_the_tail_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Rest(list[int]{1|tail}) list[int] { tail }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual([2, 3, 4], example:'Rest'([1, 2, 3, 4])).
