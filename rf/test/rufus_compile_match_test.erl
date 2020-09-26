@@ -600,6 +600,15 @@ eval_function_with_a_match_that_has_an_unbound_variable_test() ->
         "    }\n"
         "    ",
     Data = #{
+        form =>
+            {identifier, #{
+                line => 5,
+                locals => #{
+                    value =>
+                        {type, #{line => 4, source => inferred, spec => int}}
+                },
+                spec => unbound
+            }},
         globals => #{
             'Broken' => [
                 {func, #{
@@ -636,28 +645,51 @@ eval_function_with_a_match_that_has_an_unbound_variable_test() ->
                 }}
             ]
         },
-        left =>
-            {identifier, #{
-                line => 5,
-                spec => value,
-                type =>
-                    {type, #{line => 4, source => inferred, spec => int}}
-            }},
         locals => #{
             value =>
                 {type, #{line => 4, source => inferred, spec => int}}
         },
-        right =>
-            {identifier, #{
+        stack => [
+            {match_right, #{line => 5}},
+            {match, #{
+                left => {identifier, #{line => 5, spec => value}},
                 line => 5,
-                locals => #{
-                    value =>
-                        {type, #{line => 4, source => inferred, spec => int}}
-                },
-                spec => unbound
+                right => {identifier, #{line => 5, spec => unbound}}
+            }},
+            {exprs, #{line => 3}},
+            {func, #{
+                exprs => [
+                    {match, #{
+                        left => {identifier, #{line => 4, spec => value}},
+                        line => 4,
+                        right =>
+                            {int_lit, #{
+                                line => 4,
+                                spec => 1,
+                                type =>
+                                    {type, #{
+                                        line => 4,
+                                        source => inferred,
+                                        spec => int
+                                    }}
+                            }}
+                    }},
+                    {match, #{
+                        left => {identifier, #{line => 5, spec => value}},
+                        line => 5,
+                        right =>
+                            {identifier, #{line => 5, spec => unbound}}
+                    }}
+                ],
+                line => 3,
+                params => [],
+                return_type =>
+                    {type, #{line => 3, source => rufus_text, spec => int}},
+                spec => 'Broken'
             }}
+        ]
     },
-    ?assertEqual({error, unmatched_types, Data}, rufus_compile:eval(RufusText)).
+    ?assertEqual({error, unknown_identifier, Data}, rufus_compile:eval(RufusText)).
 
 eval_function_with_a_match_that_has_unbound_variables_test() ->
     RufusText =
@@ -668,6 +700,8 @@ eval_function_with_a_match_that_has_unbound_variables_test() ->
         "    }\n"
         "    ",
     Data = #{
+        form =>
+            {identifier, #{line => 4, locals => #{}, spec => unbound2}},
         globals => #{
             'Broken' => [
                 {func, #{
@@ -688,13 +722,34 @@ eval_function_with_a_match_that_has_unbound_variables_test() ->
                 }}
             ]
         },
-        left =>
-            {identifier, #{line => 4, locals => #{}, spec => unbound1}},
         locals => #{},
-        right =>
-            {identifier, #{line => 4, locals => #{}, spec => unbound2}}
+        stack => [
+            {match_right, #{line => 4}},
+            {match, #{
+                left => {identifier, #{line => 4, spec => unbound1}},
+                line => 4,
+                right => {identifier, #{line => 4, spec => unbound2}}
+            }},
+            {exprs, #{line => 3}},
+            {func, #{
+                exprs => [
+                    {match, #{
+                        left =>
+                            {identifier, #{line => 4, spec => unbound1}},
+                        line => 4,
+                        right =>
+                            {identifier, #{line => 4, spec => unbound2}}
+                    }}
+                ],
+                line => 3,
+                params => [],
+                return_type =>
+                    {type, #{line => 3, source => rufus_text, spec => int}},
+                spec => 'Broken'
+            }}
+        ]
     },
-    ?assertEqual({error, unmatched_types, Data}, rufus_compile:eval(RufusText)).
+    ?assertEqual({error, unknown_identifier, Data}, rufus_compile:eval(RufusText)).
 
 eval_function_with_a_match_that_has_unmatched_types_test() ->
     RufusText =

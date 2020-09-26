@@ -296,11 +296,8 @@ typecheck_and_annotate_identifier(
                     AnnotatedForm2 = {identifier, Context2#{type => TypeForm}},
                     {ok, NewLocals} = push_local(Locals, AnnotatedForm2),
                     {ok, NewLocals, AnnotatedForm2};
-                {error, unknown_identifier, _Data} ->
-                    %% We return the form, without type information, because the
-                    %% typechecking logic for match forms currently depends on
-                    %% this behavior.
-                    {ok, Locals, AnnotatedForm1}
+                {error, unknown_identifier, Data} ->
+                    throw({error, unknown_identifier, Data})
             end;
         TypeForm ->
             AnnotatedForm2 = {identifier, Context1#{type => TypeForm}},
