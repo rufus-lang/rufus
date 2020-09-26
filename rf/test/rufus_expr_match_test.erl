@@ -997,11 +997,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_call_operand_test()
                         line => 4,
                         spec => 'Two',
                         type =>
-                            {type, #{
-                                line => 3,
-                                source => rufus_text,
-                                spec => int
-                            }}
+                            {type, #{line => 3, source => rufus_text, spec => int}}
                     }},
                 line => 4,
                 right =>
@@ -1009,12 +1005,10 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_call_operand_test()
                         line => 4,
                         spec => 2,
                         type =>
-                            {type, #{
-                                line => 4,
-                                source => inferred,
-                                spec => int
-                            }}
-                    }}
+                            {type, #{line => 4, source => inferred, spec => int}}
+                    }},
+                type =>
+                    {type, #{line => 4, source => inferred, spec => int}}
             }},
         globals => #{
             'Random' => [
@@ -1022,11 +1016,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_call_operand_test()
                     exprs => [
                         {match, #{
                             left =>
-                                {call, #{
-                                    args => [],
-                                    line => 4,
-                                    spec => 'Two'
-                                }},
+                                {call, #{args => [], line => 4, spec => 'Two'}},
                             line => 4,
                             right =>
                                 {int_lit, #{
@@ -1038,6 +1028,149 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_call_operand_test()
                                             source => inferred,
                                             spec => int
                                         }}
+                                }}
+                        }}
+                    ],
+                    line => 4,
+                    params => [],
+                    return_type =>
+                        {type, #{line => 4, source => rufus_text, spec => int}},
+                    spec => 'Random'
+                }}
+            ],
+            'Two' => [
+                {func, #{
+                    exprs => [
+                        {int_lit, #{
+                            line => 3,
+                            spec => 2,
+                            type =>
+                                {type, #{
+                                    line => 3,
+                                    source => inferred,
+                                    spec => int
+                                }}
+                        }}
+                    ],
+                    line => 3,
+                    params => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
+                    spec => 'Two'
+                }}
+            ]
+        },
+        locals => #{}
+    },
+    ?assertEqual({error, illegal_pattern, Data}, rufus_expr:typecheck_and_annotate(Forms)).
+
+typecheck_and_annotate_function_with_a_match_that_has_a_left_binary_op_operand_with_a_call_operand_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Two() int { 2 }\n"
+        "    func Random() int {\n"
+        "        n = 3\n"
+        "        1 + Two() = n\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{
+        form =>
+            {match, #{
+                left =>
+                    {binary_op, #{
+                        left =>
+                            {int_lit, #{
+                                line => 6,
+                                spec => 1,
+                                type =>
+                                    {type, #{
+                                        line => 6,
+                                        source => inferred,
+                                        spec => int
+                                    }}
+                            }},
+                        line => 6,
+                        op => '+',
+                        right =>
+                            {call, #{
+                                args => [],
+                                line => 6,
+                                spec => 'Two',
+                                type =>
+                                    {type, #{
+                                        line => 3,
+                                        source => rufus_text,
+                                        spec => int
+                                    }}
+                            }},
+                        type =>
+                            {type, #{
+                                line => 6,
+                                source => inferred,
+                                spec => int
+                            }}
+                    }},
+                line => 6,
+                right =>
+                    {identifier, #{
+                        line => 6,
+                        spec => n
+                    }}
+            }},
+        globals => #{
+            'Random' => [
+                {func, #{
+                    exprs => [
+                        {match, #{
+                            left =>
+                                {identifier, #{
+                                    line => 5,
+                                    spec => n
+                                }},
+                            line => 5,
+                            right =>
+                                {int_lit, #{
+                                    line => 5,
+                                    spec => 3,
+                                    type =>
+                                        {type, #{
+                                            line => 5,
+                                            source => inferred,
+                                            spec => int
+                                        }}
+                                }}
+                        }},
+                        {match, #{
+                            left =>
+                                {binary_op, #{
+                                    left =>
+                                        {int_lit, #{
+                                            line => 6,
+                                            spec => 1,
+                                            type =>
+                                                {type, #{
+                                                    line => 6,
+                                                    source => inferred,
+                                                    spec => int
+                                                }}
+                                        }},
+                                    line => 6,
+                                    op => '+',
+                                    right =>
+                                        {call, #{
+                                            args => [],
+                                            line => 6,
+                                            spec => 'Two'
+                                        }}
+                                }},
+                            line => 6,
+                            right =>
+                                {identifier, #{
+                                    line => 6,
+                                    spec => n
                                 }}
                         }}
                     ],
@@ -1078,167 +1211,16 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_call_operand_test()
                 }}
             ]
         },
-        locals => #{}
+        locals => #{
+            n =>
+                {type, #{
+                    line => 5,
+                    source => inferred,
+                    spec => int
+                }}
+        }
     },
     ?assertEqual({error, illegal_pattern, Data}, rufus_expr:typecheck_and_annotate(Forms)).
-
-%% typecheck_and_annotate_function_with_a_match_that_has_a_left_binary_op_operand_with_a_call_operand_test() ->
-%%     RufusText =
-%%         "\n"
-%%         "    module example\n"
-%%         "    func Two() int { 2 }\n"
-%%         "    func Random() int {\n"
-%%         "        n = 3\n"
-%%         "        1 + Two() = n\n"
-%%         "    }\n"
-%%         "    ",
-%%     {ok, Tokens} = rufus_tokenize:string(RufusText),
-%%     {ok, Forms} = rufus_parse:parse(Tokens),
-%%     Data = #{
-%%         form =>
-%%             {match, #{
-%%                 left =>
-%%                     {binary_op, #{
-%%                         left =>
-%%                             {int_lit, #{
-%%                                 line => 6,
-%%                                 spec => 1,
-%%                                 type =>
-%%                                     {type, #{
-%%                                         line => 6,
-%%                                         source => inferred,
-%%                                         spec => int
-%%                                     }}
-%%                             }},
-%%                         line => 6,
-%%                         op => '+',
-%%                         right =>
-%%                             {call, #{
-%%                                 args => [],
-%%                                 line => 6,
-%%                                 spec => 'Two',
-%%                                 type =>
-%%                                     {type, #{
-%%                                         line => 3,
-%%                                         source => rufus_text,
-%%                                         spec => int
-%%                                     }}
-%%                             }},
-%%                         type =>
-%%                             {type, #{
-%%                                 line => 6,
-%%                                 source => inferred,
-%%                                 spec => int
-%%                             }}
-%%                     }},
-%%                 line => 6,
-%%                 right =>
-%%                     {identifier, #{
-%%                         line => 6,
-%%                         spec => n
-%%                     }}
-%%             }},
-%%         globals => #{
-%%             'Random' => [
-%%                 {func, #{
-%%                     exprs => [
-%%                         {match, #{
-%%                             left =>
-%%                                 {identifier, #{
-%%                                     line => 5,
-%%                                     spec => n
-%%                                 }},
-%%                             line => 5,
-%%                             right =>
-%%                                 {int_lit, #{
-%%                                     line => 5,
-%%                                     spec => 3,
-%%                                     type =>
-%%                                         {type, #{
-%%                                             line => 5,
-%%                                             source => inferred,
-%%                                             spec => int
-%%                                         }}
-%%                                 }}
-%%                         }},
-%%                         {match, #{
-%%                             left =>
-%%                                 {binary_op, #{
-%%                                     left =>
-%%                                         {int_lit, #{
-%%                                             line => 6,
-%%                                             spec => 1,
-%%                                             type =>
-%%                                                 {type, #{
-%%                                                     line => 6,
-%%                                                     source => inferred,
-%%                                                     spec => int
-%%                                                 }}
-%%                                         }},
-%%                                     line => 6,
-%%                                     op => '+',
-%%                                     right =>
-%%                                         {call, #{
-%%                                             args => [],
-%%                                             line => 6,
-%%                                             spec => 'Two'
-%%                                         }}
-%%                                 }},
-%%                             line => 6,
-%%                             right =>
-%%                                 {identifier, #{
-%%                                     line => 6,
-%%                                     spec => n
-%%                                 }}
-%%                         }}
-%%                     ],
-%%                     line => 4,
-%%                     params => [],
-%%                     return_type =>
-%%                         {type, #{
-%%                             line => 4,
-%%                             source => rufus_text,
-%%                             spec => int
-%%                         }},
-%%                     spec => 'Random'
-%%                 }}
-%%             ],
-%%             'Two' => [
-%%                 {func, #{
-%%                     exprs => [
-%%                         {int_lit, #{
-%%                             line => 3,
-%%                             spec => 2,
-%%                             type =>
-%%                                 {type, #{
-%%                                     line => 3,
-%%                                     source => inferred,
-%%                                     spec => int
-%%                                 }}
-%%                         }}
-%%                     ],
-%%                     line => 3,
-%%                     params => [],
-%%                     return_type =>
-%%                         {type, #{
-%%                             line => 3,
-%%                             source => rufus_text,
-%%                             spec => int
-%%                         }},
-%%                     spec => 'Two'
-%%                 }}
-%%             ]
-%%         },
-%%         locals => #{
-%%             n =>
-%%                 {type, #{
-%%                     line => 5,
-%%                     source => inferred,
-%%                     spec => int
-%%                 }}
-%%         }
-%%     },
-%%     ?assertEqual({error, illegal_pattern, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
 %% typecheck_and_annotate_function_with_a_match_that_has_a_left_binary_op_operand_with_an_unbound_identifer_as_an_operand_test() ->
 %%     RufusText =

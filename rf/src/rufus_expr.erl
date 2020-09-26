@@ -392,6 +392,7 @@ typecheck_and_annotate_match(
                     right => AnnotatedRight,
                     type => rufus_form:type(AnnotatedRight)
                 }},
+            ok = validate_pattern(Globals, NewLocals2, AnnotatedForm2),
             {ok, NewLocals2, AnnotatedForm2};
         false ->
             Data = #{
@@ -546,57 +547,57 @@ typecheck_and_annotate_match(
 %%             throw({error, unbound_variables, Data})
 %%     end.
 
-%% %% validate_pattern checks the left hand side of a pattern match expression for
-%% %% valid expressions. An `{error, illegal_pattern, Data}` error triple is thrown
-%% %% if an invalid expression is found.
-%% %%
-%% %% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
-%% %% -spec validate_pattern(globals(), locals(), match_form()) -> ok | no_return().
-%% validate_pattern(Globals, Locals, Form = {match, _Context}) ->
-%%     Data = #{
-%%         globals => Globals,
-%%         locals => Locals,
-%%         form => Form
-%%     },
-%%     validate_pattern(Data, Form).
+%% validate_pattern checks the left hand side of a pattern match expression for
+%% valid expressions. An `{error, illegal_pattern, Data}` error triple is thrown
+%% if an invalid expression is found.
+%%
+%% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
+%% -spec validate_pattern(globals(), locals(), match_form()) -> ok | no_return().
+validate_pattern(Globals, Locals, Form = {match, _Context}) ->
+    Data = #{
+        globals => Globals,
+        locals => Locals,
+        form => Form
+    },
+    validate_pattern(Data, Form).
 
-%% %% validate_pattern inspects the left hand operand of a match form to ensure
-%% %% that its a valid pattern. A pattern has the same structure as a term but can
-%% %% contain unbound variables. An `{error, illegal_pattern, Data}` error triple
-%% %% is thrown if the left hand operand contains unsupported expressions.
-%% -spec validate_pattern(context(), rufus_form()) -> ok | no_return().
-%% validate_pattern(Data, {match, #{left := Left}}) ->
-%%     validate_pattern(Data, Left);
-%% validate_pattern(_Data, {atom_lit, _Context}) ->
-%%     ok;
-%% validate_pattern(_Data, {bool_lit, _Context}) ->
-%%     ok;
-%% validate_pattern(_Data, {float_lit, _Context}) ->
-%%     ok;
-%% validate_pattern(_Data, {int_lit, _Context}) ->
-%%     ok;
-%% validate_pattern(_Data, {string_lit, _Context}) ->
-%%     ok;
-%% validate_pattern(_Data, {identifier, _Context}) ->
-%%     ok;
-%% validate_pattern(Data, Form = {binary_op, _Context}) ->
-%%     case is_constant_expr(Form) of
-%%         true ->
-%%             ok;
-%%         false ->
-%%             throw({error, illegal_pattern, Data})
-%%     end;
-%% validate_pattern(Data, _Form) ->
-%%     throw({error, illegal_pattern, Data}).
+%% validate_pattern inspects the left hand operand of a match form to ensure
+%% that its a valid pattern. A pattern has the same structure as a term but can
+%% contain unbound variables. An `{error, illegal_pattern, Data}` error triple
+%% is thrown if the left hand operand contains unsupported expressions.
+-spec validate_pattern(context(), rufus_form()) -> ok | no_return().
+validate_pattern(Data, {match, #{left := Left}}) ->
+    validate_pattern(Data, Left);
+validate_pattern(_Data, {atom_lit, _Context}) ->
+    ok;
+validate_pattern(_Data, {bool_lit, _Context}) ->
+    ok;
+validate_pattern(_Data, {float_lit, _Context}) ->
+    ok;
+validate_pattern(_Data, {int_lit, _Context}) ->
+    ok;
+validate_pattern(_Data, {string_lit, _Context}) ->
+    ok;
+validate_pattern(_Data, {identifier, _Context}) ->
+    ok;
+validate_pattern(Data, Form = {binary_op, _Context}) ->
+    case is_constant_expr(Form) of
+        true ->
+            ok;
+        false ->
+            throw({error, illegal_pattern, Data})
+    end;
+validate_pattern(Data, _Form) ->
+    throw({error, illegal_pattern, Data}).
 
-%% %% is_constant_expr returns true if a binary_op can be evaluated to a constant
-%% %% during compilation. Otherwise, it returns false.
-%% -spec is_constant_expr(rufus_form()) -> boolean().
-%% is_constant_expr({binary_op, #{left := Left, right := Right}}) ->
-%%     is_constant_expr(Left) and is_constant_expr(Right);
-%% is_constant_expr({float_lit, _Context}) ->
-%%     true;
-%% is_constant_expr({int_lit, _Context}) ->
-%%     true;
-%% is_constant_expr(_Form) ->
-%%     false.
+%% is_constant_expr returns true if a binary_op can be evaluated to a constant
+%% during compilation. Otherwise, it returns false.
+-spec is_constant_expr(rufus_form()) -> boolean().
+is_constant_expr({binary_op, #{left := Left, right := Right}}) ->
+    is_constant_expr(Left) and is_constant_expr(Right);
+is_constant_expr({float_lit, _Context}) ->
+    true;
+is_constant_expr({int_lit, _Context}) ->
+    true;
+is_constant_expr(_Form) ->
+    false.
