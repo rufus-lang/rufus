@@ -134,11 +134,7 @@ eval_function_with_a_match_that_has_a_left_call_operand_test() ->
                         line => 4,
                         spec => 'Two',
                         type =>
-                            {type, #{
-                                line => 3,
-                                source => rufus_text,
-                                spec => int
-                            }}
+                            {type, #{line => 3, source => rufus_text, spec => int}}
                     }},
                 line => 4,
                 right =>
@@ -146,12 +142,10 @@ eval_function_with_a_match_that_has_a_left_call_operand_test() ->
                         line => 4,
                         spec => 2,
                         type =>
-                            {type, #{
-                                line => 4,
-                                source => inferred,
-                                spec => int
-                            }}
-                    }}
+                            {type, #{line => 4, source => inferred, spec => int}}
+                    }},
+                type =>
+                    {type, #{line => 4, source => inferred, spec => int}}
             }},
         globals => #{
             'Random' => [
@@ -159,11 +153,7 @@ eval_function_with_a_match_that_has_a_left_call_operand_test() ->
                     exprs => [
                         {match, #{
                             left =>
-                                {call, #{
-                                    args => [],
-                                    line => 4,
-                                    spec => 'Two'
-                                }},
+                                {call, #{args => [], line => 4, spec => 'Two'}},
                             line => 4,
                             right =>
                                 {int_lit, #{
@@ -181,11 +171,7 @@ eval_function_with_a_match_that_has_a_left_call_operand_test() ->
                     line => 4,
                     params => [],
                     return_type =>
-                        {type, #{
-                            line => 4,
-                            source => rufus_text,
-                            spec => int
-                        }},
+                        {type, #{line => 4, source => rufus_text, spec => int}},
                     spec => 'Random'
                 }}
             ],
@@ -206,11 +192,7 @@ eval_function_with_a_match_that_has_a_left_call_operand_test() ->
                     line => 3,
                     params => [],
                     return_type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => int
-                        }},
+                        {type, #{line => 3, source => rufus_text, spec => int}},
                     spec => 'Two'
                 }}
             ]
@@ -260,29 +242,25 @@ eval_function_with_a_match_that_has_a_left_binary_op_operand_with_a_call_operand
                                     }}
                             }},
                         type =>
-                            {type, #{
-                                line => 6,
-                                source => inferred,
-                                spec => int
-                            }}
+                            {type, #{line => 6, source => inferred, spec => int}}
                     }},
                 line => 6,
                 right =>
                     {identifier, #{
                         line => 6,
-                        spec => n
-                    }}
+                        spec => n,
+                        type =>
+                            {type, #{line => 5, source => inferred, spec => int}}
+                    }},
+                type =>
+                    {type, #{line => 5, source => inferred, spec => int}}
             }},
         globals => #{
             'Random' => [
                 {func, #{
                     exprs => [
                         {match, #{
-                            left =>
-                                {identifier, #{
-                                    line => 5,
-                                    spec => n
-                                }},
+                            left => {identifier, #{line => 5, spec => n}},
                             line => 5,
                             right =>
                                 {int_lit, #{
@@ -321,20 +299,13 @@ eval_function_with_a_match_that_has_a_left_binary_op_operand_with_a_call_operand
                                 }},
                             line => 6,
                             right =>
-                                {identifier, #{
-                                    line => 6,
-                                    spec => n
-                                }}
+                                {identifier, #{line => 6, spec => n}}
                         }}
                     ],
                     line => 4,
                     params => [],
                     return_type =>
-                        {type, #{
-                            line => 4,
-                            source => rufus_text,
-                            spec => int
-                        }},
+                        {type, #{line => 4, source => rufus_text, spec => int}},
                     spec => 'Random'
                 }}
             ],
@@ -355,22 +326,14 @@ eval_function_with_a_match_that_has_a_left_binary_op_operand_with_a_call_operand
                     line => 3,
                     params => [],
                     return_type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => int
-                        }},
+                        {type, #{line => 3, source => rufus_text, spec => int}},
                     spec => 'Two'
                 }}
             ]
         },
         locals => #{
             n =>
-                {type, #{
-                    line => 5,
-                    source => inferred,
-                    spec => int
-                }}
+                {type, #{line => 5, source => inferred, spec => int}}
         }
     },
     ?assertEqual({error, illegal_pattern, Data}, rufus_compile:eval(RufusText)).
@@ -391,19 +354,19 @@ eval_function_with_a_match_that_has_a_left_and_right_call_operand_test() ->
                         line => 4,
                         spec => 'Two',
                         type =>
-                            {type, #{
-                                line => 3,
-                                source => rufus_text,
-                                spec => int
-                            }}
+                            {type, #{line => 3, source => rufus_text, spec => int}}
                     }},
                 line => 4,
                 right =>
                     {call, #{
                         args => [],
                         line => 4,
-                        spec => 'Two'
-                    }}
+                        spec => 'Two',
+                        type =>
+                            {type, #{line => 3, source => rufus_text, spec => int}}
+                    }},
+                type =>
+                    {type, #{line => 3, source => rufus_text, spec => int}}
             }},
         globals => #{
             'Random' => [
@@ -411,28 +374,16 @@ eval_function_with_a_match_that_has_a_left_and_right_call_operand_test() ->
                     exprs => [
                         {match, #{
                             left =>
-                                {call, #{
-                                    args => [],
-                                    line => 4,
-                                    spec => 'Two'
-                                }},
+                                {call, #{args => [], line => 4, spec => 'Two'}},
                             line => 4,
                             right =>
-                                {call, #{
-                                    args => [],
-                                    line => 4,
-                                    spec => 'Two'
-                                }}
+                                {call, #{args => [], line => 4, spec => 'Two'}}
                         }}
                     ],
                     line => 4,
                     params => [],
                     return_type =>
-                        {type, #{
-                            line => 4,
-                            source => rufus_text,
-                            spec => int
-                        }},
+                        {type, #{line => 4, source => rufus_text, spec => int}},
                     spec => 'Random'
                 }}
             ],
@@ -453,11 +404,7 @@ eval_function_with_a_match_that_has_a_left_and_right_call_operand_test() ->
                     line => 3,
                     params => [],
                     return_type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => int
-                        }},
+                        {type, #{line => 3, source => rufus_text, spec => int}},
                     spec => 'Two'
                 }}
             ]
@@ -653,29 +600,13 @@ eval_function_with_a_match_that_has_an_unbound_variable_test() ->
         "    }\n"
         "    ",
     Data = #{
-        form =>
-            {identifier, #{
-                line => 5,
-                locals => #{
-                    value =>
-                        {type, #{
-                            line => 4,
-                            source => inferred,
-                            spec => int
-                        }}
-                },
-                spec => unbound
-            }},
         globals => #{
             'Broken' => [
                 {func, #{
                     exprs => [
                         {match, #{
                             left =>
-                                {identifier, #{
-                                    line => 4,
-                                    spec => value
-                                }},
+                                {identifier, #{line => 4, spec => value}},
                             line => 4,
                             right =>
                                 {int_lit, #{
@@ -691,40 +622,42 @@ eval_function_with_a_match_that_has_an_unbound_variable_test() ->
                         }},
                         {match, #{
                             left =>
-                                {identifier, #{
-                                    line => 5,
-                                    spec => value
-                                }},
+                                {identifier, #{line => 5, spec => value}},
                             line => 5,
                             right =>
-                                {identifier, #{
-                                    line => 5,
-                                    spec => unbound
-                                }}
+                                {identifier, #{line => 5, spec => unbound}}
                         }}
                     ],
                     line => 3,
                     params => [],
                     return_type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => int
-                        }},
+                        {type, #{line => 3, source => rufus_text, spec => int}},
                     spec => 'Broken'
                 }}
             ]
         },
+        left =>
+            {identifier, #{
+                line => 5,
+                spec => value,
+                type =>
+                    {type, #{line => 4, source => inferred, spec => int}}
+            }},
         locals => #{
             value =>
-                {type, #{
-                    line => 4,
-                    source => inferred,
-                    spec => int
-                }}
-        }
+                {type, #{line => 4, source => inferred, spec => int}}
+        },
+        right =>
+            {identifier, #{
+                line => 5,
+                locals => #{
+                    value =>
+                        {type, #{line => 4, source => inferred, spec => int}}
+                },
+                spec => unbound
+            }}
     },
-    ?assertEqual({error, unbound_variable, Data}, rufus_compile:eval(RufusText)).
+    ?assertEqual({error, unmatched_types, Data}, rufus_compile:eval(RufusText)).
 
 eval_function_with_a_match_that_has_unbound_variables_test() ->
     RufusText =
@@ -741,45 +674,27 @@ eval_function_with_a_match_that_has_unbound_variables_test() ->
                     exprs => [
                         {match, #{
                             left =>
-                                {identifier, #{
-                                    line => 4,
-                                    spec => unbound1
-                                }},
+                                {identifier, #{line => 4, spec => unbound1}},
                             line => 4,
                             right =>
-                                {identifier, #{
-                                    line => 4,
-                                    spec => unbound2
-                                }}
+                                {identifier, #{line => 4, spec => unbound2}}
                         }}
                     ],
                     line => 3,
                     params => [],
                     return_type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => int
-                        }},
+                        {type, #{line => 3, source => rufus_text, spec => int}},
                     spec => 'Broken'
                 }}
             ]
         },
         left =>
-            {identifier, #{
-                line => 4,
-                locals => #{},
-                spec => unbound1
-            }},
+            {identifier, #{line => 4, locals => #{}, spec => unbound1}},
         locals => #{},
         right =>
-            {identifier, #{
-                line => 4,
-                locals => #{},
-                spec => unbound2
-            }}
+            {identifier, #{line => 4, locals => #{}, spec => unbound2}}
     },
-    ?assertEqual({error, unbound_variables, Data}, rufus_compile:eval(RufusText)).
+    ?assertEqual({error, unmatched_types, Data}, rufus_compile:eval(RufusText)).
 
 eval_function_with_a_match_that_has_unmatched_types_test() ->
     RufusText =
