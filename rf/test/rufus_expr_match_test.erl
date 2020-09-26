@@ -500,86 +500,86 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_of_int_literal_te
 %%     Expected = [],
 %%     ?assertEqual(Expected, AnnotatedForms).
 
-%% typecheck_and_annotate_function_with_a_match_that_has_left_and_right_operands_with_mismatched_types_test() ->
-%%     RufusText =
-%%         "\n"
-%%         "    module example\n"
-%%         "    func Random() int {\n"
-%%         "        2.0 = 2\n"
-%%         "    }\n"
-%%         "    ",
-%%     {ok, Tokens} = rufus_tokenize:string(RufusText),
-%%     {ok, Forms} = rufus_parse:parse(Tokens),
-%%     Data = #{
-%%         globals => #{
-%%             'Random' => [
-%%                 {func, #{
-%%                     exprs => [
-%%                         {match, #{
-%%                             left =>
-%%                                 {float_lit, #{
-%%                                     line => 4,
-%%                                     spec => 2.0,
-%%                                     type =>
-%%                                         {type, #{
-%%                                             line => 4,
-%%                                             source => inferred,
-%%                                             spec => float
-%%                                         }}
-%%                                 }},
-%%                             line => 4,
-%%                             right =>
-%%                                 {int_lit, #{
-%%                                     line => 4,
-%%                                     spec => 2,
-%%                                     type =>
-%%                                         {type, #{
-%%                                             line => 4,
-%%                                             source => inferred,
-%%                                             spec => int
-%%                                         }}
-%%                                 }}
-%%                         }}
-%%                     ],
-%%                     line => 3,
-%%                     params => [],
-%%                     return_type =>
-%%                         {type, #{
-%%                             line => 3,
-%%                             source => rufus_text,
-%%                             spec => int
-%%                         }},
-%%                     spec => 'Random'
-%%                 }}
-%%             ]
-%%         },
-%%         left =>
-%%             {float_lit, #{
-%%                 line => 4,
-%%                 spec => 2.0,
-%%                 type =>
-%%                     {type, #{
-%%                         line => 4,
-%%                         source => inferred,
-%%                         spec => float
-%%                     }}
-%%             }},
-%%         locals => #{},
-%%         right =>
-%%             {int_lit, #{
-%%                 line => 4,
-%%                 spec => 2,
-%%                 type =>
-%%                     {type, #{
-%%                         line => 4,
-%%                         source => inferred,
-%%                         spec => int
-%%                     }}
-%%             }}
-%%     },
-%%     ?assertEqual({error, unmatched_types, Data}, rufus_expr:typecheck_and_annotate(Forms)).
+typecheck_and_annotate_function_with_a_match_that_has_left_and_right_operands_with_mismatched_types_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Random() int {\n"
+        "        2.0 = 2\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{
+        globals => #{
+            'Random' => [
+                {func, #{
+                    exprs => [
+                        {match, #{
+                            left =>
+                                {float_lit, #{
+                                    line => 4,
+                                    spec => 2.0,
+                                    type =>
+                                        {type, #{
+                                            line => 4,
+                                            source => inferred,
+                                            spec => float
+                                        }}
+                                }},
+                            line => 4,
+                            right =>
+                                {int_lit, #{
+                                    line => 4,
+                                    spec => 2,
+                                    type =>
+                                        {type, #{
+                                            line => 4,
+                                            source => inferred,
+                                            spec => int
+                                        }}
+                                }}
+                        }}
+                    ],
+                    line => 3,
+                    params => [],
+                    return_type =>
+                        {type, #{
+                            line => 3,
+                            source => rufus_text,
+                            spec => int
+                        }},
+                    spec => 'Random'
+                }}
+            ]
+        },
+        left =>
+            {float_lit, #{
+                line => 4,
+                spec => 2.0,
+                type =>
+                    {type, #{
+                        line => 4,
+                        source => inferred,
+                        spec => float
+                    }}
+            }},
+        locals => #{},
+        right =>
+            {int_lit, #{
+                line => 4,
+                spec => 2,
+                type =>
+                    {type, #{
+                        line => 4,
+                        source => inferred,
+                        spec => int
+                    }}
+            }}
+    },
+    ?assertEqual({error, unmatched_types, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
-%% %% match expressions involving binary_op expressions
+%% match expressions involving binary_op expressions
 
 %% typecheck_and_annotate_function_with_a_match_that_has_a_left_binary_op_operand_test() ->
 %%     RufusText =

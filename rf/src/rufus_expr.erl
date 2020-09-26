@@ -389,8 +389,6 @@ typecheck_and_annotate_match(
             right => AnnotatedRight,
             type => rufus_form:type(AnnotatedRight)
         }},
-    io:format("~nAnnotatedForm2 => ~p~n", [AnnotatedForm2]),
-    io:format("~nNewLocals2 => ~p~n", [NewLocals2]),
     {ok, NewLocals2, AnnotatedForm2}.
 
 %% %% typecheck_and_annotate_match ensures that match operands have matching types.

@@ -371,7 +371,6 @@ lookup_identifier_type(
     [{left, _Context1} | [{match, #{right := {_FormSpec, #{type := Type}}}} | _T]],
     _Stack
 ) ->
-    io:format("THE FUCK?~n"),
     {ok, Type};
 lookup_identifier_type([{_, #{type := Type}} | _T], _Stack) ->
     {ok, Type};
