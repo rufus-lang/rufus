@@ -2,7 +2,7 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-eval_for_function_returning_an_empty_list_test() ->
+eval_function_returning_an_empty_list_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -12,7 +12,7 @@ eval_for_function_returning_an_empty_list_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual([], example:'Empty'()).
 
-eval_for_function_returning_a_list_with_a_single_element_test() ->
+eval_function_returning_a_list_with_a_single_element_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -22,7 +22,7 @@ eval_for_function_returning_a_list_with_a_single_element_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual([7], example:'Numbers'()).
 
-eval_for_function_returning_a_list_with_two_elements_test() ->
+eval_function_returning_a_list_with_two_elements_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -32,7 +32,7 @@ eval_for_function_returning_a_list_with_two_elements_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual([7, 918], example:'Numbers'()).
 
-eval_for_function_returning_a_list_of_lists_test() ->
+eval_function_returning_a_list_of_lists_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -47,7 +47,7 @@ eval_for_function_returning_a_list_of_lists_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual([[7], [918, 23]], example:'Numbers'()).
 
-eval_for_function_returning_a_list_with_expressions_as_elements_test() ->
+eval_function_returning_a_list_with_expressions_as_elements_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -64,7 +64,7 @@ eval_for_function_returning_a_list_with_expressions_as_elements_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual([7, 5, 3], example:'Numbers'()).
 
-eval_for_function_returning_a_cons_literal_with_literal_pair_values_test() ->
+eval_function_returning_a_cons_literal_with_literal_pair_values_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -74,7 +74,7 @@ eval_for_function_returning_a_cons_literal_with_literal_pair_values_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual([1, 2], example:'Numbers'()).
 
-eval_for_function_returning_a_cons_literal_with_multiple_literal_pair_values_test() ->
+eval_function_returning_a_cons_literal_with_multiple_literal_pair_values_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -84,7 +84,7 @@ eval_for_function_returning_a_cons_literal_with_multiple_literal_pair_values_tes
     ?assertEqual({ok, example}, Result),
     ?assertEqual([1, 2, 3, 4], example:'Numbers'()).
 
-eval_for_function_returning_a_cons_literal_with_variable_pair_values_test() ->
+eval_function_returning_a_cons_literal_with_variable_pair_values_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -98,7 +98,7 @@ eval_for_function_returning_a_cons_literal_with_variable_pair_values_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual([1, 2, 3, 4], example:'Numbers'()).
 
-eval_for_function_taking_a_list_lit_form_and_returning_it_test() ->
+eval_function_taking_a_list_lit_form_and_returning_it_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -108,7 +108,7 @@ eval_for_function_taking_a_list_lit_form_and_returning_it_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual([1, 2, 3, 4], example:'Echo'([1, 2, 3, 4])).
 
-eval_for_function_that_prepends_a_number_to_a_list_test() ->
+eval_function_that_prepends_a_number_to_a_list_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -118,7 +118,7 @@ eval_for_function_that_prepends_a_number_to_a_list_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual([1, 2, 3, 4], example:'Prepend'(1, [2, 3, 4])).
 
-eval_for_function_taking_a_cons_pattern_and_returning_it_test() ->
+eval_function_taking_a_cons_pattern_and_returning_it_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -128,7 +128,7 @@ eval_for_function_taking_a_cons_pattern_and_returning_it_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual([1, 2, 3, 4], example:'Echo'([1, 2, 3, 4])).
 
-eval_for_function_taking_a_cons_pattern_and_returning_the_tail_test() ->
+eval_function_taking_a_cons_pattern_and_returning_the_tail_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -138,7 +138,7 @@ eval_for_function_taking_a_cons_pattern_and_returning_the_tail_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual([2, 3, 4], example:'Rest'([1, 2, 3, 4])).
 
-eval_for_function_taking_a_list_lit_pattern_test() ->
+eval_function_taking_a_list_lit_pattern_test() ->
     RufusText =
         "\n"
         "    module example\n"

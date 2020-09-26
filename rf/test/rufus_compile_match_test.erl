@@ -2,7 +2,7 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-eval_a_function_with_a_match_that_binds_an_atom_literal_test() ->
+eval_function_with_a_match_that_binds_an_atom_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -14,7 +14,7 @@ eval_a_function_with_a_match_that_binds_an_atom_literal_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(pong, example:'Ping'()).
 
-eval_a_function_with_a_match_that_binds_a_bool_literal_test() ->
+eval_function_with_a_match_that_binds_a_bool_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -26,7 +26,7 @@ eval_a_function_with_a_match_that_binds_a_bool_literal_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(true, example:'Truthy'()).
 
-eval_a_function_with_a_match_that_binds_a_float_literal_test() ->
+eval_function_with_a_match_that_binds_a_float_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -38,7 +38,7 @@ eval_a_function_with_a_match_that_binds_a_float_literal_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(3.14159265359, example:'Pi'()).
 
-eval_a_function_with_a_match_that_binds_an_int_literal_test() ->
+eval_function_with_a_match_that_binds_an_int_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -50,7 +50,7 @@ eval_a_function_with_a_match_that_binds_an_int_literal_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(42, example:'FortyTwo'()).
 
-eval_a_function_with_a_match_that_binds_a_string_literal_test() ->
+eval_function_with_a_match_that_binds_a_string_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -62,9 +62,21 @@ eval_a_function_with_a_match_that_binds_a_string_literal_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual({string, <<"hello">>}, example:'Greeting'()).
 
+eval_function_with_a_match_that_binds_a_list_literal_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Unbox(names list[string]) string {\n"
+        "        list[string]{name} = names\n"
+        "        name\n"
+        "    }\n"
+        "    ",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual({string, <<"Rufus">>}, example:'Unbox'([{string, <<"Rufus">>}])).
+
 %% match expressions involving binary_op expressions
 
-typecheck_and_annotate_function_with_a_match_that_has_a_left_binary_op_operand_test() ->
+eval_function_with_a_match_that_has_a_left_binary_op_operand_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -76,7 +88,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_binary_op_operand_t
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(3, example:'Random'()).
 
-typecheck_and_annotate_function_with_a_match_that_has_a_right_binary_op_operand_test() ->
+eval_function_with_a_match_that_has_a_right_binary_op_operand_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -85,7 +97,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_right_binary_op_operand_
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(3, example:'Random'()).
 
-typecheck_and_annotate_function_with_a_match_that_has_left_and_right_binary_op_operands_test() ->
+eval_function_with_a_match_that_has_left_and_right_binary_op_operands_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -96,7 +108,7 @@ typecheck_and_annotate_function_with_a_match_that_has_left_and_right_binary_op_o
 
 %% match expressions involving function calls
 
-typecheck_and_annotate_function_with_a_match_that_has_a_right_call_operand_test() ->
+eval_function_with_a_match_that_has_a_right_call_operand_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -106,7 +118,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_right_call_operand_test(
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(2, example:'Random'()).
 
-typecheck_and_annotate_function_with_a_match_that_has_a_left_call_operand_test() ->
+eval_function_with_a_match_that_has_a_left_call_operand_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -207,7 +219,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_call_operand_test()
     },
     ?assertEqual({error, illegal_pattern, Data}, rufus_compile:eval(RufusText)).
 
-typecheck_and_annotate_function_with_a_match_that_has_a_left_binary_op_operand_with_a_call_operand_test() ->
+eval_function_with_a_match_that_has_a_left_binary_op_operand_with_a_call_operand_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -363,7 +375,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_binary_op_operand_w
     },
     ?assertEqual({error, illegal_pattern, Data}, rufus_compile:eval(RufusText)).
 
-typecheck_and_annotate_function_with_a_match_that_has_a_left_and_right_call_operand_test() ->
+eval_function_with_a_match_that_has_a_left_and_right_call_operand_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -454,7 +466,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_and_right_call_oper
     },
     ?assertEqual({error, illegal_pattern, Data}, rufus_compile:eval(RufusText)).
 
-typecheck_and_annotate_function_with_a_match_that_has_a_right_call_operand_with_a_mismatched_left_type_test() ->
+eval_function_with_a_match_that_has_a_right_call_operand_with_a_mismatched_left_type_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -574,7 +586,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_right_call_operand_with_
     },
     ?assertEqual({error, unmatched_types, Data}, rufus_compile:eval(RufusText)).
 
-typecheck_and_annotate_function_with_a_match_that_has_a_right_call_operand_with_a_mismatched_arg_type_test() ->
+eval_function_with_a_match_that_has_a_right_call_operand_with_a_mismatched_arg_type_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -631,7 +643,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_right_call_operand_with_
 
 %% match expressions with type constraint violations
 
-typecheck_and_annotate_function_with_a_match_that_has_an_unbound_variable_test() ->
+eval_function_with_a_match_that_has_an_unbound_variable_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -714,7 +726,7 @@ typecheck_and_annotate_function_with_a_match_that_has_an_unbound_variable_test()
     },
     ?assertEqual({error, unbound_variable, Data}, rufus_compile:eval(RufusText)).
 
-typecheck_and_annotate_function_with_a_match_that_has_unbound_variables_test() ->
+eval_function_with_a_match_that_has_unbound_variables_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -769,7 +781,7 @@ typecheck_and_annotate_function_with_a_match_that_has_unbound_variables_test() -
     },
     ?assertEqual({error, unbound_variables, Data}, rufus_compile:eval(RufusText)).
 
-typecheck_and_annotate_function_with_a_match_that_has_unmatched_types_test() ->
+eval_function_with_a_match_that_has_unmatched_types_test() ->
     RufusText =
         "\n"
         "    module example\n"

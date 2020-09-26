@@ -275,14 +275,18 @@ make_tail({cons, #{line := Line}}) ->
 make_binary_op(Op, Left, Right, Line) ->
     {binary_op, #{op => Op, left => Left, right => Right, line => Line}}.
 
-%% make_left returns a left form from a binary_op expression.
--spec make_left(binary_op_form()) -> {left, #{line => integer()}}.
+%% make_left returns a left form from a binary_op or match expression.
+-spec make_left(binary_op_form() | match_form()) -> {left, #{line => integer()}}.
 make_left({binary_op, #{line := Line}}) ->
+    {left, #{line => Line}};
+make_left({match, #{line := Line}}) ->
     {left, #{line => Line}}.
 
-%% make_right returns a right form from a binary_op expression.
--spec make_right(binary_op_form()) -> {right, #{line => integer()}}.
+%% make_right returns a right form from a binary_op or match expression.
+-spec make_right(binary_op_form() | match_form()) -> {right, #{line => integer()}}.
 make_right({binary_op, #{line := Line}}) ->
+    {right, #{line => Line}};
+make_right({match, #{line := Line}}) ->
     {right, #{line => Line}}.
 
 %% match form builder API

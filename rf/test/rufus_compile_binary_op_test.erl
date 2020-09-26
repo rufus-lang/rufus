@@ -196,7 +196,7 @@ eval_with_function_returning_the_result_of_an_or_operation_with_a_call_operand_t
     ?assertEqual({ok, example}, Result),
     ?assertEqual(true, example:'Truthy'()).
 
-forms_for_function_returning_a_boolean_from_a_nested_boolean_operation_test() ->
+eval_function_returning_a_boolean_from_a_nested_boolean_operation_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -210,7 +210,7 @@ forms_for_function_returning_a_boolean_from_a_nested_boolean_operation_test() ->
 
 %% Comparison operators
 
-forms_for_function_with_an_equality_comparison_operation_test() ->
+eval_function_with_an_equality_comparison_operation_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -220,7 +220,7 @@ forms_for_function_with_an_equality_comparison_operation_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(true, example:'Truthy'()).
 
-forms_for_function_with_an_inequality_comparison_operation_test() ->
+eval_function_with_an_inequality_comparison_operation_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -230,7 +230,7 @@ forms_for_function_with_an_inequality_comparison_operation_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(true, example:'Truthy'()).
 
-forms_for_function_with_a_less_than_comparison_operation_test() ->
+eval_function_with_a_less_than_comparison_operation_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -240,7 +240,7 @@ forms_for_function_with_a_less_than_comparison_operation_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(true, example:'Truthy'()).
 
-forms_for_function_with_a_less_than_or_greater_comparison_operation_test() ->
+eval_function_with_a_less_than_or_greater_comparison_operation_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -250,7 +250,7 @@ forms_for_function_with_a_less_than_or_greater_comparison_operation_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(true, example:'Truthy'()).
 
-forms_for_function_with_a_greater_than_comparison_operation_test() ->
+eval_function_with_a_greater_than_comparison_operation_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -260,7 +260,7 @@ forms_for_function_with_a_greater_than_comparison_operation_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(true, example:'Truthy'()).
 
-forms_for_function_with_a_greater_than_or_greater_comparison_operation_test() ->
+eval_function_with_a_greater_than_or_greater_comparison_operation_test() ->
     RufusText =
         "\n"
         "    module example\n"

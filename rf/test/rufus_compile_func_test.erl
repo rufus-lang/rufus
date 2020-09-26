@@ -4,7 +4,7 @@
 
 %% Arity-0 functions returning a literal value for scalar types
 
-eval_with_function_returning_an_atom_literal_test() ->
+eval_function_returning_an_atom_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -13,7 +13,7 @@ eval_with_function_returning_an_atom_literal_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(pong, example:'Ping'()).
 
-eval_with_function_returning_a_bool_literal_test() ->
+eval_function_returning_a_bool_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -22,7 +22,7 @@ eval_with_function_returning_a_bool_literal_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(true, example:'True'()).
 
-eval_with_function_returning_a_float_literal_test() ->
+eval_function_returning_a_float_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -31,7 +31,7 @@ eval_with_function_returning_a_float_literal_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(3.14159265359, example:'Pi'()).
 
-eval_with_function_returning_an_int_literal_test() ->
+eval_function_returning_an_int_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -40,7 +40,7 @@ eval_with_function_returning_an_int_literal_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(42, example:'Number'()).
 
-eval_with_function_returning_a_string_literal_test() ->
+eval_function_returning_a_string_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -66,7 +66,7 @@ forms_for_function_with_multiple_expressions_test() ->
 
 %% Arity-1 functions taking an unused parameter for scalar types
 
-eval_with_function_taking_an_atom_and_returning_an_atom_literal_test() ->
+eval_function_taking_an_atom_and_returning_an_atom_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -76,7 +76,7 @@ eval_with_function_taking_an_atom_and_returning_an_atom_literal_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(pong, example:'Ping'(hello)).
 
-eval_with_function_taking_a_bool_and_returning_a_bool_literal_test() ->
+eval_function_taking_a_bool_and_returning_a_bool_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -86,7 +86,7 @@ eval_with_function_taking_a_bool_and_returning_a_bool_literal_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(true, example:'MaybeEcho'(false)).
 
-eval_with_function_taking_a_float_and_returning_a_float_literal_test() ->
+eval_function_taking_a_float_and_returning_a_float_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -96,7 +96,7 @@ eval_with_function_taking_a_float_and_returning_a_float_literal_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(3.14159265359, example:'MaybeEcho'(3.14)).
 
-eval_with_function_taking_an_int_and_returning_an_int_literal_test() ->
+eval_function_taking_an_int_and_returning_an_int_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -106,7 +106,7 @@ eval_with_function_taking_an_int_and_returning_an_int_literal_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(42, example:'MaybeEcho'(42)).
 
-eval_with_function_taking_a_string_and_returning_a_string_literal_test() ->
+eval_function_taking_a_string_and_returning_a_string_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -118,7 +118,7 @@ eval_with_function_taking_a_string_and_returning_a_string_literal_test() ->
 
 %% Arity-1 functions taking an argument and returning it for scalar types
 
-eval_with_function_taking_an_atom_and_returning_it_test() ->
+eval_function_taking_an_atom_and_returning_it_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -128,7 +128,7 @@ eval_with_function_taking_an_atom_and_returning_it_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(hello, example:'Echo'(hello)).
 
-eval_with_function_taking_a_bool_and_returning_it_test() ->
+eval_function_taking_a_bool_and_returning_it_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -138,7 +138,7 @@ eval_with_function_taking_a_bool_and_returning_it_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(false, example:'Echo'(false)).
 
-eval_with_function_taking_a_float_and_returning_it_test() ->
+eval_function_taking_a_float_and_returning_it_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -148,7 +148,7 @@ eval_with_function_taking_a_float_and_returning_it_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(3.14159265359, example:'Echo'(3.14159265359)).
 
-eval_with_function_taking_an_int_and_returning_it_test() ->
+eval_function_taking_an_int_and_returning_it_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -158,7 +158,7 @@ eval_with_function_taking_an_int_and_returning_it_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(42, example:'Echo'(42)).
 
-eval_with_function_taking_a_string_and_returning_it_test() ->
+eval_function_taking_a_string_and_returning_it_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -170,7 +170,7 @@ eval_with_function_taking_a_string_and_returning_it_test() ->
 
 %% Type checking return values
 
-eval_with_function_having_unmatched_return_types_test() ->
+eval_function_having_unmatched_return_types_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -200,7 +200,7 @@ eval_with_function_having_unmatched_return_types_test() ->
 %% Arity-1 functions taking and returning an argument with a mismatched return
 %% type
 
-eval_with_function_taking_a_bool_and_returning_it_with_a_mismatched_return_type_test() ->
+eval_function_taking_a_bool_and_returning_it_with_a_mismatched_return_type_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -229,7 +229,7 @@ eval_with_function_taking_a_bool_and_returning_it_with_a_mismatched_return_type_
 
 %% Function exports
 
-eval_with_private_function_test() ->
+eval_private_function_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -241,7 +241,7 @@ eval_with_private_function_test() ->
 
 %% Functions with parameter patterns containing literal values
 
-eval_with_function_taking_an_atom_literal_test() ->
+eval_function_taking_an_atom_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -251,7 +251,7 @@ eval_with_function_taking_an_atom_literal_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(ok, example:'Echo'(ok)).
 
-eval_with_function_taking_a_bool_literal_test() ->
+eval_function_taking_a_bool_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -261,7 +261,7 @@ eval_with_function_taking_a_bool_literal_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(true, example:'Echo'(true)).
 
-eval_with_function_taking_a_float_literal_test() ->
+eval_function_taking_a_float_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -271,7 +271,7 @@ eval_with_function_taking_a_float_literal_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(1.0, example:'Echo'(1.0)).
 
-eval_with_function_taking_an_int_literal_test() ->
+eval_function_taking_an_int_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -281,7 +281,7 @@ eval_with_function_taking_an_int_literal_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(1, example:'Echo'(1)).
 
-eval_with_function_taking_a_string_literal_test() ->
+eval_function_taking_a_string_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -291,7 +291,7 @@ eval_with_function_taking_a_string_literal_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual({string, <<"ok">>}, example:'Echo'({string, <<"ok">>})).
 
-eval_with_function_taking_an_atom_literal_in_multiple_function_heads_test() ->
+eval_function_taking_an_atom_literal_in_multiple_function_heads_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -303,7 +303,7 @@ eval_with_function_taking_an_atom_literal_in_multiple_function_heads_test() ->
     ?assertEqual(alright, example:'Echo'(alright)),
     ?assertEqual(ok, example:'Echo'(ok)).
 
-eval_with_function_taking_an_atom_literal_and_passing_an_invalid_value_test() ->
+eval_function_taking_an_atom_literal_and_passing_an_invalid_value_test() ->
     RufusText =
         "\n"
         "    module example\n"

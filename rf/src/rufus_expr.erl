@@ -343,9 +343,8 @@ typecheck_and_annotate_list_lit(
 %% match helpers
 
 %% typecheck_and_annotate_match ensures that match operands have matching types.
-%% When the left operand is an identifier it's treated as an unbound variable if
-%% no type information is available. It's added to the local scope with type
-%% information inferred from the right operand. Return values:
+%% Unknown identifiers in the left operand are treated as unbound variables and
+%% their type information is inferred from the right operand. Return values:
 %% - `{ok, Locals, AnnotatedForm}` if no issues are found. The match form and
 %%   its operands are annotated with type information.
 %% - `{error, unbound_variable, Data}` is thrown if the right operand is
@@ -356,187 +355,238 @@ typecheck_and_annotate_list_lit(
 %%   have differing types.
 -spec typecheck_and_annotate_match(rufus_stack(), globals(), locals(), match_form()) ->
     {ok, locals(), match_form()} | no_return().
-typecheck_and_annotate_match(Stack, Globals, Locals, {match, Context = #{left := Left}}) ->
-    {ok, NewLocals1, [AnnotatedLeft1]} = typecheck_and_annotate([], Stack, Globals, Locals, [Left]),
-    AnnotatedForm1 = {match, Context#{left => AnnotatedLeft1}},
-    case rufus_form:has_type(AnnotatedLeft1) of
-        true ->
-            ok = validate_pattern(Globals, NewLocals1, AnnotatedForm1),
-            typecheck_and_annotate_match_with_bound_left_operand(
-                Stack,
-                Globals,
-                NewLocals1,
-                AnnotatedForm1
-            );
-        false ->
-            typecheck_and_annotate_match_with_unbound_left_operand(
-                Stack,
-                Globals,
-                NewLocals1,
-                AnnotatedForm1
-            )
-    end.
-
-%% typecheck_and_annotate_match_with_bound_left_operand typechecks match
-%% expressions with a left operand that has a known type. Return values:
-%% - `{ok, Locals, AnnotatedForm}` if no issues are found. The match form and
-%%   its operands are annotated with type information.
-%% - `{error, unbound_variable, Data}` is thrown if the right operand is
-%%   unbound.
-%% - `{error, unmarched_types, Data}` is thrown when the left and right operand
-%%   have differing types.
--spec typecheck_and_annotate_match_with_bound_left_operand(
-    rufus_stack(),
-    globals(),
-    locals(),
-    match_form()
-) -> {ok, locals(), match_form()} | no_return().
-typecheck_and_annotate_match_with_bound_left_operand(
+typecheck_and_annotate_match(
     Stack,
     Globals,
     Locals,
-    {match, Context = #{left := Left, right := Right}}
+    Form = {match, Context = #{left := Left, right := Right}}
 ) ->
-    try
-        {ok, NewLocals, [AnnotatedRight]} = typecheck_and_annotate([], Stack, Globals, Locals, [
+    MatchStack1 = [Form | Stack],
+    RightStack = [rufus_form:make_right(Form) | MatchStack1],
+    {ok, NewLocals1, [AnnotatedRight]} = typecheck_and_annotate(
+        [],
+        RightStack,
+        Globals,
+        Locals,
+        [
             Right
-        ]),
-        case rufus_form:type_spec(Left) == rufus_form:type_spec(AnnotatedRight) of
-            true ->
-                RightType = rufus_form:type(AnnotatedRight),
-                AnnotatedForm =
-                    {match, Context#{
-                        left => Left,
-                        right => AnnotatedRight,
-                        type => RightType
-                    }},
-                {ok, NewLocals, AnnotatedForm};
-            false ->
-                case AnnotatedRight of
-                    {identifier, _Context2} ->
-                        case rufus_form:has_type(AnnotatedRight) of
-                            false ->
-                                Data2 = #{
-                                    globals => Globals,
-                                    locals => Locals,
-                                    form => AnnotatedRight
-                                },
-                                throw({error, unbound_variable, Data2});
-                            true ->
-                                ok
-                        end;
-                    _ ->
-                        ok
-                end,
+        ]
+    ),
+    AnnotatedForm1 = {match, Context#{right => AnnotatedRight}},
 
-                Data3 = #{
-                    globals => Globals,
-                    locals => Locals,
-                    left => Left,
-                    right => AnnotatedRight
-                },
-                throw({error, unmatched_types, Data3})
-        end
-    catch
-        {error, unknown_identifier, Data1} ->
-            throw({error, unbound_variable, Data1})
-    end.
+    MatchStack2 = [AnnotatedForm1 | Stack],
+    LeftStack = [rufus_form:make_left(Form) | MatchStack2],
+    {ok, NewLocals2, [AnnotatedLeft]} = typecheck_and_annotate(
+        [],
+        LeftStack,
+        Globals,
+        NewLocals1,
+        [Left]
+    ),
+    AnnotatedForm2 =
+        {match, Context#{
+            left => AnnotatedLeft,
+            right => AnnotatedRight,
+            type => rufus_form:type(AnnotatedRight)
+        }},
+    io:format("~nAnnotatedForm2 => ~p~n", [AnnotatedForm2]),
+    io:format("~nNewLocals2 => ~p~n", [NewLocals2]),
+    {ok, NewLocals2, AnnotatedForm2}.
 
-%% typecheck_and_annotate_match_with_unbound_left_operand typechecks match
-%% expressions with a left operand that does not have a known type. Return
-%% values:
-%% - `{ok, NewLocals, AnnotatedForm}` if no issues are found. The match form
-%%   and its operands are annotated with type information.
-%% - `{error, unbound_variables, Data}` is thrown if both the left and right
-%%   operands are unbound.
--spec typecheck_and_annotate_match_with_unbound_left_operand(
-    rufus_stack(),
-    globals(),
-    locals(),
-    match_form()
-) -> {ok, locals(), match_form()} | no_return().
-typecheck_and_annotate_match_with_unbound_left_operand(
-    Stack,
-    Globals,
-    Locals,
-    {match, Context = #{left := Left, right := Right}}
-) ->
-    {ok, NewLocals1, [AnnotatedRight]} = typecheck_and_annotate([], Stack, Globals, Locals, [Right]),
-    case rufus_form:has_type(AnnotatedRight) of
-        true ->
-            {LeftType, LeftContext} = Left,
-            RightType = rufus_form:type(AnnotatedRight),
-            AnnotatedLeft1 = {LeftType, LeftContext#{type => RightType}},
-            {ok, NewLocals2} = push_local(NewLocals1, AnnotatedLeft1),
-            {ok, AnnotatedLeft2} = annotate_locals(NewLocals2, AnnotatedLeft1),
-            AnnotatedForm =
-                {match, Context#{
-                    left => AnnotatedLeft2,
-                    right => AnnotatedRight,
-                    type => RightType
-                }},
-            {ok, NewLocals2, AnnotatedForm};
-        false ->
-            Data = #{
-                globals => Globals,
-                locals => Locals,
-                left => Left,
-                right => AnnotatedRight
-            },
-            throw({error, unbound_variables, Data})
-    end.
+%% %% typecheck_and_annotate_match ensures that match operands have matching types.
+%% %% Unknown identifiers in the left operand are treated as unbound variables and
+%% %% their type information is inferred from the right operand. Return values:
+%% %% - `{ok, Locals, AnnotatedForm}` if no issues are found. The match form and
+%% %%   its operands are annotated with type information.
+%% %% - `{error, unbound_variable, Data}` is thrown if the right operand is
+%% %%   unbound.
+%% %% - `{error, unbound_variables, Data}` is thrown if both the left and right
+%% %%   operands are unbound.
+%% %% - `{error, unmarched_types, Data}` is thrown when the left and right operand
+%% %%   have differing types.
+%% -spec typecheck_and_annotate_match(rufus_stack(), globals(), locals(), match_form()) ->
+%%     {ok, locals(), match_form()} | no_return().
+%% typecheck_and_annotate_match(Stack, Globals, Locals, {match, Context = #{left := Left}}) ->
+%%     {ok, NewLocals1, [AnnotatedLeft1]} = typecheck_and_annotate([], Stack, Globals, Locals, [Left]),
+%%     AnnotatedForm1 = {match, Context#{left => AnnotatedLeft1}},
+%%     case rufus_form:has_type(AnnotatedLeft1) of
+%%         true ->
+%%             ok = validate_pattern(Globals, NewLocals1, AnnotatedForm1),
+%%             typecheck_and_annotate_match_with_bound_left_operand(
+%%                 Stack,
+%%                 Globals,
+%%                 NewLocals1,
+%%                 AnnotatedForm1
+%%             );
+%%         false ->
+%%             typecheck_and_annotate_match_with_unbound_left_operand(
+%%                 Stack,
+%%                 Globals,
+%%                 NewLocals1,
+%%                 AnnotatedForm1
+%%             )
+%%     end.
 
-%% validate_pattern checks the left hand side of a pattern match expression for
-%% valid expressions. An `{error, illegal_pattern, Data}` error triple is thrown
-%% if an invalid expression is found.
-%%
-%% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
-%% -spec validate_pattern(globals(), locals(), match_form()) -> ok | no_return().
-validate_pattern(Globals, Locals, Form = {match, _Context}) ->
-    Data = #{
-        globals => Globals,
-        locals => Locals,
-        form => Form
-    },
-    validate_pattern(Data, Form).
+%% %% typecheck_and_annotate_match_with_bound_left_operand typechecks match
+%% %% expressions with a left operand that has a known type. Return values:
+%% %% - `{ok, Locals, AnnotatedForm}` if no issues are found. The match form and
+%% %%   its operands are annotated with type information.
+%% %% - `{error, unbound_variable, Data}` is thrown if the right operand is
+%% %%   unbound.
+%% %% - `{error, unmarched_types, Data}` is thrown when the left and right operand
+%% %%   have differing types.
+%% -spec typecheck_and_annotate_match_with_bound_left_operand(
+%%     rufus_stack(),
+%%     globals(),
+%%     locals(),
+%%     match_form()
+%% ) -> {ok, locals(), match_form()} | no_return().
+%% typecheck_and_annotate_match_with_bound_left_operand(
+%%     Stack,
+%%     Globals,
+%%     Locals,
+%%     {match, Context = #{left := Left, right := Right}}
+%% ) ->
+%%     try
+%%         {ok, NewLocals, [AnnotatedRight]} = typecheck_and_annotate([], Stack, Globals, Locals, [
+%%             Right
+%%         ]),
+%%         case rufus_form:type_spec(Left) == rufus_form:type_spec(AnnotatedRight) of
+%%             true ->
+%%                 RightType = rufus_form:type(AnnotatedRight),
+%%                 AnnotatedForm =
+%%                     {match, Context#{
+%%                         left => Left,
+%%                         right => AnnotatedRight,
+%%                         type => RightType
+%%                     }},
+%%                 {ok, NewLocals, AnnotatedForm};
+%%             false ->
+%%                 case AnnotatedRight of
+%%                     {identifier, _Context2} ->
+%%                         case rufus_form:has_type(AnnotatedRight) of
+%%                             false ->
+%%                                 Data2 = #{
+%%                                     globals => Globals,
+%%                                     locals => Locals,
+%%                                     form => AnnotatedRight
+%%                                 },
+%%                                 throw({error, unbound_variable, Data2});
+%%                             true ->
+%%                                 ok
+%%                         end;
+%%                     _ ->
+%%                         ok
+%%                 end,
 
-%% validate_pattern inspects the left hand operand of a match form to ensure
-%% that its a valid pattern. A pattern has the same structure as a term but can
-%% contain unbound variables. An `{error, illegal_pattern, Data}` error triple
-%% is thrown if the left hand operand contains unsupported expressions.
--spec validate_pattern(context(), rufus_form()) -> ok | no_return().
-validate_pattern(Data, {match, #{left := Left}}) ->
-    validate_pattern(Data, Left);
-validate_pattern(_Data, {atom_lit, _Context}) ->
-    ok;
-validate_pattern(_Data, {bool_lit, _Context}) ->
-    ok;
-validate_pattern(_Data, {float_lit, _Context}) ->
-    ok;
-validate_pattern(_Data, {int_lit, _Context}) ->
-    ok;
-validate_pattern(_Data, {string_lit, _Context}) ->
-    ok;
-validate_pattern(_Data, {identifier, _Context}) ->
-    ok;
-validate_pattern(Data, Form = {binary_op, _Context}) ->
-    case is_constant_expr(Form) of
-        true ->
-            ok;
-        false ->
-            throw({error, illegal_pattern, Data})
-    end;
-validate_pattern(Data, _Form) ->
-    throw({error, illegal_pattern, Data}).
+%%                 Data3 = #{
+%%                     globals => Globals,
+%%                     locals => Locals,
+%%                     left => Left,
+%%                     right => AnnotatedRight
+%%                 },
+%%                 throw({error, unmatched_types, Data3})
+%%         end
+%%     catch
+%%         {error, unknown_identifier, Data1} ->
+%%             throw({error, unbound_variable, Data1})
+%%     end.
 
-%% is_constant_expr returns true if a binary_op can be evaluated to a constant
-%% during compilation. Otherwise, it returns false.
--spec is_constant_expr(rufus_form()) -> boolean().
-is_constant_expr({binary_op, #{left := Left, right := Right}}) ->
-    is_constant_expr(Left) and is_constant_expr(Right);
-is_constant_expr({float_lit, _Context}) ->
-    true;
-is_constant_expr({int_lit, _Context}) ->
-    true;
-is_constant_expr(_Form) ->
-    false.
+%% %% typecheck_and_annotate_match_with_unbound_left_operand typechecks match
+%% %% expressions with a left operand that does not have a known type. Return
+%% %% values:
+%% %% - `{ok, NewLocals, AnnotatedForm}` if no issues are found. The match form
+%% %%   and its operands are annotated with type information.
+%% %% - `{error, unbound_variables, Data}` is thrown if both the left and right
+%% %%   operands are unbound.
+%% -spec typecheck_and_annotate_match_with_unbound_left_operand(
+%%     rufus_stack(),
+%%     globals(),
+%%     locals(),
+%%     match_form()
+%% ) -> {ok, locals(), match_form()} | no_return().
+%% typecheck_and_annotate_match_with_unbound_left_operand(
+%%     Stack,
+%%     Globals,
+%%     Locals,
+%%     {match, Context = #{left := Left, right := Right}}
+%% ) ->
+%%     {ok, NewLocals1, [AnnotatedRight]} = typecheck_and_annotate([], Stack, Globals, Locals, [Right]),
+%%     case rufus_form:has_type(AnnotatedRight) of
+%%         true ->
+%%             {LeftType, LeftContext} = Left,
+%%             RightType = rufus_form:type(AnnotatedRight),
+%%             AnnotatedLeft1 = {LeftType, LeftContext#{type => RightType}},
+%%             {ok, NewLocals2} = push_local(NewLocals1, AnnotatedLeft1),
+%%             {ok, AnnotatedLeft2} = annotate_locals(NewLocals2, AnnotatedLeft1),
+%%             AnnotatedForm =
+%%                 {match, Context#{
+%%                     left => AnnotatedLeft2,
+%%                     right => AnnotatedRight,
+%%                     type => RightType
+%%                 }},
+%%             {ok, NewLocals2, AnnotatedForm};
+%%         false ->
+%%             Data = #{
+%%                 globals => Globals,
+%%                 locals => Locals,
+%%                 left => Left,
+%%                 right => AnnotatedRight
+%%             },
+%%             throw({error, unbound_variables, Data})
+%%     end.
+
+%% %% validate_pattern checks the left hand side of a pattern match expression for
+%% %% valid expressions. An `{error, illegal_pattern, Data}` error triple is thrown
+%% %% if an invalid expression is found.
+%% %%
+%% %% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
+%% %% -spec validate_pattern(globals(), locals(), match_form()) -> ok | no_return().
+%% validate_pattern(Globals, Locals, Form = {match, _Context}) ->
+%%     Data = #{
+%%         globals => Globals,
+%%         locals => Locals,
+%%         form => Form
+%%     },
+%%     validate_pattern(Data, Form).
+
+%% %% validate_pattern inspects the left hand operand of a match form to ensure
+%% %% that its a valid pattern. A pattern has the same structure as a term but can
+%% %% contain unbound variables. An `{error, illegal_pattern, Data}` error triple
+%% %% is thrown if the left hand operand contains unsupported expressions.
+%% -spec validate_pattern(context(), rufus_form()) -> ok | no_return().
+%% validate_pattern(Data, {match, #{left := Left}}) ->
+%%     validate_pattern(Data, Left);
+%% validate_pattern(_Data, {atom_lit, _Context}) ->
+%%     ok;
+%% validate_pattern(_Data, {bool_lit, _Context}) ->
+%%     ok;
+%% validate_pattern(_Data, {float_lit, _Context}) ->
+%%     ok;
+%% validate_pattern(_Data, {int_lit, _Context}) ->
+%%     ok;
+%% validate_pattern(_Data, {string_lit, _Context}) ->
+%%     ok;
+%% validate_pattern(_Data, {identifier, _Context}) ->
+%%     ok;
+%% validate_pattern(Data, Form = {binary_op, _Context}) ->
+%%     case is_constant_expr(Form) of
+%%         true ->
+%%             ok;
+%%         false ->
+%%             throw({error, illegal_pattern, Data})
+%%     end;
+%% validate_pattern(Data, _Form) ->
+%%     throw({error, illegal_pattern, Data}).
+
+%% %% is_constant_expr returns true if a binary_op can be evaluated to a constant
+%% %% during compilation. Otherwise, it returns false.
+%% -spec is_constant_expr(rufus_form()) -> boolean().
+%% is_constant_expr({binary_op, #{left := Left, right := Right}}) ->
+%%     is_constant_expr(Left) and is_constant_expr(Right);
+%% is_constant_expr({float_lit, _Context}) ->
+%%     true;
+%% is_constant_expr({int_lit, _Context}) ->
+%%     true;
+%% is_constant_expr(_Form) ->
+%%     false.

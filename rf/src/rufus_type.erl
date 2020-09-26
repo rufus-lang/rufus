@@ -367,6 +367,12 @@ lookup_identifier_type([{list_lit, #{type := Type}} | _T], Stack) ->
             Data = #{stack => Stack},
             throw({error, unknown_identifier, Data})
     end;
+lookup_identifier_type(
+    [{left, _Context1} | [{match, #{right := {_FormSpec, #{type := Type}}}} | _T]],
+    _Stack
+) ->
+    io:format("THE FUCK?~n"),
+    {ok, Type};
 lookup_identifier_type([{_, #{type := Type}} | _T], _Stack) ->
     {ok, Type};
 lookup_identifier_type([_H | T], Stack) ->
