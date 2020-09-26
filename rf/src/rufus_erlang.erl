@@ -32,7 +32,7 @@ group_forms_by_func(Forms) ->
             false
     end,
     {value, ModuleForm} = lists:search(MatchModuleForm, Forms),
-    {ok, Globals} = rufus_form:globals(Forms),
+    {ok, Globals} = rufus_forms:globals(Forms),
 
     GroupBy = fun(Name, FuncForms, Acc) ->
         {func, #{line := Line, params := Params}} = hd(FuncForms),

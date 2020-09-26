@@ -26,7 +26,7 @@
 typecheck_and_annotate(RufusForms) ->
     Acc = [],
     Stack = [],
-    {ok, Globals} = rufus_form:globals(RufusForms),
+    {ok, Globals} = rufus_forms:globals(RufusForms),
     Locals = #{},
     try
         {ok, _Locals, AnnotatedForms} = typecheck_and_annotate(
@@ -36,7 +36,7 @@ typecheck_and_annotate(RufusForms) ->
             Locals,
             RufusForms
         ),
-        ok = rufus_form:each(AnnotatedForms, fun safety_check/1),
+        ok = rufus_forms:each(AnnotatedForms, fun safety_check/1),
         {ok, AnnotatedForms}
     catch
         {error, Code, Data} ->
