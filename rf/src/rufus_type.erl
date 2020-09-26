@@ -314,17 +314,16 @@ lookup_identifier_type(Stack) ->
 
 -spec lookup_identifier_type(rufus_stack(), rufus_stack()) -> {ok, type_form()} | no_return().
 lookup_identifier_type([{head, _Context1} | [{cons, #{type := Type}} | _T]], Stack) ->
-    case
-        lists:any(
-            fun
-                ({params, _Context2}) ->
-                    true;
-                (_Form) ->
-                    false
-            end,
-            Stack
-        )
-    of
+    AllowPatternMatching = lists:any(
+        fun
+            ({params, _Context2}) ->
+                true;
+            (_Form) ->
+                false
+        end,
+        Stack
+    ),
+    case AllowPatternMatching of
         true ->
             {ok, rufus_form:element_type(Type)};
         false ->
@@ -332,17 +331,16 @@ lookup_identifier_type([{head, _Context1} | [{cons, #{type := Type}} | _T]], Sta
             throw({error, unknown_identifier, Data})
     end;
 lookup_identifier_type([{tail, _Context1} | [{cons, #{type := Type}} | _T]], Stack) ->
-    case
-        lists:any(
-            fun
-                ({params, _Context2}) ->
-                    true;
-                (_Form) ->
-                    false
-            end,
-            Stack
-        )
-    of
+    AllowPatternMatching = lists:any(
+        fun
+            ({params, _Context2}) ->
+                true;
+            (_Form) ->
+                false
+        end,
+        Stack
+    ),
+    case AllowPatternMatching of
         true ->
             {ok, Type};
         false ->
@@ -350,17 +348,18 @@ lookup_identifier_type([{tail, _Context1} | [{cons, #{type := Type}} | _T]], Sta
             throw({error, unknown_identifier, Data})
     end;
 lookup_identifier_type([{list_lit, #{type := Type}} | _T], Stack) ->
-    case
-        lists:any(
-            fun
-                ({params, _Context}) ->
-                    true;
-                (_Form) ->
-                    false
-            end,
-            Stack
-        )
-    of
+    AllowPatternMatching = lists:any(
+        fun
+            ({params, _Context}) ->
+                true;
+            ({match_left, _Context}) ->
+                true;
+            (_Form) ->
+                false
+        end,
+        Stack
+    ),
+    case AllowPatternMatching of
         true ->
             {ok, rufus_form:element_type(Type)};
         false ->
@@ -368,7 +367,7 @@ lookup_identifier_type([{list_lit, #{type := Type}} | _T], Stack) ->
             throw({error, unknown_identifier, Data})
     end;
 lookup_identifier_type(
-    [{left, _Context1} | [{match, #{right := {_FormSpec, #{type := Type}}}} | _T]],
+    [{match_left, _Context1} | [{match, #{right := {_FormSpec, #{type := Type}}}} | _T]],
     _Stack
 ) ->
     {ok, Type};

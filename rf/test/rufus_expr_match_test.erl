@@ -497,7 +497,124 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_literal_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
-    Expected = [],
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            exprs => [
+                {match, #{
+                    left =>
+                        {list_lit, #{
+                            elements => [
+                                {identifier, #{
+                                    line => 4,
+                                    locals => #{
+                                        names =>
+                                            {type, #{
+                                                collection_type => list,
+                                                element_type =>
+                                                    {type, #{
+                                                        line => 3,
+                                                        source => rufus_text,
+                                                        spec => string
+                                                    }},
+                                                line => 3,
+                                                source => rufus_text,
+                                                spec => 'list[string]'
+                                            }}
+                                    },
+                                    spec => name,
+                                    type =>
+                                        {type, #{
+                                            line => 4,
+                                            source => rufus_text,
+                                            spec => string
+                                        }}
+                                }}
+                            ],
+                            line => 4,
+                            type =>
+                                {type, #{
+                                    collection_type => list,
+                                    element_type =>
+                                        {type, #{
+                                            line => 4,
+                                            source => rufus_text,
+                                            spec => string
+                                        }},
+                                    line => 4,
+                                    source => rufus_text,
+                                    spec => 'list[string]'
+                                }}
+                        }},
+                    line => 4,
+                    right =>
+                        {identifier, #{
+                            line => 4,
+                            spec => names,
+                            type =>
+                                {type, #{
+                                    collection_type => list,
+                                    element_type =>
+                                        {type, #{
+                                            line => 3,
+                                            source => rufus_text,
+                                            spec => string
+                                        }},
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => 'list[string]'
+                                }}
+                        }},
+                    type =>
+                        {type, #{
+                            collection_type => list,
+                            element_type =>
+                                {type, #{
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => string
+                                }},
+                            line => 3,
+                            source => rufus_text,
+                            spec => 'list[string]'
+                        }}
+                }},
+                {identifier, #{
+                    line => 5,
+                    spec => name,
+                    type =>
+                        {type, #{
+                            line => 4,
+                            source => rufus_text,
+                            spec => string
+                        }}
+                }}
+            ],
+            line => 3,
+            params => [
+                {param, #{
+                    line => 3,
+                    spec => names,
+                    type =>
+                        {type, #{
+                            collection_type => list,
+                            element_type =>
+                                {type, #{
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => string
+                                }},
+                            line => 3,
+                            source => rufus_text,
+                            spec => 'list[string]'
+                        }}
+                }}
+            ],
+            return_type =>
+                {type, #{line => 3, source => rufus_text, spec => string}},
+            spec => 'Unbox'
+        }}
+    ],
     ?assertEqual(Expected, AnnotatedForms).
 
 typecheck_and_annotate_function_with_a_match_that_has_left_and_right_operands_with_mismatched_types_test() ->

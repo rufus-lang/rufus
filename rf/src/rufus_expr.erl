@@ -347,11 +347,9 @@ typecheck_and_annotate_list_lit(
 %% their type information is inferred from the right operand. Return values:
 %% - `{ok, Locals, AnnotatedForm}` if no issues are found. The match form and
 %%   its operands are annotated with type information.
-%% - `{error, unbound_variable, Data}` is thrown if the right operand is
+%% - `{error, unknown_identifier, Data}` is thrown if the right operand is
 %%   unbound.
-%% - `{error, unbound_variables, Data}` is thrown if both the left and right
-%%   operands are unbound.
-%% - `{error, unmarched_types, Data}` is thrown when the left and right operand
+%% - `{error, unmatched_types, Data}` is thrown when the left and right operand
 %%   have differing types.
 -spec typecheck_and_annotate_match(rufus_stack(), globals(), locals(), match_form()) ->
     {ok, locals(), match_form()} | no_return().
@@ -362,7 +360,7 @@ typecheck_and_annotate_match(
     Form = {match, Context = #{left := Left, right := Right}}
 ) ->
     MatchStack1 = [Form | Stack],
-    RightStack = [rufus_form:make_right(Form) | MatchStack1],
+    RightStack = [rufus_form:make_match_right(Form) | MatchStack1],
     {ok, NewLocals1, [AnnotatedRight]} = typecheck_and_annotate(
         [],
         RightStack,
@@ -373,7 +371,7 @@ typecheck_and_annotate_match(
     AnnotatedForm1 = {match, Context#{right => AnnotatedRight}},
 
     MatchStack2 = [AnnotatedForm1 | Stack],
-    LeftStack = [rufus_form:make_left(Form) | MatchStack2],
+    LeftStack = [rufus_form:make_match_left(Form) | MatchStack2],
     {ok, NewLocals2, [AnnotatedLeft]} = typecheck_and_annotate(
         [],
         LeftStack,
@@ -432,6 +430,8 @@ validate_pattern(_Data, {float_lit, _Context}) ->
 validate_pattern(_Data, {int_lit, _Context}) ->
     ok;
 validate_pattern(_Data, {string_lit, _Context}) ->
+    ok;
+validate_pattern(_Data, {list_lit, _Context}) ->
     ok;
 validate_pattern(_Data, {identifier, _Context}) ->
     ok;
