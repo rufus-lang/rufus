@@ -10,7 +10,7 @@ resolve_call_with_no_arguments_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, Globals} = rufus_form:globals(Forms),
+    {ok, Globals} = rufus_forms:globals(Forms),
     Form = rufus_form:make_call('Random', [], 7),
     Expected = rufus_form:make_type(int, 3),
     ?assertEqual({ok, Expected}, rufus_type:resolve(Globals, Form)).
@@ -23,7 +23,7 @@ resolve_call_with_one_argument_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, Globals} = rufus_form:globals(Forms),
+    {ok, Globals} = rufus_forms:globals(Forms),
     Form = rufus_form:make_call('Echo', [rufus_form:make_literal(string, <<"hello">>, 7)], 7),
     Expected = rufus_form:make_type(string, 3),
     ?assertEqual({ok, Expected}, rufus_type:resolve(Globals, Form)).
@@ -40,7 +40,7 @@ resolve_call_with_one_argument_and_many_function_heads_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, Globals} = rufus_form:globals(Forms),
+    {ok, Globals} = rufus_forms:globals(Forms),
     Form = rufus_form:make_call('Echo', [rufus_form:make_literal(string, <<"hello">>, 7)], 7),
     Expected = rufus_form:make_type(string, 7),
     ?assertEqual({ok, Expected}, rufus_type:resolve(Globals, Form)).
@@ -53,7 +53,7 @@ resolve_call_with_two_argument_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, Globals} = rufus_form:globals(Forms),
+    {ok, Globals} = rufus_forms:globals(Forms),
     Form = rufus_form:make_call(
         'Concatenate',
         [
@@ -82,7 +82,7 @@ resolve_unknown_arity_error_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, Globals} = rufus_form:globals(Forms),
+    {ok, Globals} = rufus_forms:globals(Forms),
     Form = rufus_form:make_call('Ping', [], 7),
     Data = #{
         args => [],
@@ -127,7 +127,7 @@ resolve_unmatched_args_error_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, Globals} = rufus_form:globals(Forms),
+    {ok, Globals} = rufus_forms:globals(Forms),
     Form = rufus_form:make_call('Echo', [rufus_form:make_literal(integer, 42, 7)], 7),
     Data = #{
         args => [

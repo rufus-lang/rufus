@@ -5,11 +5,11 @@
 %% Enumeration API
 
 map_with_empty_input_test() ->
-    ?assertEqual([], rufus_form:map([], fun annotate/1)).
+    ?assertEqual([], rufus_forms:map([], fun annotate/1)).
 
 map_with_noop_function_test() ->
     Form = rufus_form:make_literal(bool, true, 7),
-    ?assertEqual([Form], rufus_form:map([Form], fun(F) -> F end)).
+    ?assertEqual([Form], rufus_forms:map([Form], fun(F) -> F end)).
 
 map_test() ->
     Form = rufus_form:make_literal(bool, true, 7),
@@ -17,7 +17,7 @@ map_test() ->
         {bool_lit,
             Context = #{spec => true, line => 7, type => rufus_form:make_inferred_type(bool, 7)}},
     ?assertEqual(Expected1, Form),
-    [AnnotatedForm] = rufus_form:map([Form], fun annotate/1),
+    [AnnotatedForm] = rufus_forms:map([Form], fun annotate/1),
     Expected2 = {bool_lit, Context#{annotated => true}},
     ?assertEqual(Expected2, AnnotatedForm).
 
@@ -33,7 +33,7 @@ map_with_binary_op_test() ->
                 annotated := true
             }}
         ],
-        rufus_form:map([Form], fun annotate/1)
+        rufus_forms:map([Form], fun annotate/1)
     ).
 
 map_with_call_test() ->
@@ -41,7 +41,7 @@ map_with_call_test() ->
     Form = rufus_form:make_call('Echo', Args, 13),
     ?assertMatch(
         [{call, #{args := [{_, #{annotated := true}}], annotated := true}}],
-        rufus_form:map([Form], fun annotate/1)
+        rufus_forms:map([Form], fun annotate/1)
     ).
 
 map_with_cons_test() ->
@@ -63,7 +63,7 @@ map_with_cons_test() ->
                 annotated := true
             }}
         ],
-        rufus_form:map([Form], fun annotate/1)
+        rufus_forms:map([Form], fun annotate/1)
     ).
 
 map_with_cons_and_tail_identifier_test() ->
@@ -79,7 +79,7 @@ map_with_cons_and_tail_identifier_test() ->
                 annotated := true
             }}
         ],
-        rufus_form:map([Form], fun annotate/1)
+        rufus_forms:map([Form], fun annotate/1)
     ).
 
 map_with_func_test() ->
@@ -95,7 +95,7 @@ map_with_func_test() ->
                 annotated := true
             }}
         ],
-        rufus_form:map([Form], fun annotate/1)
+        rufus_forms:map([Form], fun annotate/1)
     ).
 
 map_with_list_lit_test() ->
@@ -110,7 +110,7 @@ map_with_list_lit_test() ->
                 annotated := true
             }}
         ],
-        rufus_form:map([Form], fun annotate/1)
+        rufus_forms:map([Form], fun annotate/1)
     ).
 
 map_with_match_test() ->
@@ -125,7 +125,7 @@ map_with_match_test() ->
                 annotated := true
             }}
         ],
-        rufus_form:map([Form], fun annotate/1)
+        rufus_forms:map([Form], fun annotate/1)
     ).
 
 annotate({FormType, Context}) ->
@@ -137,7 +137,7 @@ globals_without_func_forms_test() ->
     RufusText = "module empty",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    ?assertEqual({ok, #{}}, rufus_form:globals(Forms)).
+    ?assertEqual({ok, #{}}, rufus_forms:globals(Forms)).
 
 globals_test() ->
     RufusText =
@@ -201,7 +201,7 @@ globals_test() ->
                 }},
             spec => 'Number'
         }},
-    ?assertEqual({ok, #{'Echo' => [Echo1], 'Number' => [Number0]}}, rufus_form:globals(Forms)).
+    ?assertEqual({ok, #{'Echo' => [Echo1], 'Number' => [Number0]}}, rufus_forms:globals(Forms)).
 
 globals_with_multiple_function_heads_test() ->
     RufusText =
@@ -270,4 +270,4 @@ globals_with_multiple_function_heads_test() ->
                 }},
             spec => 'Echo'
         }},
-    ?assertEqual({ok, #{'Echo' => [EchoString, EchoInt]}}, rufus_form:globals(Forms)).
+    ?assertEqual({ok, #{'Echo' => [EchoString, EchoInt]}}, rufus_forms:globals(Forms)).
