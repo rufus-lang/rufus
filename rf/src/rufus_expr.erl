@@ -383,13 +383,25 @@ typecheck_and_annotate_match(
         NewLocals1,
         [Left]
     ),
-    AnnotatedForm2 =
-        {match, Context#{
-            left => AnnotatedLeft,
-            right => AnnotatedRight,
-            type => rufus_form:type(AnnotatedRight)
-        }},
-    {ok, NewLocals2, AnnotatedForm2}.
+
+    case rufus_form:type_spec(AnnotatedLeft) == rufus_form:type_spec(AnnotatedRight) of
+        true ->
+            AnnotatedForm2 =
+                {match, Context#{
+                    left => AnnotatedLeft,
+                    right => AnnotatedRight,
+                    type => rufus_form:type(AnnotatedRight)
+                }},
+            {ok, NewLocals2, AnnotatedForm2};
+        false ->
+            Data = #{
+                globals => Globals,
+                locals => Locals,
+                left => AnnotatedLeft,
+                right => AnnotatedRight
+            },
+            throw({error, unmatched_types, Data})
+    end.
 
 %% %% typecheck_and_annotate_match ensures that match operands have matching types.
 %% %% Unknown identifiers in the left operand are treated as unbound variables and
