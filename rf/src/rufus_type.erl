@@ -314,16 +314,7 @@ lookup_identifier_type(Stack) ->
 
 -spec lookup_identifier_type(rufus_stack(), rufus_stack()) -> {ok, type_form()} | no_return().
 lookup_identifier_type([{head, _Context1} | [{cons, #{type := Type}} | _T]], Stack) ->
-    AllowPatternMatching = lists:any(
-        fun
-            ({params, _Context2}) ->
-                true;
-            (_Form) ->
-                false
-        end,
-        Stack
-    ),
-    case AllowPatternMatching of
+    case allow_variable_binding(Stack) of
         true ->
             {ok, rufus_form:element_type(Type)};
         false ->
@@ -331,16 +322,7 @@ lookup_identifier_type([{head, _Context1} | [{cons, #{type := Type}} | _T]], Sta
             throw({error, unknown_identifier, Data})
     end;
 lookup_identifier_type([{tail, _Context1} | [{cons, #{type := Type}} | _T]], Stack) ->
-    AllowPatternMatching = lists:any(
-        fun
-            ({params, _Context2}) ->
-                true;
-            (_Form) ->
-                false
-        end,
-        Stack
-    ),
-    case AllowPatternMatching of
+    case allow_variable_binding(Stack) of
         true ->
             {ok, Type};
         false ->
@@ -348,18 +330,7 @@ lookup_identifier_type([{tail, _Context1} | [{cons, #{type := Type}} | _T]], Sta
             throw({error, unknown_identifier, Data})
     end;
 lookup_identifier_type([{list_lit, #{type := Type}} | _T], Stack) ->
-    AllowPatternMatching = lists:any(
-        fun
-            ({params, _Context}) ->
-                true;
-            ({match_left, _Context}) ->
-                true;
-            (_Form) ->
-                false
-        end,
-        Stack
-    ),
-    case AllowPatternMatching of
+    case allow_variable_binding(Stack) of
         true ->
             {ok, rufus_form:element_type(Type)};
         false ->
@@ -379,29 +350,43 @@ lookup_identifier_type([], Stack) ->
     Data = #{stack => Stack},
     throw({error, unknown_type, Data}).
 
+%% allow_variable_binding returns true if the identifier is part of an
+%% expression in a function parameter list or is part of the left operand of a match
+%% expression.
+-spec allow_variable_binding(rufus_stack()) -> boolean().
+allow_variable_binding(Stack) ->
+    lists:any(
+        fun
+            ({params, _Context}) ->
+                true;
+            ({match_left, _Context}) ->
+                true;
+            (_Form) ->
+                false
+        end,
+        Stack
+    ).
+
 %% list_lit form helpers
 
 -spec resolve_list_lit_type(rufus_stack(), globals(), list_lit_form()) ->
     {ok, type_form()} | no_return().
-resolve_list_lit_type(Stack, Globals, Form = {list_lit, #{elements := Elements, type := Type}}) ->
-    {type, #{element_type := {type, #{spec := ElementTypeSpec}}}} = Type,
-    ElementTypes = lists:map(
+resolve_list_lit_type(Stack, Globals, Form = {list_lit, #{elements := Elements, type := Type1}}) ->
+    ElementType = rufus_form:element_type(Type1),
+    ExpectedTypeSpec = rufus_form:type_spec(ElementType),
+    ElementTypeSpecs = lists:map(
         fun(ElementForm) ->
-            {ok, ElementType} = resolve_type(Stack, Globals, ElementForm),
-            ElementType
+            {ok, Type2} = resolve_type(Stack, Globals, ElementForm),
+            rufus_form:type_spec(Type2)
         end,
         Elements
     ),
 
-    case element_types_match_list_type(ElementTypeSpec, ElementTypes) of
+    CompareFun = fun(TypeSpec) -> TypeSpec == ExpectedTypeSpec end,
+    case lists:all(CompareFun, ElementTypeSpecs) of
         true ->
-            {ok, Type};
+            {ok, Type1};
         false ->
             Data = #{form => Form},
             throw({error, unexpected_element_type, Data})
     end.
-
--spec element_types_match_list_type(type_spec(), rufus_forms()) -> boolean().
-element_types_match_list_type(Expected, ElementTypes) ->
-    TypesMatch = fun({type, #{spec := Actual}}) -> Actual == Expected end,
-    lists:all(TypesMatch, ElementTypes).
