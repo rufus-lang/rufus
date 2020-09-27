@@ -430,6 +430,8 @@ validate_pattern(_Data, {string_lit, _Context}) ->
     ok;
 validate_pattern(_Data, {list_lit, _Context}) ->
     ok;
+validate_pattern(_Data, {cons, _Context}) ->
+    ok;
 validate_pattern(_Data, {identifier, _Context}) ->
     ok;
 validate_pattern(Data, Form = {binary_op, _Context}) ->
