@@ -133,9 +133,9 @@ typecheck_and_annotate_binary_op(
     Form = {binary_op, Context = #{left := Left, right := Right}}
 ) ->
     BinaryOpStack = [Form | Stack],
-    LeftStack = [rufus_form:make_left(Form) | BinaryOpStack],
+    LeftStack = [rufus_form:make_binary_op_left(Form) | BinaryOpStack],
     {ok, Locals, [AnnotatedLeft]} = typecheck_and_annotate([], LeftStack, Globals, Locals, [Left]),
-    RightStack = [rufus_form:make_right(Form) | BinaryOpStack],
+    RightStack = [rufus_form:make_binary_op_right(Form) | BinaryOpStack],
     {ok, Locals, [AnnotatedRight]} = typecheck_and_annotate([], RightStack, Globals, Locals, [Right]),
     AnnotatedForm1 =
         {binary_op, Context#{
@@ -189,11 +189,11 @@ typecheck_and_annotate_cons(
     Form = {cons, Context = #{head := Head, tail := Tail}}
 ) ->
     ConsStack = [Form | Stack],
-    HeadStack = [rufus_form:make_head(Form) | ConsStack],
+    HeadStack = [rufus_form:make_cons_head(Form) | ConsStack],
     {ok, NewLocals1, [AnnotatedHead]} = typecheck_and_annotate([], HeadStack, Globals, Locals, [
         Head
     ]),
-    TailStack = [rufus_form:make_tail(Form) | ConsStack],
+    TailStack = [rufus_form:make_cons_tail(Form) | ConsStack],
     {ok, NewLocals2, [AnnotatedTail]} = typecheck_and_annotate(
         [],
         TailStack,
@@ -231,7 +231,7 @@ typecheck_and_annotate_func(
     Form = {func, Context = #{params := Params, exprs := Exprs}}
 ) ->
     FuncStack = [Form | Stack],
-    ParamsStack = [rufus_form:make_params(Form) | FuncStack],
+    ParamsStack = [rufus_form:make_func_params(Form) | FuncStack],
     {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate(
         [],
         ParamsStack,
@@ -239,7 +239,7 @@ typecheck_and_annotate_func(
         Locals,
         Params
     ),
-    ExprsStack = [rufus_form:make_exprs(Form) | FuncStack],
+    ExprsStack = [rufus_form:make_func_exprs(Form) | FuncStack],
     {ok, _NewLocals2, AnnotatedExprs} = typecheck_and_annotate(
         [],
         ExprsStack,

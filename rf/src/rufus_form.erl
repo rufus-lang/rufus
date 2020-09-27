@@ -7,16 +7,19 @@
     has_type/1,
     line/1,
     make_binary_op/4,
+    make_binary_op_left/1,
+    make_binary_op_right/1,
     make_call/3,
     make_cons/4,
-    make_exprs/1,
+    make_cons_head/1,
+    make_cons_tail/1,
     make_func/5,
-    make_head/1,
+    make_func_exprs/1,
+    make_func_params/1,
     make_identifier/2,
     make_import/2,
     make_inferred_type/2,
     make_inferred_type/3,
-    make_left/1,
     make_literal/3,
     make_literal/4,
     make_match/3,
@@ -24,9 +27,6 @@
     make_match_right/1,
     make_module/2,
     make_param/3,
-    make_params/1,
-    make_right/1,
-    make_tail/1,
     make_type/2,
     make_type/3,
     return_type/1,
@@ -193,9 +193,9 @@ make_func(Spec, Params, ReturnType, Exprs, Line) ->
         line => Line
     }}.
 
--spec make_exprs(func_form()) -> exprs_form().
-make_exprs({func, #{line := Line}}) ->
-    {exprs, #{line => Line}}.
+-spec make_func_exprs(func_form()) -> func_exprs_form().
+make_func_exprs({func, #{line := Line}}) ->
+    {func_exprs, #{line => Line}}.
 
 %% make_param returns a form for a function parameter declaration.
 -spec make_param(atom(), type_form(), integer()) ->
@@ -204,9 +204,9 @@ make_param(Spec, Type, Line) ->
     {param, #{spec => Spec, type => Type, line => Line}}.
 
 %% make_params returns a form for a function parameter list.
--spec make_params(func_form()) -> params_form().
-make_params({func, #{line := Line}}) ->
-    {params, #{line => Line}}.
+-spec make_func_params(func_form()) -> func_params_form().
+make_func_params({func, #{line := Line}}) ->
+    {func_params, #{line => Line}}.
 
 %% call form builder API
 
@@ -250,33 +250,33 @@ make_literal(list, Type, Elements, Line) ->
 make_cons(Type, Head, Tail, Line) ->
     {cons, #{type => Type, head => Head, tail => Tail, line => Line}}.
 
-%% make_head returns a head form from a cons expression.
--spec make_head(cons_form()) -> head_form().
-make_head({cons, #{line := Line}}) ->
-    {head, #{line => Line}}.
+%% make_cons_head returns a head form from a cons expression.
+-spec make_cons_head(cons_form()) -> cons_head_form().
+make_cons_head({cons, #{line := Line}}) ->
+    {cons_head, #{line => Line}}.
 
-%% make_tail returns a tail form from a cons expression.
--spec make_tail(cons_form()) -> tail_form().
-make_tail({cons, #{line := Line}}) ->
-    {tail, #{line => Line}}.
+%% make_cons_tail returns a tail form from a cons expression.
+-spec make_cons_tail(cons_form()) -> cons_tail_form().
+make_cons_tail({cons, #{line := Line}}) ->
+    {cons_tail, #{line => Line}}.
 
 %% binary_op form builder API
 
-%% make_binary_op returns a form for a binary operation.
+%% make_binary_op returns a binary_op form.
 -spec make_binary_op(atom(), rufus_form(), rufus_form(), integer()) ->
     {binary_op, #{op => atom(), left => rufus_form(), right => rufus_form(), line => integer()}}.
 make_binary_op(Op, Left, Right, Line) ->
     {binary_op, #{op => Op, left => Left, right => Right, line => Line}}.
 
-%% make_left returns a left form from a binary_op or match expression.
--spec make_left(binary_op_form()) -> {left, #{line => integer()}}.
-make_left({binary_op, #{line := Line}}) ->
-    {left, #{line => Line}}.
+%% make_binary_op_left returns a binary_op_left form.
+-spec make_binary_op_left(binary_op_form()) -> {binary_op_left, #{line => integer()}}.
+make_binary_op_left({binary_op, #{line := Line}}) ->
+    {binary_op_left, #{line => Line}}.
 
-%% make_right returns a right form from a binary_op or match expression.
--spec make_right(binary_op_form()) -> {right, #{line => integer()}}.
-make_right({binary_op, #{line := Line}}) ->
-    {right, #{line => Line}}.
+%% make_binary_op_right returns a binary_op_right form.
+-spec make_binary_op_right(binary_op_form()) -> {binary_op_right, #{line => integer()}}.
+make_binary_op_right({binary_op, #{line := Line}}) ->
+    {binary_op_right, #{line => Line}}.
 
 %% match form builder API
 

@@ -1767,7 +1767,7 @@ typecheck_and_annotate_function_with_a_match_that_has_an_unbound_variable_test()
                 line => 5,
                 right => {identifier, #{line => 5, spec => unbound}}
             }},
-            {exprs, #{line => 3}},
+            {func_exprs, #{line => 3}},
             {func, #{
                 exprs => [
                     {match, #{
@@ -1843,7 +1843,7 @@ typecheck_and_annotate_function_with_a_match_that_has_unbound_variables_test() -
                 line => 4,
                 right => {identifier, #{line => 4, spec => unbound2}}
             }},
-            {exprs, #{line => 3}},
+            {func_exprs, #{line => 3}},
             {func, #{
                 exprs => [
                     {match, #{
