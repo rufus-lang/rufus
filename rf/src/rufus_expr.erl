@@ -296,8 +296,8 @@ typecheck_and_annotate_identifier(
                     AnnotatedForm2 = {identifier, Context2#{type => TypeForm}},
                     {ok, NewLocals} = push_local(Locals, AnnotatedForm2),
                     {ok, NewLocals, AnnotatedForm2};
-                {error, Error, Data} ->
-                    throw({error, Error, Data})
+                {error, Reason, Data} ->
+                    throw({error, Reason, Data})
             end;
         TypeForm ->
             AnnotatedForm2 = {identifier, Context1#{type => TypeForm}},

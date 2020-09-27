@@ -308,8 +308,8 @@ lookup_identifier_type(Stack) ->
     try
         lookup_identifier_type(Stack, Stack)
     catch
-        {error, Error, Data} ->
-            {error, Error, Data}
+        {error, Reason, Data} ->
+            {error, Reason, Data}
     end.
 
 -spec lookup_identifier_type(rufus_stack(), rufus_stack()) -> {ok, type_form()} | no_return().
