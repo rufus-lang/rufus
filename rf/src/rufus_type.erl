@@ -373,11 +373,11 @@ allow_variable_binding(Stack) ->
     {ok, type_form()} | no_return().
 resolve_list_lit_type(Stack, Globals, Form = {list_lit, #{elements := Elements, type := Type1}}) ->
     ElementType = rufus_form:element_type(Type1),
-    ExpectedTypeSpec = rufus_form:type_spec(ElementType),
+    ExpectedTypeSpec = rufus_form:spec(ElementType),
     ElementTypeSpecs = lists:map(
         fun(ElementForm) ->
             {ok, Type2} = resolve_type(Stack, Globals, ElementForm),
-            rufus_form:type_spec(Type2)
+            rufus_form:spec(Type2)
         end,
         Elements
     ),
