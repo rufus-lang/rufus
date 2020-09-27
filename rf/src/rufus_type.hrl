@@ -77,6 +77,8 @@
 -type left_form() :: {left, context()}.
 -type right_form() :: {right, context()}.
 -type tail_form() :: {tail, context()}.
+-type match_left_form() :: {match_left, context()}.
+-type match_right_form() :: {match_right, context()}.
 
 %% Rufus forms
 

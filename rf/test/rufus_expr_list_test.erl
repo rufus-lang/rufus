@@ -427,22 +427,13 @@ typecheck_and_annotate_with_function_returning_a_list_of_int_with_an_unknown_var
     {ok, Forms} = rufus_parse:parse(Tokens),
     Data = #{
         form =>
-            {identifier, #{
-                line => 3,
-                locals => #{},
-                spec => unknown
-            }},
+            {identifier, #{line => 3, locals => #{}, spec => unknown}},
         globals => #{
             'Numbers' => [
                 {func, #{
                     exprs => [
                         {list_lit, #{
-                            elements => [
-                                {identifier, #{
-                                    line => 3,
-                                    spec => unknown
-                                }}
-                            ],
+                            elements => [{identifier, #{line => 3, spec => unknown}}],
                             line => 3,
                             type =>
                                 {type, #{
@@ -479,7 +470,55 @@ typecheck_and_annotate_with_function_returning_a_list_of_int_with_an_unknown_var
             ]
         },
         locals => #{},
-        stack => []
+        stack => [
+            {list_lit, #{
+                elements => [{identifier, #{line => 3, spec => unknown}}],
+                line => 3,
+                type =>
+                    {type, #{
+                        collection_type => list,
+                        element_type =>
+                            {type, #{line => 3, source => rufus_text, spec => int}},
+                        line => 3,
+                        source => rufus_text,
+                        spec => 'list[int]'
+                    }}
+            }},
+            {exprs, #{line => 3}},
+            {func, #{
+                exprs => [
+                    {list_lit, #{
+                        elements => [{identifier, #{line => 3, spec => unknown}}],
+                        line => 3,
+                        type =>
+                            {type, #{
+                                collection_type => list,
+                                element_type =>
+                                    {type, #{
+                                        line => 3,
+                                        source => rufus_text,
+                                        spec => int
+                                    }},
+                                line => 3,
+                                source => rufus_text,
+                                spec => 'list[int]'
+                            }}
+                    }}
+                ],
+                line => 3,
+                params => [],
+                return_type =>
+                    {type, #{
+                        collection_type => list,
+                        element_type =>
+                            {type, #{line => 3, source => rufus_text, spec => int}},
+                        line => 3,
+                        source => rufus_text,
+                        spec => 'list[int]'
+                    }},
+                spec => 'Numbers'
+            }}
+        ]
     },
     ?assertEqual({error, unknown_identifier, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
@@ -703,31 +742,17 @@ typecheck_and_annotate_with_function_returning_a_cons_literal_with_variable_pair
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{
-            line => 2,
-            spec => example
-        }},
+        {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
                 {match, #{
                     left =>
                         {identifier, #{
                             line => 4,
-                            locals => #{
-                                head =>
-                                    {type, #{
-                                        line => 4,
-                                        source => inferred,
-                                        spec => int
-                                    }}
-                            },
+                            locals => #{},
                             spec => head,
                             type =>
-                                {type, #{
-                                    line => 4,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 4, source => inferred, spec => int}}
                         }},
                     line => 4,
                     right =>
@@ -735,18 +760,10 @@ typecheck_and_annotate_with_function_returning_a_cons_literal_with_variable_pair
                             line => 4,
                             spec => 1,
                             type =>
-                                {type, #{
-                                    line => 4,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 4, source => inferred, spec => int}}
                         }},
                     type =>
-                        {type, #{
-                            line => 4,
-                            source => inferred,
-                            spec => int
-                        }}
+                        {type, #{line => 4, source => inferred, spec => int}}
                 }},
                 {match, #{
                     left =>
@@ -758,19 +775,6 @@ typecheck_and_annotate_with_function_returning_a_cons_literal_with_variable_pair
                                         line => 4,
                                         source => inferred,
                                         spec => int
-                                    }},
-                                tail =>
-                                    {type, #{
-                                        collection_type => list,
-                                        element_type =>
-                                            {type, #{
-                                                line => 5,
-                                                source => rufus_text,
-                                                spec => int
-                                            }},
-                                        line => 5,
-                                        source => rufus_text,
-                                        spec => 'list[int]'
                                     }}
                             },
                             spec => tail,
@@ -842,11 +846,7 @@ typecheck_and_annotate_with_function_returning_a_cons_literal_with_variable_pair
                         {type, #{
                             collection_type => list,
                             element_type =>
-                                {type, #{
-                                    line => 5,
-                                    source => rufus_text,
-                                    spec => int
-                                }},
+                                {type, #{line => 5, source => rufus_text, spec => int}},
                             line => 5,
                             source => rufus_text,
                             spec => 'list[int]'
@@ -858,11 +858,7 @@ typecheck_and_annotate_with_function_returning_a_cons_literal_with_variable_pair
                             line => 6,
                             spec => head,
                             type =>
-                                {type, #{
-                                    line => 4,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 4, source => inferred, spec => int}}
                         }},
                     line => 6,
                     tail =>
@@ -887,11 +883,7 @@ typecheck_and_annotate_with_function_returning_a_cons_literal_with_variable_pair
                         {type, #{
                             collection_type => list,
                             element_type =>
-                                {type, #{
-                                    line => 6,
-                                    source => rufus_text,
-                                    spec => int
-                                }},
+                                {type, #{line => 6, source => rufus_text, spec => int}},
                             line => 6,
                             source => rufus_text,
                             spec => 'list[int]'
@@ -904,11 +896,7 @@ typecheck_and_annotate_with_function_returning_a_cons_literal_with_variable_pair
                 {type, #{
                     collection_type => list,
                     element_type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => int
-                        }},
+                        {type, #{line => 3, source => rufus_text, spec => int}},
                     line => 3,
                     source => rufus_text,
                     spec => 'list[int]'
@@ -1600,7 +1588,58 @@ typecheck_and_annotate_with_function_returning_a_cons_pattern_without_data_test(
             ]
         },
         locals => #{},
-        stack => []
+        stack => [
+            {head, #{line => 3}},
+            {cons, #{
+                head => {identifier, #{line => 3, spec => head}},
+                line => 3,
+                tail => {identifier, #{line => 3, spec => tail}},
+                type =>
+                    {type, #{
+                        collection_type => list,
+                        element_type =>
+                            {type, #{line => 3, source => rufus_text, spec => int}},
+                        line => 3,
+                        source => rufus_text,
+                        spec => 'list[int]'
+                    }}
+            }},
+            {exprs, #{line => 3}},
+            {func, #{
+                exprs => [
+                    {cons, #{
+                        head => {identifier, #{line => 3, spec => head}},
+                        line => 3,
+                        tail => {identifier, #{line => 3, spec => tail}},
+                        type =>
+                            {type, #{
+                                collection_type => list,
+                                element_type =>
+                                    {type, #{
+                                        line => 3,
+                                        source => rufus_text,
+                                        spec => int
+                                    }},
+                                line => 3,
+                                source => rufus_text,
+                                spec => 'list[int]'
+                            }}
+                    }}
+                ],
+                line => 3,
+                params => [],
+                return_type =>
+                    {type, #{
+                        collection_type => list,
+                        element_type =>
+                            {type, #{line => 3, source => rufus_text, spec => int}},
+                        line => 3,
+                        source => rufus_text,
+                        spec => 'list[int]'
+                    }},
+                spec => 'Broken'
+            }}
+        ]
     },
     ?assertEqual({error, unknown_identifier, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 

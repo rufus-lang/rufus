@@ -4,7 +4,7 @@
 
 %% Arity-0 functions making function calls
 
-eval_for_function_call_test() ->
+eval_function_call_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -17,7 +17,7 @@ eval_for_function_call_test() ->
 
 %% Arity-1 functions making function calls
 
-eval_with_function_call_with_an_atom_argument_test() ->
+eval_function_call_with_an_atom_argument_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -28,7 +28,7 @@ eval_with_function_call_with_an_atom_argument_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(hello, example:'Random'()).
 
-eval_with_function_call_with_a_bool_argument_test() ->
+eval_function_call_with_a_bool_argument_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -39,7 +39,7 @@ eval_with_function_call_with_a_bool_argument_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(true, example:'Random'()).
 
-eval_with_function_call_with_a_float_argument_test() ->
+eval_function_call_with_a_float_argument_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -50,7 +50,7 @@ eval_with_function_call_with_a_float_argument_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(4.0, example:'Random'()).
 
-eval_with_function_call_with_an_int_argument_test() ->
+eval_function_call_with_an_int_argument_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -61,7 +61,7 @@ eval_with_function_call_with_an_int_argument_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(4, example:'Random'()).
 
-eval_with_function_call_with_a_string_argument_test() ->
+eval_function_call_with_a_string_argument_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -74,7 +74,7 @@ eval_with_function_call_with_a_string_argument_test() ->
 
 %% Arity-2 functions making function calls
 
-eval_with_function_call_with_two_int_arguments_test() ->
+eval_function_call_with_two_int_arguments_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -85,7 +85,7 @@ eval_with_function_call_with_two_int_arguments_test() ->
     ?assertEqual({ok, example}, Result),
     ?assertEqual(3, example:'Random'()).
 
-eval_with_function_call_with_two_float_arguments_test() ->
+eval_function_call_with_two_float_arguments_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -98,7 +98,7 @@ eval_with_function_call_with_two_float_arguments_test() ->
 
 %% Function calls with binary_op arguments
 
-eval_with_function_call_with_binary_op_argument_test() ->
+eval_function_call_with_binary_op_argument_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -111,7 +111,7 @@ eval_with_function_call_with_binary_op_argument_test() ->
 
 %% Multiple function heads
 
-eval_with_function_call_with_one_argument_and_many_function_heads_test() ->
+eval_function_call_with_one_argument_and_many_function_heads_test() ->
     RufusText =
         "\n"
         "    module example\n"

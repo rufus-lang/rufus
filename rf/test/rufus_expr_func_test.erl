@@ -18,21 +18,11 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_function_scope_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     Result = rufus_expr:typecheck_and_annotate(Forms),
     Data = #{
-        form =>
-            {identifier, #{
-                line => 7,
-                locals => #{},
-                spec => a
-            }},
+        form => {identifier, #{line => 7, locals => #{}, spec => a}},
         globals => #{
             'Broken' => [
                 {func, #{
-                    exprs => [
-                        {identifier, #{
-                            line => 7,
-                            spec => a
-                        }}
-                    ],
+                    exprs => [{identifier, #{line => 7, spec => a}}],
                     line => 7,
                     params => [],
                     return_type =>
@@ -48,22 +38,12 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_function_scope_test() ->
                 {func, #{
                     exprs => [
                         {match, #{
-                            left =>
-                                {identifier, #{
-                                    line => 4,
-                                    spec => a
-                                }},
+                            left => {identifier, #{line => 4, spec => a}},
                             line => 4,
                             right =>
-                                {identifier, #{
-                                    line => 4,
-                                    spec => n
-                                }}
+                                {identifier, #{line => 4, spec => n}}
                         }},
-                        {identifier, #{
-                            line => 5,
-                            spec => a
-                        }}
+                        {identifier, #{line => 5, spec => a}}
                     ],
                     line => 3,
                     params => [
@@ -89,7 +69,17 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_function_scope_test() ->
             ]
         },
         locals => #{},
-        stack => []
+        stack => [
+            {exprs, #{line => 7}},
+            {func, #{
+                exprs => [{identifier, #{line => 7, spec => a}}],
+                line => 7,
+                params => [],
+                return_type =>
+                    {type, #{line => 7, source => rufus_text, spec => string}},
+                spec => 'Broken'
+            }}
+        ]
     },
     ?assertEqual({error, unknown_identifier, Data}, Result).
 
