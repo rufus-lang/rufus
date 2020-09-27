@@ -154,6 +154,28 @@ eval_function_with_a_match_that_has_a_right_call_operand_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(2, example:'Random'()).
 
+eval_function_taking_a_match_pattern_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Double(b = a int) int {\n"
+        "        a + b\n"
+        "    }\n"
+        "    ",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual(4, example:'Double'(2)).
+
+eval_function_taking_a_cons_in_match_pattern_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func First(list[int]{head|tail} = items list[int]) int {\n"
+        "        head\n"
+        "    }\n"
+        "    ",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual(1, example:'First'([1, 2, 3, 4])).
+
 eval_function_with_a_match_that_has_a_left_call_operand_test() ->
     RufusText =
         "\n"

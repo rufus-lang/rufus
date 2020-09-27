@@ -5,7 +5,7 @@
 Nonterminals
     root decl
     type block param params args expr exprs
-    binary_op call cons match
+    binary_op call cons match match_param
     list_lit list_type.
 
 Terminals
@@ -110,6 +110,7 @@ list_lit -> list_type '{' args '}' :
 list_type -> list '[' type ']'   : rufus_form:make_type(list, '$3', line('$1')).
 
 match -> expr '=' expr           : rufus_form:make_match('$1', '$3', line('$2')).
+match_param -> expr '=' param    : rufus_form:make_match('$1', '$3', line('$2')).
 
 params -> param params           : ['$1'|'$2'].
 params -> '$empty'               : [].
@@ -122,6 +123,7 @@ param -> float_lit               : rufus_form:make_literal(float, text('$1'), li
 param -> int_lit                 : rufus_form:make_literal(int, text('$1'), line('$1')).
 param -> list_lit                : '$1'.
 param -> string_lit              : rufus_form:make_literal(string, list_to_binary(text('$1')), line('$1')).
+param -> match_param             : '$1'.
 
 type -> atom                     : rufus_form:make_type(atom, line('$1')).
 type -> bool                     : rufus_form:make_type(bool, line('$1')).
