@@ -74,6 +74,42 @@ eval_function_with_a_match_that_binds_a_list_literal_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual({string, <<"Rufus">>}, example:'Unbox'([{string, <<"Rufus">>}])).
 
+eval_function_with_a_match_that_binds_a_cons_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Echo(items list[int]) list[int] {\n"
+        "        list[int]{head|tail} = items\n"
+        "        list[int]{head|tail}\n"
+        "    }\n"
+        "    ",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual([1, 2, 3], example:'Echo'([1, 2, 3])).
+
+eval_function_with_a_match_that_binds_a_cons_head_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func First(items list[int]) int {\n"
+        "        list[int]{head|list[int]{2, 3}} = items\n"
+        "        head\n"
+        "    }\n"
+        "    ",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual(1, example:'First'([1, 2, 3])).
+
+eval_function_with_a_match_that_binds_a_cons_tail_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Rest(items list[int]) list[int] {\n"
+        "        list[int]{1|tail} = items\n"
+        "        tail\n"
+        "    }\n"
+        "    ",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual([2, 3], example:'Rest'([1, 2, 3])).
+
 %% match expressions involving binary_op expressions
 
 eval_function_with_a_match_that_has_a_left_binary_op_operand_test() ->
