@@ -266,6 +266,270 @@ parse_function_with_a_match_that_binds_a_list_literal_test() ->
     ],
     ?assertEqual(Expected, Forms).
 
+parse_function_with_a_match_that_binds_a_cons_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Echo(items list[int]) list[int] {\n"
+        "        list[int]{head|tail} = items\n"
+        "        list[int]{head|tail}\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            exprs => [
+                {match, #{
+                    left =>
+                        {cons, #{
+                            head => {identifier, #{line => 4, spec => head}},
+                            line => 4,
+                            tail => {identifier, #{line => 4, spec => tail}},
+                            type =>
+                                {type, #{
+                                    collection_type => list,
+                                    element_type =>
+                                        {type, #{
+                                            line => 4,
+                                            source => rufus_text,
+                                            spec => int
+                                        }},
+                                    line => 4,
+                                    source => rufus_text,
+                                    spec => 'list[int]'
+                                }}
+                        }},
+                    line => 4,
+                    right => {identifier, #{line => 4, spec => items}}
+                }},
+                {cons, #{
+                    head => {identifier, #{line => 5, spec => head}},
+                    line => 5,
+                    tail => {identifier, #{line => 5, spec => tail}},
+                    type =>
+                        {type, #{
+                            collection_type => list,
+                            element_type =>
+                                {type, #{line => 5, source => rufus_text, spec => int}},
+                            line => 5,
+                            source => rufus_text,
+                            spec => 'list[int]'
+                        }}
+                }}
+            ],
+            line => 3,
+            params => [
+                {param, #{
+                    line => 3,
+                    spec => items,
+                    type =>
+                        {type, #{
+                            collection_type => list,
+                            element_type =>
+                                {type, #{line => 3, source => rufus_text, spec => int}},
+                            line => 3,
+                            source => rufus_text,
+                            spec => 'list[int]'
+                        }}
+                }}
+            ],
+            return_type =>
+                {type, #{
+                    collection_type => list,
+                    element_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
+                    line => 3,
+                    source => rufus_text,
+                    spec => 'list[int]'
+                }},
+            spec => 'Echo'
+        }}
+    ],
+    ?assertEqual(Expected, Forms).
+
+parse_function_with_a_match_that_binds_a_cons_head_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func First(items list[int]) int {\n"
+        "        list[int]{head|list[int]{2, 3}} = items\n"
+        "        head\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            exprs => [
+                {match, #{
+                    left =>
+                        {cons, #{
+                            head => {identifier, #{line => 4, spec => head}},
+                            line => 4,
+                            tail =>
+                                {list_lit, #{
+                                    elements => [
+                                        {int_lit, #{
+                                            line => 4,
+                                            spec => 2,
+                                            type =>
+                                                {type, #{
+                                                    line => 4,
+                                                    source => inferred,
+                                                    spec => int
+                                                }}
+                                        }},
+                                        {int_lit, #{
+                                            line => 4,
+                                            spec => 3,
+                                            type =>
+                                                {type, #{
+                                                    line => 4,
+                                                    source => inferred,
+                                                    spec => int
+                                                }}
+                                        }}
+                                    ],
+                                    line => 4,
+                                    type =>
+                                        {type, #{
+                                            collection_type => list,
+                                            element_type =>
+                                                {type, #{
+                                                    line => 4,
+                                                    source => rufus_text,
+                                                    spec => int
+                                                }},
+                                            line => 4,
+                                            source => rufus_text,
+                                            spec => 'list[int]'
+                                        }}
+                                }},
+                            type =>
+                                {type, #{
+                                    collection_type => list,
+                                    element_type =>
+                                        {type, #{
+                                            line => 4,
+                                            source => rufus_text,
+                                            spec => int
+                                        }},
+                                    line => 4,
+                                    source => rufus_text,
+                                    spec => 'list[int]'
+                                }}
+                        }},
+                    line => 4,
+                    right => {identifier, #{line => 4, spec => items}}
+                }},
+                {identifier, #{line => 5, spec => head}}
+            ],
+            line => 3,
+            params => [
+                {param, #{
+                    line => 3,
+                    spec => items,
+                    type =>
+                        {type, #{
+                            collection_type => list,
+                            element_type =>
+                                {type, #{line => 3, source => rufus_text, spec => int}},
+                            line => 3,
+                            source => rufus_text,
+                            spec => 'list[int]'
+                        }}
+                }}
+            ],
+            return_type =>
+                {type, #{line => 3, source => rufus_text, spec => int}},
+            spec => 'First'
+        }}
+    ],
+    ?assertEqual(Expected, Forms).
+
+parse_function_with_a_match_that_binds_a_cons_tail_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Rest(items list[int]) list[int] {\n"
+        "        list[int]{1|tail} = items\n"
+        "        tail\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            exprs => [
+                {match, #{
+                    left =>
+                        {cons, #{
+                            head =>
+                                {int_lit, #{
+                                    line => 4,
+                                    spec => 1,
+                                    type =>
+                                        {type, #{
+                                            line => 4,
+                                            source => inferred,
+                                            spec => int
+                                        }}
+                                }},
+                            line => 4,
+                            tail => {identifier, #{line => 4, spec => tail}},
+                            type =>
+                                {type, #{
+                                    collection_type => list,
+                                    element_type =>
+                                        {type, #{
+                                            line => 4,
+                                            source => rufus_text,
+                                            spec => int
+                                        }},
+                                    line => 4,
+                                    source => rufus_text,
+                                    spec => 'list[int]'
+                                }}
+                        }},
+                    line => 4,
+                    right => {identifier, #{line => 4, spec => items}}
+                }},
+                {identifier, #{line => 5, spec => tail}}
+            ],
+            line => 3,
+            params => [
+                {param, #{
+                    line => 3,
+                    spec => items,
+                    type =>
+                        {type, #{
+                            collection_type => list,
+                            element_type =>
+                                {type, #{line => 3, source => rufus_text, spec => int}},
+                            line => 3,
+                            source => rufus_text,
+                            spec => 'list[int]'
+                        }}
+                }}
+            ],
+            return_type =>
+                {type, #{
+                    collection_type => list,
+                    element_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
+                    line => 3,
+                    source => rufus_text,
+                    spec => 'list[int]'
+                }},
+            spec => 'Rest'
+        }}
+    ],
+    ?assertEqual(Expected, Forms).
+
 parse_function_with_a_match_that_binds_a_variable_test() ->
     RufusText =
         "\n"
