@@ -1215,6 +1215,150 @@ typecheck_and_annotate_function_taking_a_match_pattern_test() ->
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
+typecheck_and_annotate_function_taking_a_cons_in_match_pattern_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func First(list[int]{head|tail} = items list[int]) int {\n"
+        "        head\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            exprs => [
+                {identifier, #{
+                    line => 4,
+                    spec => head,
+                    type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}}
+                }}
+            ],
+            line => 3,
+            params => [
+                {match, #{
+                    left =>
+                        {cons, #{
+                            head =>
+                                {identifier, #{
+                                    line => 3,
+                                    locals => #{
+                                        items =>
+                                            {type, #{
+                                                collection_type => list,
+                                                element_type =>
+                                                    {type, #{
+                                                        line => 3,
+                                                        source => rufus_text,
+                                                        spec => int
+                                                    }},
+                                                line => 3,
+                                                source => rufus_text,
+                                                spec => 'list[int]'
+                                            }}
+                                    },
+                                    spec => head,
+                                    type =>
+                                        {type, #{
+                                            line => 3,
+                                            source => rufus_text,
+                                            spec => int
+                                        }}
+                                }},
+                            line => 3,
+                            tail =>
+                                {identifier, #{
+                                    line => 3,
+                                    locals => #{
+                                        head =>
+                                            {type, #{
+                                                line => 3,
+                                                source => rufus_text,
+                                                spec => int
+                                            }},
+                                        items =>
+                                            {type, #{
+                                                collection_type => list,
+                                                element_type =>
+                                                    {type, #{
+                                                        line => 3,
+                                                        source => rufus_text,
+                                                        spec => int
+                                                    }},
+                                                line => 3,
+                                                source => rufus_text,
+                                                spec => 'list[int]'
+                                            }}
+                                    },
+                                    spec => tail,
+                                    type =>
+                                        {type, #{
+                                            collection_type => list,
+                                            element_type =>
+                                                {type, #{
+                                                    line => 3,
+                                                    source => rufus_text,
+                                                    spec => int
+                                                }},
+                                            line => 3,
+                                            source => rufus_text,
+                                            spec => 'list[int]'
+                                        }}
+                                }},
+                            type =>
+                                {type, #{
+                                    collection_type => list,
+                                    element_type =>
+                                        {type, #{
+                                            line => 3,
+                                            source => rufus_text,
+                                            spec => int
+                                        }},
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => 'list[int]'
+                                }}
+                        }},
+                    line => 3,
+                    right =>
+                        {param, #{
+                            line => 3,
+                            spec => items,
+                            type =>
+                                {type, #{
+                                    collection_type => list,
+                                    element_type =>
+                                        {type, #{
+                                            line => 3,
+                                            source => rufus_text,
+                                            spec => int
+                                        }},
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => 'list[int]'
+                                }}
+                        }},
+                    type =>
+                        {type, #{
+                            collection_type => list,
+                            element_type =>
+                                {type, #{line => 3, source => rufus_text, spec => int}},
+                            line => 3,
+                            source => rufus_text,
+                            spec => 'list[int]'
+                        }}
+                }}
+            ],
+            return_type =>
+                {type, #{line => 3, source => rufus_text, spec => int}},
+            spec => 'First'
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
 typecheck_and_annotate_function_with_a_match_that_has_left_and_right_operands_with_mismatched_types_test() ->
     RufusText =
         "\n"
