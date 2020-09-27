@@ -70,7 +70,7 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_function_scope_test() ->
         },
         locals => #{},
         stack => [
-            {exprs, #{line => 7}},
+            {func_exprs, #{line => 7}},
             {func, #{
                 exprs => [{identifier, #{line => 7, spec => a}}],
                 line => 7,

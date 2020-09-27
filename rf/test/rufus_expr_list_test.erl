@@ -484,7 +484,7 @@ typecheck_and_annotate_with_function_returning_a_list_of_int_with_an_unknown_var
                         spec => 'list[int]'
                     }}
             }},
-            {exprs, #{line => 3}},
+            {func_exprs, #{line => 3}},
             {func, #{
                 exprs => [
                     {list_lit, #{
@@ -1589,7 +1589,7 @@ typecheck_and_annotate_with_function_returning_a_cons_pattern_without_data_test(
         },
         locals => #{},
         stack => [
-            {head, #{line => 3}},
+            {cons_head, #{line => 3}},
             {cons, #{
                 head => {identifier, #{line => 3, spec => head}},
                 line => 3,
@@ -1604,7 +1604,7 @@ typecheck_and_annotate_with_function_returning_a_cons_pattern_without_data_test(
                         spec => 'list[int]'
                     }}
             }},
-            {exprs, #{line => 3}},
+            {func_exprs, #{line => 3}},
             {func, #{
                 exprs => [
                     {cons, #{

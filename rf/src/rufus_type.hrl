@@ -71,12 +71,12 @@
 
 %% Virtual forms
 
--type exprs_form() :: {exprs, context()}.
--type params_form() :: {params, context()}.
--type head_form() :: {head, context()}.
--type left_form() :: {left, context()}.
--type right_form() :: {right, context()}.
--type tail_form() :: {tail, context()}.
+-type binary_op_left_form() :: {binary_op_left, context()}.
+-type binary_op_right_form() :: {binary_op_right, context()}.
+-type cons_head_form() :: {cons_head, context()}.
+-type cons_tail_form() :: {cons_tail, context()}.
+-type func_exprs_form() :: {func_exprs, context()}.
+-type func_params_form() :: {func_params, context()}.
 -type match_left_form() :: {match_left, context()}.
 -type match_right_form() :: {match_right, context()}.
 
