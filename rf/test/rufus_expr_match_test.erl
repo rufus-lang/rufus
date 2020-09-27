@@ -1126,6 +1126,95 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_test() ->
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
+typecheck_and_annotate_function_taking_a_match_pattern_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Double(b = a int) int {\n"
+        "        a + b\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            exprs => [
+                {binary_op, #{
+                    left =>
+                        {identifier, #{
+                            line => 4,
+                            spec => a,
+                            type =>
+                                {type, #{
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => int
+                                }}
+                        }},
+                    line => 4,
+                    op => '+',
+                    right =>
+                        {identifier, #{
+                            line => 4,
+                            spec => b,
+                            type =>
+                                {type, #{
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => int
+                                }}
+                        }},
+                    type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}}
+                }}
+            ],
+            line => 3,
+            params => [
+                {match, #{
+                    left =>
+                        {identifier, #{
+                            line => 3,
+                            locals => #{
+                                a =>
+                                    {type, #{
+                                        line => 3,
+                                        source => rufus_text,
+                                        spec => int
+                                    }}
+                            },
+                            spec => b,
+                            type =>
+                                {type, #{
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => int
+                                }}
+                        }},
+                    line => 3,
+                    right =>
+                        {param, #{
+                            line => 3,
+                            spec => a,
+                            type =>
+                                {type, #{
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => int
+                                }}
+                        }},
+                    type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}}
+                }}
+            ],
+            return_type =>
+                {type, #{line => 3, source => rufus_text, spec => int}},
+            spec => 'Double'
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
 typecheck_and_annotate_function_with_a_match_that_has_left_and_right_operands_with_mismatched_types_test() ->
     RufusText =
         "\n"

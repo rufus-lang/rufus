@@ -30,6 +30,7 @@
     make_literal/3,
     make_literal/4,
     make_match/3,
+    make_match/4,
     make_match_left/1,
     make_match_right/1,
     make_module/2,
@@ -228,6 +229,11 @@ make_literal(list, Type, Elements, Line) ->
     {match, #{left => rufus_form(), right => rufus_form(), line => integer()}}.
 make_match(Left, Right, Line) ->
     {match, #{left => Left, right => Right, line => Line}}.
+
+-spec make_match(type_form(), rufus_form(), rufus_form(), integer()) ->
+    {match, #{left => rufus_form(), right => rufus_form(), line => integer(), type => type_form()}}.
+make_match(Type, Left, Right, Line) ->
+    {match, #{type => Type, left => Left, right => Right, line => Line}}.
 
 %% make_match_left returns a left form from a binary_op or match expression.
 -spec make_match_left(match_form()) -> match_left_form().

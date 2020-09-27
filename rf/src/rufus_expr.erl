@@ -101,19 +101,7 @@ typecheck_and_annotate(Acc, Stack, Globals, Locals, [H | T]) ->
 typecheck_and_annotate(Acc, _Stack, _Globals, Locals, []) ->
     {ok, Locals, lists:reverse(Acc)}.
 
-%% scope helpers
-
-%% annotate_locals adds a `locals` key to a form context.
--spec annotate_locals(locals(), rufus_form()) -> {ok, rufus_form()}.
-annotate_locals(Locals, {FormType, Context}) ->
-    {ok, {FormType, Context#{locals => Locals}}}.
-
-%% push_local adds a form to the local scope.
--spec push_local(locals(), rufus_form()) -> {ok, locals()}.
-push_local(Locals, {_FormType, #{spec := Spec, type := Type}}) ->
-    {ok, Locals#{Spec => Type}}.
-
-%% binary_op helpers
+%% binary_op form helpers
 
 %% typecheck_and_annotate_binary_op ensures that binary_op operands are
 %% exclusively ints or exclusively floats. Inferred type information is added to
@@ -156,7 +144,7 @@ typecheck_and_annotate_binary_op(
             throw(Error)
     end.
 
-%% call helpers
+%% call form helpers
 
 %% typecheck_and_annotate_call resolves the return type for a function call and
 %% returns a call form annotated with type information.
@@ -173,7 +161,7 @@ typecheck_and_annotate_call(Stack, Globals, Locals, {call, Context1 = #{args := 
             throw(Error)
     end.
 
-%% cons helpers
+%% cons form helpers
 
 %% typecheck_and_annotate_cons enforces the constraint that the head and tail
 %% elements are of the expected type. Return values:
@@ -217,7 +205,7 @@ typecheck_and_annotate_cons(
             throw(Error)
     end.
 
-%% func helpers
+%% func form helpers
 
 %% typecheck_and_annotate_func adds all parameters to the local scope. It also
 %% resolves and annotates types for all expressions in the function body to
@@ -272,7 +260,7 @@ typecheck_func_return_type(Globals, {func, #{return_type := ReturnType, exprs :=
             throw(Error)
     end.
 
-%% identifier helpers
+%% identifier form helpers
 
 %% typecheck_and_annotate_identifier adds a locals key/value pair to the
 %% identifier with information about local variables that are in scope. Type
@@ -304,7 +292,7 @@ typecheck_and_annotate_identifier(
             {ok, Locals, AnnotatedForm2}
     end.
 
-%% list_lit helpers
+%% list_lit form helpers
 
 %% typecheck_and_annotate_list_lit enforces the constraint that each list
 %% element matches the collection type. Returns values:
@@ -337,7 +325,7 @@ typecheck_and_annotate_list_lit(
             throw(Error)
     end.
 
-%% match helpers
+%% match form helpers
 
 %% typecheck_and_annotate_match ensures that match operands have matching types.
 %% Unknown identifiers in the left operand are treated as unbound variables and
@@ -455,3 +443,15 @@ is_constant_expr({int_lit, _Context}) ->
     true;
 is_constant_expr(_Form) ->
     false.
+
+%% scope helpers
+
+%% annotate_locals adds a `locals` key to a form context.
+-spec annotate_locals(locals(), rufus_form()) -> {ok, rufus_form()}.
+annotate_locals(Locals, {FormType, Context}) ->
+    {ok, {FormType, Context#{locals => Locals}}}.
+
+%% push_local adds a form to the local scope.
+-spec push_local(locals(), rufus_form()) -> {ok, locals()}.
+push_local(Locals, {_FormType, #{spec := Spec, type := Type}}) ->
+    {ok, Locals#{Spec => Type}}.

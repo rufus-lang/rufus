@@ -585,3 +585,42 @@ parse_function_with_a_match_that_binds_a_variable_test() ->
         }}
     ],
     ?assertEqual(Expected, Forms).
+
+parse_function_taking_a_match_pattern_test() ->
+    RufusText = "func Double(b = a int) int { a + b }",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [
+        {func, #{
+            exprs => [
+                {binary_op, #{
+                    left => {identifier, #{line => 1, spec => a}},
+                    line => 1,
+                    op => '+',
+                    right => {identifier, #{line => 1, spec => b}}
+                }}
+            ],
+            line => 1,
+            params => [
+                {match, #{
+                    left => {identifier, #{line => 1, spec => b}},
+                    line => 1,
+                    right =>
+                        {param, #{
+                            line => 1,
+                            spec => a,
+                            type =>
+                                {type, #{
+                                    line => 1,
+                                    source => rufus_text,
+                                    spec => int
+                                }}
+                        }}
+                }}
+            ],
+            return_type =>
+                {type, #{line => 1, source => rufus_text, spec => int}},
+            spec => 'Double'
+        }}
+    ],
+    ?assertEqual(Expected, Forms).
