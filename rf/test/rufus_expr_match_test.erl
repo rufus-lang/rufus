@@ -621,9 +621,9 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
     RufusText =
         "\n"
         "    module example\n"
-        "    func First(items list[int]) int {\n"
+        "    func Echo(items list[int]) list[int] {\n"
         "        list[int]{head|tail} = items\n"
-        "        head\n"
+        "        list[int]{head|tail}\n"
         "    }\n"
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
@@ -745,11 +745,46 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
                             spec => 'list[int]'
                         }}
                 }},
-                {identifier, #{
+                {cons, #{
+                    head =>
+                        {identifier, #{
+                            line => 5,
+                            spec => head,
+                            type =>
+                                {type, #{
+                                    line => 4,
+                                    source => rufus_text,
+                                    spec => int
+                                }}
+                        }},
                     line => 5,
-                    spec => head,
+                    tail =>
+                        {identifier, #{
+                            line => 5,
+                            spec => tail,
+                            type =>
+                                {type, #{
+                                    collection_type => list,
+                                    element_type =>
+                                        {type, #{
+                                            line => 4,
+                                            source => rufus_text,
+                                            spec => int
+                                        }},
+                                    line => 4,
+                                    source => rufus_text,
+                                    spec => 'list[int]'
+                                }}
+                        }},
                     type =>
-                        {type, #{line => 4, source => rufus_text, spec => int}}
+                        {type, #{
+                            collection_type => list,
+                            element_type =>
+                                {type, #{line => 5, source => rufus_text, spec => int}},
+                            line => 5,
+                            source => rufus_text,
+                            spec => 'list[int]'
+                        }}
                 }}
             ],
             line => 3,
@@ -769,8 +804,15 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => int}},
-            spec => 'First'
+                {type, #{
+                    collection_type => list,
+                    element_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
+                    line => 3,
+                    source => rufus_text,
+                    spec => 'list[int]'
+                }},
+            spec => 'Echo'
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
