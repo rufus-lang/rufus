@@ -21,6 +21,7 @@
     make_cons_head/1,
     make_cons_tail/1,
     make_func/5,
+    make_func_expr/4,
     make_func_exprs/1,
     make_func_params/1,
     make_identifier/2,
@@ -35,7 +36,8 @@
     make_module/2,
     make_param/3,
     make_type/2,
-    make_type/3
+    make_type/3,
+    make_type/4
 ]).
 
 %% Form API
@@ -162,15 +164,73 @@ make_cons_tail({cons, #{line := Line}}) ->
         return_type => type_form(),
         exprs => list(),
         line => integer()
-    }}.
+    }} |
+    no_return().
 make_func(Spec, Params, ReturnType, Exprs, Line) ->
-    {func, #{
-        spec => Spec,
-        params => Params,
-        return_type => ReturnType,
-        exprs => Exprs,
-        line => Line
-    }}.
+    case no_forms_are_type_forms(Params) of
+        true ->
+            {func, #{
+                spec => Spec,
+                params => Params,
+                return_type => ReturnType,
+                exprs => Exprs,
+                line => Line
+            }};
+        false ->
+            Data = #{
+                spec => func_expr,
+                params => Params,
+                return_type => ReturnType,
+                exprs => Exprs,
+                line => Line
+            },
+            throw({error, parse_error, Data})
+    end.
+
+-spec make_func_expr(list(param_form()), type_form(), list(), integer()) ->
+    %% TODO(jkakar) Generate a better spec, like 'func(string,int) string',
+    %% instead of using the generic 'func_expr'.
+    {func_expr, #{
+        spec => func_expr,
+        params => list(param_form),
+        return_type => type_form(),
+        exprs => list(),
+        line => integer()
+    }} |
+    no_return().
+make_func_expr(Params, ReturnType, Exprs, Line) ->
+    case no_forms_are_type_forms(Params) of
+        true ->
+            {func_expr, #{
+                spec => func_expr,
+                params => Params,
+                return_type => ReturnType,
+                exprs => Exprs,
+                line => Line
+            }};
+        false ->
+            Data = #{
+                spec => func_expr,
+                params => Params,
+                return_type => ReturnType,
+                exprs => Exprs,
+                line => Line
+            },
+            throw({error, parse_error, Data})
+    end.
+
+no_forms_are_type_forms(Forms) ->
+    lists:all(
+        fun(Form) ->
+            case Form of
+                {type, _Context} ->
+                    false;
+                _Form ->
+                    true
+            end
+        end,
+        Forms
+    ).
 
 -spec make_func_exprs(func_form()) -> func_exprs_form().
 make_func_exprs({func, #{line := Line}}) ->
@@ -285,9 +345,47 @@ make_type(Spec, Line) ->
 make_type(list, ElementType, Line) ->
     make_type_with_source(list, ElementType, rufus_text, Line).
 
+make_type(func, ParamTypes, ReturnType, Line) ->
+    make_type_with_source(func, ParamTypes, ReturnType, rufus_text, Line).
+
 -spec make_type_with_source(type_spec(), type_source(), integer()) -> type_form().
 make_type_with_source(Spec, Source, Line) ->
     {type, #{spec => Spec, source => Source, line => Line}}.
+
+-spec make_type_with_source(func, list(type_form()), type_form(), type_source(), integer()) ->
+    type_form() | no_return().
+make_type_with_source(func, ParamTypes, ReturnType, Source, Line) ->
+    case all_forms_are_type_forms(ParamTypes) of
+        true ->
+            {type, #{
+                decl_type => func,
+                param_types => ParamTypes,
+                return_type => ReturnType,
+                source => Source,
+                line => Line
+            }};
+        false ->
+            Data = #{
+                param_types => ParamTypes,
+                return_type => ReturnType,
+                source => Source,
+                line => Line
+            },
+            throw({error, parse_error, Data})
+    end.
+
+all_forms_are_type_forms(Forms) ->
+    lists:all(
+        fun(Form) ->
+            case Form of
+                {type, _Context} ->
+                    true;
+                _Form ->
+                    false
+            end
+        end,
+        Forms
+    ).
 
 -spec make_type_with_source(list | list_lit, type_form(), type_source(), integer()) -> type_form().
 make_type_with_source(_CollectionSpec, ElementType, Source, Line) ->
