@@ -754,7 +754,7 @@ parse_function_with_param_in_func_expr_type_test() ->
 parse_function_returning_a_function_test() ->
     RufusText =
         "\n"
-        "    func FortyTwoFunc() (func() int) {\n"
+        "    func FortyTwoFunc() func() int {\n"
         "        func() int { 42 }\n"
         "    }\n"
         "    ",

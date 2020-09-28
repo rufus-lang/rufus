@@ -70,7 +70,6 @@ type -> int                      : rufus_form:make_type(int, line('$1')).
 type -> string                   : rufus_form:make_type(string, line('$1')).
 type -> list_type                : '$1'.
 type -> func '(' params ')' type : rufus_form:make_type(func, '$3', '$5', line('$1')).
-type -> '(' type ')'             : '$2'.
 
 params -> param params           : ['$1'|'$2'].
 params -> '$empty'               : [].
