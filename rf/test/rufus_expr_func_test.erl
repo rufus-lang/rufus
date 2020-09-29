@@ -1092,31 +1092,82 @@ typecheck_and_annotate_for_function_taking_a_string_literal_test() ->
 
 %% Anonymous functions
 
-%% typecheck_and_annotate_anonymous_function_test() ->
-%%     RufusText =
-%%         "\n"
-%%         "    module example\n"
-%%         "    func NumberFunc() func() int {\n"
-%%         "        func() int { 42 }\n"
-%%         "    }\n"
-%%         "    ",
-%%     {ok, Tokens} = rufus_tokenize:string(RufusText),
-%%     {ok, Forms} = rufus_parse:parse(Tokens),
-%%     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
-%%     Expected = [
-%%         {module, #{line => 2, spec => example}},
-%%         {func, #{
-%%             params => [],
-%%             exprs => [
-%%                 {int_lit, #{
-%%                     line => 3,
-%%                     spec => 42,
-%%                     type => {type, #{line => 3, spec => int, source => inferred}}
-%%                 }}
-%%             ],
-%%             line => 3,
-%%             return_type => {type, #{line => 3, spec => int, source => rufus_text}},
-%%             spec => 'Number'
-%%         }}
-%%     ],
-%%     ?assertEqual(Expected, AnnotatedForms).
+typecheck_and_annotate_anonymous_function_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func NumberFunc() func() int {\n"
+        "        func() int { 42 }\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            exprs => [
+                {func_expr, #{
+                    exprs => [
+                        {int_lit, #{
+                            line => 4,
+                            spec => 42,
+                            type =>
+                                {type, #{
+                                    line => 4,
+                                    source => inferred,
+                                    spec => int
+                                }}
+                        }}
+                    ],
+                    line => 4,
+                    params => [],
+                    return_type =>
+                        {type, #{line => 4, source => rufus_text, spec => int}},
+                    spec => func_expr,
+                    type =>
+                        {type, #{
+                            kind => func,
+                            line => 4,
+                            param_types => [],
+                            return_type =>
+                                {type, #{line => 4, source => rufus_text, spec => int}},
+                            source => rufus_text,
+                            spec => 'func() int'
+                        }}
+                }}
+            ],
+            line => 3,
+            params => [],
+            return_type =>
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
+                    source => rufus_text,
+                    spec => 'func() int'
+                }},
+            spec => 'NumberFunc',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{
+                            kind => func,
+                            line => 3,
+                            param_types => [],
+                            return_type =>
+                                {type, #{line => 3, source => rufus_text, spec => int}},
+                            source => rufus_text,
+                            spec => 'func() int'
+                        }},
+                    source => rufus_text,
+                    spec => 'func() func() int'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
