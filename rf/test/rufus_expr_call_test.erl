@@ -138,10 +138,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_one_argument_test()
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{
-            line => 2,
-            spec => math
-        }},
+        {module, #{line => 2, spec => math}},
         {func, #{
             exprs => [
                 {identifier, #{
@@ -169,12 +166,18 @@ typecheck_and_annotate_with_function_calling_a_function_with_one_argument_test()
                 }}
             ],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => string}},
+            spec => 'Echo',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => string}},
                     source => rufus_text,
-                    spec => string
-                }},
-            spec => 'Echo'
+                    spec => 'func (string) string'
+                }}
         }},
         {func, #{
             exprs => [
@@ -204,12 +207,18 @@ typecheck_and_annotate_with_function_calling_a_function_with_one_argument_test()
             line => 4,
             params => [],
             return_type =>
+                {type, #{line => 4, source => rufus_text, spec => string}},
+            spec => 'Greeting',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 4,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 4, source => rufus_text, spec => string}},
                     source => rufus_text,
-                    spec => string
-                }},
-            spec => 'Greeting'
+                    spec => 'func () string'
+                }}
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
@@ -225,10 +234,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{
-            line => 2,
-            spec => math
-        }},
+        {module, #{line => 2, spec => math}},
         {func, #{
             exprs => [
                 {binary_op, #{
@@ -257,11 +263,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
                                 }}
                         }},
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => int
-                        }}
+                        {type, #{line => 3, source => rufus_text, spec => int}}
                 }}
             ],
             line => 3,
@@ -270,30 +272,31 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
                     line => 3,
                     spec => m,
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => int
-                        }}
+                        {type, #{line => 3, source => rufus_text, spec => int}}
                 }},
                 {param, #{
                     line => 3,
                     spec => n,
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => int
-                        }}
+                        {type, #{line => 3, source => rufus_text, spec => int}}
                 }}
             ],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => int}},
+            spec => 'Sum',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [
+                        {type, #{line => 3, source => rufus_text, spec => int}},
+                        {type, #{line => 3, source => rufus_text, spec => int}}
+                    ],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => int
-                }},
-            spec => 'Sum'
+                    spec => 'func (int, int) int'
+                }}
         }},
         {func, #{
             exprs => [
@@ -323,22 +326,24 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
                     line => 4,
                     spec => 'Sum',
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => int
-                        }}
+                        {type, #{line => 3, source => rufus_text, spec => int}}
                 }}
             ],
             line => 4,
             params => [],
             return_type =>
+                {type, #{line => 4, source => rufus_text, spec => int}},
+            spec => 'Random',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 4,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 4, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => int
-                }},
-            spec => 'Random'
+                    spec => 'func () int'
+                }}
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
@@ -355,12 +360,8 @@ eval_with_function_call_with_binary_op_argument_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
-
     Expected = [
-        {module, #{
-            line => 2,
-            spec => example
-        }},
+        {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
                 {binary_op, #{
@@ -382,18 +383,10 @@ eval_with_function_call_with_binary_op_argument_test() ->
                             line => 3,
                             spec => 2,
                             type =>
-                                {type, #{
-                                    line => 3,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 3, source => inferred, spec => int}}
                         }},
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => int
-                        }}
+                        {type, #{line => 3, source => rufus_text, spec => int}}
                 }}
             ],
             line => 3,
@@ -402,20 +395,22 @@ eval_with_function_call_with_binary_op_argument_test() ->
                     line => 3,
                     spec => n,
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => int
-                        }}
+                        {type, #{line => 3, source => rufus_text, spec => int}}
                 }}
             ],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => int}},
+            spec => double,
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [{type, #{line => 3, source => rufus_text, spec => int}}],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => int
-                }},
-            spec => double
+                    spec => 'func (int) int'
+                }}
         }},
         {func, #{
             exprs => [
@@ -457,11 +452,7 @@ eval_with_function_call_with_binary_op_argument_test() ->
                     line => 4,
                     spec => double,
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => int
-                        }}
+                        {type, #{line => 3, source => rufus_text, spec => int}}
                 }}
             ],
             line => 4,
@@ -470,30 +461,31 @@ eval_with_function_call_with_binary_op_argument_test() ->
                     line => 4,
                     spec => m,
                     type =>
-                        {type, #{
-                            line => 4,
-                            source => rufus_text,
-                            spec => int
-                        }}
+                        {type, #{line => 4, source => rufus_text, spec => int}}
                 }},
                 {param, #{
                     line => 4,
                     spec => n,
                     type =>
-                        {type, #{
-                            line => 4,
-                            source => rufus_text,
-                            spec => int
-                        }}
+                        {type, #{line => 4, source => rufus_text, spec => int}}
                 }}
             ],
             return_type =>
+                {type, #{line => 4, source => rufus_text, spec => int}},
+            spec => 'SumAndDouble',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 4,
+                    param_types => [
+                        {type, #{line => 4, source => rufus_text, spec => int}},
+                        {type, #{line => 4, source => rufus_text, spec => int}}
+                    ],
+                    return_type =>
+                        {type, #{line => 4, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => int
-                }},
-            spec => 'SumAndDouble'
+                    spec => 'func (int, int) int'
+                }}
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
@@ -511,21 +503,14 @@ eval_with_function_call_with_match_argument_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{
-            line => 2,
-            spec => example
-        }},
+        {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
                 {identifier, #{
                     line => 3,
                     spec => n,
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => int
-                        }}
+                        {type, #{line => 3, source => rufus_text, spec => int}}
                 }}
             ],
             line => 3,
@@ -534,20 +519,22 @@ eval_with_function_call_with_match_argument_test() ->
                     line => 3,
                     spec => n,
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => int
-                        }}
+                        {type, #{line => 3, source => rufus_text, spec => int}}
                 }}
             ],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => int}},
+            spec => 'Echo',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [{type, #{line => 3, source => rufus_text, spec => int}}],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => int
-                }},
-            spec => 'Echo'
+                    spec => 'func (int) int'
+                }}
         }},
         {func, #{
             exprs => [
@@ -557,11 +544,7 @@ eval_with_function_call_with_match_argument_test() ->
                             line => 4,
                             spec => 42,
                             type =>
-                                {type, #{
-                                    line => 4,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 4, source => inferred, spec => int}}
                         }},
                     line => 4,
                     right =>
@@ -588,22 +571,24 @@ eval_with_function_call_with_match_argument_test() ->
                                 }}
                         }},
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => int
-                        }}
+                        {type, #{line => 3, source => rufus_text, spec => int}}
                 }}
             ],
             line => 4,
             params => [],
             return_type =>
+                {type, #{line => 4, source => rufus_text, spec => int}},
+            spec => 'Random',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 4,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 4, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => int
-                }},
-            spec => 'Random'
+                    spec => 'func () int'
+                }}
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).

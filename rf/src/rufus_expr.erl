@@ -219,7 +219,14 @@ typecheck_and_annotate_func(
     Stack,
     Globals,
     Locals,
-    Form = {func, Context = #{params := Params, exprs := Exprs}}
+    Form =
+        {func,
+            Context = #{
+                params := Params,
+                exprs := Exprs,
+                return_type := ReturnType,
+                line := Line
+            }}
 ) ->
     FuncStack = [Form | Stack],
     ParamsStack = [rufus_form:make_func_params(Form) | FuncStack],
@@ -238,7 +245,14 @@ typecheck_and_annotate_func(
         NewLocals1,
         Exprs
     ),
-    AnnotatedForm = {func, Context#{params => AnnotatedParams, exprs => AnnotatedExprs}},
+    ParamTypes = lists:map(fun(ParamForm) -> rufus_form:type(ParamForm) end, AnnotatedParams),
+    Type = rufus_form:make_type(func, ParamTypes, ReturnType, Line),
+    AnnotatedForm =
+        {func, Context#{
+            params => AnnotatedParams,
+            exprs => AnnotatedExprs,
+            type => Type
+        }},
     ok = typecheck_func_return_type(Globals, AnnotatedForm),
     {ok, AnnotatedForm}.
 
@@ -274,7 +288,14 @@ typecheck_and_annotate_func_expr(
     Stack,
     Globals,
     Locals,
-    Form = {func_expr, Context = #{params := Params, exprs := Exprs}}
+    Form =
+        {func_expr,
+            Context = #{
+                params := Params,
+                exprs := Exprs,
+                return_type := ReturnType,
+                line := Line
+            }}
 ) ->
     FuncExprStack = [Form | Stack],
     ParamsStack = [rufus_form:make_func_params(Form) | FuncExprStack],
@@ -293,7 +314,14 @@ typecheck_and_annotate_func_expr(
         NewLocals1,
         Exprs
     ),
-    AnnotatedForm = {func_expr, Context#{params => AnnotatedParams, exprs => AnnotatedExprs}},
+    ParamTypes = lists:map(fun(ParamForm) -> rufus_form:type(ParamForm) end, AnnotatedParams),
+    Type = rufus_form:make_type(func, ParamTypes, ReturnType, Line),
+    AnnotatedForm =
+        {func, Context#{
+            params => AnnotatedParams,
+            exprs => AnnotatedExprs,
+            type => Type
+        }},
     ok = typecheck_func_expr_return_type(Globals, AnnotatedForm),
     {ok, AnnotatedForm}.
 

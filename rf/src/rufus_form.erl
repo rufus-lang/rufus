@@ -367,11 +367,27 @@ make_type_with_source(func, ParamTypes, ReturnType, Source, Line) ->
     %% types. Type params may only be types.
     case all_forms_are_type_forms(ParamTypes) of
         true ->
+            ParamTypesSpec = lists:map(
+                fun(ParamType) ->
+                    atom_to_list(type_spec(ParamType))
+                end,
+                ParamTypes
+            ),
+            ReturnTypeSpec = type_spec(ReturnType),
+            Spec = list_to_atom(
+                unicode:characters_to_list([
+                    "func (",
+                    lists:join(", ", ParamTypesSpec),
+                    ") ",
+                    atom_to_list(ReturnTypeSpec)
+                ])
+            ),
             {type, #{
                 decl_type => func,
                 param_types => ParamTypes,
                 return_type => ReturnType,
                 source => Source,
+                spec => Spec,
                 line => Line
             }};
         false ->

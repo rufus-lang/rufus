@@ -12,13 +12,10 @@ typecheck_and_annotate_mathematical_operator_with_ints_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{
-            line => 2,
-            spec => example
-        }},
+        {module, #{line => 2, spec => example}},
         {func, #{
-            params => [],
             exprs => [
                 {binary_op, #{
                     left =>
@@ -26,11 +23,7 @@ typecheck_and_annotate_mathematical_operator_with_ints_test() ->
                             line => 3,
                             spec => 19,
                             type =>
-                                {type, #{
-                                    line => 3,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 3, source => inferred, spec => int}}
                         }},
                     line => 3,
                     op => '+',
@@ -39,31 +32,29 @@ typecheck_and_annotate_mathematical_operator_with_ints_test() ->
                             line => 3,
                             spec => 23,
                             type =>
-                                {type, #{
-                                    line => 3,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 3, source => inferred, spec => int}}
                         }},
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => int
-                        }}
+                        {type, #{line => 3, source => inferred, spec => int}}
                 }}
             ],
             line => 3,
+            params => [],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => int}},
+            spec => 'FortyTwo',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => int
-                }},
-            spec => 'FortyTwo'
+                    spec => 'func () int'
+                }}
         }}
     ],
-    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
 typecheck_and_annotate_mathematical_operator_with_floats_test() ->
@@ -74,13 +65,10 @@ typecheck_and_annotate_mathematical_operator_with_floats_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{
-            line => 2,
-            spec => example
-        }},
+        {module, #{line => 2, spec => example}},
         {func, #{
-            params => [],
             exprs => [
                 {binary_op, #{
                     left =>
@@ -108,24 +96,26 @@ typecheck_and_annotate_mathematical_operator_with_floats_test() ->
                                 }}
                         }},
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => float
-                        }}
+                        {type, #{line => 3, source => inferred, spec => float}}
                 }}
             ],
             line => 3,
+            params => [],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => float}},
+            spec => 'Pi',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => float}},
                     source => rufus_text,
-                    spec => float
-                }},
-            spec => 'Pi'
+                    spec => 'func () float'
+                }}
         }}
     ],
-    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
 typecheck_and_annotate_mathematical_operator_with_float_and_int_test() ->
@@ -136,7 +126,7 @@ typecheck_and_annotate_mathematical_operator_with_float_and_int_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    Expected = #{
+    Data = #{
         form =>
             {binary_op, #{
                 left =>
@@ -166,8 +156,7 @@ typecheck_and_annotate_mathematical_operator_with_float_and_int_test() ->
                     }}
             }}
     },
-    {error, unmatched_operand_type, Data} = rufus_expr:typecheck_and_annotate(Forms),
-    ?assertEqual(Expected, Data).
+    ?assertEqual({error, unmatched_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
 typecheck_and_annotate_mathematical_operator_with_float_and_float_and_int_test() ->
     RufusText =
@@ -177,7 +166,7 @@ typecheck_and_annotate_mathematical_operator_with_float_and_float_and_int_test()
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    Expected = #{
+    Data = #{
         form =>
             {binary_op, #{
                 left =>
@@ -229,8 +218,7 @@ typecheck_and_annotate_mathematical_operator_with_float_and_float_and_int_test()
                     }}
             }}
     },
-    {error, unmatched_operand_type, Data} = rufus_expr:typecheck_and_annotate(Forms),
-    ?assertEqual(Expected, Data).
+    ?assertEqual({error, unmatched_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
 typecheck_and_annotate_mathematical_operator_with_bools_test() ->
     RufusText =
@@ -240,7 +228,7 @@ typecheck_and_annotate_mathematical_operator_with_bools_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    Expected = #{
+    Data = #{
         form =>
             {binary_op, #{
                 left =>
@@ -270,8 +258,7 @@ typecheck_and_annotate_mathematical_operator_with_bools_test() ->
                     }}
             }}
     },
-    {error, unsupported_operand_type, Data} = rufus_expr:typecheck_and_annotate(Forms),
-    ?assertEqual(Expected, Data).
+    ?assertEqual({error, unsupported_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
 typecheck_and_annotate_mathematical_operator_with_strings_test() ->
     RufusText =
@@ -281,7 +268,7 @@ typecheck_and_annotate_mathematical_operator_with_strings_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    Expected = #{
+    Data = #{
         form =>
             {binary_op, #{
                 left =>
@@ -311,8 +298,7 @@ typecheck_and_annotate_mathematical_operator_with_strings_test() ->
                     }}
             }}
     },
-    {error, unsupported_operand_type, Data} = rufus_expr:typecheck_and_annotate(Forms),
-    ?assertEqual(Expected, Data).
+    ?assertEqual({error, unsupported_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
 typecheck_and_annotate_remainder_mathematical_operator_with_ints_test() ->
     RufusText =
@@ -322,13 +308,10 @@ typecheck_and_annotate_remainder_mathematical_operator_with_ints_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{
-            line => 2,
-            spec => example
-        }},
+        {module, #{line => 2, spec => example}},
         {func, #{
-            params => [],
             exprs => [
                 {binary_op, #{
                     left =>
@@ -336,11 +319,7 @@ typecheck_and_annotate_remainder_mathematical_operator_with_ints_test() ->
                             line => 3,
                             spec => 27,
                             type =>
-                                {type, #{
-                                    line => 3,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 3, source => inferred, spec => int}}
                         }},
                     line => 3,
                     op => '%',
@@ -349,31 +328,29 @@ typecheck_and_annotate_remainder_mathematical_operator_with_ints_test() ->
                             line => 3,
                             spec => 7,
                             type =>
-                                {type, #{
-                                    line => 3,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 3, source => inferred, spec => int}}
                         }},
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => int
-                        }}
+                        {type, #{line => 3, source => inferred, spec => int}}
                 }}
             ],
             line => 3,
+            params => [],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => int}},
+            spec => 'Six',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => int
-                }},
-            spec => 'Six'
+                    spec => 'func () int'
+                }}
         }}
     ],
-    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
 typecheck_and_annotate_remainder_mathematical_operator_with_floats_test() ->
@@ -384,7 +361,7 @@ typecheck_and_annotate_remainder_mathematical_operator_with_floats_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    Expected = #{
+    Data = #{
         form =>
             {binary_op, #{
                 left =>
@@ -414,8 +391,7 @@ typecheck_and_annotate_remainder_mathematical_operator_with_floats_test() ->
                     }}
             }}
     },
-    {error, unsupported_operand_type, Data} = rufus_expr:typecheck_and_annotate(Forms),
-    ?assertEqual(Expected, Data).
+    ?assertEqual({error, unsupported_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
 %% Conditional operators
 
@@ -427,13 +403,10 @@ typecheck_and_annotate_conditional_operator_with_bools_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{
-            line => 2,
-            spec => example
-        }},
+        {module, #{line => 2, spec => example}},
         {func, #{
-            params => [],
             exprs => [
                 {binary_op, #{
                     left =>
@@ -461,24 +434,26 @@ typecheck_and_annotate_conditional_operator_with_bools_test() ->
                                 }}
                         }},
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => bool
-                        }}
+                        {type, #{line => 3, source => inferred, spec => bool}}
                 }}
             ],
             line => 3,
+            params => [],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => bool}},
+            spec => 'Falsy',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => bool
-                }},
-            spec => 'Falsy'
+                    spec => 'func () bool'
+                }}
         }}
     ],
-    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
 typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
@@ -490,11 +465,9 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{
-            line => 2,
-            spec => example
-        }},
+        {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
                 {binary_op, #{
@@ -545,22 +518,24 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
                                 }}
                         }},
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => bool
-                        }}
+                        {type, #{line => 3, source => inferred, spec => bool}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => bool}},
+            spec => 'Falsy',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => bool
-                }},
-            spec => 'Falsy'
+                    spec => 'func () bool'
+                }}
         }},
         {func, #{
             exprs => [
@@ -612,25 +587,26 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
                                 }}
                         }},
                     type =>
-                        {type, #{
-                            line => 4,
-                            source => inferred,
-                            spec => bool
-                        }}
+                        {type, #{line => 4, source => inferred, spec => bool}}
                 }}
             ],
             line => 4,
             params => [],
             return_type =>
+                {type, #{line => 4, source => rufus_text, spec => bool}},
+            spec => 'Truthy',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 4,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 4, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => bool
-                }},
-            spec => 'Truthy'
+                    spec => 'func () bool'
+                }}
         }}
     ],
-    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
 typecheck_and_annotate_conditional_operator_with_bool_and_int_test() ->
@@ -641,7 +617,7 @@ typecheck_and_annotate_conditional_operator_with_bool_and_int_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    Expected = #{
+    Data = #{
         form =>
             {binary_op, #{
                 left =>
@@ -671,8 +647,7 @@ typecheck_and_annotate_conditional_operator_with_bool_and_int_test() ->
                     }}
             }}
     },
-    {error, unsupported_operand_type, Data} = rufus_expr:typecheck_and_annotate(Forms),
-    ?assertEqual(Expected, Data).
+    ?assertEqual({error, unsupported_operand_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
 %% Comparison operators
 
@@ -684,11 +659,9 @@ typecheck_and_annotate_equality_comparison_operator_with_ints_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{
-            line => 2,
-            spec => example
-        }},
+        {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
                 {binary_op, #{
@@ -697,11 +670,7 @@ typecheck_and_annotate_equality_comparison_operator_with_ints_test() ->
                             line => 3,
                             spec => 1,
                             type =>
-                                {type, #{
-                                    line => 3,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 3, source => inferred, spec => int}}
                         }},
                     line => 3,
                     op => '==',
@@ -710,32 +679,29 @@ typecheck_and_annotate_equality_comparison_operator_with_ints_test() ->
                             line => 3,
                             spec => 2,
                             type =>
-                                {type, #{
-                                    line => 3,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 3, source => inferred, spec => int}}
                         }},
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => bool
-                        }}
+                        {type, #{line => 3, source => inferred, spec => bool}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => bool}},
+            spec => 'Falsy',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => bool
-                }},
-            spec => 'Falsy'
+                    spec => 'func () bool'
+                }}
         }}
     ],
-    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
 typecheck_and_annotate_equality_comparison_operator_with_mismatched_operands_test() ->
@@ -786,11 +752,9 @@ typecheck_and_annotate_inequality_comparison_operator_with_ints_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{
-            line => 2,
-            spec => example
-        }},
+        {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
                 {binary_op, #{
@@ -799,11 +763,7 @@ typecheck_and_annotate_inequality_comparison_operator_with_ints_test() ->
                             line => 3,
                             spec => 1,
                             type =>
-                                {type, #{
-                                    line => 3,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 3, source => inferred, spec => int}}
                         }},
                     line => 3,
                     op => '!=',
@@ -812,32 +772,29 @@ typecheck_and_annotate_inequality_comparison_operator_with_ints_test() ->
                             line => 3,
                             spec => 1,
                             type =>
-                                {type, #{
-                                    line => 3,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 3, source => inferred, spec => int}}
                         }},
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => bool
-                        }}
+                        {type, #{line => 3, source => inferred, spec => bool}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => bool}},
+            spec => 'Falsy',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => bool
-                }},
-            spec => 'Falsy'
+                    spec => 'func () bool'
+                }}
         }}
     ],
-    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
 typecheck_and_annotate_inequality_comparison_operator_with_mismatched_operands_test() ->
@@ -888,11 +845,9 @@ typecheck_and_annotate_less_than_comparison_operator_with_ints_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{
-            line => 2,
-            spec => example
-        }},
+        {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
                 {binary_op, #{
@@ -901,11 +856,7 @@ typecheck_and_annotate_less_than_comparison_operator_with_ints_test() ->
                             line => 3,
                             spec => 2,
                             type =>
-                                {type, #{
-                                    line => 3,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 3, source => inferred, spec => int}}
                         }},
                     line => 3,
                     op => '<',
@@ -914,32 +865,29 @@ typecheck_and_annotate_less_than_comparison_operator_with_ints_test() ->
                             line => 3,
                             spec => 1,
                             type =>
-                                {type, #{
-                                    line => 3,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 3, source => inferred, spec => int}}
                         }},
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => bool
-                        }}
+                        {type, #{line => 3, source => inferred, spec => bool}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => bool}},
+            spec => 'Falsy',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => bool
-                }},
-            spec => 'Falsy'
+                    spec => 'func () bool'
+                }}
         }}
     ],
-    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
 typecheck_and_annotate_less_than_comparison_operator_with_mismatched_operands_test() ->
@@ -1030,11 +978,9 @@ typecheck_and_annotate_less_than_or_equal_comparison_operator_with_ints_test() -
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{
-            line => 2,
-            spec => example
-        }},
+        {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
                 {binary_op, #{
@@ -1043,11 +989,7 @@ typecheck_and_annotate_less_than_or_equal_comparison_operator_with_ints_test() -
                             line => 3,
                             spec => 2,
                             type =>
-                                {type, #{
-                                    line => 3,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 3, source => inferred, spec => int}}
                         }},
                     line => 3,
                     op => '<=',
@@ -1056,32 +998,29 @@ typecheck_and_annotate_less_than_or_equal_comparison_operator_with_ints_test() -
                             line => 3,
                             spec => 1,
                             type =>
-                                {type, #{
-                                    line => 3,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 3, source => inferred, spec => int}}
                         }},
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => bool
-                        }}
+                        {type, #{line => 3, source => inferred, spec => bool}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => bool}},
+            spec => 'Falsy',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => bool
-                }},
-            spec => 'Falsy'
+                    spec => 'func () bool'
+                }}
         }}
     ],
-    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
 typecheck_and_annotate_less_than_or_equal_comparison_operator_with_mismatched_operands_test() ->
@@ -1172,11 +1111,9 @@ typecheck_and_annotate_greater_than_comparison_operator_with_ints_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{
-            line => 2,
-            spec => example
-        }},
+        {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
                 {binary_op, #{
@@ -1185,11 +1122,7 @@ typecheck_and_annotate_greater_than_comparison_operator_with_ints_test() ->
                             line => 3,
                             spec => 1,
                             type =>
-                                {type, #{
-                                    line => 3,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 3, source => inferred, spec => int}}
                         }},
                     line => 3,
                     op => '>',
@@ -1198,32 +1131,29 @@ typecheck_and_annotate_greater_than_comparison_operator_with_ints_test() ->
                             line => 3,
                             spec => 2,
                             type =>
-                                {type, #{
-                                    line => 3,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 3, source => inferred, spec => int}}
                         }},
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => bool
-                        }}
+                        {type, #{line => 3, source => inferred, spec => bool}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => bool}},
+            spec => 'Falsy',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => bool
-                }},
-            spec => 'Falsy'
+                    spec => 'func () bool'
+                }}
         }}
     ],
-    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
 typecheck_and_annotate_greater_than_comparison_operator_with_mismatched_operands_test() ->
@@ -1314,11 +1244,9 @@ typecheck_and_annotate_greater_than_or_equal_comparison_operator_with_ints_test(
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{
-            line => 2,
-            spec => example
-        }},
+        {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
                 {binary_op, #{
@@ -1327,11 +1255,7 @@ typecheck_and_annotate_greater_than_or_equal_comparison_operator_with_ints_test(
                             line => 3,
                             spec => 1,
                             type =>
-                                {type, #{
-                                    line => 3,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 3, source => inferred, spec => int}}
                         }},
                     line => 3,
                     op => '>=',
@@ -1340,32 +1264,29 @@ typecheck_and_annotate_greater_than_or_equal_comparison_operator_with_ints_test(
                             line => 3,
                             spec => 2,
                             type =>
-                                {type, #{
-                                    line => 3,
-                                    source => inferred,
-                                    spec => int
-                                }}
+                                {type, #{line => 3, source => inferred, spec => int}}
                         }},
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => bool
-                        }}
+                        {type, #{line => 3, source => inferred, spec => bool}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => bool}},
+            spec => 'Falsy',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => bool
-                }},
-            spec => 'Falsy'
+                    spec => 'func () bool'
+                }}
         }}
     ],
-    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     ?assertEqual(Expected, AnnotatedForms).
 
 typecheck_and_annotate_greater_than_or_equal_comparison_operator_with_mismatched_operands_test() ->
