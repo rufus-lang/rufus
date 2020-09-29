@@ -717,10 +717,7 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_it_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{
-            line => 2,
-            spec => example
-        }},
+        {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
                 {identifier, #{
@@ -730,11 +727,7 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_it_test() ->
                         {type, #{
                             collection_type => list,
                             element_type =>
-                                {type, #{
-                                    line => 3,
-                                    source => rufus_text,
-                                    spec => int
-                                }},
+                                {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
                             source => rufus_text,
                             spec => 'list[int]'
@@ -750,11 +743,7 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_it_test() ->
                         {type, #{
                             collection_type => list,
                             element_type =>
-                                {type, #{
-                                    line => 3,
-                                    source => rufus_text,
-                                    spec => int
-                                }},
+                                {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
                             source => rufus_text,
                             spec => 'list[int]'
@@ -765,16 +754,38 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_it_test() ->
                 {type, #{
                     collection_type => list,
                     element_type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => int
-                        }},
+                        {type, #{line => 3, source => rufus_text, spec => int}},
                     line => 3,
                     source => rufus_text,
                     spec => 'list[int]'
                 }},
-            spec => 'Echo'
+            spec => 'Echo',
+            type =>
+                {type, #{
+                    decl_type => func,
+                    line => 3,
+                    param_types => [
+                        {type, #{
+                            collection_type => list,
+                            element_type =>
+                                {type, #{line => 3, source => rufus_text, spec => int}},
+                            line => 3,
+                            source => rufus_text,
+                            spec => 'list[int]'
+                        }}
+                    ],
+                    return_type =>
+                        {type, #{
+                            collection_type => list,
+                            element_type =>
+                                {type, #{line => 3, source => rufus_text, spec => int}},
+                            line => 3,
+                            source => rufus_text,
+                            spec => 'list[int]'
+                        }},
+                    source => rufus_text,
+                    spec => 'func (list[int]) list[int]'
+                }}
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
@@ -789,7 +800,36 @@ typecheck_and_annotate_function_with_literal_return_value_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    ?assertEqual({ok, Forms}, rufus_expr:typecheck_and_annotate(Forms)).
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            exprs => [
+                {int_lit, #{
+                    line => 3,
+                    spec => 42,
+                    type =>
+                        {type, #{line => 3, source => inferred, spec => int}}
+                }}
+            ],
+            line => 3,
+            params => [],
+            return_type =>
+                {type, #{line => 3, source => rufus_text, spec => int}},
+            spec => 'Number',
+            type =>
+                {type, #{
+                    decl_type => func,
+                    line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
+                    source => rufus_text,
+                    spec => 'func () int'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
 
 typecheck_and_annotate_function_with_unmatched_return_types_test() ->
     RufusText =
@@ -840,11 +880,7 @@ typecheck_and_annotate_for_function_taking_an_atom_literal_test() ->
                     line => 3,
                     spec => ok,
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => atom
-                        }}
+                        {type, #{line => 3, source => inferred, spec => atom}}
                 }}
             ],
             line => 3,
@@ -853,20 +889,22 @@ typecheck_and_annotate_for_function_taking_an_atom_literal_test() ->
                     line => 3,
                     spec => ok,
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => atom
-                        }}
+                        {type, #{line => 3, source => inferred, spec => atom}}
                 }}
             ],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => atom}},
+            spec => 'Echo',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [{type, #{line => 3, source => inferred, spec => atom}}],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => atom}},
                     source => rufus_text,
-                    spec => atom
-                }},
-            spec => 'Echo'
+                    spec => 'func (atom) atom'
+                }}
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
@@ -888,11 +926,7 @@ typecheck_and_annotate_for_function_taking_a_bool_literal_test() ->
                     line => 3,
                     spec => true,
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => bool
-                        }}
+                        {type, #{line => 3, source => inferred, spec => bool}}
                 }}
             ],
             line => 3,
@@ -901,20 +935,22 @@ typecheck_and_annotate_for_function_taking_a_bool_literal_test() ->
                     line => 3,
                     spec => true,
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => bool
-                        }}
+                        {type, #{line => 3, source => inferred, spec => bool}}
                 }}
             ],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => bool}},
+            spec => 'Echo',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [{type, #{line => 3, source => inferred, spec => bool}}],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => bool
-                }},
-            spec => 'Echo'
+                    spec => 'func (bool) bool'
+                }}
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
@@ -936,11 +972,7 @@ typecheck_and_annotate_for_function_taking_a_float_literal_test() ->
                     line => 3,
                     spec => 1.0,
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => float
-                        }}
+                        {type, #{line => 3, source => inferred, spec => float}}
                 }}
             ],
             line => 3,
@@ -949,20 +981,22 @@ typecheck_and_annotate_for_function_taking_a_float_literal_test() ->
                     line => 3,
                     spec => 1.0,
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => float
-                        }}
+                        {type, #{line => 3, source => inferred, spec => float}}
                 }}
             ],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => float}},
+            spec => 'Echo',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [{type, #{line => 3, source => inferred, spec => float}}],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => float}},
                     source => rufus_text,
-                    spec => float
-                }},
-            spec => 'Echo'
+                    spec => 'func (float) float'
+                }}
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
@@ -984,11 +1018,7 @@ typecheck_and_annotate_for_function_taking_an_int_literal_test() ->
                     line => 3,
                     spec => 1,
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => int
-                        }}
+                        {type, #{line => 3, source => inferred, spec => int}}
                 }}
             ],
             line => 3,
@@ -997,20 +1027,22 @@ typecheck_and_annotate_for_function_taking_an_int_literal_test() ->
                     line => 3,
                     spec => 1,
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => int
-                        }}
+                        {type, #{line => 3, source => inferred, spec => int}}
                 }}
             ],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => int}},
+            spec => 'Echo',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [{type, #{line => 3, source => inferred, spec => int}}],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => int
-                }},
-            spec => 'Echo'
+                    spec => 'func (int) int'
+                }}
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
@@ -1032,11 +1064,7 @@ typecheck_and_annotate_for_function_taking_a_string_literal_test() ->
                     line => 3,
                     spec => <<"ok">>,
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => string
-                        }}
+                        {type, #{line => 3, source => inferred, spec => string}}
                 }}
             ],
             line => 3,
@@ -1045,51 +1073,53 @@ typecheck_and_annotate_for_function_taking_a_string_literal_test() ->
                     line => 3,
                     spec => <<"ok">>,
                     type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => string
-                        }}
+                        {type, #{line => 3, source => inferred, spec => string}}
                 }}
             ],
             return_type =>
+                {type, #{line => 3, source => rufus_text, spec => string}},
+            spec => 'Echo',
+            type =>
                 {type, #{
+                    decl_type => func,
                     line => 3,
+                    param_types => [{type, #{line => 3, source => inferred, spec => string}}],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => string}},
                     source => rufus_text,
-                    spec => string
-                }},
-            spec => 'Echo'
+                    spec => 'func (string) string'
+                }}
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
 %% Anonymous functions
 
-typecheck_and_annotate_anonymous_function_test() ->
-    RufusText =
-        "\n"
-        "    module example\n"
-        "    func NumberFunc() func() int {\n"
-        "        func() int { 42 }\n"
-        "    }\n"
-        "    ",
-    {ok, Tokens} = rufus_tokenize:string(RufusText),
-    {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
-    Expected = [
-        {module, #{line => 2, spec => example}},
-        {func, #{
-            params => [],
-            exprs => [
-                {int_lit, #{
-                    line => 3,
-                    spec => 42,
-                    type => {type, #{line => 3, spec => int, source => inferred}}
-                }}
-            ],
-            line => 3,
-            return_type => {type, #{line => 3, spec => int, source => rufus_text}},
-            spec => 'Number'
-        }}
-    ],
-    ?assertEqual(Expected, AnnotatedForms).
+%% typecheck_and_annotate_anonymous_function_test() ->
+%%     RufusText =
+%%         "\n"
+%%         "    module example\n"
+%%         "    func NumberFunc() func() int {\n"
+%%         "        func() int { 42 }\n"
+%%         "    }\n"
+%%         "    ",
+%%     {ok, Tokens} = rufus_tokenize:string(RufusText),
+%%     {ok, Forms} = rufus_parse:parse(Tokens),
+%%     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+%%     Expected = [
+%%         {module, #{line => 2, spec => example}},
+%%         {func, #{
+%%             params => [],
+%%             exprs => [
+%%                 {int_lit, #{
+%%                     line => 3,
+%%                     spec => 42,
+%%                     type => {type, #{line => 3, spec => int, source => inferred}}
+%%                 }}
+%%             ],
+%%             line => 3,
+%%             return_type => {type, #{line => 3, spec => int, source => rufus_text}},
+%%             spec => 'Number'
+%%         }}
+%%     ],
+%%     ?assertEqual(Expected, AnnotatedForms).
