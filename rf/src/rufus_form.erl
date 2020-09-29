@@ -376,7 +376,7 @@ make_type_with_source(func, ParamTypes, ReturnType, Source, Line) ->
             ReturnTypeSpec = type_spec(ReturnType),
             Spec = list_to_atom(
                 unicode:characters_to_list([
-                    "func (",
+                    "func(",
                     lists:join(", ", ParamTypesSpec),
                     ") ",
                     atom_to_list(ReturnTypeSpec)

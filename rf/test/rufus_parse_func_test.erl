@@ -793,7 +793,7 @@ parse_function_returning_a_function_test() ->
                     return_type =>
                         {type, #{line => 2, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func () int'
+                    spec => 'func() int'
                 }},
             spec => 'FortyTwoFunc'
         }}

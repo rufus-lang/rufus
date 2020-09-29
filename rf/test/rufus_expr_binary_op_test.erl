@@ -51,7 +51,7 @@ typecheck_and_annotate_mathematical_operator_with_ints_test() ->
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func () int'
+                    spec => 'func() int'
                 }}
         }}
     ],
@@ -112,7 +112,7 @@ typecheck_and_annotate_mathematical_operator_with_floats_test() ->
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => float}},
                     source => rufus_text,
-                    spec => 'func () float'
+                    spec => 'func() float'
                 }}
         }}
     ],
@@ -347,7 +347,7 @@ typecheck_and_annotate_remainder_mathematical_operator_with_ints_test() ->
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func () int'
+                    spec => 'func() int'
                 }}
         }}
     ],
@@ -450,7 +450,7 @@ typecheck_and_annotate_conditional_operator_with_bools_test() ->
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => 'func () bool'
+                    spec => 'func() bool'
                 }}
         }}
     ],
@@ -534,7 +534,7 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => 'func () bool'
+                    spec => 'func() bool'
                 }}
         }},
         {func, #{
@@ -603,7 +603,7 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
                     return_type =>
                         {type, #{line => 4, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => 'func () bool'
+                    spec => 'func() bool'
                 }}
         }}
     ],
@@ -698,7 +698,7 @@ typecheck_and_annotate_equality_comparison_operator_with_ints_test() ->
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => 'func () bool'
+                    spec => 'func() bool'
                 }}
         }}
     ],
@@ -791,7 +791,7 @@ typecheck_and_annotate_inequality_comparison_operator_with_ints_test() ->
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => 'func () bool'
+                    spec => 'func() bool'
                 }}
         }}
     ],
@@ -884,7 +884,7 @@ typecheck_and_annotate_less_than_comparison_operator_with_ints_test() ->
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => 'func () bool'
+                    spec => 'func() bool'
                 }}
         }}
     ],
@@ -1017,7 +1017,7 @@ typecheck_and_annotate_less_than_or_equal_comparison_operator_with_ints_test() -
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => 'func () bool'
+                    spec => 'func() bool'
                 }}
         }}
     ],
@@ -1150,7 +1150,7 @@ typecheck_and_annotate_greater_than_comparison_operator_with_ints_test() ->
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => 'func () bool'
+                    spec => 'func() bool'
                 }}
         }}
     ],
@@ -1283,7 +1283,7 @@ typecheck_and_annotate_greater_than_or_equal_comparison_operator_with_ints_test(
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => 'func () bool'
+                    spec => 'func() bool'
                 }}
         }}
     ],

@@ -176,7 +176,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_one_argument_test()
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => string}},
                     source => rufus_text,
-                    spec => 'func (string) string'
+                    spec => 'func(string) string'
                 }}
         }},
         {func, #{
@@ -217,7 +217,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_one_argument_test()
                     return_type =>
                         {type, #{line => 4, source => rufus_text, spec => string}},
                     source => rufus_text,
-                    spec => 'func () string'
+                    spec => 'func() string'
                 }}
         }}
     ],
@@ -295,7 +295,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func (int, int) int'
+                    spec => 'func(int, int) int'
                 }}
         }},
         {func, #{
@@ -342,7 +342,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
                     return_type =>
                         {type, #{line => 4, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func () int'
+                    spec => 'func() int'
                 }}
         }}
     ],
@@ -409,7 +409,7 @@ eval_with_function_call_with_binary_op_argument_test() ->
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func (int) int'
+                    spec => 'func(int) int'
                 }}
         }},
         {func, #{
@@ -484,7 +484,7 @@ eval_with_function_call_with_binary_op_argument_test() ->
                     return_type =>
                         {type, #{line => 4, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func (int, int) int'
+                    spec => 'func(int, int) int'
                 }}
         }}
     ],
@@ -533,7 +533,7 @@ eval_with_function_call_with_match_argument_test() ->
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func (int) int'
+                    spec => 'func(int) int'
                 }}
         }},
         {func, #{
@@ -587,7 +587,7 @@ eval_with_function_call_with_match_argument_test() ->
                     return_type =>
                         {type, #{line => 4, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func () int'
+                    spec => 'func() int'
                 }}
         }}
     ],

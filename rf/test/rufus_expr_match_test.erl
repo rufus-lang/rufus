@@ -68,7 +68,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_an_atom_literal_test() -
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => atom}},
                     source => rufus_text,
-                    spec => 'func () atom'
+                    spec => 'func() atom'
                 }}
         }}
     ],
@@ -138,7 +138,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_bool_literal_test() ->
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => bool}},
                     source => rufus_text,
-                    spec => 'func () bool'
+                    spec => 'func() bool'
                 }}
         }}
     ],
@@ -208,7 +208,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_float_literal_test() -
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => float}},
                     source => rufus_text,
-                    spec => 'func () float'
+                    spec => 'func() float'
                 }}
         }}
     ],
@@ -270,7 +270,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_an_int_literal_test() ->
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func () int'
+                    spec => 'func() int'
                 }}
         }}
     ],
@@ -340,7 +340,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_string_literal_test() 
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => string}},
                     source => rufus_text,
-                    spec => 'func () string'
+                    spec => 'func() string'
                 }}
         }}
     ],
@@ -463,7 +463,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_of_int_literal_te
                             spec => 'list[int]'
                         }},
                     source => rufus_text,
-                    spec => 'func () list[int]'
+                    spec => 'func() list[int]'
                 }}
         }}
     ],
@@ -618,7 +618,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_literal_test() ->
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => string}},
                     source => rufus_text,
-                    spec => 'func (list[string]) string'
+                    spec => 'func(list[string]) string'
                 }}
         }}
     ],
@@ -844,7 +844,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
                             spec => 'list[int]'
                         }},
                     source => rufus_text,
-                    spec => 'func (list[int]) list[int]'
+                    spec => 'func(list[int]) list[int]'
                 }}
         }}
     ],
@@ -1021,7 +1021,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_head_test() ->
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func (list[int]) int'
+                    spec => 'func(list[int]) int'
                 }}
         }}
     ],
@@ -1198,7 +1198,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_test() ->
                             spec => 'list[int]'
                         }},
                     source => rufus_text,
-                    spec => 'func (list[int]) list[int]'
+                    spec => 'func(list[int]) list[int]'
                 }}
         }}
     ],
@@ -1297,7 +1297,7 @@ typecheck_and_annotate_function_taking_a_match_pattern_test() ->
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func (int) int'
+                    spec => 'func(int) int'
                 }}
         }}
     ],
@@ -1460,7 +1460,7 @@ typecheck_and_annotate_function_taking_a_cons_in_match_pattern_test() ->
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func (list[int]) int'
+                    spec => 'func(list[int]) int'
                 }}
         }}
     ],
@@ -1638,7 +1638,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_binary_op_operand_t
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func () int'
+                    spec => 'func() int'
                 }}
         }}
     ],
@@ -1713,7 +1713,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_right_binary_op_operand_
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func () int'
+                    spec => 'func() int'
                 }}
         }}
     ],
@@ -1811,7 +1811,7 @@ typecheck_and_annotate_function_with_a_match_that_has_left_and_right_binary_op_o
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func () int'
+                    spec => 'func() int'
                 }}
         }}
     ],
@@ -1853,7 +1853,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_right_call_operand_test(
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func () int'
+                    spec => 'func() int'
                 }}
         }},
         {func, #{
@@ -1901,7 +1901,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_right_call_operand_test(
                     return_type =>
                         {type, #{line => 4, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func () int'
+                    spec => 'func() int'
                 }}
         }}
     ],

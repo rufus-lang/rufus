@@ -56,7 +56,7 @@ typecheck_and_annotate_with_function_returning_an_empty_list_of_ints_test() ->
                             spec => 'list[int]'
                         }},
                     source => rufus_text,
-                    spec => 'func () list[int]'
+                    spec => 'func() list[int]'
                 }}
         }}
     ],
@@ -127,7 +127,7 @@ typecheck_and_annotate_with_function_returning_a_list_of_one_int_test() ->
                             spec => 'list[int]'
                         }},
                     source => rufus_text,
-                    spec => 'func () list[int]'
+                    spec => 'func() list[int]'
                 }}
         }}
     ],
@@ -220,7 +220,7 @@ typecheck_and_annotate_with_function_returning_a_list_of_one_int_binary_op_test(
                             spec => 'list[int]'
                         }},
                     source => rufus_text,
-                    spec => 'func () list[int]'
+                    spec => 'func() list[int]'
                 }}
         }}
     ],
@@ -364,7 +364,7 @@ typecheck_and_annotate_with_function_taking_a_list_and_returning_a_list_test() -
                             spec => 'list[int]'
                         }},
                     source => rufus_text,
-                    spec => 'func (list[int]) list[int]'
+                    spec => 'func(list[int]) list[int]'
                 }}
         }}
     ],
@@ -442,7 +442,7 @@ typecheck_and_annotate_with_function_taking_an_int_and_returning_a_list_of_int_t
                             spec => 'list[int]'
                         }},
                     source => rufus_text,
-                    spec => 'func (int) list[int]'
+                    spec => 'func(int) list[int]'
                 }}
         }}
     ],
@@ -642,7 +642,7 @@ typecheck_and_annotate_with_function_returning_a_cons_literal_with_literal_pair_
                             spec => 'list[int]'
                         }},
                     source => rufus_text,
-                    spec => 'func () list[int]'
+                    spec => 'func() list[int]'
                 }}
         }}
     ],
@@ -757,7 +757,7 @@ typecheck_and_annotate_with_function_returning_a_cons_literal_with_multiple_lite
                             spec => 'list[int]'
                         }},
                     source => rufus_text,
-                    spec => 'func () list[int]'
+                    spec => 'func() list[int]'
                 }}
         }}
     ],
@@ -952,7 +952,7 @@ typecheck_and_annotate_with_function_returning_a_cons_literal_with_variable_pair
                             spec => 'list[int]'
                         }},
                     source => rufus_text,
-                    spec => 'func () list[int]'
+                    spec => 'func() list[int]'
                 }}
         }}
     ],
@@ -1438,7 +1438,7 @@ typecheck_and_annotate_with_function_taking_a_cons_pattern_and_returning_it_test
                             spec => 'list[int]'
                         }},
                     source => rufus_text,
-                    spec => 'func (list[int]) list[int]'
+                    spec => 'func(list[int]) list[int]'
                 }}
         }}
     ],
@@ -1539,7 +1539,7 @@ typecheck_and_annotate_with_function_taking_a_cons_pattern_and_returning_the_hea
                     return_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
-                    spec => 'func (list[int]) int'
+                    spec => 'func(list[int]) int'
                 }}
         }}
     ],
@@ -1649,7 +1649,7 @@ typecheck_and_annotate_with_function_taking_a_cons_pattern_and_returning_the_tai
                             spec => 'list[int]'
                         }},
                     source => rufus_text,
-                    spec => 'func (list[int]) list[int]'
+                    spec => 'func(list[int]) list[int]'
                 }}
         }}
     ],
@@ -1930,7 +1930,7 @@ typecheck_and_annotate_with_function_taking_a_list_lit_pattern_test() ->
                             spec => 'list[int]'
                         }},
                     source => rufus_text,
-                    spec => 'func (list[int]) list[int]'
+                    spec => 'func(list[int]) list[int]'
                 }}
         }}
     ],
