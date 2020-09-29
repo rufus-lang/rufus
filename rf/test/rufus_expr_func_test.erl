@@ -1062,3 +1062,34 @@ typecheck_and_annotate_for_function_taking_a_string_literal_test() ->
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
+
+%% Anonymous functions
+
+typecheck_and_annotate_anonymous_function_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func NumberFunc() func() int {\n"
+        "        func() int { 42 }\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            params => [],
+            exprs => [
+                {int_lit, #{
+                    line => 3,
+                    spec => 42,
+                    type => {type, #{line => 3, spec => int, source => inferred}}
+                }}
+            ],
+            line => 3,
+            return_type => {type, #{line => 3, spec => int, source => rufus_text}},
+            spec => 'Number'
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
