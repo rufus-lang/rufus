@@ -14,7 +14,7 @@ parse_function_returning_empty_list_of_ints_test() ->
                     line => 1,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{
                                     line => 1,
@@ -31,7 +31,7 @@ parse_function_returning_empty_list_of_ints_test() ->
             params => [],
             return_type =>
                 {type, #{
-                    collection_type => list,
+                    kind => list,
                     element_type =>
                         {type, #{
                             line => 1,
@@ -70,7 +70,7 @@ parse_function_returning_list_of_int_with_one_element_test() ->
                     line => 1,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{
                                     line => 1,
@@ -87,7 +87,7 @@ parse_function_returning_list_of_int_with_one_element_test() ->
             params => [],
             return_type =>
                 {type, #{
-                    collection_type => list,
+                    kind => list,
                     element_type =>
                         {type, #{
                             line => 1,
@@ -136,7 +136,7 @@ parse_function_returning_list_of_many_ints_test() ->
                     line => 1,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{
                                     line => 1,
@@ -153,7 +153,7 @@ parse_function_returning_list_of_many_ints_test() ->
             params => [],
             return_type =>
                 {type, #{
-                    collection_type => list,
+                    kind => list,
                     element_type =>
                         {type, #{
                             line => 1,
@@ -195,7 +195,7 @@ parse_function_returning_nested_list_of_list_of_ints_test() ->
                             line => 1,
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 1,
@@ -233,7 +233,7 @@ parse_function_returning_nested_list_of_list_of_ints_test() ->
                             line => 1,
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 1,
@@ -249,10 +249,10 @@ parse_function_returning_nested_list_of_list_of_ints_test() ->
                     line => 1,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 1,
@@ -273,10 +273,10 @@ parse_function_returning_nested_list_of_list_of_ints_test() ->
             params => [],
             return_type =>
                 {type, #{
-                    collection_type => list,
+                    kind => list,
                     element_type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{
                                     line => 1,
@@ -315,7 +315,7 @@ parse_function_taking_and_returning_list_of_ints_test() ->
                     spec => numbers,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{
                                     line => 1,
@@ -330,7 +330,7 @@ parse_function_taking_and_returning_list_of_ints_test() ->
             ],
             return_type =>
                 {type, #{
-                    collection_type => list,
+                    kind => list,
                     element_type =>
                         {type, #{
                             line => 1,
@@ -383,7 +383,7 @@ parse_function_returning_a_cons_expression_test() ->
                             line => 1,
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 1,
@@ -397,7 +397,7 @@ parse_function_returning_a_cons_expression_test() ->
                         }},
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{
                                     line => 1,
@@ -414,7 +414,7 @@ parse_function_returning_a_cons_expression_test() ->
             params => [],
             return_type =>
                 {type, #{
-                    collection_type => list,
+                    kind => list,
                     element_type =>
                         {type, #{
                             line => 1,
@@ -481,7 +481,7 @@ parse_function_that_creates_cons_expression_from_a_variable_and_a_list_literal_t
                             line => 1,
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 1,
@@ -495,7 +495,7 @@ parse_function_that_creates_cons_expression_from_a_variable_and_a_list_literal_t
                         }},
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{
                                     line => 1,
@@ -523,7 +523,7 @@ parse_function_that_creates_cons_expression_from_a_variable_and_a_list_literal_t
             ],
             return_type =>
                 {type, #{
-                    collection_type => list,
+                    kind => list,
                     element_type =>
                         {type, #{
                             line => 1,
@@ -616,7 +616,7 @@ parse_function_that_creates_cons_expression_from_head_and_tail_variables_test() 
                             line => 4,
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 4,
@@ -643,7 +643,7 @@ parse_function_that_creates_cons_expression_from_head_and_tail_variables_test() 
                         }},
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{
                                     line => 5,
@@ -660,7 +660,7 @@ parse_function_that_creates_cons_expression_from_head_and_tail_variables_test() 
             params => [],
             return_type =>
                 {type, #{
-                    collection_type => list,
+                    kind => list,
                     element_type =>
                         {type, #{
                             line => 2,
@@ -689,7 +689,7 @@ parse_function_taking_a_cons_pattern_test() ->
                     tail => {identifier, #{line => 1, spec => tail}},
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 1, source => rufus_text, spec => int}},
                             line => 1,
@@ -706,7 +706,7 @@ parse_function_taking_a_cons_pattern_test() ->
                     tail => {identifier, #{line => 1, spec => tail}},
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 1, source => rufus_text, spec => int}},
                             line => 1,
@@ -717,7 +717,7 @@ parse_function_taking_a_cons_pattern_test() ->
             ],
             return_type =>
                 {type, #{
-                    collection_type => list,
+                    kind => list,
                     element_type =>
                         {type, #{line => 1, source => rufus_text, spec => int}},
                     line => 1,
@@ -752,7 +752,7 @@ parse_function_taking_a_list_pattern_test() ->
                     line => 4,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 4, source => rufus_text, spec => int}},
                             line => 4,
@@ -772,7 +772,7 @@ parse_function_taking_a_list_pattern_test() ->
                     line => 3,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -783,7 +783,7 @@ parse_function_taking_a_list_pattern_test() ->
             ],
             return_type =>
                 {type, #{
-                    collection_type => list,
+                    kind => list,
                     element_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     line => 3,

@@ -222,7 +222,7 @@ parse_function_with_a_match_that_binds_a_list_literal_test() ->
                             line => 3,
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 3,
@@ -246,7 +246,7 @@ parse_function_with_a_match_that_binds_a_list_literal_test() ->
                     spec => names,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{
                                     line => 2,
@@ -289,7 +289,7 @@ parse_function_with_a_match_that_binds_a_cons_test() ->
                             tail => {identifier, #{line => 4, spec => tail}},
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 4,
@@ -310,7 +310,7 @@ parse_function_with_a_match_that_binds_a_cons_test() ->
                     tail => {identifier, #{line => 5, spec => tail}},
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 5, source => rufus_text, spec => int}},
                             line => 5,
@@ -326,7 +326,7 @@ parse_function_with_a_match_that_binds_a_cons_test() ->
                     spec => items,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -337,7 +337,7 @@ parse_function_with_a_match_that_binds_a_cons_test() ->
             ],
             return_type =>
                 {type, #{
-                    collection_type => list,
+                    kind => list,
                     element_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     line => 3,
@@ -396,7 +396,7 @@ parse_function_with_a_match_that_binds_a_cons_head_test() ->
                                     line => 4,
                                     type =>
                                         {type, #{
-                                            collection_type => list,
+                                            kind => list,
                                             element_type =>
                                                 {type, #{
                                                     line => 4,
@@ -410,7 +410,7 @@ parse_function_with_a_match_that_binds_a_cons_head_test() ->
                                 }},
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 4,
@@ -434,7 +434,7 @@ parse_function_with_a_match_that_binds_a_cons_head_test() ->
                     spec => items,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -483,7 +483,7 @@ parse_function_with_a_match_that_binds_a_cons_tail_test() ->
                             tail => {identifier, #{line => 4, spec => tail}},
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 4,
@@ -507,7 +507,7 @@ parse_function_with_a_match_that_binds_a_cons_tail_test() ->
                     spec => items,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -518,7 +518,7 @@ parse_function_with_a_match_that_binds_a_cons_tail_test() ->
             ],
             return_type =>
                 {type, #{
-                    collection_type => list,
+                    kind => list,
                     element_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     line => 3,

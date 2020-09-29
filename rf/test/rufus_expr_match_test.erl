@@ -62,7 +62,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_an_atom_literal_test() -
             spec => 'Ping',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -132,7 +132,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_bool_literal_test() ->
             spec => 'Truthy',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -202,7 +202,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_float_literal_test() -
             spec => 'FortyTwo',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -264,7 +264,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_an_int_literal_test() ->
             spec => 'FortyTwo',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -334,7 +334,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_string_literal_test() 
             spec => 'Ping',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -370,7 +370,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_of_int_literal_te
                             spec => response,
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 4,
@@ -400,7 +400,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_of_int_literal_te
                             line => 4,
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 4,
@@ -414,7 +414,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_of_int_literal_te
                         }},
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 4, source => rufus_text, spec => int}},
                             line => 4,
@@ -427,7 +427,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_of_int_literal_te
                     spec => response,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 4, source => rufus_text, spec => int}},
                             line => 4,
@@ -440,7 +440,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_of_int_literal_te
             params => [],
             return_type =>
                 {type, #{
-                    collection_type => list,
+                    kind => list,
                     element_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     line => 3,
@@ -450,12 +450,12 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_of_int_literal_te
             spec => 'FortyTwo',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -494,7 +494,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_literal_test() ->
                                     locals => #{
                                         names =>
                                             {type, #{
-                                                collection_type => list,
+                                                kind => list,
                                                 element_type =>
                                                     {type, #{
                                                         line => 3,
@@ -518,7 +518,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_literal_test() ->
                             line => 4,
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 4,
@@ -537,7 +537,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_literal_test() ->
                             spec => names,
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 3,
@@ -551,7 +551,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_literal_test() ->
                         }},
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{
                                     line => 3,
@@ -581,7 +581,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_literal_test() ->
                     spec => names,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{
                                     line => 3,
@@ -599,11 +599,11 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_literal_test() ->
             spec => 'Unbox',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{
                                     line => 3,
@@ -649,7 +649,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
                                     locals => #{
                                         items =>
                                             {type, #{
-                                                collection_type => list,
+                                                kind => list,
                                                 element_type =>
                                                     {type, #{
                                                         line => 3,
@@ -682,7 +682,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
                                             }},
                                         items =>
                                             {type, #{
-                                                collection_type => list,
+                                                kind => list,
                                                 element_type =>
                                                     {type, #{
                                                         line => 3,
@@ -697,7 +697,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
                                     spec => tail,
                                     type =>
                                         {type, #{
-                                            collection_type => list,
+                                            kind => list,
                                             element_type =>
                                                 {type, #{
                                                     line => 4,
@@ -711,7 +711,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
                                 }},
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 4,
@@ -730,7 +730,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
                             spec => items,
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 3,
@@ -744,7 +744,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
                         }},
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -771,7 +771,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
                             spec => tail,
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 4,
@@ -785,7 +785,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
                         }},
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 5, source => rufus_text, spec => int}},
                             line => 5,
@@ -801,7 +801,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
                     spec => items,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -812,7 +812,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
             ],
             return_type =>
                 {type, #{
-                    collection_type => list,
+                    kind => list,
                     element_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     line => 3,
@@ -822,11 +822,11 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
             spec => 'Echo',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -836,7 +836,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
                     ],
                     return_type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -875,7 +875,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_head_test() ->
                                     locals => #{
                                         items =>
                                             {type, #{
-                                                collection_type => list,
+                                                kind => list,
                                                 element_type =>
                                                     {type, #{
                                                         line => 3,
@@ -923,7 +923,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_head_test() ->
                                     line => 4,
                                     type =>
                                         {type, #{
-                                            collection_type => list,
+                                            kind => list,
                                             element_type =>
                                                 {type, #{
                                                     line => 4,
@@ -937,7 +937,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_head_test() ->
                                 }},
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 4,
@@ -956,7 +956,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_head_test() ->
                             spec => items,
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 3,
@@ -970,7 +970,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_head_test() ->
                         }},
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -992,7 +992,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_head_test() ->
                     spec => items,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -1006,11 +1006,11 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_head_test() ->
             spec => 'First',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -1064,7 +1064,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_test() ->
                                     locals => #{
                                         items =>
                                             {type, #{
-                                                collection_type => list,
+                                                kind => list,
                                                 element_type =>
                                                     {type, #{
                                                         line => 3,
@@ -1079,7 +1079,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_test() ->
                                     spec => tail,
                                     type =>
                                         {type, #{
-                                            collection_type => list,
+                                            kind => list,
                                             element_type =>
                                                 {type, #{
                                                     line => 4,
@@ -1093,7 +1093,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_test() ->
                                 }},
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 4,
@@ -1112,7 +1112,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_test() ->
                             spec => items,
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 3,
@@ -1126,7 +1126,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_test() ->
                         }},
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -1139,7 +1139,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_test() ->
                     spec => tail,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 4, source => rufus_text, spec => int}},
                             line => 4,
@@ -1155,7 +1155,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_test() ->
                     spec => items,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -1166,7 +1166,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_test() ->
             ],
             return_type =>
                 {type, #{
-                    collection_type => list,
+                    kind => list,
                     element_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     line => 3,
@@ -1176,11 +1176,11 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_test() ->
             spec => 'Rest',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -1190,7 +1190,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_test() ->
                     ],
                     return_type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -1291,7 +1291,7 @@ typecheck_and_annotate_function_taking_a_match_pattern_test() ->
             spec => 'Double',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => rufus_text, spec => int}}],
                     return_type =>
@@ -1336,7 +1336,7 @@ typecheck_and_annotate_function_taking_a_cons_in_match_pattern_test() ->
                                     locals => #{
                                         items =>
                                             {type, #{
-                                                collection_type => list,
+                                                kind => list,
                                                 element_type =>
                                                     {type, #{
                                                         line => 3,
@@ -1369,7 +1369,7 @@ typecheck_and_annotate_function_taking_a_cons_in_match_pattern_test() ->
                                             }},
                                         items =>
                                             {type, #{
-                                                collection_type => list,
+                                                kind => list,
                                                 element_type =>
                                                     {type, #{
                                                         line => 3,
@@ -1384,7 +1384,7 @@ typecheck_and_annotate_function_taking_a_cons_in_match_pattern_test() ->
                                     spec => tail,
                                     type =>
                                         {type, #{
-                                            collection_type => list,
+                                            kind => list,
                                             element_type =>
                                                 {type, #{
                                                     line => 3,
@@ -1398,7 +1398,7 @@ typecheck_and_annotate_function_taking_a_cons_in_match_pattern_test() ->
                                 }},
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 3,
@@ -1417,7 +1417,7 @@ typecheck_and_annotate_function_taking_a_cons_in_match_pattern_test() ->
                             spec => items,
                             type =>
                                 {type, #{
-                                    collection_type => list,
+                                    kind => list,
                                     element_type =>
                                         {type, #{
                                             line => 3,
@@ -1431,7 +1431,7 @@ typecheck_and_annotate_function_taking_a_cons_in_match_pattern_test() ->
                         }},
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -1445,11 +1445,11 @@ typecheck_and_annotate_function_taking_a_cons_in_match_pattern_test() ->
             spec => 'First',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -1632,7 +1632,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_binary_op_operand_t
             spec => 'Random',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -1707,7 +1707,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_right_binary_op_operand_
             spec => 'Random',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -1805,7 +1805,7 @@ typecheck_and_annotate_function_with_a_match_that_has_left_and_right_binary_op_o
             spec => 'Random',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -1847,7 +1847,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_right_call_operand_test(
             spec => 'Two',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -1895,7 +1895,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_right_call_operand_test(
             spec => 'Random',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 4,
                     param_types => [],
                     return_type =>

@@ -33,7 +33,7 @@ resolve_list_with_mismatched_element_type_test() ->
                 line => 3,
                 type =>
                     {type, #{
-                        collection_type => list,
+                        kind => list,
                         element_type =>
                             {type, #{
                                 line => 3,

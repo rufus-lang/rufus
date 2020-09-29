@@ -80,9 +80,9 @@ has_type(_Form) ->
 
 %% element_type returns the element type for a list type.
 -spec element_type(type_form()) -> type_form().
-element_type({type, #{collection_type := list, element_type := ElementType}}) ->
+element_type({type, #{kind := list, element_type := ElementType}}) ->
     ElementType;
-element_type({_, #{type := {type, #{collection_type := list, element_type := ElementType}}}}) ->
+element_type({_, #{type := {type, #{kind := list, element_type := ElementType}}}}) ->
     ElementType.
 
 %% type returns type information for the form.
@@ -327,7 +327,7 @@ make_inferred_type(Spec, Line) ->
 %% compiler.
 -spec make_inferred_type(list, type_form(), integer()) ->
     {type, #{
-        collection_type => list,
+        kind => list,
         element_type => type_form(),
         line => integer(),
         source => type_source(),
@@ -348,7 +348,7 @@ make_type(Spec, Line) ->
 %% 'collection' key with value 'list', and a 'spec' key with a value that
 %% defines the element type.
 %% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
-%% -spec make_type(list, {type, context()}, integer()) -> {type, #{collection_type => list, element_type => type_spec(), spec => atom(), source => type_source(), line => integer()}}.
+%% -spec make_type(list, {type, context()}, integer()) -> {type, #{kind => list, element_type => type_spec(), spec => atom(), source => type_source(), line => integer()}}.
 make_type(list, ElementType, Line) ->
     make_type_with_source(list, ElementType, rufus_text, Line).
 
@@ -383,7 +383,7 @@ make_type_with_source(func, ParamTypes, ReturnType, Source, Line) ->
                 ])
             ),
             {type, #{
-                decl_type => func,
+                kind => func,
                 param_types => ParamTypes,
                 return_type => ReturnType,
                 source => Source,
@@ -418,7 +418,7 @@ make_type_with_source(_CollectionSpec, ElementType, Source, Line) ->
     {type, #{spec := Spec}} = ElementType,
     TypeSpec = list_to_atom(unicode:characters_to_list(["list[", atom_to_list(Spec), "]"])),
     {type, #{
-        collection_type => list,
+        kind => list,
         element_type => ElementType,
         spec => TypeSpec,
         source => Source,

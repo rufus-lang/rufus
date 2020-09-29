@@ -45,7 +45,7 @@ typecheck_and_annotate_mathematical_operator_with_ints_test() ->
             spec => 'FortyTwo',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -106,7 +106,7 @@ typecheck_and_annotate_mathematical_operator_with_floats_test() ->
             spec => 'Pi',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -341,7 +341,7 @@ typecheck_and_annotate_remainder_mathematical_operator_with_ints_test() ->
             spec => 'Six',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -444,7 +444,7 @@ typecheck_and_annotate_conditional_operator_with_bools_test() ->
             spec => 'Falsy',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -528,7 +528,7 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
             spec => 'Falsy',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -597,7 +597,7 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
             spec => 'Truthy',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 4,
                     param_types => [],
                     return_type =>
@@ -692,7 +692,7 @@ typecheck_and_annotate_equality_comparison_operator_with_ints_test() ->
             spec => 'Falsy',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -785,7 +785,7 @@ typecheck_and_annotate_inequality_comparison_operator_with_ints_test() ->
             spec => 'Falsy',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -878,7 +878,7 @@ typecheck_and_annotate_less_than_comparison_operator_with_ints_test() ->
             spec => 'Falsy',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -1011,7 +1011,7 @@ typecheck_and_annotate_less_than_or_equal_comparison_operator_with_ints_test() -
             spec => 'Falsy',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -1144,7 +1144,7 @@ typecheck_and_annotate_greater_than_comparison_operator_with_ints_test() ->
             spec => 'Falsy',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -1277,7 +1277,7 @@ typecheck_and_annotate_greater_than_or_equal_comparison_operator_with_ints_test(
             spec => 'Falsy',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>

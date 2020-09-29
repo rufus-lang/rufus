@@ -787,7 +787,7 @@ parse_function_returning_a_function_test() ->
             params => [],
             return_type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 2,
                     param_types => [],
                     return_type =>

@@ -317,7 +317,7 @@ typecheck_and_annotate_func_expr(
     ParamTypes = lists:map(fun(ParamForm) -> rufus_form:type(ParamForm) end, AnnotatedParams),
     Type = rufus_form:make_type(func, ParamTypes, ReturnType, Line),
     AnnotatedForm =
-        {func, Context#{
+        {func_expr, Context#{
             params => AnnotatedParams,
             exprs => AnnotatedExprs,
             type => Type

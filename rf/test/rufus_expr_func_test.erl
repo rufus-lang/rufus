@@ -110,7 +110,7 @@ typecheck_and_annotate_test() ->
             spec => 'Number',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -158,7 +158,7 @@ typecheck_and_annotate_for_function_taking_an_atom_and_returning_an_atom_literal
             spec => 'Ping',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => rufus_text, spec => atom}}],
                     return_type =>
@@ -204,7 +204,7 @@ typecheck_and_annotate_for_function_taking_a_bool_and_returning_a_bool_literal_t
             spec => 'MaybeEcho',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => rufus_text, spec => bool}}],
                     return_type =>
@@ -254,7 +254,7 @@ typecheck_and_annotate_for_function_taking_a_float_and_returning_a_float_literal
             spec => 'MaybeEcho',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => rufus_text, spec => float}}],
                     return_type =>
@@ -300,7 +300,7 @@ typecheck_and_annotate_for_function_taking_an_int_and_returning_an_int_literal_t
             spec => 'MaybeEcho',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => rufus_text, spec => int}}],
                     return_type =>
@@ -350,7 +350,7 @@ typecheck_and_annotate_for_function_taking_a_string_and_returning_a_string_liter
             spec => 'MaybeEcho',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
                     return_type =>
@@ -391,7 +391,7 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_a_list_literal_t
                     line => 3,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -407,7 +407,7 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_a_list_literal_t
                     spec => n,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -418,7 +418,7 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_a_list_literal_t
             ],
             return_type =>
                 {type, #{
-                    collection_type => list,
+                    kind => list,
                     element_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     line => 3,
@@ -428,11 +428,11 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_a_list_literal_t
             spec => 'MaybeEcho',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -442,7 +442,7 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_a_list_literal_t
                     ],
                     return_type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -492,7 +492,7 @@ typecheck_and_annotate_for_function_taking_an_atom_and_returning_it_test() ->
             spec => 'Echo',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => rufus_text, spec => atom}}],
                     return_type =>
@@ -538,7 +538,7 @@ typecheck_and_annotate_for_function_taking_a_bool_and_returning_it_test() ->
             spec => 'Echo',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => rufus_text, spec => bool}}],
                     return_type =>
@@ -592,7 +592,7 @@ typecheck_and_annotate_for_function_taking_a_float_and_returning_it_test() ->
             spec => 'Echo',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => rufus_text, spec => float}}],
                     return_type =>
@@ -638,7 +638,7 @@ typecheck_and_annotate_for_function_taking_an_int_and_returning_it_test() ->
             spec => 'Echo',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => rufus_text, spec => int}}],
                     return_type =>
@@ -692,7 +692,7 @@ typecheck_and_annotate_for_function_taking_a_string_and_returning_it_test() ->
             spec => 'Echo',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
                     return_type =>
@@ -722,7 +722,7 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_it_test() ->
                     spec => n,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -738,7 +738,7 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_it_test() ->
                     spec => n,
                     type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -749,7 +749,7 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_it_test() ->
             ],
             return_type =>
                 {type, #{
-                    collection_type => list,
+                    kind => list,
                     element_type =>
                         {type, #{line => 3, source => rufus_text, spec => int}},
                     line => 3,
@@ -759,11 +759,11 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_it_test() ->
             spec => 'Echo',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -773,7 +773,7 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_it_test() ->
                     ],
                     return_type =>
                         {type, #{
-                            collection_type => list,
+                            kind => list,
                             element_type =>
                                 {type, #{line => 3, source => rufus_text, spec => int}},
                             line => 3,
@@ -816,7 +816,7 @@ typecheck_and_annotate_function_with_literal_return_value_test() ->
             spec => 'Number',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [],
                     return_type =>
@@ -894,7 +894,7 @@ typecheck_and_annotate_for_function_taking_an_atom_literal_test() ->
             spec => 'Echo',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => inferred, spec => atom}}],
                     return_type =>
@@ -940,7 +940,7 @@ typecheck_and_annotate_for_function_taking_a_bool_literal_test() ->
             spec => 'Echo',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => inferred, spec => bool}}],
                     return_type =>
@@ -986,7 +986,7 @@ typecheck_and_annotate_for_function_taking_a_float_literal_test() ->
             spec => 'Echo',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => inferred, spec => float}}],
                     return_type =>
@@ -1032,7 +1032,7 @@ typecheck_and_annotate_for_function_taking_an_int_literal_test() ->
             spec => 'Echo',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => inferred, spec => int}}],
                     return_type =>
@@ -1078,7 +1078,7 @@ typecheck_and_annotate_for_function_taking_a_string_literal_test() ->
             spec => 'Echo',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => inferred, spec => string}}],
                     return_type =>

@@ -170,7 +170,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_one_argument_test()
             spec => 'Echo',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
                     return_type =>
@@ -211,7 +211,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_one_argument_test()
             spec => 'Greeting',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 4,
                     param_types => [],
                     return_type =>
@@ -286,7 +286,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
             spec => 'Sum',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [
                         {type, #{line => 3, source => rufus_text, spec => int}},
@@ -336,7 +336,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
             spec => 'Random',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 4,
                     param_types => [],
                     return_type =>
@@ -403,7 +403,7 @@ eval_with_function_call_with_binary_op_argument_test() ->
             spec => double,
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => rufus_text, spec => int}}],
                     return_type =>
@@ -475,7 +475,7 @@ eval_with_function_call_with_binary_op_argument_test() ->
             spec => 'SumAndDouble',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 4,
                     param_types => [
                         {type, #{line => 4, source => rufus_text, spec => int}},
@@ -527,7 +527,7 @@ eval_with_function_call_with_match_argument_test() ->
             spec => 'Echo',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 3,
                     param_types => [{type, #{line => 3, source => rufus_text, spec => int}}],
                     return_type =>
@@ -581,7 +581,7 @@ eval_with_function_call_with_match_argument_test() ->
             spec => 'Random',
             type =>
                 {type, #{
-                    decl_type => func,
+                    kind => func,
                     line => 4,
                     param_types => [],
                     return_type =>
