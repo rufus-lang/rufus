@@ -199,6 +199,9 @@ make_func(Spec, Params, ReturnType, Exprs, Line) ->
     }} |
     no_return().
 make_func_expr(Params, ReturnType, Exprs, Line) ->
+    %% This is needed because yecc complains about conflicts when we define a
+    %% grammar that disambiguates func declarations and expressions from func
+    %% types. Bare types are not acceptable as function parameters.
     case no_forms_are_type_forms(Params) of
         true ->
             {func_expr, #{
@@ -355,6 +358,9 @@ make_type_with_source(Spec, Source, Line) ->
 -spec make_type_with_source(func, list(type_form()), type_form(), type_source(), integer()) ->
     type_form() | no_return().
 make_type_with_source(func, ParamTypes, ReturnType, Source, Line) ->
+    %% This is needed because yecc complains about conflicts when we define a
+    %% grammar that disambiguates func declarations and expressions from func
+    %% types. Type params may only be types.
     case all_forms_are_type_forms(ParamTypes) of
         true ->
             {type, #{
