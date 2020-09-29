@@ -235,8 +235,10 @@ no_forms_are_type_forms(Forms) ->
         Forms
     ).
 
--spec make_func_exprs(func_form()) -> func_exprs_form().
+-spec make_func_exprs(func_form() | func_expr_form()) -> func_exprs_form().
 make_func_exprs({func, #{line := Line}}) ->
+    {func_exprs, #{line => Line}};
+make_func_exprs({func_expr, #{line := Line}}) ->
     {func_exprs, #{line => Line}}.
 
 %% make_param returns a form for a function parameter declaration.
@@ -246,8 +248,10 @@ make_param(Spec, Type, Line) ->
     {param, #{spec => Spec, type => Type, line => Line}}.
 
 %% make_params returns a form for a function parameter list.
--spec make_func_params(func_form()) -> func_params_form().
+-spec make_func_params(func_form() | func_expr_form()) -> func_params_form().
 make_func_params({func, #{line := Line}}) ->
+    {func_params, #{line => Line}};
+make_func_params({func_expr, #{line := Line}}) ->
     {func_params, #{line => Line}}.
 
 %% identifier form builder API

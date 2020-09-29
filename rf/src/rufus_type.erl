@@ -44,6 +44,8 @@ resolve_type(Stack, Globals, Form = {call, _Context}) ->
     resolve_call_type(Stack, Globals, Form);
 resolve_type(_Stack, _Globals, {func, #{return_type := Type}}) ->
     {ok, Type};
+resolve_type(_Stack, _Globals, {func_expr, #{return_type := Type}}) ->
+    {ok, Type};
 resolve_type(Stack, Globals, Form = {identifier, _Context}) ->
     resolve_identifier_type(Stack, Globals, Form).
 
