@@ -1171,3 +1171,81 @@ typecheck_and_annotate_anonymous_function_test() ->
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_nested_anonymous_functions_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func NumberFunc() func() int {\n"
+        "        f = func() func() int { func() int { 42 } }\n"
+        "        f()\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Result = rufus_expr:typecheck_and_annotate(Forms),
+    Data = #{
+        form => {identifier, #{line => 7, locals => #{}, spec => a}},
+        globals => #{
+            'Broken' => [
+                {func, #{
+                    exprs => [{identifier, #{line => 7, spec => a}}],
+                    line => 7,
+                    params => [],
+                    return_type =>
+                        {type, #{
+                            line => 7,
+                            source => rufus_text,
+                            spec => string
+                        }},
+                    spec => 'Broken'
+                }}
+            ],
+            'Echo' => [
+                {func, #{
+                    exprs => [
+                        {match, #{
+                            left => {identifier, #{line => 4, spec => a}},
+                            line => 4,
+                            right =>
+                                {identifier, #{line => 4, spec => n}}
+                        }},
+                        {identifier, #{line => 5, spec => a}}
+                    ],
+                    line => 3,
+                    params => [
+                        {param, #{
+                            line => 3,
+                            spec => n,
+                            type =>
+                                {type, #{
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => string
+                                }}
+                        }}
+                    ],
+                    return_type =>
+                        {type, #{
+                            line => 3,
+                            source => rufus_text,
+                            spec => string
+                        }},
+                    spec => 'Echo'
+                }}
+            ]
+        },
+        locals => #{},
+        stack => [
+            {func_exprs, #{line => 7}},
+            {func, #{
+                exprs => [{identifier, #{line => 7, spec => a}}],
+                line => 7,
+                params => [],
+                return_type =>
+                    {type, #{line => 7, source => rufus_text, spec => string}},
+                spec => 'Broken'
+            }}
+        ]
+    },
+    ?assertEqual({error, unknown_identifier, Data}, Result).
