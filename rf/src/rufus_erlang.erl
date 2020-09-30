@@ -104,7 +104,7 @@ forms(Acc, [{identifier, #{line := Line, spec := Spec, type := Type}} | T]) ->
                 {var, Line, Spec};
             {type, #{spec := int}} ->
                 {var, Line, Spec};
-            {type, #{collection_type := list}} ->
+            {type, #{kind := list}} ->
                 {var, Line, Spec};
             _ ->
                 TypeSpec = rufus_form:spec(Type),
@@ -136,7 +136,7 @@ forms(Acc, [{param, #{line := Line, spec := Spec, type := Type}} | T]) ->
                 {var, Line, Spec};
             {type, #{spec := int}} ->
                 {var, Line, Spec};
-            {type, #{collection_type := list}} ->
+            {type, #{kind := list}} ->
                 {var, Line, Spec};
             _ ->
                 TypeSpec = rufus_form:spec(Type),

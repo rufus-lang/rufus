@@ -35,7 +35,8 @@
     make_module/2,
     make_param/3,
     make_type/2,
-    make_type/3
+    make_type/3,
+    make_type/4
 ]).
 
 %% Form API
@@ -78,9 +79,9 @@ has_type(_Form) ->
 
 %% element_type returns the element type for a list type.
 -spec element_type(type_form()) -> type_form().
-element_type({type, #{collection_type := list, element_type := ElementType}}) ->
+element_type({type, #{kind := list, element_type := ElementType}}) ->
     ElementType;
-element_type({_, #{type := {type, #{collection_type := list, element_type := ElementType}}}}) ->
+element_type({_, #{type := {type, #{kind := list, element_type := ElementType}}}}) ->
     ElementType.
 
 %% type returns type information for the form.
@@ -260,7 +261,7 @@ make_inferred_type(Spec, Line) ->
 %% compiler.
 -spec make_inferred_type(list, type_form(), integer()) ->
     {type, #{
-        collection_type => list,
+        kind => list,
         element_type => type_form(),
         line => integer(),
         source => type_source(),
@@ -281,20 +282,50 @@ make_type(Spec, Line) ->
 %% 'collection' key with value 'list', and a 'spec' key with a value that
 %% defines the element type.
 %% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
-%% -spec make_type(list, {type, context()}, integer()) -> {type, #{collection_type => list, element_type => type_spec(), spec => atom(), source => type_source(), line => integer()}}.
+%% -spec make_type(list, {type, context()}, integer()) -> {type, #{kind => list, element_type => type_spec(), spec => atom(), source => type_source(), line => integer()}}.
 make_type(list, ElementType, Line) ->
     make_type_with_source(list, ElementType, rufus_text, Line).
+
+make_type(func, ParamTypes, ReturnType, Line) ->
+    make_type_with_source(func, ParamTypes, ReturnType, rufus_text, Line).
 
 -spec make_type_with_source(type_spec(), type_source(), integer()) -> type_form().
 make_type_with_source(Spec, Source, Line) ->
     {type, #{spec => Spec, source => Source, line => Line}}.
 
+-spec make_type_with_source(func, list(type_form()), type_form(), type_source(), integer()) ->
+    type_form() | no_return().
+make_type_with_source(func, ParamTypes, ReturnType, Source, Line) ->
+    ParamTypeSpecs = lists:map(
+        fun(ParamType) ->
+            atom_to_list(type_spec(ParamType))
+        end,
+        ParamTypes
+    ),
+    ReturnTypeSpec = type_spec(ReturnType),
+    Spec = list_to_atom(
+        unicode:characters_to_list([
+            "func(",
+            lists:join(", ", ParamTypeSpecs),
+            ") ",
+            atom_to_list(ReturnTypeSpec)
+        ])
+    ),
+    {type, #{
+        kind => func,
+        param_types => ParamTypes,
+        return_type => ReturnType,
+        source => Source,
+        spec => Spec,
+        line => Line
+    }}.
+
 -spec make_type_with_source(list | list_lit, type_form(), type_source(), integer()) -> type_form().
-make_type_with_source(_CollectionSpec, ElementType, Source, Line) ->
+make_type_with_source(_Kind, ElementType, Source, Line) ->
     {type, #{spec := Spec}} = ElementType,
     TypeSpec = list_to_atom(unicode:characters_to_list(["list[", atom_to_list(Spec), "]"])),
     {type, #{
-        collection_type => list,
+        kind => list,
         element_type => ElementType,
         spec => TypeSpec,
         source => Source,

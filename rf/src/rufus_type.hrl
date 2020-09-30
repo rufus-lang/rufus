@@ -19,7 +19,7 @@
 
 %% Types
 
--type collection_type_spec() :: list.
+-type kind_spec() :: func | list.
 -type type_spec() :: atom().
 -type type_form() :: {type, context()}.
 -type type_source() :: inferred | rufus_text.
