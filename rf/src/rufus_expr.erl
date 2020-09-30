@@ -79,9 +79,6 @@ typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {cons, _Context} | T
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {func, _Context} | T]) ->
     {ok, AnnotatedForm} = typecheck_and_annotate_func(Stack, Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
-typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {func_expr, _Context} | T]) ->
-    {ok, AnnotatedForm} = typecheck_and_annotate_func_expr(Stack, Globals, Locals, Form),
-    typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {identifier, _Context} | T]) ->
     {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_identifier(
         Stack,
@@ -262,75 +259,6 @@ typecheck_and_annotate_func(
 %% error triple is thrown.
 -spec typecheck_func_return_type(globals(), func_form()) -> ok | no_return().
 typecheck_func_return_type(Globals, {func, #{return_type := ReturnType, exprs := Exprs}}) ->
-    LastExpr = lists:last(Exprs),
-    case rufus_type:resolve(Globals, LastExpr) of
-        {ok, {type, #{spec := ActualSpec}}} ->
-            {type, #{spec := ExpectedSpec}} = ReturnType,
-            case ExpectedSpec == ActualSpec of
-                true ->
-                    ok;
-                false ->
-                    Data = #{return_type => ReturnType, expr => LastExpr},
-                    throw({error, unmatched_return_type, Data})
-            end;
-        Error ->
-            throw(Error)
-    end.
-
-%% func_expr form helpers
-
-%% typecheck_and_annotate_func_expr adds all parameters to the local scope. It
-%% also resolves and annotates types for all expressions in the function body to
-%% ensure they satisfy type constraints.
--spec typecheck_and_annotate_func_expr(rufus_stack(), globals(), locals(), func_expr_form()) ->
-    {ok, func_expr_form()} | no_return().
-typecheck_and_annotate_func_expr(
-    Stack,
-    Globals,
-    Locals,
-    Form =
-        {func_expr,
-            Context = #{
-                params := Params,
-                exprs := Exprs,
-                return_type := ReturnType,
-                line := Line
-            }}
-) ->
-    FuncExprStack = [Form | Stack],
-    ParamsStack = [rufus_form:make_func_params(Form) | FuncExprStack],
-    {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate(
-        [],
-        ParamsStack,
-        Globals,
-        Locals,
-        Params
-    ),
-    ExprsStack = [rufus_form:make_func_exprs(Form) | FuncExprStack],
-    {ok, _NewLocals2, AnnotatedExprs} = typecheck_and_annotate(
-        [],
-        ExprsStack,
-        Globals,
-        NewLocals1,
-        Exprs
-    ),
-    ParamTypes = lists:map(fun(ParamForm) -> rufus_form:type(ParamForm) end, AnnotatedParams),
-    Type = rufus_form:make_type(func, ParamTypes, ReturnType, Line),
-    AnnotatedForm =
-        {func_expr, Context#{
-            params => AnnotatedParams,
-            exprs => AnnotatedExprs,
-            type => Type
-        }},
-    ok = typecheck_func_expr_return_type(Globals, AnnotatedForm),
-    {ok, AnnotatedForm}.
-
-%% typecheck_func_expr_return_type enforces the constraint that the type of the
-%% final expression in a function matches its return type. `ok` is returned if
-%% typechecks all pass, otherwise an `{error, unmatched_return_type, Data}`
-%% error triple is thrown.
--spec typecheck_func_expr_return_type(globals(), func_expr_form()) -> ok | no_return().
-typecheck_func_expr_return_type(Globals, {func_expr, #{return_type := ReturnType, exprs := Exprs}}) ->
     LastExpr = lists:last(Exprs),
     case rufus_type:resolve(Globals, LastExpr) of
         {ok, {type, #{spec := ActualSpec}}} ->

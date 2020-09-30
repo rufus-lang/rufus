@@ -61,15 +61,12 @@ decl -> import string_lit ';'    : rufus_form:make_import(text('$2'), line('$2')
 decl -> func identifier '(' params ')' type block :
                                    rufus_form:make_func(list_to_atom(text('$2')), '$4', '$6', '$7', line('$1')).
 
-block -> '{' exprs '}' ';'       : '$2'.
-
 type -> atom                     : rufus_form:make_type(atom, line('$1')).
 type -> bool                     : rufus_form:make_type(bool, line('$1')).
 type -> float                    : rufus_form:make_type(float, line('$1')).
 type -> int                      : rufus_form:make_type(int, line('$1')).
 type -> string                   : rufus_form:make_type(string, line('$1')).
 type -> list_type                : '$1'.
-type -> func '(' params ')' type : rufus_form:make_type(func, '$3', '$5', line('$1')).
 
 params -> param params           : ['$1'|'$2'].
 params -> '$empty'               : [].
@@ -85,9 +82,6 @@ param -> string_lit              : rufus_form:make_literal(string, list_to_binar
 param -> match_param             : '$1'.
 param -> type                    : '$1'.
 
-args -> expr ',' args            : ['$1'|'$3'].
-args -> expr                     : ['$1'].
-args -> '$empty'                 : [].
 
 expr -> atom_lit                 : rufus_form:make_literal(atom, text('$1'), line('$1')).
 expr -> bool_lit                 : rufus_form:make_literal(bool, text('$1'), line('$1')).
@@ -100,13 +94,16 @@ expr -> cons                     : '$1'.
 expr -> match                    : '$1'.
 expr -> call                     : '$1'.
 expr -> list_lit                 : '$1'.
-expr -> func '(' params ')' type block :
-                                   rufus_form:make_func_expr('$3', '$5', '$6', line('$1')).
-
 
 exprs -> expr ';' exprs          : ['$1'|'$3'].
 exprs -> expr                    : ['$1'].
 exprs -> '$empty'                : [].
+
+args -> expr ',' args            : ['$1'|'$3'].
+args -> expr                     : ['$1'].
+args -> '$empty'                 : [].
+
+block -> '{' exprs '}' ';'       : '$2'.
 
 binary_op -> expr '+' expr       : rufus_form:make_binary_op('+', '$1', '$3', line('$2')).
 binary_op -> expr '-' expr       : rufus_form:make_binary_op('-', '$1', '$3', line('$2')).

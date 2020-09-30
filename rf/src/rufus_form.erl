@@ -21,7 +21,6 @@
     make_cons_head/1,
     make_cons_tail/1,
     make_func/5,
-    make_func_expr/4,
     make_func_exprs/1,
     make_func_params/1,
     make_identifier/2,
@@ -164,81 +163,18 @@ make_cons_tail({cons, #{line := Line}}) ->
         return_type => type_form(),
         exprs => list(),
         line => integer()
-    }} |
-    no_return().
+    }}.
 make_func(Spec, Params, ReturnType, Exprs, Line) ->
-    case no_forms_are_type_forms(Params) of
-        true ->
-            {func, #{
-                spec => Spec,
-                params => Params,
-                return_type => ReturnType,
-                exprs => Exprs,
-                line => Line
-            }};
-        false ->
-            Data = #{
-                spec => func_expr,
-                params => Params,
-                return_type => ReturnType,
-                exprs => Exprs,
-                line => Line
-            },
-            throw({error, parse_error, Data})
-    end.
+    {func, #{
+        spec => Spec,
+        params => Params,
+        return_type => ReturnType,
+        exprs => Exprs,
+        line => Line
+    }}.
 
--spec make_func_expr(list(param_form()), type_form(), list(), integer()) ->
-    %% TODO(jkakar) Generate a better spec, like 'func(string,int) string',
-    %% instead of using the generic 'func_expr'.
-    {func_expr, #{
-        spec => func_expr,
-        params => list(param_form),
-        return_type => type_form(),
-        exprs => list(),
-        line => integer()
-    }} |
-    no_return().
-make_func_expr(Params, ReturnType, Exprs, Line) ->
-    %% This is needed because yecc complains about conflicts when we define a
-    %% grammar that disambiguates func declarations and expressions from func
-    %% types. Bare types are not acceptable as function parameters.
-    case no_forms_are_type_forms(Params) of
-        true ->
-            {func_expr, #{
-                spec => func_expr,
-                params => Params,
-                return_type => ReturnType,
-                exprs => Exprs,
-                line => Line
-            }};
-        false ->
-            Data = #{
-                spec => func_expr,
-                params => Params,
-                return_type => ReturnType,
-                exprs => Exprs,
-                line => Line
-            },
-            throw({error, parse_error, Data})
-    end.
-
-no_forms_are_type_forms(Forms) ->
-    lists:all(
-        fun(Form) ->
-            case Form of
-                {type, _Context} ->
-                    false;
-                _Form ->
-                    true
-            end
-        end,
-        Forms
-    ).
-
--spec make_func_exprs(func_form() | func_expr_form()) -> func_exprs_form().
+-spec make_func_exprs(func_form()) -> func_exprs_form().
 make_func_exprs({func, #{line := Line}}) ->
-    {func_exprs, #{line => Line}};
-make_func_exprs({func_expr, #{line := Line}}) ->
     {func_exprs, #{line => Line}}.
 
 %% make_param returns a form for a function parameter declaration.
@@ -248,10 +184,8 @@ make_param(Spec, Type, Line) ->
     {param, #{spec => Spec, type => Type, line => Line}}.
 
 %% make_params returns a form for a function parameter list.
--spec make_func_params(func_form() | func_expr_form()) -> func_params_form().
+-spec make_func_params(func_form()) -> func_params_form().
 make_func_params({func, #{line := Line}}) ->
-    {func_params, #{line => Line}};
-make_func_params({func_expr, #{line := Line}}) ->
     {func_params, #{line => Line}}.
 
 %% identifier form builder API
@@ -362,59 +296,32 @@ make_type_with_source(Spec, Source, Line) ->
 -spec make_type_with_source(func, list(type_form()), type_form(), type_source(), integer()) ->
     type_form() | no_return().
 make_type_with_source(func, ParamTypes, ReturnType, Source, Line) ->
-    %% This is needed because yecc complains about conflicts when we define a
-    %% grammar that disambiguates func declarations and expressions from func
-    %% types. Type params may only be types.
-    case all_forms_are_type_forms(ParamTypes) of
-        true ->
-            ParamTypesSpec = lists:map(
-                fun(ParamType) ->
-                    atom_to_list(type_spec(ParamType))
-                end,
-                ParamTypes
-            ),
-            ReturnTypeSpec = type_spec(ReturnType),
-            Spec = list_to_atom(
-                unicode:characters_to_list([
-                    "func(",
-                    lists:join(", ", ParamTypesSpec),
-                    ") ",
-                    atom_to_list(ReturnTypeSpec)
-                ])
-            ),
-            {type, #{
-                kind => func,
-                param_types => ParamTypes,
-                return_type => ReturnType,
-                source => Source,
-                spec => Spec,
-                line => Line
-            }};
-        false ->
-            Data = #{
-                param_types => ParamTypes,
-                return_type => ReturnType,
-                source => Source,
-                line => Line
-            },
-            throw({error, parse_error, Data})
-    end.
-
-all_forms_are_type_forms(Forms) ->
-    lists:all(
-        fun(Form) ->
-            case Form of
-                {type, _Context} ->
-                    true;
-                _Form ->
-                    false
-            end
+    ParamTypeSpecs = lists:map(
+        fun(ParamType) ->
+            atom_to_list(type_spec(ParamType))
         end,
-        Forms
-    ).
+        ParamTypes
+    ),
+    ReturnTypeSpec = type_spec(ReturnType),
+    Spec = list_to_atom(
+        unicode:characters_to_list([
+            "func(",
+            lists:join(", ", ParamTypeSpecs),
+            ") ",
+            atom_to_list(ReturnTypeSpec)
+        ])
+    ),
+    {type, #{
+        kind => func,
+        param_types => ParamTypes,
+        return_type => ReturnType,
+        source => Source,
+        spec => Spec,
+        line => Line
+    }}.
 
 -spec make_type_with_source(list | list_lit, type_form(), type_source(), integer()) -> type_form().
-make_type_with_source(_CollectionSpec, ElementType, Source, Line) ->
+make_type_with_source(_Kind, ElementType, Source, Line) ->
     {type, #{spec := Spec}} = ElementType,
     TypeSpec = list_to_atom(unicode:characters_to_list(["list[", atom_to_list(Spec), "]"])),
     {type, #{
