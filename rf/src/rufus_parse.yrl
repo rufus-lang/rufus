@@ -4,7 +4,7 @@
 
 Nonterminals
     root decl
-    type block param params args expr exprs
+    type types block param params args expr exprs
     binary_op call cons match match_param
     list_lit list_type.
 
@@ -99,6 +99,8 @@ expr  -> cons                    : '$1'.
 expr  -> match                   : '$1'.
 expr  -> call                    : '$1'.
 expr  -> list_lit                : '$1'.
+expr  -> func '(' params ')' type '{' exprs '}' :
+                                   rufus_form:make_func('$3', '$5', '$7', line('$1')).
 
 exprs -> expr ';' exprs          : ['$1'|'$3'].
 exprs -> expr                    : ['$1'].
@@ -131,6 +133,10 @@ type -> float                    : rufus_form:make_type(float, line('$1')).
 type -> int                      : rufus_form:make_type(int, line('$1')).
 type -> string                   : rufus_form:make_type(string, line('$1')).
 type -> list_type                : '$1'.
+type -> func '(' types ')' type  : rufus_form:make_type(func, '$3', '$5', line('$1')).
+
+types -> type types              : ['$1'|'$2'].
+types -> '$empty'                : [].
 
 Erlang code.
 

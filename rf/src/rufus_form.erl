@@ -20,6 +20,7 @@
     make_cons/4,
     make_cons_head/1,
     make_cons_tail/1,
+    make_func/4,
     make_func/5,
     make_func_exprs/1,
     make_func_params/1,
@@ -167,6 +168,21 @@ make_cons_tail({cons, #{line := Line}}) ->
 make_func(Spec, Params, ReturnType, Exprs, Line) ->
     {func, #{
         spec => Spec,
+        params => Params,
+        return_type => ReturnType,
+        exprs => Exprs,
+        line => Line
+    }}.
+
+-spec make_func(list(param_form()), type_form(), list(), integer()) ->
+    {func, #{
+        params => list(param_form),
+        return_type => type_form(),
+        exprs => list(),
+        line => integer()
+    }}.
+make_func(Params, ReturnType, Exprs, Line) ->
+    {func, #{
         params => Params,
         return_type => ReturnType,
         exprs => Exprs,
