@@ -189,33 +189,52 @@ allow_type_pair_with_comparison_operator(_, _) -> false.
 %% call form helpers
 
 -spec resolve_call_type(rufus_stack(), globals(), call_form()) -> {ok, type_form()} | no_return().
-resolve_call_type(Stack, Globals, Form = {call, #{spec := Spec, args := Args, locals := Locals}}) ->
-    Funcs =
+resolve_call_type(
+    Stack,
+    Globals,
+    Form = {call, #{spec := Spec, args := Args, locals := Locals}}
+) ->
+    Types =
         case maps:get(Spec, Locals, undefined) of
             undefined ->
-                case maps:get(Spec, Globals, undefined) of
-                    undefined ->
-                        Data1 = #{spec => Spec, args => Args},
-                        throw({error, unknown_func, Data1});
-                    GlobalFuncs ->
-                        GlobalFuncs
-                end;
-            LocalFuncs ->
-                lists:filter(
-                    fun
-                        ({type, #{kind := func}}) ->
-                            true;
-                        (_) ->
-                            false
-                    end,
-                    LocalFuncs
-                )
+                ok;
+            LocalTypes ->
+                LocalTypes
         end,
 
-    case find_matching_funcs(Funcs, Args) of
-        {error, Reason, Data2} ->
-            throw({error, Reason, Data2});
-        {ok, MatchingFuncs} when length(MatchingFuncs) > 1 ->
+    case find_matching_types(Types, Args) of
+        {error, _Reason1, _Data1} ->
+            Funcs =
+                case maps:get(Spec, Globals, undefined) of
+                    undefined ->
+                        Data2 = #{spec => Spec, args => Args},
+                        throw({error, unknown_func, Data2});
+                    GlobalFuncs ->
+                        GlobalFuncs
+                end,
+
+            case find_matching_funcs(Funcs, Args) of
+                {error, Reason2, Data3} ->
+                    throw({error, Reason2, Data3});
+                {ok, MatchingFuncs} when length(MatchingFuncs) > 1 ->
+                    %% TODO(jkakar): We need to handle cases where more than one
+                    %% function matches a given set of parameters. For example,
+                    %% consider two functions:
+                    %%
+                    %% func Echo(:hello) atom { :hello }
+                    %% func Echo(:goodbye) string { "goodbye" }
+                    %%
+                    %% These both match an args list with a single atom arg
+                    %% type, but they have different return types. We need to
+                    %% account for all possible return types. When a callsite
+                    %% specifies a literal value such as :hello or :goodbye we
+                    %% should select the correct singular return type.
+                    erlang:error({not_implemented, [Stack, Globals, Form]});
+                {ok, MatchingFuncs} when length(MatchingFuncs) =:= 1 ->
+                    [Func] = MatchingFuncs,
+                    {ok, rufus_form:return_type(Func)}
+            end;
+        {ok, MatchingTypes} when length(MatchingTypes) > 1 ->
             %% TODO(jkakar): We need to handle cases where more than one
             %% function matches a given set of parameters. For example,
             %% consider two functions:
@@ -229,9 +248,9 @@ resolve_call_type(Stack, Globals, Form = {call, #{spec := Spec, args := Args, lo
             %% specifies a literal value such as :hello or :goodbye we
             %% should select the correct singular return type.
             erlang:error({not_implemented, [Stack, Globals, Form]});
-        {ok, MatchingFuncs} when length(MatchingFuncs) =:= 1 ->
-            [Func] = MatchingFuncs,
-            {ok, rufus_form:return_type(Func)}
+        {ok, MatchingTypes} when length(MatchingTypes) =:= 1 ->
+            [Type] = MatchingTypes,
+            {ok, rufus_form:return_type(Type)}
     end.
 
 -spec find_matching_funcs(list(func_form()), rufus_forms()) ->
@@ -269,6 +288,58 @@ find_matching_funcs(Funcs, Args) ->
             end;
         _ ->
             {error, unknown_arity, #{funcs => Funcs, args => Args}}
+    end.
+
+-spec find_matching_types(list(type_form()), rufus_forms()) ->
+    {ok, list(type_form())} | error_triple().
+find_matching_types(Types, Args) ->
+    ArgTypes = lists:filter(
+        fun
+            ({_Form, #{type := _ArgType}}) ->
+                true;
+            (_Form) ->
+                false
+        end,
+        Args
+    ),
+
+    TypesWithMatchingArity = lists:filter(
+        fun
+            ({type, #{kind := func, param_types := ParamTypes}}) ->
+                length(ParamTypes) =:= length(ArgTypes);
+            (_Form) ->
+                false
+        end,
+        [Types]
+    ),
+
+    case length(TypesWithMatchingArity) of
+        Length when Length > 0 ->
+            Result = lists:filter(
+                fun({type, #{param_types := ParamTypes}}) ->
+                    Zipped = lists:zip(ParamTypes, ArgTypes),
+                    lists:all(
+                        fun(
+                            {
+                                {type, #{spec := ParamTypeSpec}},
+                                {type, #{spec := ArgTypeSpec}}
+                            }
+                        ) ->
+                            ParamTypeSpec =:= ArgTypeSpec
+                        end,
+                        Zipped
+                    )
+                end,
+                TypesWithMatchingArity
+            ),
+            case Result of
+                Result when length(Result) =:= 0 ->
+                    {error, unmatched_args, #{types => TypesWithMatchingArity, args => Args}};
+                _ ->
+                    {ok, Result}
+            end;
+        _ ->
+            {error, unknown_arity, #{types => Types, args => Args}}
     end.
 
 %% cons form helpers

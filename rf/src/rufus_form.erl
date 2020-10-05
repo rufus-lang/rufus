@@ -50,8 +50,10 @@ line({_, #{line := Line}}) ->
     Line.
 
 %% source returns information about where the type information is from.
--spec return_type(func_form()) -> type_form().
+-spec return_type(func_form() | type_form()) -> type_form().
 return_type({func, #{return_type := ReturnType}}) ->
+    ReturnType;
+return_type({type, #{kind := func, return_type := ReturnType}}) ->
     ReturnType.
 
 %% source returns information about where the type information is from.

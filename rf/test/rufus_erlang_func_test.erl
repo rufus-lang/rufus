@@ -467,3 +467,41 @@ forms_for_function_taking_a_string_literal_test() ->
         ]}
     ],
     ?assertEqual(Expected, ErlangForms).
+
+%% Anonymous functions
+
+eval_function_returning_a_nested_function_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func NumberFunc() func() int {\n"
+        "        f = func() func() int {\n"
+        "            func() int { 42 }\n"
+        "        }\n"
+        "        f()\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'Echo', 1}]},
+        {function, 3, 'Echo', 1, [
+            {clause, 3,
+                [
+                    {tuple, 3, [
+                        {atom, 3, string},
+                        {bin, 3, [{bin_element, 3, {string, 3, "ok"}, default, default}]}
+                    ]}
+                ],
+                [], [
+                    {tuple, 3, [
+                        {atom, 3, string},
+                        {bin, 3, [{bin_element, 3, {string, 3, "ok"}, default, default}]}
+                    ]}
+                ]}
+        ]}
+    ],
+    ?assertEqual(Expected, ErlangForms).

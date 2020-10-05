@@ -1092,7 +1092,7 @@ typecheck_and_annotate_for_function_taking_a_string_literal_test() ->
 
 %% Anonymous functions
 
-parse_function_taking_and_returning_a_function_test() ->
+typecheck_and_annotate_function_taking_and_returning_a_function_test() ->
     RufusText =
         "\n"
         "    func Echo(fn func() int) func() int {\n"
@@ -1180,7 +1180,7 @@ parse_function_taking_and_returning_a_function_test() ->
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
-parse_function_returning_a_function_test() ->
+typecheck_and_annotate_function_returning_a_function_test() ->
     RufusText =
         "\n"
         "    func NumberFunc() func() int {\n"
@@ -1257,7 +1257,7 @@ parse_function_returning_a_function_test() ->
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
-parse_function_returning_a_function_variable_test() ->
+typecheck_and_annotate_function_returning_a_function_variable_test() ->
     RufusText =
         "\n"
         "    func NumberFunc() func() int {\n"
@@ -1409,7 +1409,7 @@ parse_function_returning_a_function_variable_test() ->
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
-parse_function_returning_a_nested_function_test() ->
+typecheck_and_annotate_function_returning_a_nested_function_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -1428,7 +1428,34 @@ parse_function_returning_a_nested_function_test() ->
         {func, #{
             exprs => [
                 {match, #{
-                    left => {identifier, #{line => 4, spec => f}},
+                    left =>
+                        {identifier, #{
+                            line => 4,
+                            locals => #{},
+                            spec => f,
+                            type =>
+                                {type, #{
+                                    kind => func,
+                                    line => 4,
+                                    param_types => [],
+                                    return_type =>
+                                        {type, #{
+                                            kind => func,
+                                            line => 4,
+                                            param_types => [],
+                                            return_type =>
+                                                {type, #{
+                                                    line => 4,
+                                                    source => rufus_text,
+                                                    spec => int
+                                                }},
+                                            source => rufus_text,
+                                            spec => 'func() int'
+                                        }},
+                                    source => rufus_text,
+                                    spec => 'func() func() int'
+                                }}
+                        }},
                     line => 4,
                     right =>
                         {func, #{
@@ -1453,6 +1480,20 @@ parse_function_returning_a_nested_function_test() ->
                                             line => 5,
                                             source => rufus_text,
                                             spec => int
+                                        }},
+                                    type =>
+                                        {type, #{
+                                            kind => func,
+                                            line => 5,
+                                            param_types => [],
+                                            return_type =>
+                                                {type, #{
+                                                    line => 5,
+                                                    source => rufus_text,
+                                                    spec => int
+                                                }},
+                                            source => rufus_text,
+                                            spec => 'func() int'
                                         }}
                                 }}
                             ],
@@ -1471,10 +1512,68 @@ parse_function_returning_a_nested_function_test() ->
                                         }},
                                     source => rufus_text,
                                     spec => 'func() int'
+                                }},
+                            type =>
+                                {type, #{
+                                    kind => func,
+                                    line => 4,
+                                    param_types => [],
+                                    return_type =>
+                                        {type, #{
+                                            kind => func,
+                                            line => 4,
+                                            param_types => [],
+                                            return_type =>
+                                                {type, #{
+                                                    line => 4,
+                                                    source => rufus_text,
+                                                    spec => int
+                                                }},
+                                            source => rufus_text,
+                                            spec => 'func() int'
+                                        }},
+                                    source => rufus_text,
+                                    spec => 'func() func() int'
                                 }}
+                        }},
+                    type =>
+                        {type, #{
+                            kind => func,
+                            line => 4,
+                            param_types => [],
+                            return_type =>
+                                {type, #{
+                                    kind => func,
+                                    line => 4,
+                                    param_types => [],
+                                    return_type =>
+                                        {type, #{
+                                            line => 4,
+                                            source => rufus_text,
+                                            spec => int
+                                        }},
+                                    source => rufus_text,
+                                    spec => 'func() int'
+                                }},
+                            source => rufus_text,
+                            spec => 'func() func() int'
                         }}
                 }},
-                {call, #{args => [], line => 7, spec => f}}
+                {call, #{
+                    args => [],
+                    line => 7,
+                    spec => f,
+                    type =>
+                        {type, #{
+                            kind => func,
+                            line => 4,
+                            param_types => [],
+                            return_type =>
+                                {type, #{line => 4, source => rufus_text, spec => int}},
+                            source => rufus_text,
+                            spec => 'func() int'
+                        }}
+                }}
             ],
             line => 3,
             params => [],
@@ -1488,7 +1587,25 @@ parse_function_returning_a_nested_function_test() ->
                     source => rufus_text,
                     spec => 'func() int'
                 }},
-            spec => 'NumberFunc'
+            spec => 'NumberFunc',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{
+                            kind => func,
+                            line => 3,
+                            param_types => [],
+                            return_type =>
+                                {type, #{line => 3, source => rufus_text, spec => int}},
+                            source => rufus_text,
+                            spec => 'func() int'
+                        }},
+                    source => rufus_text,
+                    spec => 'func() func() int'
+                }}
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).

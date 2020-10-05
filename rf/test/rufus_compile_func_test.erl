@@ -315,7 +315,7 @@ eval_function_taking_an_atom_literal_and_passing_an_invalid_value_test() ->
 
 %% Anonymous functions
 
-rval_function_returning_a_nested_function_test() ->
+eval_function_returning_a_nested_function_test() ->
     RufusText =
         "\n"
         "    module example\n"
