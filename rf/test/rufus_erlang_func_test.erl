@@ -470,7 +470,7 @@ forms_for_function_taking_a_string_literal_test() ->
 
 %% Anonymous functions
 
-eval_function_returning_a_nested_function_test() ->
+forms_for_function_returning_a_nested_function_test() ->
     RufusText =
         "\n"
         "    module example\n"
