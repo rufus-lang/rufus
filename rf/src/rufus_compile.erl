@@ -59,7 +59,8 @@ compile(ErlangForms) ->
         {error, Reason} ->
             {error, Reason};
         error ->
-            {error, unknown}
+            Data = #{erlang_forms => ErlangForms},
+            {error, unknown, Data}
     end.
 
 %% load creates or overwrites a module with a code binary.
