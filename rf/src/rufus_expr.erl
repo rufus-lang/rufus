@@ -26,18 +26,18 @@
 typecheck_and_annotate(RufusForms) ->
     Acc = [],
     Stack = [],
-    {ok, Globals} = rufus_forms:globals(RufusForms),
     Locals = #{},
     try
-        {ok, _Locals, AnnotatedForms} = typecheck_and_annotate(
+        {ok, Globals, AnnotatedForms1} = typecheck_and_annotate_globals(Acc, Stack, RufusForms),
+        {ok, _Locals, AnnotatedForms2} = typecheck_and_annotate(
             Acc,
             Stack,
             Globals,
             Locals,
-            RufusForms
+            AnnotatedForms1
         ),
-        ok = rufus_forms:each(AnnotatedForms, fun safety_check/1),
-        {ok, AnnotatedForms}
+        ok = rufus_forms:each(AnnotatedForms2, fun safety_check/1),
+        {ok, AnnotatedForms2}
     catch
         {error, Code, Data} ->
             {error, Code, Data}
@@ -61,6 +61,21 @@ safety_check(Form) ->
         error => missing_type_information
     },
     throw({error, safety_check, Data}).
+
+%% typecheck_and_annotate_globals iterates over RufusForms and adds type
+%% information to all module-level functions. An `{error, Reason, Data}` error
+%% triple is thrown at the first error.
+-spec typecheck_and_annotate_globals(rufus_forms(), rufus_stack(), rufus_forms()) ->
+    {ok, globals(), rufus_forms()}.
+typecheck_and_annotate_globals(Acc, Stack, [Form = {func, _Context} | T]) ->
+    {ok, AnnotatedForm} = typecheck_and_annotate_func(Stack, Form),
+    typecheck_and_annotate_globals([AnnotatedForm | Acc], Stack, T);
+typecheck_and_annotate_globals(Acc, Stack, [Form = {module, _Context} | T]) ->
+    typecheck_and_annotate_globals([Form | Acc], Stack, T);
+typecheck_and_annotate_globals(Acc, _Stack, []) ->
+    Forms = lists:reverse(Acc),
+    {ok, Globals} = rufus_forms:globals(Forms),
+    {ok, Globals, Forms}.
 
 %% typecheck_and_annotate iterates over RufusForms and adds type information
 %% from the current scope to each form. An `{error, Reason, Data}` error triple
@@ -208,15 +223,11 @@ typecheck_and_annotate_cons(
 
 %% func form helpers
 
-%% typecheck_and_annotate_func adds all parameters to the local scope. It also
-%% resolves and annotates types for all expressions in the function body to
-%% ensure they satisfy type constraints.
--spec typecheck_and_annotate_func(rufus_stack(), globals(), locals(), func_form()) ->
-    {ok, func_form()} | no_return().
+%% typecheck_and_annotate_func resolves and annotates types for each parameter
+%% in a function parameter list to ensure they satisfy type constraints.
+-spec typecheck_and_annotate_func(rufus_stack(), func_form()) -> {ok, func_form()} | no_return().
 typecheck_and_annotate_func(
     Stack,
-    Globals,
-    Locals,
     Form =
         {func,
             Context = #{
@@ -228,28 +239,54 @@ typecheck_and_annotate_func(
 ) ->
     FuncStack = [Form | Stack],
     ParamsStack = [rufus_form:make_func_params(Form) | FuncStack],
-    {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate(
+    {ok, Locals, AnnotatedParams} = typecheck_and_annotate(
         [],
         ParamsStack,
-        Globals,
-        Locals,
+        #{},
+        #{},
         Params
     ),
+    ParamTypes = lists:map(fun(ParamForm) -> rufus_form:type(ParamForm) end, AnnotatedParams),
+    FuncType = rufus_form:make_type(func, ParamTypes, ReturnType, Line),
+    AnnotatedForm =
+        {func, Context#{
+            params => AnnotatedParams,
+            exprs => Exprs,
+            type => FuncType,
+            locals => Locals
+        }},
+    {ok, AnnotatedForm}.
+
+%% typecheck_and_annotate_func adds all parameters to the local scope. It also
+%% resolves and annotates types for all expressions in the function body to
+%% ensure they satisfy type constraints.
+-spec typecheck_and_annotate_func(rufus_stack(), globals(), locals(), func_form()) ->
+    {ok, func_form()} | no_return().
+typecheck_and_annotate_func(
+    Stack,
+    Globals,
+    Locals1,
+    Form =
+        {func,
+            Context1 = #{
+                exprs := Exprs,
+                locals := Locals2
+            }}
+) ->
+    Locals3 = maps:merge(Locals1, Locals2),
+    FuncStack = [Form | Stack],
     ExprsStack = [rufus_form:make_func_exprs(Form) | FuncStack],
     {ok, _NewLocals2, AnnotatedExprs} = typecheck_and_annotate(
         [],
         ExprsStack,
         Globals,
-        NewLocals1,
+        Locals3,
         Exprs
     ),
-    ParamTypes = lists:map(fun(ParamForm) -> rufus_form:type(ParamForm) end, AnnotatedParams),
-    Type = rufus_form:make_type(func, ParamTypes, ReturnType, Line),
+    Context2 = maps:remove(locals, Context1),
     AnnotatedForm =
-        {func, Context#{
-            params => AnnotatedParams,
-            exprs => AnnotatedExprs,
-            type => Type
+        {func, Context2#{
+            exprs => AnnotatedExprs
         }},
     ok = typecheck_func_return_type(Globals, AnnotatedForm),
     {ok, AnnotatedForm}.
@@ -268,7 +305,13 @@ typecheck_func_return_type(Globals, {func, #{return_type := ReturnType, exprs :=
                 true ->
                     ok;
                 false ->
-                    Data = #{return_type => ReturnType, expr => LastExpr},
+                    Data = #{
+                        globals => Globals,
+                        return_type => ReturnType,
+                        expr => LastExpr,
+                        actual => ActualSpec,
+                        expected => ExpectedSpec
+                    },
                     throw({error, unmatched_return_type, Data})
             end;
         Error ->

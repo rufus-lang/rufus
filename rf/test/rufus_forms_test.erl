@@ -148,60 +148,32 @@ globals_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    Echo1 =
-        {func, #{
-            params => [
-                {param, #{
-                    line => 3,
-                    spec => n,
-                    type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => string
-                        }}
-                }}
-            ],
-            exprs => [
-                {identifier, #{
-                    line => 3,
-                    spec => n
-                }}
-            ],
-            line => 3,
-            return_type =>
-                {type, #{
-                    line => 3,
-                    source => rufus_text,
-                    spec => string
-                }},
-            spec => 'Echo'
-        }},
-    Number0 =
-        {func, #{
-            params => [],
-            exprs => [
-                {int_lit, #{
-                    line => 4,
-                    spec => 42,
-                    type =>
-                        {type, #{
-                            line => 4,
-                            source => inferred,
-                            spec => int
-                        }}
-                }}
-            ],
-            line => 4,
-            return_type =>
-                {type, #{
-                    line => 4,
-                    source => rufus_text,
-                    spec => int
-                }},
-            spec => 'Number'
-        }},
-    ?assertEqual({ok, #{'Echo' => [Echo1], 'Number' => [Number0]}}, rufus_forms:globals(Forms)).
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = #{
+        'Echo' => [
+            {type, #{
+                kind => func,
+                line => 3,
+                param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
+                return_type =>
+                    {type, #{line => 3, source => rufus_text, spec => string}},
+                source => rufus_text,
+                spec => 'func(string) string'
+            }}
+        ],
+        'Number' => [
+            {type, #{
+                kind => func,
+                line => 4,
+                param_types => [],
+                return_type =>
+                    {type, #{line => 4, source => rufus_text, spec => int}},
+                source => rufus_text,
+                spec => 'func() int'
+            }}
+        ]
+    },
+    ?assertEqual({ok, Expected}, rufus_forms:globals(AnnotatedForms)).
 
 globals_with_multiple_function_heads_test() ->
     RufusText =
@@ -212,62 +184,27 @@ globals_with_multiple_function_heads_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    EchoString =
-        {func, #{
-            params => [
-                {param, #{
-                    line => 3,
-                    spec => n,
-                    type =>
-                        {type, #{
-                            line => 3,
-                            source => rufus_text,
-                            spec => string
-                        }}
-                }}
-            ],
-            exprs => [
-                {identifier, #{
-                    line => 3,
-                    spec => n
-                }}
-            ],
-            line => 3,
-            return_type =>
-                {type, #{
-                    line => 3,
-                    source => rufus_text,
-                    spec => string
-                }},
-            spec => 'Echo'
-        }},
-    EchoInt =
-        {func, #{
-            params => [
-                {param, #{
-                    line => 4,
-                    spec => n,
-                    type =>
-                        {type, #{
-                            line => 4,
-                            source => rufus_text,
-                            spec => int
-                        }}
-                }}
-            ],
-            exprs => [
-                {identifier, #{
-                    line => 4,
-                    spec => n
-                }}
-            ],
-            line => 4,
-            return_type =>
-                {type, #{
-                    line => 4,
-                    source => rufus_text,
-                    spec => int
-                }},
-            spec => 'Echo'
-        }},
-    ?assertEqual({ok, #{'Echo' => [EchoString, EchoInt]}}, rufus_forms:globals(Forms)).
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = #{
+        'Echo' => [
+            {type, #{
+                kind => func,
+                line => 3,
+                param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
+                return_type =>
+                    {type, #{line => 3, source => rufus_text, spec => string}},
+                source => rufus_text,
+                spec => 'func(string) string'
+            }},
+            {type, #{
+                kind => func,
+                line => 4,
+                param_types => [{type, #{line => 4, source => rufus_text, spec => int}}],
+                return_type =>
+                    {type, #{line => 4, source => rufus_text, spec => int}},
+                source => rufus_text,
+                spec => 'func(int) int'
+            }}
+        ]
+    },
+    ?assertEqual({ok, Expected}, rufus_forms:globals(AnnotatedForms)).
