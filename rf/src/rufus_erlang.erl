@@ -40,8 +40,9 @@ group_forms_by_func(Acc, [{module, _Context} | T]) ->
     group_forms_by_func(Acc, T);
 group_forms_by_func(Acc, [Form = {func, #{line := Line, spec := Spec, params := Params}} | T]) ->
     Arity = length(Params),
-    FuncGroupSpec = list_to_atom(unicode:characters_to_list([atom_to_list(Spec), "/", Arity])),
-    io:format("~n~nFuncGroupSpec -> ~p~n~n", [FuncGroupSpec]),
+    FuncGroupSpec = list_to_atom(
+        unicode:characters_to_list([atom_to_list(Spec), "/", integer_to_list(Arity)])
+    ),
     {func_group, Context = #{forms := Forms}} = maps:get(
         FuncGroupSpec,
         Acc,
