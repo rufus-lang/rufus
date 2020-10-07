@@ -36,6 +36,8 @@ group_forms_by_func(Forms) ->
     {ok, FuncGroups} = group_forms_by_func(Acc, Forms),
     {ok, [ModuleForm | FuncGroups]}.
 
+-spec group_forms_by_func(map(), rufus_forms()) ->
+    {ok, list(module_form() | {func_group, context()})}.
 group_forms_by_func(Acc, [{module, _Context} | T]) ->
     group_forms_by_func(Acc, T);
 group_forms_by_func(Acc, [Form = {func, #{line := Line, spec := Spec, params := Params}} | T]) ->
