@@ -152,7 +152,8 @@ typecheck_and_annotate_binary_op(
     {ok, call_form()} | no_return().
 typecheck_and_annotate_call(Stack, Globals, Locals, {call, Context1 = #{args := Args}}) ->
     {ok, _NewLocals, AnnotatedArgs} = typecheck_and_annotate([], Stack, Globals, Locals, Args),
-    Form = {call, Context2 = Context1#{args => AnnotatedArgs}},
+    Context2 = Context1#{args => AnnotatedArgs},
+    Form = {call, Context2#{locals => Locals}},
     case rufus_type:resolve(Globals, Form) of
         {ok, TypeForm} ->
             AnnotatedForm = {call, Context2#{type => TypeForm}},

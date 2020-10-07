@@ -1,6 +1,7 @@
 -module(rufus_type_call_test).
 
 -include_lib("eunit/include/eunit.hrl").
+-include_lib("rufus_type.hrl").
 
 resolve_call_with_no_arguments_test() ->
     RufusText =
@@ -11,7 +12,10 @@ resolve_call_with_no_arguments_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, Globals} = rufus_forms:globals(Forms),
-    Form = rufus_form:make_call('Random', [], 7),
+    {ok, Form} = annotate_locals(
+        #{},
+        rufus_form:make_call('Random', [], 7)
+    ),
     Expected = rufus_form:make_type(int, 3),
     ?assertEqual({ok, Expected}, rufus_type:resolve(Globals, Form)).
 
@@ -24,7 +28,10 @@ resolve_call_with_one_argument_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, Globals} = rufus_forms:globals(Forms),
-    Form = rufus_form:make_call('Echo', [rufus_form:make_literal(string, <<"hello">>, 7)], 7),
+    {ok, Form} = annotate_locals(
+        #{},
+        rufus_form:make_call('Echo', [rufus_form:make_literal(string, <<"hello">>, 7)], 7)
+    ),
     Expected = rufus_form:make_type(string, 3),
     ?assertEqual({ok, Expected}, rufus_type:resolve(Globals, Form)).
 
@@ -41,7 +48,10 @@ resolve_call_with_one_argument_and_many_function_heads_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, Globals} = rufus_forms:globals(Forms),
-    Form = rufus_form:make_call('Echo', [rufus_form:make_literal(string, <<"hello">>, 7)], 7),
+    {ok, Form} = annotate_locals(
+        #{},
+        rufus_form:make_call('Echo', [rufus_form:make_literal(string, <<"hello">>, 7)], 7)
+    ),
     Expected = rufus_form:make_type(string, 7),
     ?assertEqual({ok, Expected}, rufus_type:resolve(Globals, Form)).
 
@@ -54,19 +64,25 @@ resolve_call_with_two_argument_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, Globals} = rufus_forms:globals(Forms),
-    Form = rufus_form:make_call(
-        'Concatenate',
-        [
-            rufus_form:make_literal(atom, hello, 7),
-            rufus_form:make_literal(string, <<"world">>, 7)
-        ],
-        7
+    {ok, Form} = annotate_locals(
+        #{},
+        rufus_form:make_call(
+            'Concatenate',
+            [
+                rufus_form:make_literal(atom, hello, 7),
+                rufus_form:make_literal(string, <<"world">>, 7)
+            ],
+            7
+        )
     ),
     Expected = rufus_form:make_type(string, 3),
     ?assertEqual({ok, Expected}, rufus_type:resolve(Globals, Form)).
 
 resolve_unknown_func_error_test() ->
-    Form = rufus_form:make_call('Ping', [], 7),
+    {ok, Form} = annotate_locals(
+        #{},
+        rufus_form:make_call('Ping', [], 7)
+    ),
     Expected =
         {error, unknown_func, #{
             args => [],
@@ -83,7 +99,10 @@ resolve_unknown_arity_error_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, Globals} = rufus_forms:globals(Forms),
-    Form = rufus_form:make_call('Ping', [], 7),
+    {ok, Form} = annotate_locals(
+        #{},
+        rufus_form:make_call('Ping', [], 7)
+    ),
     Data = #{
         args => [],
         funcs => [
@@ -128,7 +147,10 @@ resolve_unmatched_args_error_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, Globals} = rufus_forms:globals(Forms),
-    Form = rufus_form:make_call('Echo', [rufus_form:make_literal(integer, 42, 7)], 7),
+    {ok, Form} = annotate_locals(
+        #{},
+        rufus_form:make_call('Echo', [rufus_form:make_literal(integer, 42, 7)], 7)
+    ),
     Data = #{
         args => [
             {integer_lit, #{
@@ -174,3 +196,7 @@ resolve_unmatched_args_error_test() ->
         ]
     },
     ?assertEqual({error, unmatched_args, Data}, rufus_type:resolve(Globals, Form)).
+
+-spec annotate_locals(locals(), rufus_form()) -> {ok, rufus_form()}.
+annotate_locals(Locals, {FormType, Context}) ->
+    {ok, {FormType, Context#{locals => Locals}}}.
