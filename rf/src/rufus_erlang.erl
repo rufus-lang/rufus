@@ -31,9 +31,7 @@ group_forms_by_func(Forms) ->
             false
     end,
     {value, ModuleForm} = lists:search(MatchModuleForm, Forms),
-
-    Acc = #{},
-    {ok, FuncGroups} = group_forms_by_func(Acc, Forms),
+    {ok, FuncGroups} = group_forms_by_func(#{}, Forms),
     {ok, [ModuleForm | FuncGroups]}.
 
 -spec group_forms_by_func(map(), rufus_forms()) ->
@@ -43,17 +41,18 @@ group_forms_by_func(Acc, [{module, _Context} | T]) ->
 group_forms_by_func(Acc, [Form = {func, #{line := Line, spec := Spec, params := Params}} | T]) ->
     Arity = length(Params),
     FuncGroupSpec = list_to_atom(unicode:characters_to_list([atom_to_list(Spec), "/", Arity])),
+    io:format("~n~nFuncGroupSpec -> ~p~n~n", [FuncGroupSpec]),
     {func_group, Context = #{forms := Forms}} = maps:get(
         FuncGroupSpec,
         Acc,
         {func_group, #{line => Line, spec => Spec, arity => length(Params), forms => []}}
     ),
     NewFuncGroup = {func_group, Context#{forms => [Form | Forms]}},
-    group_forms_by_func(maps:put(Spec, NewFuncGroup, Acc), T);
+    group_forms_by_func(maps:put(FuncGroupSpec, NewFuncGroup, Acc), T);
 group_forms_by_func(Acc, []) ->
     {ok, maps:values(Acc)}.
 
--spec forms(list(erlang_form()), list(rufus_form() | {func_group, context()})) ->
+-spec forms(list(erlang_form()), list(module_form() | {func_group, context()})) ->
     {ok, list(erlang_form())}.
 forms(Acc, [{atom_lit, _Context} = AtomLit | T]) ->
     Form = box(AtomLit),

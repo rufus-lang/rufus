@@ -177,23 +177,30 @@ eval_function_having_unmatched_return_types_test() ->
         "    func Number() float { 42 }\n"
         "    ",
     Data = #{
+        actual => int,
+        expected => float,
         expr =>
             {int_lit, #{
                 line => 3,
                 spec => 42,
                 type =>
-                    {type, #{
-                        line => 3,
-                        source => inferred,
-                        spec => int
-                    }}
+                    {type, #{line => 3, source => inferred, spec => int}}
             }},
+        globals => #{
+            'Number' => [
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => float}},
+                    source => rufus_text,
+                    spec => 'func() float'
+                }}
+            ]
+        },
         return_type =>
-            {type, #{
-                line => 3,
-                source => rufus_text,
-                spec => float
-            }}
+            {type, #{line => 3, source => rufus_text, spec => float}}
     },
     ?assertEqual({error, unmatched_return_type, Data}, rufus_compile:eval(RufusText)).
 
@@ -207,23 +214,36 @@ eval_function_taking_a_bool_and_returning_it_with_a_mismatched_return_type_test(
         "    func MismatchedReturnType(b bool) int { b }\n"
         "    ",
     Data = #{
+        actual => bool,
+        expected => int,
         expr =>
             {identifier, #{
                 line => 3,
                 spec => b,
                 type =>
-                    {type, #{
-                        line => 3,
-                        source => rufus_text,
-                        spec => bool
-                    }}
+                    {type, #{line => 3, source => rufus_text, spec => bool}}
             }},
+        globals => #{
+            'MismatchedReturnType' => [
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [
+                        {type, #{
+                            line => 3,
+                            source => rufus_text,
+                            spec => bool
+                        }}
+                    ],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
+                    source => rufus_text,
+                    spec => 'func(bool) int'
+                }}
+            ]
+        },
         return_type =>
-            {type, #{
-                line => 3,
-                source => rufus_text,
-                spec => int
-            }}
+            {type, #{line => 3, source => rufus_text, spec => int}}
     },
     ?assertEqual({error, unmatched_return_type, Data}, rufus_compile:eval(RufusText)).
 
