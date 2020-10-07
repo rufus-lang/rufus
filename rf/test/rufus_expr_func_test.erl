@@ -836,27 +836,26 @@ typecheck_and_annotate_function_with_unmatched_return_types_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    Expected =
-        {error, unmatched_return_type, #{
-            expr =>
-                {float_lit, #{
-                    line => 3,
-                    spec => 42.0,
-                    type =>
-                        {type, #{
-                            line => 3,
-                            source => inferred,
-                            spec => float
-                        }}
-                }},
-            return_type =>
-                {type, #{
-                    line => 3,
-                    source => rufus_text,
-                    spec => int
-                }}
-        }},
-    ?assertEqual(Expected, rufus_expr:typecheck_and_annotate(Forms)).
+    Data = #{
+        expr =>
+            {float_lit, #{
+                line => 3,
+                spec => 42.0,
+                type =>
+                    {type, #{
+                        line => 3,
+                        source => inferred,
+                        spec => float
+                    }}
+            }},
+        return_type =>
+            {type, #{
+                line => 3,
+                source => rufus_text,
+                spec => int
+            }}
+    },
+    ?assertEqual({error, unmatched_return_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
 %% Functions with parameter patterns containing literal values
 
@@ -2744,3 +2743,211 @@ typecheck_and_annotate_for_anonymous_function_taking_a_match_param_test() ->
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_anonymous_function_with_unmatched_return_types_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func EchoFunc() func() int {\n"
+        "        func() int { 42.0 }\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{
+        expr =>
+            {float_lit, #{
+                line => 4,
+                spec => 42.0,
+                type =>
+                    {type, #{line => 4, source => inferred, spec => float}}
+            }},
+        return_type =>
+            {type, #{line => 4, source => rufus_text, spec => int}}
+    },
+    ?assertEqual({error, unmatched_return_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
+
+typecheck_and_annotate_does_not_allow_locals_to_escape_anonymous_function_scope_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func EchoFunc() func() int {\n"
+        "        fn = func() int {\n"
+        "            num = 42\n"
+        "            num\n"
+        "        }\n"
+        "        escape = num\n"
+        "        fn\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Result = rufus_expr:typecheck_and_annotate(Forms),
+    Data = #{
+        form =>
+            {identifier, #{
+                line => 8,
+                locals => #{
+                    fn =>
+                        {type, #{
+                            kind => func,
+                            line => 4,
+                            param_types => [],
+                            return_type =>
+                                {type, #{
+                                    line => 4,
+                                    source => rufus_text,
+                                    spec => int
+                                }},
+                            source => rufus_text,
+                            spec => 'func() int'
+                        }}
+                },
+                spec => num
+            }},
+        globals => #{
+            'EchoFunc' => [
+                {func, #{
+                    exprs => [
+                        {match, #{
+                            left => {identifier, #{line => 4, spec => fn}},
+                            line => 4,
+                            right =>
+                                {func, #{
+                                    exprs => [
+                                        {match, #{
+                                            left =>
+                                                {identifier, #{line => 5, spec => num}},
+                                            line => 5,
+                                            right =>
+                                                {int_lit, #{
+                                                    line => 5,
+                                                    spec => 42,
+                                                    type =>
+                                                        {type, #{
+                                                            line => 5,
+                                                            source => inferred,
+                                                            spec => int
+                                                        }}
+                                                }}
+                                        }},
+                                        {identifier, #{line => 6, spec => num}}
+                                    ],
+                                    line => 4,
+                                    params => [],
+                                    return_type =>
+                                        {type, #{
+                                            line => 4,
+                                            source => rufus_text,
+                                            spec => int
+                                        }}
+                                }}
+                        }},
+                        {match, #{
+                            left => {identifier, #{line => 8, spec => escape}},
+                            line => 8,
+                            right =>
+                                {identifier, #{line => 8, spec => num}}
+                        }},
+                        {identifier, #{line => 9, spec => fn}}
+                    ],
+                    line => 3,
+                    params => [],
+                    return_type =>
+                        {type, #{
+                            kind => func,
+                            line => 3,
+                            param_types => [],
+                            return_type =>
+                                {type, #{
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => int
+                                }},
+                            source => rufus_text,
+                            spec => 'func() int'
+                        }},
+                    spec => 'EchoFunc'
+                }}
+            ]
+        },
+        locals => #{
+            fn =>
+                {type, #{
+                    kind => func,
+                    line => 4,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 4, source => rufus_text, spec => int}},
+                    source => rufus_text,
+                    spec => 'func() int'
+                }}
+        },
+        stack => [
+            {match_right, #{line => 8}},
+            {match, #{
+                left => {identifier, #{line => 8, spec => escape}},
+                line => 8,
+                right => {identifier, #{line => 8, spec => num}}
+            }},
+            {func_exprs, #{line => 3}},
+            {func, #{
+                exprs => [
+                    {match, #{
+                        left => {identifier, #{line => 4, spec => fn}},
+                        line => 4,
+                        right =>
+                            {func, #{
+                                exprs => [
+                                    {match, #{
+                                        left =>
+                                            {identifier, #{line => 5, spec => num}},
+                                        line => 5,
+                                        right =>
+                                            {int_lit, #{
+                                                line => 5,
+                                                spec => 42,
+                                                type =>
+                                                    {type, #{
+                                                        line => 5,
+                                                        source => inferred,
+                                                        spec => int
+                                                    }}
+                                            }}
+                                    }},
+                                    {identifier, #{line => 6, spec => num}}
+                                ],
+                                line => 4,
+                                params => [],
+                                return_type =>
+                                    {type, #{
+                                        line => 4,
+                                        source => rufus_text,
+                                        spec => int
+                                    }}
+                            }}
+                    }},
+                    {match, #{
+                        left => {identifier, #{line => 8, spec => escape}},
+                        line => 8,
+                        right => {identifier, #{line => 8, spec => num}}
+                    }},
+                    {identifier, #{line => 9, spec => fn}}
+                ],
+                line => 3,
+                params => [],
+                return_type =>
+                    {type, #{
+                        kind => func,
+                        line => 3,
+                        param_types => [],
+                        return_type =>
+                            {type, #{line => 3, source => rufus_text, spec => int}},
+                        source => rufus_text,
+                        spec => 'func() int'
+                    }},
+                spec => 'EchoFunc'
+            }}
+        ]
+    },
+    ?assertEqual({error, unknown_identifier, Data}, Result).
