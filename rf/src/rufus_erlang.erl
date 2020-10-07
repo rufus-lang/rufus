@@ -11,7 +11,7 @@
 
 %% forms transforms RufusForms into Erlang forms that can be compiled with
 %% compile:forms/1 and then loaded with code:load_binary/3.
--spec forms(rufus_forms()) -> {ok, list(erlang_form())}.
+-spec forms(list(module_form() | func_form())) -> {ok, list(erlang_form())}.
 forms(RufusForms) ->
     {ok, GroupedRufusForms} = group_forms_by_func(RufusForms),
     {ok, ErlangForms} = forms([], GroupedRufusForms),
