@@ -316,7 +316,12 @@ resolve_identifier_type(Stack, Globals, Form = {identifier, #{spec := Spec, loca
                 {ok, Type} ->
                     {ok, Type};
                 _ ->
-                    Data = #{globals => Globals, locals => Locals, form => Form, stack => Stack},
+                    Data = #{
+                        globals => Globals,
+                        locals => Locals,
+                        form => Form,
+                        stack => Stack
+                    },
                     throw({error, unknown_identifier, Data})
             end
     end.
@@ -373,8 +378,6 @@ lookup_identifier_type(
 ) ->
     Data = #{stack => Stack},
     throw({error, unknown_type, Data});
-lookup_identifier_type([{_, #{type := Type}} | _T], _Stack) ->
-    {ok, Type};
 lookup_identifier_type([_H | T], Stack) ->
     lookup_identifier_type(T, Stack);
 lookup_identifier_type([], Stack) ->

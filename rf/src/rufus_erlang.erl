@@ -20,10 +20,9 @@ forms(RufusForms) ->
 %% Private API
 
 %% group_forms_by_func transforms a list of Rufus forms with individual entries
-%% for func expressions of the same name and arity into a list of Rufus forms
-%% with a single func expression for each name/arity pair, with form details
-%% represented as a list instead of a context map.
--spec group_forms_by_func(rufus_forms()) -> {ok, list(rufus_form() | {func_group, context()})}.
+%% for func expressions of the same name and arity into a list of func_group
+%% forms, one per name/arity pair.
+-spec group_forms_by_func(rufus_forms()) -> {ok, list(module_form() | {func_group, context()})}.
 group_forms_by_func(Forms) ->
     MatchModuleForm = fun
         ({module, _Context}) ->
@@ -32,27 +31,60 @@ group_forms_by_func(Forms) ->
             false
     end,
     {value, ModuleForm} = lists:search(MatchModuleForm, Forms),
-    {ok, Globals} = rufus_forms:globals(Forms),
 
-    GroupBy = fun(Name, FuncForms, Acc) ->
-        {func, #{line := Line, params := Params}} = hd(FuncForms),
-        Form =
-            {func_group, #{line => Line, spec => Name, arity => length(Params), forms => FuncForms}},
-        [Form | Acc]
-    end,
-    GroupedFuncForms = maps:fold(GroupBy, [], Globals),
+    Acc = #{},
+    {ok, FuncGroups} = group_forms_by_func(Acc, Forms),
+    {ok, [ModuleForm | FuncGroups]}.
 
-    %% We can't rely on the order of func forms in GroupedFuncForms because the
-    %% order of key/value pairs in Globals is undefined, so we sort here to
-    %% ensure stable ordering. This is only needed to ensure that tests are
-    %% reliable, and could be disabled in a production build to avoid paying
-    %% this cost at runtime.
-    SortBy = fun({func_group, #{spec := LeftName}}, {func_group, #{spec := RightName}}) ->
-        LeftName > RightName
-    end,
-    SortedFuncForms = lists:sort(SortBy, GroupedFuncForms),
+group_forms_by_func(Acc, [{module, _Context} | T]) ->
+    group_forms_by_func(Acc, T);
+group_forms_by_func(Acc, [Form = {func, #{line := Line, spec := Spec, params := Params}} | T]) ->
+    Arity = length(Params),
+    FuncGroupSpec = list_to_atom(unicode:characters_to_list([atom_to_list(Spec), "/", Arity])),
+    {func_group, Context = #{forms := Forms}} = maps:get(
+        FuncGroupSpec,
+        Acc,
+        {func_group, #{line => Line, spec => Spec, arity => length(Params), forms => []}}
+    ),
+    NewFuncGroup = {func_group, Context#{forms => [Form | Forms]}},
+    group_forms_by_func(maps:put(Spec, NewFuncGroup, Acc), T);
+group_forms_by_func(Acc, []) ->
+    {ok, maps:values(Acc)}.
 
-    {ok, [ModuleForm | lists:reverse(SortedFuncForms)]}.
+%% %% group_forms_by_func transforms a list of Rufus forms with individual entries
+%% %% for func expressions of the same name and arity into a list of Rufus forms
+%% %% with a single func expression for each name/arity pair, with form details
+%% %% represented as a list instead of a context map.
+%% -spec group_forms_by_func(rufus_forms()) -> {ok, list(rufus_form() | {func_group, context()})}.
+%% group_forms_by_func(Forms) ->
+%%     MatchModuleForm = fun
+%%         ({module, _Context}) ->
+%%             true;
+%%         (_) ->
+%%             false
+%%     end,
+%%     {value, ModuleForm} = lists:search(MatchModuleForm, Forms),
+%%     {ok, Globals} = rufus_forms:globals(Forms),
+
+%%     GroupBy = fun(Name, FuncForms, Acc) ->
+%%         {func, #{line := Line, params := Params}} = hd(FuncForms),
+%%         Form =
+%%             {func_group, #{line => Line, spec => Name, arity => length(Params), forms => FuncForms}},
+%%         [Form | Acc]
+%%     end,
+%%     GroupedFuncForms = maps:fold(GroupBy, [], Globals),
+
+%%     %% We can't rely on the order of func forms in GroupedFuncForms because the
+%%     %% order of key/value pairs in Globals is undefined, so we sort here to
+%%     %% ensure stable ordering. This is only needed to ensure that tests are
+%%     %% reliable, and could be disabled in a production build to avoid paying
+%%     %% this cost at runtime.
+%%     SortBy = fun({func_group, #{spec := LeftName}}, {func_group, #{spec := RightName}}) ->
+%%         LeftName > RightName
+%%     end,
+%%     SortedFuncForms = lists:sort(SortBy, GroupedFuncForms),
+
+%%     {ok, [ModuleForm | lists:reverse(SortedFuncForms)]}.
 
 -spec forms(list(erlang_form()), list(rufus_form() | {func_group, context()})) ->
     {ok, list(erlang_form())}.

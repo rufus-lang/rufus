@@ -60,41 +60,29 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_function_scope_test() ->
         form => {identifier, #{line => 7, locals => #{}, spec => a}},
         globals => #{
             'Broken' => [
-                {func, #{
-                    exprs => [{identifier, #{line => 7, spec => a}}],
+                {type, #{
+                    kind => func,
                     line => 7,
-                    params => [],
+                    param_types => [],
                     return_type =>
                         {type, #{
                             line => 7,
                             source => rufus_text,
                             spec => string
                         }},
-                    spec => 'Broken'
+                    source => rufus_text,
+                    spec => 'func() string'
                 }}
             ],
             'Echo' => [
-                {func, #{
-                    exprs => [
-                        {match, #{
-                            left => {identifier, #{line => 4, spec => a}},
-                            line => 4,
-                            right =>
-                                {identifier, #{line => 4, spec => n}}
-                        }},
-                        {identifier, #{line => 5, spec => a}}
-                    ],
+                {type, #{
+                    kind => func,
                     line => 3,
-                    params => [
-                        {param, #{
+                    param_types => [
+                        {type, #{
                             line => 3,
-                            spec => n,
-                            type =>
-                                {type, #{
-                                    line => 3,
-                                    source => rufus_text,
-                                    spec => string
-                                }}
+                            source => rufus_text,
+                            spec => string
                         }}
                     ],
                     return_type =>
@@ -103,7 +91,8 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_function_scope_test() ->
                             source => rufus_text,
                             spec => string
                         }},
-                    spec => 'Echo'
+                    source => rufus_text,
+                    spec => 'func(string) string'
                 }}
             ]
         },
@@ -113,10 +102,25 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_function_scope_test() ->
             {func, #{
                 exprs => [{identifier, #{line => 7, spec => a}}],
                 line => 7,
+                locals => #{},
                 params => [],
                 return_type =>
                     {type, #{line => 7, source => rufus_text, spec => string}},
-                spec => 'Broken'
+                spec => 'Broken',
+                type =>
+                    {type, #{
+                        kind => func,
+                        line => 7,
+                        param_types => [],
+                        return_type =>
+                            {type, #{
+                                line => 7,
+                                source => rufus_text,
+                                spec => string
+                            }},
+                        source => rufus_text,
+                        spec => 'func() string'
+                    }}
             }}
         ]
     },
@@ -1067,23 +1071,30 @@ typecheck_and_annotate_function_with_unmatched_return_types_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Data = #{
+        actual => float,
+        expected => int,
         expr =>
             {float_lit, #{
                 line => 3,
                 spec => 42.0,
                 type =>
-                    {type, #{
-                        line => 3,
-                        source => inferred,
-                        spec => float
-                    }}
+                    {type, #{line => 3, source => inferred, spec => float}}
             }},
+        globals => #{
+            'Number' => [
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
+                    source => rufus_text,
+                    spec => 'func() int'
+                }}
+            ]
+        },
         return_type =>
-            {type, #{
-                line => 3,
-                source => rufus_text,
-                spec => int
-            }}
+            {type, #{line => 3, source => rufus_text, spec => int}}
     },
     ?assertEqual({error, unmatched_return_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
