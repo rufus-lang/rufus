@@ -53,7 +53,7 @@ group_forms_by_func(Acc, [Form = {func, #{line := Line, spec := Spec, params := 
 group_forms_by_func(Acc, []) ->
     {ok, maps:values(Acc)}.
 
--spec forms(list(erlang_form()), list(module_form() | {func_group, context()})) ->
+-spec forms(list(erlang_form()), list(rufus_form() | {func_group, context()})) ->
     {ok, list(erlang_form())}.
 forms(Acc, [{atom_lit, _Context} = AtomLit | T]) ->
     Form = box(AtomLit),
