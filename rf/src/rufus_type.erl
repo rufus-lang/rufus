@@ -315,7 +315,7 @@ resolve_identifier_type(Stack, Globals, Form = {identifier, #{spec := Spec, loca
             case lookup_identifier_type(Stack) of
                 {ok, Type} ->
                     {ok, Type};
-                _ ->
+                _Error ->
                     Data = #{
                         globals => Globals,
                         locals => Locals,

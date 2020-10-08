@@ -1303,6 +1303,71 @@ typecheck_and_annotate_function_taking_a_match_pattern_test() ->
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
+typecheck_and_annotate_function_taking_a_match_pattern_with_a_literal_left_operand_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func EchoFortyTwo(42 = a int) int {\n"
+        "        a\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            exprs => [
+                {identifier, #{
+                    line => 4,
+                    spec => a,
+                    type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}}
+                }}
+            ],
+            line => 3,
+            params => [
+                {match, #{
+                    left =>
+                        {int_lit, #{
+                            line => 3,
+                            spec => 42,
+                            type =>
+                                {type, #{line => 3, source => inferred, spec => int}}
+                        }},
+                    line => 3,
+                    right =>
+                        {param, #{
+                            line => 3,
+                            spec => a,
+                            type =>
+                                {type, #{
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => int
+                                }}
+                        }},
+                    type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}}
+                }}
+            ],
+            return_type =>
+                {type, #{line => 3, source => rufus_text, spec => int}},
+            spec => 'EchoFortyTwo',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [{type, #{line => 3, source => rufus_text, spec => int}}],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
+                    source => rufus_text,
+                    spec => 'func(int) int'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
 typecheck_and_annotate_function_taking_a_cons_in_match_pattern_test() ->
     RufusText =
         "\n"

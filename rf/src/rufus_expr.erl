@@ -289,6 +289,47 @@ typecheck_and_annotate_func(
             exprs => AnnotatedExprs
         }},
     ok = typecheck_func_return_type(Globals, AnnotatedForm),
+    {ok, AnnotatedForm};
+typecheck_and_annotate_func(
+    Stack,
+    Globals,
+    Locals,
+    Form =
+        {func,
+            Context = #{
+                params := Params,
+                return_type := ReturnType,
+                exprs := Exprs,
+                line := Line
+            }}
+) ->
+    FuncStack = [Form | Stack],
+    ParamsStack = [rufus_form:make_func_params(Form) | FuncStack],
+    {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate(
+        [],
+        ParamsStack,
+        Globals,
+        Locals,
+        Params
+    ),
+    ParamTypes = lists:map(fun(ParamForm) -> rufus_form:type(ParamForm) end, AnnotatedParams),
+    FuncType = rufus_form:make_type(func, ParamTypes, ReturnType, Line),
+
+    ExprsStack = [rufus_form:make_func_exprs(Form) | FuncStack],
+    {ok, _NewLocals2, AnnotatedExprs} = typecheck_and_annotate(
+        [],
+        ExprsStack,
+        Globals,
+        NewLocals1,
+        Exprs
+    ),
+    AnnotatedForm =
+        {func, Context#{
+            params => AnnotatedParams,
+            exprs => AnnotatedExprs,
+            type => FuncType
+        }},
+    ok = typecheck_func_return_type(Globals, AnnotatedForm),
     {ok, AnnotatedForm}.
 
 %% typecheck_func_return_type enforces the constraint that the type of the final
