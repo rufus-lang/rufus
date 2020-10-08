@@ -3054,7 +3054,27 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_anonymous_function_scope_
     {ok, Forms} = rufus_parse:parse(Tokens),
     Result = rufus_expr:typecheck_and_annotate(Forms),
     Data = #{
-        form => {identifier, #{line => 4, locals => #{}, spec => fn}},
+        form =>
+            {identifier, #{
+                line => 8,
+                locals => #{
+                    fn =>
+                        {type, #{
+                            kind => func,
+                            line => 4,
+                            param_types => [],
+                            return_type =>
+                                {type, #{
+                                    line => 4,
+                                    source => rufus_text,
+                                    spec => int
+                                }},
+                            source => rufus_text,
+                            spec => 'func() int'
+                        }}
+                },
+                spec => num
+            }},
         globals => #{
             'EchoFunc' => [
                 {type, #{
@@ -3080,67 +3100,24 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_anonymous_function_scope_
                 }}
             ]
         },
-        locals => #{},
+        locals => #{
+            fn =>
+                {type, #{
+                    kind => func,
+                    line => 4,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 4, source => rufus_text, spec => int}},
+                    source => rufus_text,
+                    spec => 'func() int'
+                }}
+        },
         stack => [
-            {match_left, #{line => 4}},
+            {match_right, #{line => 8}},
             {match, #{
-                left => {identifier, #{line => 4, spec => fn}},
-                line => 4,
-                right =>
-                    {func, #{
-                        exprs => [
-                            {match, #{
-                                left =>
-                                    {identifier, #{
-                                        line => 5,
-                                        locals => #{},
-                                        spec => num,
-                                        type =>
-                                            {type, #{
-                                                line => 5,
-                                                source => inferred,
-                                                spec => int
-                                            }}
-                                    }},
-                                line => 5,
-                                right =>
-                                    {int_lit, #{
-                                        line => 5,
-                                        spec => 42,
-                                        type =>
-                                            {type, #{
-                                                line => 5,
-                                                source => inferred,
-                                                spec => int
-                                            }}
-                                    }},
-                                type =>
-                                    {type, #{
-                                        line => 5,
-                                        source => inferred,
-                                        spec => int
-                                    }}
-                            }},
-                            {identifier, #{
-                                line => 6,
-                                spec => num,
-                                type =>
-                                    {type, #{
-                                        line => 5,
-                                        source => inferred,
-                                        spec => int
-                                    }}
-                            }}
-                        ],
-                        line => 4,
-                        params => [],
-                        return_type =>
-                            {type, #{
-                                line => 4,
-                                source => rufus_text,
-                                spec => int
-                            }}
-                    }}
+                left => {identifier, #{line => 8, spec => escape}},
+                line => 8,
+                right => {identifier, #{line => 8, spec => num}}
             }},
             {func_exprs, #{line => 3}},
             {func, #{
