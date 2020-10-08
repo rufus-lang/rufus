@@ -461,42 +461,25 @@ typecheck_and_annotate_with_function_returning_a_list_of_int_with_an_unknown_var
             {identifier, #{line => 3, locals => #{}, spec => unknown}},
         globals => #{
             'Numbers' => [
-                {func, #{
-                    exprs => [
-                        {list_lit, #{
-                            elements => [{identifier, #{line => 3, spec => unknown}}],
-                            line => 3,
-                            type =>
-                                {type, #{
-                                    kind => list,
-                                    element_type =>
-                                        {type, #{
-                                            line => 3,
-                                            source => rufus_text,
-                                            spec => int
-                                        }},
-                                    line => 3,
-                                    source => rufus_text,
-                                    spec => 'list[int]'
-                                }}
-                        }}
-                    ],
+                {type, #{
+                    kind => func,
                     line => 3,
-                    params => [],
+                    param_types => [],
                     return_type =>
                         {type, #{
-                            kind => list,
                             element_type =>
                                 {type, #{
                                     line => 3,
                                     source => rufus_text,
                                     spec => int
                                 }},
+                            kind => list,
                             line => 3,
                             source => rufus_text,
                             spec => 'list[int]'
                         }},
-                    spec => 'Numbers'
+                    source => rufus_text,
+                    spec => 'func() list[int]'
                 }}
             ]
         },
@@ -507,9 +490,9 @@ typecheck_and_annotate_with_function_returning_a_list_of_int_with_an_unknown_var
                 line => 3,
                 type =>
                     {type, #{
-                        kind => list,
                         element_type =>
                             {type, #{line => 3, source => rufus_text, spec => int}},
+                        kind => list,
                         line => 3,
                         source => rufus_text,
                         spec => 'list[int]'
@@ -523,13 +506,13 @@ typecheck_and_annotate_with_function_returning_a_list_of_int_with_an_unknown_var
                         line => 3,
                         type =>
                             {type, #{
-                                kind => list,
                                 element_type =>
                                     {type, #{
                                         line => 3,
                                         source => rufus_text,
                                         spec => int
                                     }},
+                                kind => list,
                                 line => 3,
                                 source => rufus_text,
                                 spec => 'list[int]'
@@ -537,17 +520,39 @@ typecheck_and_annotate_with_function_returning_a_list_of_int_with_an_unknown_var
                     }}
                 ],
                 line => 3,
+                locals => #{},
                 params => [],
                 return_type =>
                     {type, #{
-                        kind => list,
                         element_type =>
                             {type, #{line => 3, source => rufus_text, spec => int}},
+                        kind => list,
                         line => 3,
                         source => rufus_text,
                         spec => 'list[int]'
                     }},
-                spec => 'Numbers'
+                spec => 'Numbers',
+                type =>
+                    {type, #{
+                        kind => func,
+                        line => 3,
+                        param_types => [],
+                        return_type =>
+                            {type, #{
+                                element_type =>
+                                    {type, #{
+                                        line => 3,
+                                        source => rufus_text,
+                                        spec => int
+                                    }},
+                                kind => list,
+                                line => 3,
+                                source => rufus_text,
+                                spec => 'list[int]'
+                            }},
+                        source => rufus_text,
+                        spec => 'func() list[int]'
+                    }}
             }}
         ]
     },
@@ -1668,45 +1673,25 @@ typecheck_and_annotate_with_function_returning_a_cons_pattern_without_data_test(
             {identifier, #{line => 3, locals => #{}, spec => head}},
         globals => #{
             'Broken' => [
-                {func, #{
-                    exprs => [
-                        {cons, #{
-                            head =>
-                                {identifier, #{line => 3, spec => head}},
-                            line => 3,
-                            tail =>
-                                {identifier, #{line => 3, spec => tail}},
-                            type =>
-                                {type, #{
-                                    kind => list,
-                                    element_type =>
-                                        {type, #{
-                                            line => 3,
-                                            source => rufus_text,
-                                            spec => int
-                                        }},
-                                    line => 3,
-                                    source => rufus_text,
-                                    spec => 'list[int]'
-                                }}
-                        }}
-                    ],
+                {type, #{
+                    kind => func,
                     line => 3,
-                    params => [],
+                    param_types => [],
                     return_type =>
                         {type, #{
-                            kind => list,
                             element_type =>
                                 {type, #{
                                     line => 3,
                                     source => rufus_text,
                                     spec => int
                                 }},
+                            kind => list,
                             line => 3,
                             source => rufus_text,
                             spec => 'list[int]'
                         }},
-                    spec => 'Broken'
+                    source => rufus_text,
+                    spec => 'func() list[int]'
                 }}
             ]
         },
@@ -1719,9 +1704,9 @@ typecheck_and_annotate_with_function_returning_a_cons_pattern_without_data_test(
                 tail => {identifier, #{line => 3, spec => tail}},
                 type =>
                     {type, #{
-                        kind => list,
                         element_type =>
                             {type, #{line => 3, source => rufus_text, spec => int}},
+                        kind => list,
                         line => 3,
                         source => rufus_text,
                         spec => 'list[int]'
@@ -1736,13 +1721,13 @@ typecheck_and_annotate_with_function_returning_a_cons_pattern_without_data_test(
                         tail => {identifier, #{line => 3, spec => tail}},
                         type =>
                             {type, #{
-                                kind => list,
                                 element_type =>
                                     {type, #{
                                         line => 3,
                                         source => rufus_text,
                                         spec => int
                                     }},
+                                kind => list,
                                 line => 3,
                                 source => rufus_text,
                                 spec => 'list[int]'
@@ -1750,17 +1735,39 @@ typecheck_and_annotate_with_function_returning_a_cons_pattern_without_data_test(
                     }}
                 ],
                 line => 3,
+                locals => #{},
                 params => [],
                 return_type =>
                     {type, #{
-                        kind => list,
                         element_type =>
                             {type, #{line => 3, source => rufus_text, spec => int}},
+                        kind => list,
                         line => 3,
                         source => rufus_text,
                         spec => 'list[int]'
                     }},
-                spec => 'Broken'
+                spec => 'Broken',
+                type =>
+                    {type, #{
+                        kind => func,
+                        line => 3,
+                        param_types => [],
+                        return_type =>
+                            {type, #{
+                                element_type =>
+                                    {type, #{
+                                        line => 3,
+                                        source => rufus_text,
+                                        spec => int
+                                    }},
+                                kind => list,
+                                line => 3,
+                                source => rufus_text,
+                                spec => 'list[int]'
+                            }},
+                        source => rufus_text,
+                        spec => 'func() list[int]'
+                    }}
             }}
         ]
     },

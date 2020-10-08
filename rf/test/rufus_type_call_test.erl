@@ -11,7 +11,8 @@ resolve_call_with_no_arguments_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, Globals} = rufus_forms:globals(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, Globals} = rufus_forms:globals(AnnotatedForms),
     {ok, Form} = annotate_locals(
         #{},
         rufus_form:make_call('Random', [], 7)
@@ -27,7 +28,8 @@ resolve_call_with_one_argument_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, Globals} = rufus_forms:globals(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, Globals} = rufus_forms:globals(AnnotatedForms),
     {ok, Form} = annotate_locals(
         #{},
         rufus_form:make_call('Echo', [rufus_form:make_literal(string, <<"hello">>, 7)], 7)
@@ -47,7 +49,8 @@ resolve_call_with_one_argument_and_many_function_heads_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, Globals} = rufus_forms:globals(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, Globals} = rufus_forms:globals(AnnotatedForms),
     {ok, Form} = annotate_locals(
         #{},
         rufus_form:make_call('Echo', [rufus_form:make_literal(string, <<"hello">>, 7)], 7)
@@ -63,7 +66,8 @@ resolve_call_with_two_argument_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, Globals} = rufus_forms:globals(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, Globals} = rufus_forms:globals(AnnotatedForms),
     {ok, Form} = annotate_locals(
         #{},
         rufus_form:make_call(
@@ -83,12 +87,18 @@ resolve_unknown_func_error_test() ->
         #{},
         rufus_form:make_call('Ping', [], 7)
     ),
-    Expected =
-        {error, unknown_func, #{
-            args => [],
-            spec => 'Ping'
-        }},
-    ?assertEqual(Expected, rufus_type:resolve(#{}, Form)).
+    Data = #{
+        form =>
+            {call, #{
+                args => [],
+                line => 7,
+                locals => #{},
+                spec => 'Ping'
+            }},
+        globals => #{},
+        stack => []
+    },
+    ?assertEqual({error, unknown_func, Data}, rufus_type:resolve(#{}, Form)).
 
 resolve_unknown_arity_error_test() ->
     RufusText =
@@ -98,41 +108,23 @@ resolve_unknown_arity_error_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, Globals} = rufus_forms:globals(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, Globals} = rufus_forms:globals(AnnotatedForms),
     {ok, Form} = annotate_locals(
         #{},
         rufus_form:make_call('Ping', [], 7)
     ),
     Data = #{
         args => [],
-        funcs => [
-            {func, #{
-                params => [
-                    {param, #{
-                        line => 3,
-                        spec => message,
-                        type =>
-                            {type, #{
-                                line => 3,
-                                source => rufus_text,
-                                spec => string
-                            }}
-                    }}
-                ],
-                exprs => [
-                    {identifier, #{
-                        line => 3,
-                        spec => message
-                    }}
-                ],
+        types => [
+            {type, #{
+                kind => func,
                 line => 3,
+                param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
                 return_type =>
-                    {type, #{
-                        line => 3,
-                        source => rufus_text,
-                        spec => string
-                    }},
-                spec => 'Ping'
+                    {type, #{line => 3, source => rufus_text, spec => string}},
+                source => rufus_text,
+                spec => 'func(string) string'
             }}
         ]
     },
@@ -146,7 +138,8 @@ resolve_unmatched_args_error_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, Globals} = rufus_forms:globals(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, Globals} = rufus_forms:globals(AnnotatedForms),
     {ok, Form} = annotate_locals(
         #{},
         rufus_form:make_call('Echo', [rufus_form:make_literal(integer, 42, 7)], 7)
@@ -157,41 +150,18 @@ resolve_unmatched_args_error_test() ->
                 line => 7,
                 spec => 42,
                 type =>
-                    {type, #{
-                        line => 7,
-                        source => inferred,
-                        spec => integer
-                    }}
+                    {type, #{line => 7, source => inferred, spec => integer}}
             }}
         ],
-        funcs => [
-            {func, #{
-                params => [
-                    {param, #{
-                        line => 3,
-                        spec => text,
-                        type =>
-                            {type, #{
-                                line => 3,
-                                source => rufus_text,
-                                spec => string
-                            }}
-                    }}
-                ],
-                exprs => [
-                    {identifier, #{
-                        line => 3,
-                        spec => text
-                    }}
-                ],
+        types => [
+            {type, #{
+                kind => func,
                 line => 3,
+                param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
                 return_type =>
-                    {type, #{
-                        line => 3,
-                        source => rufus_text,
-                        spec => string
-                    }},
-                spec => 'Echo'
+                    {type, #{line => 3, source => rufus_text, spec => string}},
+                source => rufus_text,
+                spec => 'func(string) string'
             }}
         ]
     },

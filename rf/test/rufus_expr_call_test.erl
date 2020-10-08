@@ -11,7 +11,46 @@ typecheck_and_annotate_with_function_calling_an_unknown_function_test() ->
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Result = rufus_expr:typecheck_and_annotate(Forms),
-    Data = #{args => [], spec => 'Ping'},
+    Data = #{
+        form =>
+            {call, #{
+                args => [],
+                line => 3,
+                locals => #{
+                    text =>
+                        {type, #{
+                            line => 3,
+                            source => rufus_text,
+                            spec => string
+                        }}
+                },
+                spec => 'Ping'
+            }},
+        globals => #{
+            'Echo' => [
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [
+                        {type, #{
+                            line => 3,
+                            source => rufus_text,
+                            spec => string
+                        }}
+                    ],
+                    return_type =>
+                        {type, #{
+                            line => 3,
+                            source => rufus_text,
+                            spec => string
+                        }},
+                    source => rufus_text,
+                    spec => 'func(string) string'
+                }}
+            ]
+        },
+        stack => []
+    },
     ?assertEqual({error, unknown_func, Data}, Result).
 
 typecheck_and_annotate_with_function_calling_a_function_with_a_missing_argument_test() ->
@@ -26,40 +65,15 @@ typecheck_and_annotate_with_function_calling_a_function_with_a_missing_argument_
     Result = rufus_expr:typecheck_and_annotate(Forms),
     Data = #{
         args => [],
-        funcs => [
-            {func, #{
-                params => [
-                    {param, #{
-                        line => 3,
-                        spec => n,
-                        type =>
-                            {type, #{
-                                line => 3,
-                                source => rufus_text,
-                                spec => string
-                            }}
-                    }}
-                ],
-                exprs => [
-                    {string_lit, #{
-                        line => 3,
-                        spec => <<"Hello">>,
-                        type =>
-                            {type, #{
-                                line => 3,
-                                source => inferred,
-                                spec => string
-                            }}
-                    }}
-                ],
+        types => [
+            {type, #{
+                kind => func,
                 line => 3,
+                param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
                 return_type =>
-                    {type, #{
-                        line => 3,
-                        source => rufus_text,
-                        spec => string
-                    }},
-                spec => 'Echo'
+                    {type, #{line => 3, source => rufus_text, spec => string}},
+                source => rufus_text,
+                spec => 'func(string) string'
             }}
         ]
     },
@@ -81,47 +95,18 @@ typecheck_and_annotate_with_function_calling_a_function_with_a_mismatched_argume
                 line => 4,
                 spec => 42,
                 type =>
-                    {type, #{
-                        line => 4,
-                        source => inferred,
-                        spec => int
-                    }}
+                    {type, #{line => 4, source => inferred, spec => int}}
             }}
         ],
-        funcs => [
-            {func, #{
-                params => [
-                    {param, #{
-                        line => 3,
-                        spec => n,
-                        type =>
-                            {type, #{
-                                line => 3,
-                                source => rufus_text,
-                                spec => string
-                            }}
-                    }}
-                ],
-                exprs => [
-                    {string_lit, #{
-                        line => 3,
-                        spec => <<"Hello">>,
-                        type =>
-                            {type, #{
-                                line => 3,
-                                source => inferred,
-                                spec => string
-                            }}
-                    }}
-                ],
+        types => [
+            {type, #{
+                kind => func,
                 line => 3,
+                param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
                 return_type =>
-                    {type, #{
-                        line => 3,
-                        source => rufus_text,
-                        spec => string
-                    }},
-                spec => 'Echo'
+                    {type, #{line => 3, source => rufus_text, spec => string}},
+                source => rufus_text,
+                spec => 'func(string) string'
             }}
         ]
     },

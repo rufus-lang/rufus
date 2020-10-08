@@ -99,16 +99,16 @@ map(Acc, [], _Fun) ->
 
 %% Scope API
 
-%% globals creates a map of function names to func forms for all top-level
+%% globals creates a map of function names to type form lists for all top-level
 %% functions in RufusForms.
--spec globals(rufus_forms()) -> {ok, #{atom() => rufus_forms()}}.
+-spec globals(rufus_forms()) -> {ok, #{atom() => list(type_form())}}.
 globals(RufusForms) ->
     globals(#{}, RufusForms).
 
--spec globals(map(), rufus_forms()) -> {ok, #{atom() => rufus_forms()}}.
-globals(Acc, [Form = {func, #{spec := Spec}} | T]) ->
-    Forms = maps:get(Spec, Acc, []),
-    globals(Acc#{Spec => Forms ++ [Form]}, T);
+-spec globals(map(), list(module_form() | func_form())) -> {ok, #{atom() => list(type_form())}}.
+globals(Acc, [{func, #{spec := Spec, type := Type}} | T]) ->
+    Types = maps:get(Spec, Acc, []),
+    globals(Acc#{Spec => Types ++ [Type]}, T);
 globals(Acc, [_H | T]) ->
     globals(Acc, T);
 globals(Acc, []) ->

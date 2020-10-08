@@ -194,29 +194,31 @@ resolve_call_type(
     Globals,
     Form = {call, #{spec := Spec, args := Args, locals := Locals}}
 ) ->
-    Types =
-        case maps:get(Spec, Locals, undefined) of
-            undefined ->
-                ok;
-            LocalTypes ->
-                LocalTypes
-        end,
-
-    case find_matching_types(Types, Args) of
-        {error, _Reason1, _Data1} ->
-            Funcs =
-                case maps:get(Spec, Globals, undefined) of
-                    undefined ->
-                        Data2 = #{spec => Spec, args => Args},
-                        throw({error, unknown_func, Data2});
-                    GlobalFuncs ->
-                        GlobalFuncs
+    FuncTypes = maps:get(Spec, Globals, undefined),
+    case maps:get(Spec, Locals, FuncTypes) of
+        undefined ->
+            Data = #{
+                form => Form,
+                globals => Globals,
+                stack => Stack
+            },
+            throw({error, unknown_func, Data});
+        Types1 ->
+            %% TODO(jkakar) Eliminate this transformation. The issue here is
+            %% that Locals is a map of identifer->type, while Globals is a map
+            %% of identifier->[type]. This is here to ensure we always pass a
+            %% list of types to find_matching_types.
+            Types2 =
+                case Types1 of
+                    Types1 when is_list(Types1) ->
+                        Types1;
+                    Types1 ->
+                        [Types1]
                 end,
-
-            case find_matching_funcs(Funcs, Args) of
-                {error, Reason2, Data3} ->
-                    throw({error, Reason2, Data3});
-                {ok, MatchingFuncs} when length(MatchingFuncs) > 1 ->
+            case find_matching_types(Types2, Args) of
+                {error, Reason1, Data1} ->
+                    throw({error, Reason1, Data1});
+                {ok, MatchingTypes} when length(MatchingTypes) > 1 ->
                     %% TODO(jkakar): We need to handle cases where more than one
                     %% function matches a given set of parameters. For example,
                     %% consider two functions:
@@ -230,76 +232,17 @@ resolve_call_type(
                     %% specifies a literal value such as :hello or :goodbye we
                     %% should select the correct singular return type.
                     erlang:error({not_implemented, [Stack, Globals, Form]});
-                {ok, MatchingFuncs} when length(MatchingFuncs) =:= 1 ->
-                    [Func] = MatchingFuncs,
-                    {ok, rufus_form:return_type(Func)}
-            end;
-        {ok, MatchingTypes} when length(MatchingTypes) > 1 ->
-            %% TODO(jkakar): We need to handle cases where more than one
-            %% function matches a given set of parameters. For example,
-            %% consider two functions:
-            %%
-            %% func Echo(:hello) atom { :hello }
-            %% func Echo(:goodbye) string { "goodbye" }
-            %%
-            %% These both match an args list with a single atom arg
-            %% type, but they have different return types. We need to
-            %% account for all possible return types. When a callsite
-            %% specifies a literal value such as :hello or :goodbye we
-            %% should select the correct singular return type.
-            erlang:error({not_implemented, [Stack, Globals, Form]});
-        {ok, MatchingTypes} when length(MatchingTypes) =:= 1 ->
-            [Type] = MatchingTypes,
-            {ok, rufus_form:return_type(Type)}
-    end.
-
--spec find_matching_funcs(list(func_form()), rufus_forms()) ->
-    {ok, list(func_form())} | error_triple().
-find_matching_funcs(Funcs, Args) ->
-    FuncsWithMatchingArity = lists:filter(
-        fun({func, #{params := Params}}) ->
-            length(Params) =:= length(Args)
-        end,
-        Funcs
-    ),
-
-    case length(FuncsWithMatchingArity) of
-        Length when Length > 0 ->
-            Result = lists:filter(
-                fun({func, #{params := Params}}) ->
-                    Zipped = lists:zip(Params, Args),
-                    lists:all(
-                        fun(
-                            {{param, #{type := {type, #{spec := ParamTypeSpec}}}},
-                                {_, #{type := {type, #{spec := ArgTypeSpec}}}}}
-                        ) ->
-                            ParamTypeSpec =:= ArgTypeSpec
-                        end,
-                        Zipped
-                    )
-                end,
-                FuncsWithMatchingArity
-            ),
-            case Result of
-                Result when length(Result) =:= 0 ->
-                    {error, unmatched_args, #{funcs => FuncsWithMatchingArity, args => Args}};
-                _ ->
-                    {ok, Result}
-            end;
-        _ ->
-            {error, unknown_arity, #{funcs => Funcs, args => Args}}
+                {ok, MatchingTypes} when length(MatchingTypes) =:= 1 ->
+                    [Type] = MatchingTypes,
+                    {ok, rufus_form:return_type(Type)}
+            end
     end.
 
 -spec find_matching_types(list(type_form()), rufus_forms()) ->
     {ok, list(type_form())} | error_triple().
 find_matching_types(Types, Args) ->
-    ArgTypes = lists:filter(
-        fun
-            ({_Form, #{type := _ArgType}}) ->
-                true;
-            (_Form) ->
-                false
-        end,
+    ArgTypes = lists:map(
+        fun({_Form, #{type := ArgType}}) -> ArgType end,
         Args
     ),
 
@@ -310,7 +253,7 @@ find_matching_types(Types, Args) ->
             (_Form) ->
                 false
         end,
-        [Types]
+        Types
     ),
 
     case length(TypesWithMatchingArity) of
@@ -383,14 +326,19 @@ resolve_identifier_type(Stack, Globals, Form = {identifier, #{spec := Spec, loca
             case lookup_identifier_type(Stack) of
                 {ok, Type} ->
                     {ok, Type};
-                _ ->
-                    Data = #{globals => Globals, locals => Locals, form => Form, stack => Stack},
+                _Error ->
+                    Data = #{
+                        globals => Globals,
+                        locals => Locals,
+                        form => Form,
+                        stack => Stack
+                    },
                     throw({error, unknown_identifier, Data})
             end
     end.
 
 %% lookup_identifier_type walks up the stack, finds, and returns the first type
-%% it encounters.
+%% it encounters. An error is returned if type information cannot be found.
 -spec lookup_identifier_type(rufus_stack()) -> {ok, type_form()} | error_triple().
 lookup_identifier_type(Stack) ->
     try
@@ -430,8 +378,17 @@ lookup_identifier_type(
     _Stack
 ) ->
     {ok, Type};
-lookup_identifier_type([{_, #{type := Type}} | _T], _Stack) ->
+lookup_identifier_type(
+    [{match_right, _Context1} | [{match, #{right := {_FormSpec, #{type := Type}}}} | _T]],
+    _Stack
+) ->
     {ok, Type};
+lookup_identifier_type(
+    [{match_right, _Context1} | [{match, #{right := _Context2}} | _T]],
+    Stack
+) ->
+    Data = #{stack => Stack},
+    throw({error, unknown_type, Data});
 lookup_identifier_type([_H | T], Stack) ->
     lookup_identifier_type(T, Stack);
 lookup_identifier_type([], Stack) ->
