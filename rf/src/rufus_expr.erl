@@ -68,7 +68,7 @@ safety_check(Form) ->
 -spec typecheck_and_annotate_globals(rufus_forms(), rufus_stack(), rufus_forms()) ->
     {ok, globals(), rufus_forms()}.
 typecheck_and_annotate_globals(Acc, Stack, [Form = {func, _Context} | T]) ->
-    {ok, AnnotatedForm} = typecheck_and_annotate_func(Stack, Form),
+    {ok, AnnotatedForm} = typecheck_and_annotate_func_params(Stack, Form),
     typecheck_and_annotate_globals([AnnotatedForm | Acc], Stack, T);
 typecheck_and_annotate_globals(Acc, Stack, [Form = {module, _Context} | T]) ->
     typecheck_and_annotate_globals([Form | Acc], Stack, T);
@@ -223,10 +223,11 @@ typecheck_and_annotate_cons(
 
 %% func form helpers
 
-%% typecheck_and_annotate_func resolves and annotates types for each parameter
+%% typecheck_and_annotate_func_params resolves and annotates types for each parameter
 %% in a function parameter list to ensure they satisfy type constraints.
--spec typecheck_and_annotate_func(rufus_stack(), func_form()) -> {ok, func_form()} | no_return().
-typecheck_and_annotate_func(
+-spec typecheck_and_annotate_func_params(rufus_stack(), func_form()) ->
+    {ok, func_form()} | no_return().
+typecheck_and_annotate_func_params(
     Stack,
     Form =
         {func,
@@ -273,6 +274,8 @@ typecheck_and_annotate_func(
                 locals := Locals2
             }}
 ) ->
+    %% This version of the function is only called for module-level functions,
+    %% which have locals in their context.
     Locals3 = maps:merge(Locals1, Locals2),
     FuncStack = [Form | Stack],
     ExprsStack = [rufus_form:make_func_exprs(Form) | FuncStack],
@@ -303,6 +306,8 @@ typecheck_and_annotate_func(
                 line := Line
             }}
 ) ->
+    %% This version of the function is only called for anonymous functions,
+    %% which don't have locals in their context.
     FuncStack = [Form | Stack],
     ParamsStack = [rufus_form:make_func_params(Form) | FuncStack],
     {ok, NewLocals1, AnnotatedParams} = typecheck_and_annotate(
