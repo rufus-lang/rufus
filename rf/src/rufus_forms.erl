@@ -101,11 +101,11 @@ map(Acc, [], _Fun) ->
 
 %% globals creates a map of function names to type form lists for all top-level
 %% functions in RufusForms.
--spec globals(rufus_forms()) -> {ok, #{atom() => rufus_forms()}}.
+-spec globals(rufus_forms()) -> {ok, #{atom() => list(type_form())}}.
 globals(RufusForms) ->
     globals(#{}, RufusForms).
 
--spec globals(map(), rufus_forms()) -> {ok, #{atom() => rufus_forms()}}.
+-spec globals(map(), list(module_form() | func_form())) -> {ok, #{atom() => list(type_form())}}.
 globals(Acc, [{func, #{spec := Spec, type := Type}} | T]) ->
     Types = maps:get(Spec, Acc, []),
     globals(Acc#{Spec => Types ++ [Type]}, T);
