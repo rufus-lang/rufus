@@ -345,9 +345,23 @@ eval_function_taking_and_returning_a_function_test() ->
         "    ",
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
-    NumberFunc = example:'Echo'(fun() -> 42 end),
-    ?assert(is_function(NumberFunc)),
-    ?assertEqual(42, NumberFunc()).
+    Fun = example:'Echo'(fun() -> 42 end),
+    ?assert(is_function(Fun)),
+    ?assertEqual(42, Fun()).
+
+eval_function_returning_a_function_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func NumberFunc() func() int {\n"
+        "        func() int { 42 }\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    Fun = example:'NumberFunc'(),
+    ?assert(is_function(Fun)),
+    ?assertEqual(42, Fun()).
 
 eval_function_returning_a_function_variable_test() ->
     RufusText =

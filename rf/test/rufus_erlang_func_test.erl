@@ -501,7 +501,13 @@ forms_for_function_returning_a_function_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
-    Expected = [],
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'NumberFunc', 0}]},
+        {function, 3, 'NumberFunc', 0, [
+            {clause, 3, [], [], [{'fun', 4, {clauses, [{clause, 4, [], [], [{integer, 4, 42}]}]}}]}
+        ]}
+    ],
     ?assertEqual(Expected, ErlangForms).
 
 forms_for_function_returning_a_function_variable_test() ->
