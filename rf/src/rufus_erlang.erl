@@ -79,6 +79,13 @@ forms(Acc, [{cons, #{head := Head, tail := Tail, line := Line}} | T]) ->
 forms(Acc, [{float_lit, _Context} = FloatLit | T]) ->
     Form = box(FloatLit),
     forms([Form | Acc], T);
+forms(Acc, [{func, #{line := Line, params := Params, exprs := Exprs}} | T]) ->
+    {ok, ParamForms} = forms([], Params),
+    {ok, GuardForms} = guard_forms([], Params),
+    {ok, ExprForms} = forms([], Exprs),
+    FuncClause = {clause, Line, ParamForms, GuardForms, ExprForms},
+    Form = {'fun', Line, {clauses, [FuncClause]}},
+    forms([Form | Acc], T);
 forms(Acc, [{func_group, #{line := Line1, spec := Spec, arity := Arity, forms := Forms}} | T]) ->
     FuncClauses = lists:map(
         fun(Form) ->
@@ -104,6 +111,8 @@ forms(Acc, [{identifier, #{line := Line, spec := Spec, type := Type}} | T]) ->
             {type, #{spec := int}} ->
                 {var, Line, Spec};
             {type, #{kind := list}} ->
+                {var, Line, Spec};
+            {type, #{kind := func}} ->
                 {var, Line, Spec};
             _ ->
                 TypeSpec = rufus_form:spec(Type),
@@ -136,6 +145,8 @@ forms(Acc, [{param, #{line := Line, spec := Spec, type := Type}} | T]) ->
             {type, #{spec := int}} ->
                 {var, Line, Spec};
             {type, #{kind := list}} ->
+                {var, Line, Spec};
+            {type, #{kind := func}} ->
                 {var, Line, Spec};
             _ ->
                 TypeSpec = rufus_form:spec(Type),

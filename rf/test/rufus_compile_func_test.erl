@@ -332,3 +332,34 @@ eval_function_taking_an_atom_literal_and_passing_an_invalid_value_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertError(function_clause, example:'Echo'(fine)).
+
+%% Anonymous functions
+
+eval_function_taking_and_returning_a_function_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Echo(fn func() int) func() int {\n"
+        "        fn\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    NumberFunc = example:'Echo'(fun() -> 42 end),
+    ?assert(is_function(NumberFunc)),
+    ?assertEqual(42, NumberFunc()).
+
+eval_function_returning_a_function_variable_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func NumberFunc() func() int {\n"
+        "        fn = func() int { 21 + 21 }\n"
+        "        fn\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    NumberFunc = example:'NumberFunc'(),
+    ?assert(is_function(NumberFunc)),
+    ?assertEqual(42, NumberFunc()).
