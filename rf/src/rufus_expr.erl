@@ -140,20 +140,11 @@ typecheck_and_annotate_binary_op(
     {ok, Locals, [AnnotatedLeft]} = typecheck_and_annotate([], LeftStack, Globals, Locals, [Left]),
     RightStack = [rufus_form:make_binary_op_right(Form) | BinaryOpStack],
     {ok, Locals, [AnnotatedRight]} = typecheck_and_annotate([], RightStack, Globals, Locals, [Right]),
-    AnnotatedForm1 =
-        {binary_op, Context#{
-            left => AnnotatedLeft,
-            right => AnnotatedRight,
-            locals => Locals
-        }},
+    Context1 = Context#{left => AnnotatedLeft, right => AnnotatedRight},
+    AnnotatedForm1 = {binary_op, Context1#{locals => Locals}},
     case rufus_type:resolve(Globals, AnnotatedForm1) of
         {ok, TypeForm} ->
-            AnnotatedForm2 =
-                {binary_op, Context#{
-                    left => AnnotatedLeft,
-                    right => AnnotatedRight,
-                    type => TypeForm
-                }},
+            AnnotatedForm2 = {binary_op, Context1#{type => TypeForm}},
             {ok, AnnotatedForm2};
         Error ->
             throw(Error)
