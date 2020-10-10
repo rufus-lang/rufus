@@ -332,3 +332,194 @@ eval_function_taking_an_atom_literal_and_passing_an_invalid_value_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertError(function_clause, example:'Echo'(fine)).
+
+%% Anonymous functions
+
+eval_function_taking_and_returning_a_function_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Echo(fn func() int) func() int {\n"
+        "        fn\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    Fun = example:'Echo'(fun() -> 42 end),
+    ?assert(is_function(Fun)),
+    ?assertEqual(42, Fun()).
+
+eval_function_returning_a_function_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func NumberFunc() func() int {\n"
+        "        func() int { 42 }\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    Fun = example:'NumberFunc'(),
+    ?assert(is_function(Fun)),
+    ?assertEqual(42, Fun()).
+
+eval_function_returning_a_function_variable_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func NumberFunc() func() int {\n"
+        "        fn = func() int { 21 + 21 }\n"
+        "        fn\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    NumberFunc = example:'NumberFunc'(),
+    ?assert(is_function(NumberFunc)),
+    ?assertEqual(42, NumberFunc()).
+
+eval_function_returning_a_nested_function_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func NumberFunc() func() int {\n"
+        "        f = func() func() int {\n"
+        "            func() int { 42 }\n"
+        "        }\n"
+        "        f()\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    NumberFunc = example:'NumberFunc'(),
+    ?assert(is_function(NumberFunc)),
+    ?assertEqual(42, NumberFunc()).
+
+eval_anonymous_function_taking_an_atom_and_returning_an_atom_literal_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func EchoFunc() func(atom) atom {\n"
+        "        func(value atom) atom { value }\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    EchoFunc = example:'EchoFunc'(),
+    ?assert(is_function(EchoFunc)),
+    ?assertEqual(rufus, EchoFunc(rufus)).
+
+eval_for_anonymous_function_taking_a_bool_and_returning_a_bool_literal_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func EchoFunc() func(bool) bool {\n"
+        "        func(value bool) bool { value }\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    EchoFunc = example:'EchoFunc'(),
+    ?assert(is_function(EchoFunc)),
+    ?assertEqual(true, EchoFunc(true)).
+
+eval_for_anonymous_function_taking_a_float_and_returning_a_float_literal_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func EchoFunc() func(float) float {\n"
+        "        func(value float) float { value }\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    EchoFunc = example:'EchoFunc'(),
+    ?assert(is_function(EchoFunc)),
+    ?assertEqual(42.0, EchoFunc(42.0)).
+
+eval_for_anonymous_function_taking_an_int_and_returning_an_int_literal_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func EchoFunc() func(int) int {\n"
+        "        func(value int) int { value }\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    EchoFunc = example:'EchoFunc'(),
+    ?assert(is_function(EchoFunc)),
+    ?assertEqual(42, EchoFunc(42)).
+
+eval_for_anonymous_function_taking_a_string_and_returning_a_string_literal_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func EchoFunc() func(string) string {\n"
+        "        func(value string) string { value }\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    EchoFunc = example:'EchoFunc'(),
+    ?assert(is_function(EchoFunc)),
+    ?assertEqual({string, <<"rufus">>}, EchoFunc({string, <<"rufus">>})).
+
+typecheck_and_annotate_for_anonymous_function_taking_a_cons_expression_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func EchoNumberListFunc() func(list[int]) list[int] {\n"
+        "        func(list[int]{head|tail}) list[int] { list[int]{head|tail} }\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    EchoNumberListFunc = example:'EchoNumberListFunc'(),
+    ?assert(is_function(EchoNumberListFunc)),
+    ?assertEqual([1, 2, 3], EchoNumberListFunc([1, 2, 3])).
+
+typecheck_and_annotate_for_anonymous_function_taking_a_list_literal_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func EchoNumberListFunc() func(list[int]) list[int] {\n"
+        "        func(numbers = list[int]{1, 2, 3}) list[int] { numbers }\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    EchoNumberListFunc = example:'EchoNumberListFunc'(),
+    ?assert(is_function(EchoNumberListFunc)),
+    ?assertEqual([1, 2, 3], EchoNumberListFunc([1, 2, 3])).
+
+typecheck_and_annotate_for_anonymous_function_taking_a_match_param_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func EchoFortyTwoFunc() func(int) int {\n"
+        "        func(42 = value int) int {\n"
+        "            value\n"
+        "        }\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    EchoFortyTwoFunc = example:'EchoFortyTwoFunc'(),
+    ?assert(is_function(EchoFortyTwoFunc)),
+    ?assertEqual(42, EchoFortyTwoFunc(42)).
+
+typecheck_and_annotate_closure_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Memoize(num int) func() int {\n"
+        "        func() int { num }\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    FortyTwoFunc = example:'Memoize'(42),
+    ?assert(is_function(FortyTwoFunc)),
+    ?assertEqual(42, FortyTwoFunc()),
+    ?assertEqual(42, FortyTwoFunc()).

@@ -67,10 +67,16 @@ forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}
 forms(Acc, [{bool_lit, _Context} = BoolLit | T]) ->
     Form = box(BoolLit),
     forms([Form | Acc], T);
-forms(Acc, [{call, #{spec := Spec, args := Args, line := Line}} | T]) ->
+forms(Acc, [{call, Context = #{spec := Spec, args := Args, line := Line}} | T]) ->
     {ok, ArgsForms} = forms([], Args),
-    Form = {call, Line, {atom, Line, Spec}, ArgsForms},
-    forms([Form | Acc], T);
+    Name =
+        case maps:get(kind, Context, named) of
+            anonymous ->
+                {var, Line, Spec};
+            named ->
+                {atom, Line, Spec}
+        end,
+    forms([{call, Line, Name, ArgsForms} | Acc], T);
 forms(Acc, [{cons, #{head := Head, tail := Tail, line := Line}} | T]) ->
     {ok, [HeadForm]} = forms([], [Head]),
     {ok, [TailForm]} = forms([], [Tail]),
@@ -78,6 +84,13 @@ forms(Acc, [{cons, #{head := Head, tail := Tail, line := Line}} | T]) ->
     forms([Form | Acc], T);
 forms(Acc, [{float_lit, _Context} = FloatLit | T]) ->
     Form = box(FloatLit),
+    forms([Form | Acc], T);
+forms(Acc, [{func, #{line := Line, params := Params, exprs := Exprs}} | T]) ->
+    {ok, ParamForms} = forms([], Params),
+    {ok, GuardForms} = guard_forms([], Params),
+    {ok, ExprForms} = forms([], Exprs),
+    FuncClause = {clause, Line, ParamForms, GuardForms, ExprForms},
+    Form = {'fun', Line, {clauses, [FuncClause]}},
     forms([Form | Acc], T);
 forms(Acc, [{func_group, #{line := Line1, spec := Spec, arity := Arity, forms := Forms}} | T]) ->
     FuncClauses = lists:map(
@@ -104,6 +117,8 @@ forms(Acc, [{identifier, #{line := Line, spec := Spec, type := Type}} | T]) ->
             {type, #{spec := int}} ->
                 {var, Line, Spec};
             {type, #{kind := list}} ->
+                {var, Line, Spec};
+            {type, #{kind := func}} ->
                 {var, Line, Spec};
             _ ->
                 TypeSpec = rufus_form:spec(Type),
@@ -136,6 +151,8 @@ forms(Acc, [{param, #{line := Line, spec := Spec, type := Type}} | T]) ->
             {type, #{spec := int}} ->
                 {var, Line, Spec};
             {type, #{kind := list}} ->
+                {var, Line, Spec};
+            {type, #{kind := func}} ->
                 {var, Line, Spec};
             _ ->
                 TypeSpec = rufus_form:spec(Type),

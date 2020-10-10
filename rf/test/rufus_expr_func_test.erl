@@ -1335,6 +1335,7 @@ typecheck_and_annotate_for_function_taking_a_string_literal_test() ->
 typecheck_and_annotate_function_taking_and_returning_a_function_test() ->
     RufusText =
         "\n"
+        "    module example\n"
         "    func Echo(fn func() int) func() int {\n"
         "        fn\n"
         "    }\n"
@@ -1343,262 +1344,9 @@ typecheck_and_annotate_function_taking_and_returning_a_function_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
+        {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {identifier, #{
-                    line => 3,
-                    spec => fn,
-                    type =>
-                        {type, #{
-                            kind => func,
-                            line => 2,
-                            param_types => [],
-                            return_type =>
-                                {type, #{line => 2, source => rufus_text, spec => int}},
-                            source => rufus_text,
-                            spec => 'func() int'
-                        }}
-                }}
-            ],
-            line => 2,
-            params => [
-                {param, #{
-                    line => 2,
-                    spec => fn,
-                    type =>
-                        {type, #{
-                            kind => func,
-                            line => 2,
-                            param_types => [],
-                            return_type =>
-                                {type, #{line => 2, source => rufus_text, spec => int}},
-                            source => rufus_text,
-                            spec => 'func() int'
-                        }}
-                }}
-            ],
-            return_type =>
-                {type, #{
-                    kind => func,
-                    line => 2,
-                    param_types => [],
-                    return_type =>
-                        {type, #{line => 2, source => rufus_text, spec => int}},
-                    source => rufus_text,
-                    spec => 'func() int'
-                }},
-            spec => 'Echo',
-            type =>
-                {type, #{
-                    kind => func,
-                    line => 2,
-                    param_types => [
-                        {type, #{
-                            kind => func,
-                            line => 2,
-                            param_types => [],
-                            return_type =>
-                                {type, #{line => 2, source => rufus_text, spec => int}},
-                            source => rufus_text,
-                            spec => 'func() int'
-                        }}
-                    ],
-                    return_type =>
-                        {type, #{
-                            kind => func,
-                            line => 2,
-                            param_types => [],
-                            return_type =>
-                                {type, #{line => 2, source => rufus_text, spec => int}},
-                            source => rufus_text,
-                            spec => 'func() int'
-                        }},
-                    source => rufus_text,
-                    spec => 'func(func() int) func() int'
-                }}
-        }}
-    ],
-    ?assertEqual(Expected, AnnotatedForms).
-
-typecheck_and_annotate_function_returning_a_function_test() ->
-    RufusText =
-        "\n"
-        "    func NumberFunc() func() int {\n"
-        "        func() int { 42 }\n"
-        "    }\n"
-        "    ",
-    {ok, Tokens} = rufus_tokenize:string(RufusText),
-    {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
-    Expected = [
-        {func, #{
-            exprs => [
-                {func, #{
-                    exprs => [
-                        {int_lit, #{
-                            line => 3,
-                            spec => 42,
-                            type =>
-                                {type, #{
-                                    line => 3,
-                                    source => inferred,
-                                    spec => int
-                                }}
-                        }}
-                    ],
-                    line => 3,
-                    params => [],
-                    return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
-                    type =>
-                        {type, #{
-                            kind => func,
-                            line => 3,
-                            param_types => [],
-                            return_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
-                            source => rufus_text,
-                            spec => 'func() int'
-                        }}
-                }}
-            ],
-            line => 2,
-            params => [],
-            return_type =>
-                {type, #{
-                    kind => func,
-                    line => 2,
-                    param_types => [],
-                    return_type =>
-                        {type, #{line => 2, source => rufus_text, spec => int}},
-                    source => rufus_text,
-                    spec => 'func() int'
-                }},
-            spec => 'NumberFunc',
-            type =>
-                {type, #{
-                    kind => func,
-                    line => 2,
-                    param_types => [],
-                    return_type =>
-                        {type, #{
-                            kind => func,
-                            line => 2,
-                            param_types => [],
-                            return_type =>
-                                {type, #{line => 2, source => rufus_text, spec => int}},
-                            source => rufus_text,
-                            spec => 'func() int'
-                        }},
-                    source => rufus_text,
-                    spec => 'func() func() int'
-                }}
-        }}
-    ],
-    ?assertEqual(Expected, AnnotatedForms).
-
-typecheck_and_annotate_function_returning_a_function_variable_test() ->
-    RufusText =
-        "\n"
-        "    func NumberFunc() func() int {\n"
-        "        fn = func() int { 21 + 21 }\n"
-        "        fn\n"
-        "    }\n"
-        "    ",
-    {ok, Tokens} = rufus_tokenize:string(RufusText),
-    {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
-    Expected = [
-        {func, #{
-            exprs => [
-                {match, #{
-                    left =>
-                        {identifier, #{
-                            line => 3,
-                            locals => #{},
-                            spec => fn,
-                            type =>
-                                {type, #{
-                                    kind => func,
-                                    line => 3,
-                                    param_types => [],
-                                    return_type =>
-                                        {type, #{
-                                            line => 3,
-                                            source => rufus_text,
-                                            spec => int
-                                        }},
-                                    source => rufus_text,
-                                    spec => 'func() int'
-                                }}
-                        }},
-                    line => 3,
-                    right =>
-                        {func, #{
-                            exprs => [
-                                {binary_op, #{
-                                    left =>
-                                        {int_lit, #{
-                                            line => 3,
-                                            spec => 21,
-                                            type =>
-                                                {type, #{
-                                                    line => 3,
-                                                    source => inferred,
-                                                    spec => int
-                                                }}
-                                        }},
-                                    line => 3,
-                                    op => '+',
-                                    right =>
-                                        {int_lit, #{
-                                            line => 3,
-                                            spec => 21,
-                                            type =>
-                                                {type, #{
-                                                    line => 3,
-                                                    source => inferred,
-                                                    spec => int
-                                                }}
-                                        }},
-                                    type =>
-                                        {type, #{
-                                            line => 3,
-                                            source => inferred,
-                                            spec => int
-                                        }}
-                                }}
-                            ],
-                            line => 3,
-                            params => [],
-                            return_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
-                            type =>
-                                {type, #{
-                                    kind => func,
-                                    line => 3,
-                                    param_types => [],
-                                    return_type =>
-                                        {type, #{
-                                            line => 3,
-                                            source => rufus_text,
-                                            spec => int
-                                        }},
-                                    source => rufus_text,
-                                    spec => 'func() int'
-                                }}
-                        }},
-                    type =>
-                        {type, #{
-                            kind => func,
-                            line => 3,
-                            param_types => [],
-                            return_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
-                            source => rufus_text,
-                            spec => 'func() int'
-                        }}
-                }},
                 {identifier, #{
                     line => 4,
                     spec => fn,
@@ -1614,15 +1362,119 @@ typecheck_and_annotate_function_returning_a_function_variable_test() ->
                         }}
                 }}
             ],
-            line => 2,
+            line => 3,
+            params => [
+                {param, #{
+                    line => 3,
+                    spec => fn,
+                    type =>
+                        {type, #{
+                            kind => func,
+                            line => 3,
+                            param_types => [],
+                            return_type =>
+                                {type, #{line => 3, source => rufus_text, spec => int}},
+                            source => rufus_text,
+                            spec => 'func() int'
+                        }}
+                }}
+            ],
+            return_type =>
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
+                    source => rufus_text,
+                    spec => 'func() int'
+                }},
+            spec => 'Echo',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [
+                        {type, #{
+                            kind => func,
+                            line => 3,
+                            param_types => [],
+                            return_type =>
+                                {type, #{line => 3, source => rufus_text, spec => int}},
+                            source => rufus_text,
+                            spec => 'func() int'
+                        }}
+                    ],
+                    return_type =>
+                        {type, #{
+                            kind => func,
+                            line => 3,
+                            param_types => [],
+                            return_type =>
+                                {type, #{line => 3, source => rufus_text, spec => int}},
+                            source => rufus_text,
+                            spec => 'func() int'
+                        }},
+                    source => rufus_text,
+                    spec => 'func(func() int) func() int'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_function_returning_a_function_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func NumberFunc() func() int {\n"
+        "        func() int { 42 }\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            exprs => [
+                {func, #{
+                    exprs => [
+                        {int_lit, #{
+                            line => 4,
+                            spec => 42,
+                            type =>
+                                {type, #{
+                                    line => 4,
+                                    source => inferred,
+                                    spec => int
+                                }}
+                        }}
+                    ],
+                    line => 4,
+                    params => [],
+                    return_type =>
+                        {type, #{line => 4, source => rufus_text, spec => int}},
+                    type =>
+                        {type, #{
+                            kind => func,
+                            line => 4,
+                            param_types => [],
+                            return_type =>
+                                {type, #{line => 4, source => rufus_text, spec => int}},
+                            source => rufus_text,
+                            spec => 'func() int'
+                        }}
+                }}
+            ],
+            line => 3,
             params => [],
             return_type =>
                 {type, #{
                     kind => func,
-                    line => 2,
+                    line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 2, source => rufus_text, spec => int}},
+                        {type, #{line => 3, source => rufus_text, spec => int}},
                     source => rufus_text,
                     spec => 'func() int'
                 }},
@@ -1630,15 +1482,169 @@ typecheck_and_annotate_function_returning_a_function_variable_test() ->
             type =>
                 {type, #{
                     kind => func,
-                    line => 2,
+                    line => 3,
                     param_types => [],
                     return_type =>
                         {type, #{
                             kind => func,
-                            line => 2,
+                            line => 3,
                             param_types => [],
                             return_type =>
-                                {type, #{line => 2, source => rufus_text, spec => int}},
+                                {type, #{line => 3, source => rufus_text, spec => int}},
+                            source => rufus_text,
+                            spec => 'func() int'
+                        }},
+                    source => rufus_text,
+                    spec => 'func() func() int'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_function_returning_a_function_variable_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func NumberFunc() func() int {\n"
+        "        fn = func() int { 21 + 21 }\n"
+        "        fn\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            exprs => [
+                {match, #{
+                    left =>
+                        {identifier, #{
+                            line => 4,
+                            locals => #{},
+                            spec => fn,
+                            type =>
+                                {type, #{
+                                    kind => func,
+                                    line => 4,
+                                    param_types => [],
+                                    return_type =>
+                                        {type, #{
+                                            line => 4,
+                                            source => rufus_text,
+                                            spec => int
+                                        }},
+                                    source => rufus_text,
+                                    spec => 'func() int'
+                                }}
+                        }},
+                    line => 4,
+                    right =>
+                        {func, #{
+                            exprs => [
+                                {binary_op, #{
+                                    left =>
+                                        {int_lit, #{
+                                            line => 4,
+                                            spec => 21,
+                                            type =>
+                                                {type, #{
+                                                    line => 4,
+                                                    source => inferred,
+                                                    spec => int
+                                                }}
+                                        }},
+                                    line => 4,
+                                    op => '+',
+                                    right =>
+                                        {int_lit, #{
+                                            line => 4,
+                                            spec => 21,
+                                            type =>
+                                                {type, #{
+                                                    line => 4,
+                                                    source => inferred,
+                                                    spec => int
+                                                }}
+                                        }},
+                                    type =>
+                                        {type, #{
+                                            line => 4,
+                                            source => inferred,
+                                            spec => int
+                                        }}
+                                }}
+                            ],
+                            line => 4,
+                            params => [],
+                            return_type =>
+                                {type, #{line => 4, source => rufus_text, spec => int}},
+                            type =>
+                                {type, #{
+                                    kind => func,
+                                    line => 4,
+                                    param_types => [],
+                                    return_type =>
+                                        {type, #{
+                                            line => 4,
+                                            source => rufus_text,
+                                            spec => int
+                                        }},
+                                    source => rufus_text,
+                                    spec => 'func() int'
+                                }}
+                        }},
+                    type =>
+                        {type, #{
+                            kind => func,
+                            line => 4,
+                            param_types => [],
+                            return_type =>
+                                {type, #{line => 4, source => rufus_text, spec => int}},
+                            source => rufus_text,
+                            spec => 'func() int'
+                        }}
+                }},
+                {identifier, #{
+                    line => 5,
+                    spec => fn,
+                    type =>
+                        {type, #{
+                            kind => func,
+                            line => 4,
+                            param_types => [],
+                            return_type =>
+                                {type, #{line => 4, source => rufus_text, spec => int}},
+                            source => rufus_text,
+                            spec => 'func() int'
+                        }}
+                }}
+            ],
+            line => 3,
+            params => [],
+            return_type =>
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
+                    source => rufus_text,
+                    spec => 'func() int'
+                }},
+            spec => 'NumberFunc',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{
+                            kind => func,
+                            line => 3,
+                            param_types => [],
+                            return_type =>
+                                {type, #{line => 3, source => rufus_text, spec => int}},
                             source => rufus_text,
                             spec => 'func() int'
                         }},
@@ -1800,6 +1806,7 @@ typecheck_and_annotate_function_returning_a_nested_function_test() ->
                         }}
                 }},
                 {call, #{
+                    kind => anonymous,
                     args => [],
                     line => 7,
                     spec => f,
@@ -2982,6 +2989,92 @@ typecheck_and_annotate_for_anonymous_function_taking_a_match_param_test() ->
                         }},
                     source => rufus_text,
                     spec => 'func() func(int) int'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_closure_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Memoize(num int) func() int {\n"
+        "        func() int { num }\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            exprs => [
+                {func, #{
+                    exprs => [
+                        {identifier, #{
+                            line => 4,
+                            spec => num,
+                            type =>
+                                {type, #{
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => int
+                                }}
+                        }}
+                    ],
+                    line => 4,
+                    params => [],
+                    return_type =>
+                        {type, #{line => 4, source => rufus_text, spec => int}},
+                    type =>
+                        {type, #{
+                            kind => func,
+                            line => 4,
+                            param_types => [],
+                            return_type =>
+                                {type, #{line => 4, source => rufus_text, spec => int}},
+                            source => rufus_text,
+                            spec => 'func() int'
+                        }}
+                }}
+            ],
+            line => 3,
+            params => [
+                {param, #{
+                    line => 3,
+                    spec => num,
+                    type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}}
+                }}
+            ],
+            return_type =>
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
+                    source => rufus_text,
+                    spec => 'func() int'
+                }},
+            spec => 'Memoize',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [{type, #{line => 3, source => rufus_text, spec => int}}],
+                    return_type =>
+                        {type, #{
+                            kind => func,
+                            line => 3,
+                            param_types => [],
+                            return_type =>
+                                {type, #{line => 3, source => rufus_text, spec => int}},
+                            source => rufus_text,
+                            spec => 'func() int'
+                        }},
+                    source => rufus_text,
+                    spec => 'func(int) func() int'
                 }}
         }}
     ],
