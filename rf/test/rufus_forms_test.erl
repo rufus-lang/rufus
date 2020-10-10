@@ -14,8 +14,7 @@ map_with_noop_function_test() ->
 map_test() ->
     Form = rufus_form:make_literal(bool, true, 7),
     Expected1 =
-        {bool_lit,
-            Context = #{spec => true, line => 7, type => rufus_form:make_type(bool, 7)}},
+        {bool_lit, Context = #{spec => true, line => 7, type => rufus_form:make_type(bool, 7)}},
     ?assertEqual(Expected1, Form),
     [AnnotatedForm] = rufus_forms:map([Form], fun annotate/1),
     Expected2 = {bool_lit, Context#{annotated => true}},
