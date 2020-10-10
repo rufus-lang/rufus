@@ -69,9 +69,9 @@ typecheck_and_annotate_with_function_calling_a_function_with_a_missing_argument_
             {type, #{
                 kind => func,
                 line => 3,
-                param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
+                param_types => [{type, #{line => 3, spec => string}}],
                 return_type =>
-                    {type, #{line => 3, source => rufus_text, spec => string}},
+                    {type, #{line => 3, spec => string}},
                 source => rufus_text,
                 spec => 'func(string) string'
             }}
@@ -95,16 +95,16 @@ typecheck_and_annotate_with_function_calling_a_function_with_a_mismatched_argume
                 line => 4,
                 spec => 42,
                 type =>
-                    {type, #{line => 4, source => inferred, spec => int}}
+                    {type, #{line => 4, spec => int}}
             }}
         ],
         types => [
             {type, #{
                 kind => func,
                 line => 3,
-                param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
+                param_types => [{type, #{line => 3, spec => string}}],
                 return_type =>
-                    {type, #{line => 3, source => rufus_text, spec => string}},
+                    {type, #{line => 3, spec => string}},
                 source => rufus_text,
                 spec => 'func(string) string'
             }}
@@ -151,15 +151,15 @@ typecheck_and_annotate_with_function_calling_a_function_with_one_argument_test()
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => string}},
+                {type, #{line => 3, spec => string}},
             spec => 'Echo',
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
+                    param_types => [{type, #{line => 3, spec => string}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => string}},
+                        {type, #{line => 3, spec => string}},
                     source => rufus_text,
                     spec => 'func(string) string'
                 }}
@@ -192,7 +192,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_one_argument_test()
             line => 4,
             params => [],
             return_type =>
-                {type, #{line => 4, source => rufus_text, spec => string}},
+                {type, #{line => 4, spec => string}},
             spec => 'Greeting',
             type =>
                 {type, #{
@@ -200,7 +200,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_one_argument_test()
                     line => 4,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 4, source => rufus_text, spec => string}},
+                        {type, #{line => 4, spec => string}},
                     source => rufus_text,
                     spec => 'func() string'
                 }}
@@ -248,7 +248,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
                                 }}
                         }},
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             line => 3,
@@ -257,28 +257,28 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
                     line => 3,
                     spec => m,
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }},
                 {param, #{
                     line => 3,
                     spec => n,
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => int}},
+                {type, #{line => 3, spec => int}},
             spec => 'Sum',
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
                     param_types => [
-                        {type, #{line => 3, source => rufus_text, spec => int}},
-                        {type, #{line => 3, source => rufus_text, spec => int}}
+                        {type, #{line => 3, spec => int}},
+                        {type, #{line => 3, spec => int}}
                     ],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
+                        {type, #{line => 3, spec => int}},
                     source => rufus_text,
                     spec => 'func(int, int) int'
                 }}
@@ -311,13 +311,13 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
                     line => 4,
                     spec => 'Sum',
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             line => 4,
             params => [],
             return_type =>
-                {type, #{line => 4, source => rufus_text, spec => int}},
+                {type, #{line => 4, spec => int}},
             spec => 'Random',
             type =>
                 {type, #{
@@ -325,7 +325,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
                     line => 4,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 4, source => rufus_text, spec => int}},
+                        {type, #{line => 4, spec => int}},
                     source => rufus_text,
                     spec => 'func() int'
                 }}
@@ -368,10 +368,10 @@ eval_with_function_call_with_binary_op_argument_test() ->
                             line => 3,
                             spec => 2,
                             type =>
-                                {type, #{line => 3, source => inferred, spec => int}}
+                                {type, #{line => 3, spec => int}}
                         }},
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             line => 3,
@@ -380,19 +380,19 @@ eval_with_function_call_with_binary_op_argument_test() ->
                     line => 3,
                     spec => n,
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => int}},
+                {type, #{line => 3, spec => int}},
             spec => double,
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => int}}],
+                    param_types => [{type, #{line => 3, spec => int}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
+                        {type, #{line => 3, spec => int}},
                     source => rufus_text,
                     spec => 'func(int) int'
                 }}
@@ -437,7 +437,7 @@ eval_with_function_call_with_binary_op_argument_test() ->
                     line => 4,
                     spec => double,
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             line => 4,
@@ -446,28 +446,28 @@ eval_with_function_call_with_binary_op_argument_test() ->
                     line => 4,
                     spec => m,
                     type =>
-                        {type, #{line => 4, source => rufus_text, spec => int}}
+                        {type, #{line => 4, spec => int}}
                 }},
                 {param, #{
                     line => 4,
                     spec => n,
                     type =>
-                        {type, #{line => 4, source => rufus_text, spec => int}}
+                        {type, #{line => 4, spec => int}}
                 }}
             ],
             return_type =>
-                {type, #{line => 4, source => rufus_text, spec => int}},
+                {type, #{line => 4, spec => int}},
             spec => 'SumAndDouble',
             type =>
                 {type, #{
                     kind => func,
                     line => 4,
                     param_types => [
-                        {type, #{line => 4, source => rufus_text, spec => int}},
-                        {type, #{line => 4, source => rufus_text, spec => int}}
+                        {type, #{line => 4, spec => int}},
+                        {type, #{line => 4, spec => int}}
                     ],
                     return_type =>
-                        {type, #{line => 4, source => rufus_text, spec => int}},
+                        {type, #{line => 4, spec => int}},
                     source => rufus_text,
                     spec => 'func(int, int) int'
                 }}
@@ -495,7 +495,7 @@ eval_with_function_call_with_match_argument_test() ->
                     line => 3,
                     spec => n,
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             line => 3,
@@ -504,19 +504,19 @@ eval_with_function_call_with_match_argument_test() ->
                     line => 3,
                     spec => n,
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => int}},
+                {type, #{line => 3, spec => int}},
             spec => 'Echo',
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => int}}],
+                    param_types => [{type, #{line => 3, spec => int}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
+                        {type, #{line => 3, spec => int}},
                     source => rufus_text,
                     spec => 'func(int) int'
                 }}
@@ -529,7 +529,7 @@ eval_with_function_call_with_match_argument_test() ->
                             line => 4,
                             spec => 42,
                             type =>
-                                {type, #{line => 4, source => inferred, spec => int}}
+                                {type, #{line => 4, spec => int}}
                         }},
                     line => 4,
                     right =>
@@ -556,13 +556,13 @@ eval_with_function_call_with_match_argument_test() ->
                                 }}
                         }},
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             line => 4,
             params => [],
             return_type =>
-                {type, #{line => 4, source => rufus_text, spec => int}},
+                {type, #{line => 4, spec => int}},
             spec => 'Random',
             type =>
                 {type, #{
@@ -570,7 +570,7 @@ eval_with_function_call_with_match_argument_test() ->
                     line => 4,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 4, source => rufus_text, spec => int}},
+                        {type, #{line => 4, spec => int}},
                     source => rufus_text,
                     spec => 'func() int'
                 }}

@@ -260,7 +260,7 @@ parse_function_with_a_match_that_binds_a_list_literal_test() ->
                 }}
             ],
             return_type =>
-                {type, #{line => 2, source => rufus_text, spec => string}},
+                {type, #{line => 2, spec => string}},
             spec => 'Unbox'
         }}
     ],
@@ -312,7 +312,7 @@ parse_function_with_a_match_that_binds_a_cons_test() ->
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 5, source => rufus_text, spec => int}},
+                                {type, #{line => 5, spec => int}},
                             line => 5,
                             source => rufus_text,
                             spec => 'list[int]'
@@ -328,7 +328,7 @@ parse_function_with_a_match_that_binds_a_cons_test() ->
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
+                                {type, #{line => 3, spec => int}},
                             line => 3,
                             source => rufus_text,
                             spec => 'list[int]'
@@ -339,7 +339,7 @@ parse_function_with_a_match_that_binds_a_cons_test() ->
                 {type, #{
                     kind => list,
                     element_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
+                        {type, #{line => 3, spec => int}},
                     line => 3,
                     source => rufus_text,
                     spec => 'list[int]'
@@ -436,7 +436,7 @@ parse_function_with_a_match_that_binds_a_cons_head_test() ->
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
+                                {type, #{line => 3, spec => int}},
                             line => 3,
                             source => rufus_text,
                             spec => 'list[int]'
@@ -444,7 +444,7 @@ parse_function_with_a_match_that_binds_a_cons_head_test() ->
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => int}},
+                {type, #{line => 3, spec => int}},
             spec => 'First'
         }}
     ],
@@ -509,7 +509,7 @@ parse_function_with_a_match_that_binds_a_cons_tail_test() ->
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
+                                {type, #{line => 3, spec => int}},
                             line => 3,
                             source => rufus_text,
                             spec => 'list[int]'
@@ -520,7 +520,7 @@ parse_function_with_a_match_that_binds_a_cons_tail_test() ->
                 {type, #{
                     kind => list,
                     element_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
+                        {type, #{line => 3, spec => int}},
                     line => 3,
                     source => rufus_text,
                     spec => 'list[int]'
@@ -619,7 +619,7 @@ parse_function_taking_a_match_pattern_test() ->
                 }}
             ],
             return_type =>
-                {type, #{line => 1, source => rufus_text, spec => int}},
+                {type, #{line => 1, spec => int}},
             spec => 'Double'
         }}
     ],

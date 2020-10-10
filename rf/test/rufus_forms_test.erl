@@ -154,9 +154,9 @@ globals_test() ->
             {type, #{
                 kind => func,
                 line => 3,
-                param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
+                param_types => [{type, #{line => 3, spec => string}}],
                 return_type =>
-                    {type, #{line => 3, source => rufus_text, spec => string}},
+                    {type, #{line => 3, spec => string}},
                 source => rufus_text,
                 spec => 'func(string) string'
             }}
@@ -167,7 +167,7 @@ globals_test() ->
                 line => 4,
                 param_types => [],
                 return_type =>
-                    {type, #{line => 4, source => rufus_text, spec => int}},
+                    {type, #{line => 4, spec => int}},
                 source => rufus_text,
                 spec => 'func() int'
             }}
@@ -190,18 +190,18 @@ globals_with_multiple_function_heads_test() ->
             {type, #{
                 kind => func,
                 line => 3,
-                param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
+                param_types => [{type, #{line => 3, spec => string}}],
                 return_type =>
-                    {type, #{line => 3, source => rufus_text, spec => string}},
+                    {type, #{line => 3, spec => string}},
                 source => rufus_text,
                 spec => 'func(string) string'
             }},
             {type, #{
                 kind => func,
                 line => 4,
-                param_types => [{type, #{line => 4, source => rufus_text, spec => int}}],
+                param_types => [{type, #{line => 4, spec => int}}],
                 return_type =>
-                    {type, #{line => 4, source => rufus_text, spec => int}},
+                    {type, #{line => 4, spec => int}},
                 source => rufus_text,
                 spec => 'func(int) int'
             }}

@@ -691,7 +691,7 @@ parse_function_taking_a_cons_pattern_test() ->
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 1, source => rufus_text, spec => int}},
+                                {type, #{line => 1, spec => int}},
                             line => 1,
                             source => rufus_text,
                             spec => 'list[int]'
@@ -708,7 +708,7 @@ parse_function_taking_a_cons_pattern_test() ->
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 1, source => rufus_text, spec => int}},
+                                {type, #{line => 1, spec => int}},
                             line => 1,
                             source => rufus_text,
                             spec => 'list[int]'
@@ -719,7 +719,7 @@ parse_function_taking_a_cons_pattern_test() ->
                 {type, #{
                     kind => list,
                     element_type =>
-                        {type, #{line => 1, source => rufus_text, spec => int}},
+                        {type, #{line => 1, spec => int}},
                     line => 1,
                     source => rufus_text,
                     spec => 'list[int]'
@@ -754,7 +754,7 @@ parse_function_taking_a_list_pattern_test() ->
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 4, source => rufus_text, spec => int}},
+                                {type, #{line => 4, spec => int}},
                             line => 4,
                             source => rufus_text,
                             spec => 'list[int]'
@@ -774,7 +774,7 @@ parse_function_taking_a_list_pattern_test() ->
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
+                                {type, #{line => 3, spec => int}},
                             line => 3,
                             source => rufus_text,
                             spec => 'list[int]'
@@ -785,7 +785,7 @@ parse_function_taking_a_list_pattern_test() ->
                 {type, #{
                     kind => list,
                     element_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
+                        {type, #{line => 3, spec => int}},
                     line => 3,
                     source => rufus_text,
                     spec => 'list[int]'

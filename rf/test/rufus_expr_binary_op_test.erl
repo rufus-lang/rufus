@@ -23,7 +23,7 @@ typecheck_and_annotate_mathematical_operator_with_ints_test() ->
                             line => 3,
                             spec => 19,
                             type =>
-                                {type, #{line => 3, source => inferred, spec => int}}
+                                {type, #{line => 3, spec => int}}
                         }},
                     line => 3,
                     op => '+',
@@ -32,16 +32,16 @@ typecheck_and_annotate_mathematical_operator_with_ints_test() ->
                             line => 3,
                             spec => 23,
                             type =>
-                                {type, #{line => 3, source => inferred, spec => int}}
+                                {type, #{line => 3, spec => int}}
                         }},
                     type =>
-                        {type, #{line => 3, source => inferred, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => int}},
+                {type, #{line => 3, spec => int}},
             spec => 'FortyTwo',
             type =>
                 {type, #{
@@ -49,7 +49,7 @@ typecheck_and_annotate_mathematical_operator_with_ints_test() ->
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
+                        {type, #{line => 3, spec => int}},
                     source => rufus_text,
                     spec => 'func() int'
                 }}
@@ -96,13 +96,13 @@ typecheck_and_annotate_mathematical_operator_with_floats_test() ->
                                 }}
                         }},
                     type =>
-                        {type, #{line => 3, source => inferred, spec => float}}
+                        {type, #{line => 3, spec => float}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => float}},
+                {type, #{line => 3, spec => float}},
             spec => 'Pi',
             type =>
                 {type, #{
@@ -110,7 +110,7 @@ typecheck_and_annotate_mathematical_operator_with_floats_test() ->
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => float}},
+                        {type, #{line => 3, spec => float}},
                     source => rufus_text,
                     spec => 'func() float'
                 }}
@@ -319,7 +319,7 @@ typecheck_and_annotate_remainder_mathematical_operator_with_ints_test() ->
                             line => 3,
                             spec => 27,
                             type =>
-                                {type, #{line => 3, source => inferred, spec => int}}
+                                {type, #{line => 3, spec => int}}
                         }},
                     line => 3,
                     op => '%',
@@ -328,16 +328,16 @@ typecheck_and_annotate_remainder_mathematical_operator_with_ints_test() ->
                             line => 3,
                             spec => 7,
                             type =>
-                                {type, #{line => 3, source => inferred, spec => int}}
+                                {type, #{line => 3, spec => int}}
                         }},
                     type =>
-                        {type, #{line => 3, source => inferred, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => int}},
+                {type, #{line => 3, spec => int}},
             spec => 'Six',
             type =>
                 {type, #{
@@ -345,7 +345,7 @@ typecheck_and_annotate_remainder_mathematical_operator_with_ints_test() ->
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
+                        {type, #{line => 3, spec => int}},
                     source => rufus_text,
                     spec => 'func() int'
                 }}
@@ -434,13 +434,13 @@ typecheck_and_annotate_conditional_operator_with_bools_test() ->
                                 }}
                         }},
                     type =>
-                        {type, #{line => 3, source => inferred, spec => bool}}
+                        {type, #{line => 3, spec => bool}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => bool}},
+                {type, #{line => 3, spec => bool}},
             spec => 'Falsy',
             type =>
                 {type, #{
@@ -448,7 +448,7 @@ typecheck_and_annotate_conditional_operator_with_bools_test() ->
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => bool}},
+                        {type, #{line => 3, spec => bool}},
                     source => rufus_text,
                     spec => 'func() bool'
                 }}
@@ -518,13 +518,13 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
                                 }}
                         }},
                     type =>
-                        {type, #{line => 3, source => inferred, spec => bool}}
+                        {type, #{line => 3, spec => bool}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => bool}},
+                {type, #{line => 3, spec => bool}},
             spec => 'Falsy',
             type =>
                 {type, #{
@@ -532,7 +532,7 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => bool}},
+                        {type, #{line => 3, spec => bool}},
                     source => rufus_text,
                     spec => 'func() bool'
                 }}
@@ -587,13 +587,13 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
                                 }}
                         }},
                     type =>
-                        {type, #{line => 4, source => inferred, spec => bool}}
+                        {type, #{line => 4, spec => bool}}
                 }}
             ],
             line => 4,
             params => [],
             return_type =>
-                {type, #{line => 4, source => rufus_text, spec => bool}},
+                {type, #{line => 4, spec => bool}},
             spec => 'Truthy',
             type =>
                 {type, #{
@@ -601,7 +601,7 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
                     line => 4,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 4, source => rufus_text, spec => bool}},
+                        {type, #{line => 4, spec => bool}},
                     source => rufus_text,
                     spec => 'func() bool'
                 }}
@@ -670,7 +670,7 @@ typecheck_and_annotate_equality_comparison_operator_with_ints_test() ->
                             line => 3,
                             spec => 1,
                             type =>
-                                {type, #{line => 3, source => inferred, spec => int}}
+                                {type, #{line => 3, spec => int}}
                         }},
                     line => 3,
                     op => '==',
@@ -679,16 +679,16 @@ typecheck_and_annotate_equality_comparison_operator_with_ints_test() ->
                             line => 3,
                             spec => 2,
                             type =>
-                                {type, #{line => 3, source => inferred, spec => int}}
+                                {type, #{line => 3, spec => int}}
                         }},
                     type =>
-                        {type, #{line => 3, source => inferred, spec => bool}}
+                        {type, #{line => 3, spec => bool}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => bool}},
+                {type, #{line => 3, spec => bool}},
             spec => 'Falsy',
             type =>
                 {type, #{
@@ -696,7 +696,7 @@ typecheck_and_annotate_equality_comparison_operator_with_ints_test() ->
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => bool}},
+                        {type, #{line => 3, spec => bool}},
                     source => rufus_text,
                     spec => 'func() bool'
                 }}
@@ -763,7 +763,7 @@ typecheck_and_annotate_inequality_comparison_operator_with_ints_test() ->
                             line => 3,
                             spec => 1,
                             type =>
-                                {type, #{line => 3, source => inferred, spec => int}}
+                                {type, #{line => 3, spec => int}}
                         }},
                     line => 3,
                     op => '!=',
@@ -772,16 +772,16 @@ typecheck_and_annotate_inequality_comparison_operator_with_ints_test() ->
                             line => 3,
                             spec => 1,
                             type =>
-                                {type, #{line => 3, source => inferred, spec => int}}
+                                {type, #{line => 3, spec => int}}
                         }},
                     type =>
-                        {type, #{line => 3, source => inferred, spec => bool}}
+                        {type, #{line => 3, spec => bool}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => bool}},
+                {type, #{line => 3, spec => bool}},
             spec => 'Falsy',
             type =>
                 {type, #{
@@ -789,7 +789,7 @@ typecheck_and_annotate_inequality_comparison_operator_with_ints_test() ->
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => bool}},
+                        {type, #{line => 3, spec => bool}},
                     source => rufus_text,
                     spec => 'func() bool'
                 }}
@@ -856,7 +856,7 @@ typecheck_and_annotate_less_than_comparison_operator_with_ints_test() ->
                             line => 3,
                             spec => 2,
                             type =>
-                                {type, #{line => 3, source => inferred, spec => int}}
+                                {type, #{line => 3, spec => int}}
                         }},
                     line => 3,
                     op => '<',
@@ -865,16 +865,16 @@ typecheck_and_annotate_less_than_comparison_operator_with_ints_test() ->
                             line => 3,
                             spec => 1,
                             type =>
-                                {type, #{line => 3, source => inferred, spec => int}}
+                                {type, #{line => 3, spec => int}}
                         }},
                     type =>
-                        {type, #{line => 3, source => inferred, spec => bool}}
+                        {type, #{line => 3, spec => bool}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => bool}},
+                {type, #{line => 3, spec => bool}},
             spec => 'Falsy',
             type =>
                 {type, #{
@@ -882,7 +882,7 @@ typecheck_and_annotate_less_than_comparison_operator_with_ints_test() ->
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => bool}},
+                        {type, #{line => 3, spec => bool}},
                     source => rufus_text,
                     spec => 'func() bool'
                 }}
@@ -989,7 +989,7 @@ typecheck_and_annotate_less_than_or_equal_comparison_operator_with_ints_test() -
                             line => 3,
                             spec => 2,
                             type =>
-                                {type, #{line => 3, source => inferred, spec => int}}
+                                {type, #{line => 3, spec => int}}
                         }},
                     line => 3,
                     op => '<=',
@@ -998,16 +998,16 @@ typecheck_and_annotate_less_than_or_equal_comparison_operator_with_ints_test() -
                             line => 3,
                             spec => 1,
                             type =>
-                                {type, #{line => 3, source => inferred, spec => int}}
+                                {type, #{line => 3, spec => int}}
                         }},
                     type =>
-                        {type, #{line => 3, source => inferred, spec => bool}}
+                        {type, #{line => 3, spec => bool}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => bool}},
+                {type, #{line => 3, spec => bool}},
             spec => 'Falsy',
             type =>
                 {type, #{
@@ -1015,7 +1015,7 @@ typecheck_and_annotate_less_than_or_equal_comparison_operator_with_ints_test() -
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => bool}},
+                        {type, #{line => 3, spec => bool}},
                     source => rufus_text,
                     spec => 'func() bool'
                 }}
@@ -1122,7 +1122,7 @@ typecheck_and_annotate_greater_than_comparison_operator_with_ints_test() ->
                             line => 3,
                             spec => 1,
                             type =>
-                                {type, #{line => 3, source => inferred, spec => int}}
+                                {type, #{line => 3, spec => int}}
                         }},
                     line => 3,
                     op => '>',
@@ -1131,16 +1131,16 @@ typecheck_and_annotate_greater_than_comparison_operator_with_ints_test() ->
                             line => 3,
                             spec => 2,
                             type =>
-                                {type, #{line => 3, source => inferred, spec => int}}
+                                {type, #{line => 3, spec => int}}
                         }},
                     type =>
-                        {type, #{line => 3, source => inferred, spec => bool}}
+                        {type, #{line => 3, spec => bool}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => bool}},
+                {type, #{line => 3, spec => bool}},
             spec => 'Falsy',
             type =>
                 {type, #{
@@ -1148,7 +1148,7 @@ typecheck_and_annotate_greater_than_comparison_operator_with_ints_test() ->
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => bool}},
+                        {type, #{line => 3, spec => bool}},
                     source => rufus_text,
                     spec => 'func() bool'
                 }}
@@ -1255,7 +1255,7 @@ typecheck_and_annotate_greater_than_or_equal_comparison_operator_with_ints_test(
                             line => 3,
                             spec => 1,
                             type =>
-                                {type, #{line => 3, source => inferred, spec => int}}
+                                {type, #{line => 3, spec => int}}
                         }},
                     line => 3,
                     op => '>=',
@@ -1264,16 +1264,16 @@ typecheck_and_annotate_greater_than_or_equal_comparison_operator_with_ints_test(
                             line => 3,
                             spec => 2,
                             type =>
-                                {type, #{line => 3, source => inferred, spec => int}}
+                                {type, #{line => 3, spec => int}}
                         }},
                     type =>
-                        {type, #{line => 3, source => inferred, spec => bool}}
+                        {type, #{line => 3, spec => bool}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => bool}},
+                {type, #{line => 3, spec => bool}},
             spec => 'Falsy',
             type =>
                 {type, #{
@@ -1281,7 +1281,7 @@ typecheck_and_annotate_greater_than_or_equal_comparison_operator_with_ints_test(
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => bool}},
+                        {type, #{line => 3, spec => bool}},
                     source => rufus_text,
                     spec => 'func() bool'
                 }}

@@ -752,7 +752,7 @@ parse_function_taking_and_returning_a_function_test() ->
                             line => 2,
                             param_types => [],
                             return_type =>
-                                {type, #{line => 2, source => rufus_text, spec => int}},
+                                {type, #{line => 2, spec => int}},
                             source => rufus_text,
                             spec => 'func() int'
                         }}
@@ -764,7 +764,7 @@ parse_function_taking_and_returning_a_function_test() ->
                     line => 2,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 2, source => rufus_text, spec => int}},
+                        {type, #{line => 2, spec => int}},
                     source => rufus_text,
                     spec => 'func() int'
                 }},
@@ -801,7 +801,7 @@ parse_function_returning_a_function_test() ->
                     line => 3,
                     params => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             line => 2,
@@ -812,7 +812,7 @@ parse_function_returning_a_function_test() ->
                     line => 2,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 2, source => rufus_text, spec => int}},
+                        {type, #{line => 2, spec => int}},
                     source => rufus_text,
                     spec => 'func() int'
                 }},
@@ -870,7 +870,7 @@ parse_function_returning_a_function_variable_test() ->
                             line => 3,
                             params => [],
                             return_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}}
+                                {type, #{line => 3, spec => int}}
                         }}
                 }},
                 {identifier, #{line => 4, spec => fn}}
@@ -883,7 +883,7 @@ parse_function_returning_a_function_variable_test() ->
                     line => 2,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 2, source => rufus_text, spec => int}},
+                        {type, #{line => 2, spec => int}},
                     source => rufus_text,
                     spec => 'func() int'
                 }},
@@ -966,7 +966,7 @@ parse_function_returning_a_nested_function_test() ->
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
+                        {type, #{line => 3, spec => int}},
                     source => rufus_text,
                     spec => 'func() int'
                 }},

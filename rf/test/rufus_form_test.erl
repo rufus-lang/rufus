@@ -336,12 +336,12 @@ make_module_test() ->
 
 make_inferred_type_test() ->
     ?assertEqual(
-        {type, #{spec => int, source => inferred, line => 4}},
+        {type, #{spec => int, line => 4}},
         rufus_form:make_inferred_type(int, 4)
     ).
 
 make_type_test() ->
     ?assertEqual(
-        {type, #{spec => float, source => rufus_text, line => 37}},
+        {type, #{spec => float, line => 37}},
         rufus_form:make_type(float, 37)
     ).
