@@ -2994,6 +2994,92 @@ typecheck_and_annotate_for_anonymous_function_taking_a_match_param_test() ->
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
+typecheck_and_annotate_closure_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Memoize(num int) func() int {\n"
+        "        func() int { num }\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            exprs => [
+                {func, #{
+                    exprs => [
+                        {identifier, #{
+                            line => 4,
+                            spec => num,
+                            type =>
+                                {type, #{
+                                    line => 3,
+                                    source => rufus_text,
+                                    spec => int
+                                }}
+                        }}
+                    ],
+                    line => 4,
+                    params => [],
+                    return_type =>
+                        {type, #{line => 4, source => rufus_text, spec => int}},
+                    type =>
+                        {type, #{
+                            kind => func,
+                            line => 4,
+                            param_types => [],
+                            return_type =>
+                                {type, #{line => 4, source => rufus_text, spec => int}},
+                            source => rufus_text,
+                            spec => 'func() int'
+                        }}
+                }}
+            ],
+            line => 3,
+            params => [
+                {param, #{
+                    line => 3,
+                    spec => num,
+                    type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}}
+                }}
+            ],
+            return_type =>
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 3, source => rufus_text, spec => int}},
+                    source => rufus_text,
+                    spec => 'func() int'
+                }},
+            spec => 'Memoize',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [{type, #{line => 3, source => rufus_text, spec => int}}],
+                    return_type =>
+                        {type, #{
+                            kind => func,
+                            line => 3,
+                            param_types => [],
+                            return_type =>
+                                {type, #{line => 3, source => rufus_text, spec => int}},
+                            source => rufus_text,
+                            spec => 'func() int'
+                        }},
+                    source => rufus_text,
+                    spec => 'func(int) func() int'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
 typecheck_and_annotate_anonymous_function_with_unmatched_return_types_test() ->
     RufusText =
         "\n"

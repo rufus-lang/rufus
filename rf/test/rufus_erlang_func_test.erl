@@ -571,3 +571,37 @@ forms_for_function_returning_a_nested_function_test() ->
         ]}
     ],
     ?assertEqual(Expected, ErlangForms).
+
+forms_for_anonymous_function_taking_an_atom_and_returning_an_atom_literal_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func EchoFunc() func(atom) atom {\n"
+        "        func(value atom) atom { value }\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'EchoFunc', 0}]},
+        {function, 3, 'EchoFunc', 0, [
+            {clause, 3, [], [], [
+                {'fun', 4,
+                    {clauses, [
+                        {clause, 4, [{var, 4, value}],
+                            [
+                                [
+                                    {call, 4, {remote, 4, {atom, 4, erlang}, {atom, 4, is_atom}}, [
+                                        {var, 4, value}
+                                    ]}
+                                ]
+                            ],
+                            [{var, 4, value}]}
+                    ]}}
+            ]}
+        ]}
+    ],
+    ?assertEqual(Expected, ErlangForms).

@@ -69,14 +69,14 @@ forms(Acc, [{bool_lit, _Context} = BoolLit | T]) ->
     forms([Form | Acc], T);
 forms(Acc, [{call, Context = #{spec := Spec, args := Args, line := Line}} | T]) ->
     {ok, ArgsForms} = forms([], Args),
-    Form =
+    Name =
         case maps:get(kind, Context, named) of
             anonymous ->
-                {call, Line, {var, Line, Spec}, ArgsForms};
+                {var, Line, Spec};
             named ->
-                {call, Line, {atom, Line, Spec}, ArgsForms}
+                {atom, Line, Spec}
         end,
-    forms([Form | Acc], T);
+    forms([{call, Line, Name, ArgsForms} | Acc], T);
 forms(Acc, [{cons, #{head := Head, tail := Tail, line := Line}} | T]) ->
     {ok, [HeadForm]} = forms([], [Head]),
     {ok, [TailForm]} = forms([], [Tail]),
