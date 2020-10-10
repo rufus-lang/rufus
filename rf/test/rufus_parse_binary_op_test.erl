@@ -43,8 +43,7 @@ parse_function_adding_two_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'Three'
         }}
@@ -106,8 +105,7 @@ parse_function_adding_three_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'Six'
         }}
@@ -153,8 +151,7 @@ parse_function_subtracting_two_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'One'
         }}
@@ -216,8 +213,7 @@ parse_function_subtracting_three_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'MinusNine'
         }}
@@ -263,8 +259,7 @@ parse_function_multiplying_two_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'FortyTwo'
         }}
@@ -326,8 +321,7 @@ parse_function_multiplying_three_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'OneTwenty'
         }}
@@ -373,8 +367,7 @@ parse_function_dividing_two_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'FortyTwo'
         }}
@@ -436,8 +429,7 @@ parse_function_dividing_three_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'Five'
         }}
@@ -483,8 +475,7 @@ parse_function_remaindering_two_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'Six'
         }}
@@ -546,8 +537,7 @@ parse_function_remaindering_three_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'Four'
         }}

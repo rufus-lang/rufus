@@ -27,8 +27,7 @@ parse_function_returning_an_atom_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => atom,
-                    source => rufus_text
+                    spec => atom
                 }},
             spec => 'Color'
         }}
@@ -58,8 +57,7 @@ parse_function_returning_a_bool_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => bool,
-                    source => rufus_text
+                    spec => bool
                 }},
             spec => 'True'
         }}
@@ -89,8 +87,7 @@ parse_function_returning_a_float_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => float,
-                    source => rufus_text
+                    spec => float
                 }},
             spec => 'Pi'
         }}
@@ -120,8 +117,7 @@ parse_function_returning_an_int_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'Number'
         }}
@@ -151,8 +147,7 @@ parse_function_returning_a_string_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => string,
-                    source => rufus_text
+                    spec => string
                 }},
             spec => 'Greeting'
         }}
@@ -309,8 +304,7 @@ parse_function_taking_an_atom_and_returning_an_atom_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            spec => atom,
-                            source => rufus_text
+                            spec => atom
                         }}
                 }}
             ],
@@ -330,8 +324,7 @@ parse_function_taking_an_atom_and_returning_an_atom_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => atom,
-                    source => rufus_text
+                    spec => atom
                 }},
             spec => 'Color'
         }}
@@ -351,8 +344,7 @@ parse_function_taking_a_bool_and_returning_a_bool_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            spec => bool,
-                            source => rufus_text
+                            spec => bool
                         }}
                 }}
             ],
@@ -372,8 +364,7 @@ parse_function_taking_a_bool_and_returning_a_bool_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => bool,
-                    source => rufus_text
+                    spec => bool
                 }},
             spec => 'Echo'
         }}
@@ -393,8 +384,7 @@ parse_function_taking_an_float_and_returning_an_float_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            spec => float,
-                            source => rufus_text
+                            spec => float
                         }}
                 }}
             ],
@@ -414,8 +404,7 @@ parse_function_taking_an_float_and_returning_an_float_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => float,
-                    source => rufus_text
+                    spec => float
                 }},
             spec => 'Echo'
         }}
@@ -435,8 +424,7 @@ parse_function_taking_an_int_and_returning_an_int_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            spec => int,
-                            source => rufus_text
+                            spec => int
                         }}
                 }}
             ],
@@ -456,8 +444,7 @@ parse_function_taking_an_int_and_returning_an_int_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'Echo'
         }}
@@ -477,8 +464,7 @@ parse_function_taking_an_string_and_returning_an_string_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            spec => string,
-                            source => rufus_text
+                            spec => string
                         }}
                 }}
             ],
@@ -498,8 +484,7 @@ parse_function_taking_an_string_and_returning_an_string_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => string,
-                    source => rufus_text
+                    spec => string
                 }},
             spec => 'Echo'
         }}
