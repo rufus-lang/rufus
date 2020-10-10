@@ -257,6 +257,9 @@ typecheck_and_annotate_func_params(
     ),
     ParamTypes = lists:map(fun(ParamForm) -> rufus_form:type(ParamForm) end, AnnotatedParams),
     FuncType = rufus_form:make_type(func, ParamTypes, ReturnType, Line),
+    %% Local symbols from the parameter list are captured and stored on the
+    %% annotated func form. They're used during the second pass when the
+    %% function body is typechecked.
     AnnotatedForm =
         {func, Context#{
             params => AnnotatedParams,
