@@ -487,30 +487,11 @@ typecheck_and_annotate_for_anonymous_function_taking_a_list_literal_test() ->
         "        func(numbers = list[int]{1, 2, 3}) list[int] { numbers }\n"
         "    }\n"
         "    ",
-    {ok, Tokens} = rufus_tokenize:string(RufusText),
-    {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
-    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
-    Expected = [
-        {attribute, 2, module, example},
-        {attribute, 3, export, [{'EchoNumberListFunc', 0}]},
-        {function, 3, 'EchoNumberListFunc', 0, [
-            {clause, 3, [], [], [
-                {'fun', 4,
-                    {clauses, [
-                        {clause, 4,
-                            [
-                                {match, 4, {var, 4, numbers},
-                                    {cons, 4, {integer, 4, 1},
-                                        {cons, 4, {integer, 4, 2},
-                                            {cons, 4, {integer, 4, 3}, {nil, 4}}}}}
-                            ],
-                            [], [{var, 4, numbers}]}
-                    ]}}
-            ]}
-        ]}
-    ],
-    ?assertEqual(Expected, ErlangForms).
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    EchoNumberListFunc = example:'EchoNumberListFunc'(),
+    ?assert(is_function(EchoNumberListFunc)),
+    ?assertEqual([1, 2, 3], EchoNumberListFunc([1, 2, 3])).
 
 typecheck_and_annotate_for_anonymous_function_taking_a_match_param_test() ->
     RufusText =
@@ -522,25 +503,11 @@ typecheck_and_annotate_for_anonymous_function_taking_a_match_param_test() ->
         "        }\n"
         "    }\n"
         "    ",
-    {ok, Tokens} = rufus_tokenize:string(RufusText),
-    {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
-    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
-    Expected = [
-        {attribute, 2, module, example},
-        {attribute, 3, export, [{'EchoFortyTwoFunc', 0}]},
-        {function, 3, 'EchoFortyTwoFunc', 0, [
-            {clause, 3, [], [], [
-                {'fun', 4,
-                    {clauses, [
-                        {clause, 4, [{match, 4, {integer, 4, 42}, {var, 4, value}}], [], [
-                            {var, 5, value}
-                        ]}
-                    ]}}
-            ]}
-        ]}
-    ],
-    ?assertEqual(Expected, ErlangForms).
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    EchoFortyTwoFunc = example:'EchoFortyTwoFunc'(),
+    ?assert(is_function(EchoFortyTwoFunc)),
+    ?assertEqual(42, EchoFortyTwoFunc(42)).
 
 typecheck_and_annotate_closure_test() ->
     RufusText =
@@ -550,23 +517,8 @@ typecheck_and_annotate_closure_test() ->
         "        func() int { num }\n"
         "    }\n"
         "    ",
-    {ok, Tokens} = rufus_tokenize:string(RufusText),
-    {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
-    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
-    Expected = [
-        {attribute, 2, module, example},
-        {attribute, 3, export, [{'Memoize', 1}]},
-        {function, 3, 'Memoize', 1, [
-            {clause, 3, [{var, 3, num}],
-                [
-                    [
-                        {call, 3, {remote, 3, {atom, 3, erlang}, {atom, 3, is_integer}}, [
-                            {var, 3, num}
-                        ]}
-                    ]
-                ],
-                [{'fun', 4, {clauses, [{clause, 4, [], [], [{var, 4, num}]}]}}]}
-        ]}
-    ],
-    ?assertEqual(Expected, ErlangForms).
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    FortyTwoFunc = example:'Memoize'(42),
+    ?assert(is_function(FortyTwoFunc)),
+    ?assertEqual(42, FortyTwoFunc()).
