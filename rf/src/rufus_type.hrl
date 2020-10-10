@@ -12,18 +12,18 @@
 
 -type rufus_text() :: string().
 
-%% Symbols
-
--type symbols() :: #{atom() := list(type_form())}.
--type globals() :: symbols().
--type locals() :: symbols().
-
 %% Types
 
 -type kind_spec() :: func | list.
 -type type_spec() :: atom().
 -type type_form() :: {type, context()}.
 -type type_source() :: inferred | rufus_text.
+
+%% Symbols
+
+-type symbols() :: #{atom() := list(type_form())}.
+-type globals() :: symbols().
+-type locals() :: symbols().
 
 %% Modules
 
