@@ -22,8 +22,7 @@ parse_function_adding_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }},
                     right =>
@@ -33,8 +32,7 @@ parse_function_adding_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -69,8 +67,7 @@ parse_function_adding_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             right =>
@@ -80,8 +77,7 @@ parse_function_adding_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             line => 1
@@ -95,8 +91,7 @@ parse_function_adding_three_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -130,8 +125,7 @@ parse_function_subtracting_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }},
                     right =>
@@ -141,8 +135,7 @@ parse_function_subtracting_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -177,8 +170,7 @@ parse_function_subtracting_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             right =>
@@ -188,8 +180,7 @@ parse_function_subtracting_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             line => 1
@@ -203,8 +194,7 @@ parse_function_subtracting_three_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -238,8 +228,7 @@ parse_function_multiplying_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }},
                     right =>
@@ -249,8 +238,7 @@ parse_function_multiplying_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -285,8 +273,7 @@ parse_function_multiplying_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             right =>
@@ -296,8 +283,7 @@ parse_function_multiplying_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             line => 1
@@ -311,8 +297,7 @@ parse_function_multiplying_three_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -346,8 +331,7 @@ parse_function_dividing_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }},
                     right =>
@@ -357,8 +341,7 @@ parse_function_dividing_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -393,8 +376,7 @@ parse_function_dividing_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             right =>
@@ -404,8 +386,7 @@ parse_function_dividing_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             line => 1
@@ -419,8 +400,7 @@ parse_function_dividing_three_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -454,8 +434,7 @@ parse_function_remaindering_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }},
                     right =>
@@ -465,8 +444,7 @@ parse_function_remaindering_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -501,8 +479,7 @@ parse_function_remaindering_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             right =>
@@ -512,8 +489,7 @@ parse_function_remaindering_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             line => 1
@@ -527,8 +503,7 @@ parse_function_remaindering_three_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}

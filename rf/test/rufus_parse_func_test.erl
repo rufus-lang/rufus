@@ -18,8 +18,7 @@ parse_function_returning_an_atom_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            spec => atom,
-                            source => inferred
+                            spec => atom
                         }}
                 }}
             ],
@@ -48,8 +47,7 @@ parse_function_returning_a_bool_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            spec => bool,
-                            source => inferred
+                            spec => bool
                         }}
                 }}
             ],
@@ -78,8 +76,7 @@ parse_function_returning_a_float_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            spec => float,
-                            source => inferred
+                            spec => float
                         }}
                 }}
             ],
@@ -108,8 +105,7 @@ parse_function_returning_an_int_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            spec => int,
-                            source => inferred
+                            spec => int
                         }}
                 }}
             ],
@@ -138,8 +134,7 @@ parse_function_returning_a_string_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            spec => string,
-                            source => inferred
+                            spec => string
                         }}
                 }}
             ],
@@ -315,8 +310,7 @@ parse_function_taking_an_atom_and_returning_an_atom_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            spec => atom,
-                            source => inferred
+                            spec => atom
                         }}
                 }}
             ],
@@ -355,8 +349,7 @@ parse_function_taking_a_bool_and_returning_a_bool_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            spec => bool,
-                            source => inferred
+                            spec => bool
                         }}
                 }}
             ],
@@ -395,8 +388,7 @@ parse_function_taking_an_float_and_returning_an_float_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            spec => float,
-                            source => inferred
+                            spec => float
                         }}
                 }}
             ],
@@ -435,8 +427,7 @@ parse_function_taking_an_int_and_returning_an_int_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            spec => int,
-                            source => inferred
+                            spec => int
                         }}
                 }}
             ],
@@ -475,8 +466,7 @@ parse_function_taking_an_string_and_returning_an_string_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            spec => string,
-                            source => inferred
+                            spec => string
                         }}
                 }}
             ],
