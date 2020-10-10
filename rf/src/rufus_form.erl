@@ -8,7 +8,6 @@
     has_type/1,
     line/1,
     return_type/1,
-    source/1,
     spec/1,
     type/1,
     type_spec/1,
@@ -26,8 +25,6 @@
     make_func_params/1,
     make_identifier/2,
     make_import/2,
-    make_inferred_type/2,
-    make_inferred_type/3,
     make_literal/3,
     make_literal/4,
     make_match/3,
@@ -55,11 +52,6 @@ return_type({func, #{return_type := ReturnType}}) ->
     ReturnType;
 return_type({type, #{kind := func, return_type := ReturnType}}) ->
     ReturnType.
-
-%% source returns information about where the type information is from.
--spec source(type_form()) -> type_source().
-source({type, #{source := Source}}) ->
-    Source.
 
 %% spec returns the human-readable name for the form.
 -spec spec(rufus_form()) -> atom().
@@ -228,7 +220,7 @@ make_literal(TypeSpec, Spec, Line) ->
     FormSpec = list_to_atom(unicode:characters_to_list([atom_to_list(TypeSpec), "_lit"])),
     {FormSpec, #{
         spec => Spec,
-        type => make_inferred_type(TypeSpec, Line),
+        type => make_type(TypeSpec, Line),
         line => Line
     }}.
 
@@ -267,33 +259,12 @@ make_module(Spec, Line) ->
 
 %% type form builder API
 
-%% make_inferred_type creates a type form with 'inferred' as the 'source' value,
-%% to indicate that the type has been inferred by the compiler.
--spec make_inferred_type(type_spec(), integer()) ->
-    {type, #{spec => atom(), source => type_source(), line => integer()}}.
-make_inferred_type(Spec, Line) ->
-    make_type_with_source(Spec, inferred, Line).
-
-%% make_inferred_type creates a list type form with 'inferred' as the 'source'
-%% value, to indicate that the type of the list has been inferred by the
-%% compiler.
--spec make_inferred_type(list, type_form(), integer()) ->
-    {type, #{
-        kind => list,
-        element_type => type_form(),
-        line => integer(),
-        source => type_source(),
-        spec => atom()
-    }}.
-make_inferred_type(list, ElementType, Line) ->
-    make_type_with_source(list, ElementType, inferred, Line).
-
 %% make_type returns a type form with 'rufus_text' as the 'source' value, to
 %% indicate that the type came from source code.
 -spec make_type(atom(), integer()) ->
     {type, #{spec => atom(), source => type_source(), line => integer()}}.
 make_type(Spec, Line) ->
-    make_type_with_source(Spec, rufus_text, Line).
+    {type, #{spec => Spec, line => Line}}.
 
 %% make_type returns a list type form with 'rufus_text' as the 'source' value,
 %% to indicate that the type came from source code. The type form has a
@@ -302,18 +273,16 @@ make_type(Spec, Line) ->
 %% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
 %% -spec make_type(list, {type, context()}, integer()) -> {type, #{kind => list, element_type => type_spec(), spec => atom(), source => type_source(), line => integer()}}.
 make_type(list, ElementType, Line) ->
-    make_type_with_source(list, ElementType, rufus_text, Line).
+    {type, #{spec := Spec}} = ElementType,
+    TypeSpec = list_to_atom(unicode:characters_to_list(["list[", atom_to_list(Spec), "]"])),
+    {type, #{
+        kind => list,
+        element_type => ElementType,
+        spec => TypeSpec,
+        line => Line
+    }}.
 
 make_type(func, ParamTypes, ReturnType, Line) ->
-    make_type_with_source(func, ParamTypes, ReturnType, rufus_text, Line).
-
--spec make_type_with_source(type_spec(), type_source(), integer()) -> type_form().
-make_type_with_source(Spec, Source, Line) ->
-    {type, #{spec => Spec, source => Source, line => Line}}.
-
--spec make_type_with_source(func, list(type_form()), type_form(), type_source(), integer()) ->
-    type_form() | no_return().
-make_type_with_source(func, ParamTypes, ReturnType, Source, Line) ->
     ParamTypeSpecs = lists:map(
         fun(ParamType) ->
             atom_to_list(type_spec(ParamType))
@@ -333,19 +302,6 @@ make_type_with_source(func, ParamTypes, ReturnType, Source, Line) ->
         kind => func,
         param_types => ParamTypes,
         return_type => ReturnType,
-        source => Source,
         spec => Spec,
-        line => Line
-    }}.
-
--spec make_type_with_source(list | list_lit, type_form(), type_source(), integer()) -> type_form().
-make_type_with_source(_Kind, ElementType, Source, Line) ->
-    {type, #{spec := Spec}} = ElementType,
-    TypeSpec = list_to_atom(unicode:characters_to_list(["list[", atom_to_list(Spec), "]"])),
-    {type, #{
-        kind => list,
-        element_type => ElementType,
-        spec => TypeSpec,
-        source => Source,
         line => Line
     }}.

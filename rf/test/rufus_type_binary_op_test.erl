@@ -8,7 +8,7 @@ resolve_arithmetic_binary_op_with_ints_test() ->
             Left = rufus_form:make_literal(int, 5, 9),
             Right = rufus_form:make_literal(int, 7, 9),
             Form = rufus_form:make_binary_op(Op, Left, Right, 9),
-            Expected = rufus_form:make_inferred_type(int, 9),
+            Expected = rufus_form:make_type(int, 9),
             ?assertEqual({ok, Expected}, rufus_type:resolve(#{}, Form))
         end,
         ['+', '-', '*', '/', '%']
@@ -21,7 +21,7 @@ resolve_arithmetic_binary_op_with_floats_test() ->
             Left = rufus_form:make_literal(float, 1.0, 9),
             Right = rufus_form:make_literal(float, 2.14159265359, 9),
             Form = rufus_form:make_binary_op(Op, Left, Right, 9),
-            Expected = rufus_form:make_inferred_type(float, 9),
+            Expected = rufus_form:make_type(float, 9),
             ?assertEqual({ok, Expected}, rufus_type:resolve(#{}, Form))
         end,
         ['+', '-', '*', '/']
@@ -81,7 +81,7 @@ resolve_boolean_binary_op_with_bools_test() ->
             Left = rufus_form:make_literal(bool, true, 9),
             Right = rufus_form:make_literal(bool, false, 9),
             Form = rufus_form:make_binary_op(Op, Left, Right, 9),
-            Expected = rufus_form:make_inferred_type(bool, 9),
+            Expected = rufus_form:make_type(bool, 9),
             ?assertEqual({ok, Expected}, rufus_type:resolve(#{}, Form))
         end,
         ['and', 'or']

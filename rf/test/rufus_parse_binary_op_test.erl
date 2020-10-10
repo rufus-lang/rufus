@@ -22,8 +22,7 @@ parse_function_adding_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }},
                     right =>
@@ -33,8 +32,7 @@ parse_function_adding_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -43,8 +41,7 @@ parse_function_adding_two_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'Three'
         }}
@@ -70,8 +67,7 @@ parse_function_adding_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             right =>
@@ -81,8 +77,7 @@ parse_function_adding_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             line => 1
@@ -96,8 +91,7 @@ parse_function_adding_three_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -106,8 +100,7 @@ parse_function_adding_three_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'Six'
         }}
@@ -132,8 +125,7 @@ parse_function_subtracting_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }},
                     right =>
@@ -143,8 +135,7 @@ parse_function_subtracting_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -153,8 +144,7 @@ parse_function_subtracting_two_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'One'
         }}
@@ -180,8 +170,7 @@ parse_function_subtracting_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             right =>
@@ -191,8 +180,7 @@ parse_function_subtracting_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             line => 1
@@ -206,8 +194,7 @@ parse_function_subtracting_three_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -216,8 +203,7 @@ parse_function_subtracting_three_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'MinusNine'
         }}
@@ -242,8 +228,7 @@ parse_function_multiplying_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }},
                     right =>
@@ -253,8 +238,7 @@ parse_function_multiplying_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -263,8 +247,7 @@ parse_function_multiplying_two_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'FortyTwo'
         }}
@@ -290,8 +273,7 @@ parse_function_multiplying_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             right =>
@@ -301,8 +283,7 @@ parse_function_multiplying_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             line => 1
@@ -316,8 +297,7 @@ parse_function_multiplying_three_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -326,8 +306,7 @@ parse_function_multiplying_three_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'OneTwenty'
         }}
@@ -352,8 +331,7 @@ parse_function_dividing_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }},
                     right =>
@@ -363,8 +341,7 @@ parse_function_dividing_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -373,8 +350,7 @@ parse_function_dividing_two_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'FortyTwo'
         }}
@@ -400,8 +376,7 @@ parse_function_dividing_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             right =>
@@ -411,8 +386,7 @@ parse_function_dividing_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             line => 1
@@ -426,8 +400,7 @@ parse_function_dividing_three_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -436,8 +409,7 @@ parse_function_dividing_three_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'Five'
         }}
@@ -462,8 +434,7 @@ parse_function_remaindering_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }},
                     right =>
@@ -473,8 +444,7 @@ parse_function_remaindering_two_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -483,8 +453,7 @@ parse_function_remaindering_two_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'Six'
         }}
@@ -510,8 +479,7 @@ parse_function_remaindering_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             right =>
@@ -521,8 +489,7 @@ parse_function_remaindering_three_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            spec => int,
-                                            source => inferred
+                                            spec => int
                                         }}
                                 }},
                             line => 1
@@ -536,8 +503,7 @@ parse_function_remaindering_three_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    spec => int,
-                                    source => inferred
+                                    spec => int
                                 }}
                         }}
                 }}
@@ -546,8 +512,7 @@ parse_function_remaindering_three_ints_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    spec => int,
-                    source => rufus_text
+                    spec => int
                 }},
             spec => 'Four'
         }}
@@ -571,7 +536,6 @@ parse_function_anding_two_bools_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }},
@@ -584,7 +548,6 @@ parse_function_anding_two_bools_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }}
@@ -595,7 +558,6 @@ parse_function_anding_two_bools_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => bool
                 }},
             spec => 'Falsy'
@@ -618,7 +580,6 @@ parse_function_oring_two_bools_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }},
@@ -631,7 +592,6 @@ parse_function_oring_two_bools_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }}
@@ -642,7 +602,6 @@ parse_function_oring_two_bools_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => bool
                 }},
             spec => 'Truthy'
@@ -667,7 +626,6 @@ parse_function_comparing_two_bools_for_equality_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }},
@@ -680,7 +638,6 @@ parse_function_comparing_two_bools_for_equality_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }}
@@ -691,7 +648,6 @@ parse_function_comparing_two_bools_for_equality_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => bool
                 }},
             spec => 'Falsy'
@@ -714,7 +670,6 @@ parse_function_comparing_two_bools_for_inequality_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }},
@@ -727,7 +682,6 @@ parse_function_comparing_two_bools_for_inequality_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }}
@@ -738,7 +692,6 @@ parse_function_comparing_two_bools_for_inequality_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => bool
                 }},
             spec => 'Falsy'
@@ -761,7 +714,6 @@ parse_function_comparing_two_ints_to_determine_which_is_lesser_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }},
@@ -774,7 +726,6 @@ parse_function_comparing_two_ints_to_determine_which_is_lesser_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }}
@@ -785,7 +736,6 @@ parse_function_comparing_two_ints_to_determine_which_is_lesser_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => bool
                 }},
             spec => 'Falsy'
@@ -808,7 +758,6 @@ parse_function_comparing_two_ints_to_determine_which_is_lesser_or_equal_test() -
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }},
@@ -821,7 +770,6 @@ parse_function_comparing_two_ints_to_determine_which_is_lesser_or_equal_test() -
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }}
@@ -832,7 +780,6 @@ parse_function_comparing_two_ints_to_determine_which_is_lesser_or_equal_test() -
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => bool
                 }},
             spec => 'Falsy'
@@ -855,7 +802,6 @@ parse_function_comparing_two_ints_to_determine_which_is_greater_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }},
@@ -868,7 +814,6 @@ parse_function_comparing_two_ints_to_determine_which_is_greater_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }}
@@ -879,7 +824,6 @@ parse_function_comparing_two_ints_to_determine_which_is_greater_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => bool
                 }},
             spec => 'Falsy'
@@ -902,7 +846,6 @@ parse_function_comparing_two_ints_to_determine_which_is_greater_or_equal_test() 
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }},
@@ -915,7 +858,6 @@ parse_function_comparing_two_ints_to_determine_which_is_greater_or_equal_test() 
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }}
@@ -926,7 +868,6 @@ parse_function_comparing_two_ints_to_determine_which_is_greater_or_equal_test() 
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => bool
                 }},
             spec => 'Falsy'

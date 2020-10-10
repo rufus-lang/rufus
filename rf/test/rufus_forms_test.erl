@@ -14,8 +14,7 @@ map_with_noop_function_test() ->
 map_test() ->
     Form = rufus_form:make_literal(bool, true, 7),
     Expected1 =
-        {bool_lit,
-            Context = #{spec => true, line => 7, type => rufus_form:make_inferred_type(bool, 7)}},
+        {bool_lit, Context = #{spec => true, line => 7, type => rufus_form:make_type(bool, 7)}},
     ?assertEqual(Expected1, Form),
     [AnnotatedForm] = rufus_forms:map([Form], fun annotate/1),
     Expected2 = {bool_lit, Context#{annotated => true}},
@@ -154,10 +153,9 @@ globals_test() ->
             {type, #{
                 kind => func,
                 line => 3,
-                param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
+                param_types => [{type, #{line => 3, spec => string}}],
                 return_type =>
-                    {type, #{line => 3, source => rufus_text, spec => string}},
-                source => rufus_text,
+                    {type, #{line => 3, spec => string}},
                 spec => 'func(string) string'
             }}
         ],
@@ -167,8 +165,7 @@ globals_test() ->
                 line => 4,
                 param_types => [],
                 return_type =>
-                    {type, #{line => 4, source => rufus_text, spec => int}},
-                source => rufus_text,
+                    {type, #{line => 4, spec => int}},
                 spec => 'func() int'
             }}
         ]
@@ -190,19 +187,17 @@ globals_with_multiple_function_heads_test() ->
             {type, #{
                 kind => func,
                 line => 3,
-                param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
+                param_types => [{type, #{line => 3, spec => string}}],
                 return_type =>
-                    {type, #{line => 3, source => rufus_text, spec => string}},
-                source => rufus_text,
+                    {type, #{line => 3, spec => string}},
                 spec => 'func(string) string'
             }},
             {type, #{
                 kind => func,
                 line => 4,
-                param_types => [{type, #{line => 4, source => rufus_text, spec => int}}],
+                param_types => [{type, #{line => 4, spec => int}}],
                 return_type =>
-                    {type, #{line => 4, source => rufus_text, spec => int}},
-                source => rufus_text,
+                    {type, #{line => 4, spec => int}},
                 spec => 'func(int) int'
             }}
         ]

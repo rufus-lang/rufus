@@ -17,12 +17,6 @@ return_type_test() ->
     Form = rufus_form:make_func('Ping', [], ReturnType, [], 13),
     ?assertEqual(ReturnType, rufus_form:return_type(Form)).
 
-source_test() ->
-    Type = rufus_form:make_type(int, 19),
-    ?assertEqual(rufus_text, rufus_form:source(Type)),
-    InferredType = rufus_form:make_inferred_type(int, 27),
-    ?assertEqual(inferred, rufus_form:source(InferredType)).
-
 spec_test() ->
     Form =
         {identifier, #{
@@ -32,7 +26,7 @@ spec_test() ->
     ?assertEqual(n, rufus_form:spec(Form)).
 
 has_type_test() ->
-    Type = rufus_form:make_inferred_type(int, 27),
+    Type = rufus_form:make_type(int, 27),
     Form =
         {int_lit, #{
             spec => 42,
@@ -42,7 +36,7 @@ has_type_test() ->
     ?assertEqual(true, rufus_form:has_type(Form)).
 
 has_type_infers_identifier_type_from_locals_test() ->
-    Type = rufus_form:make_inferred_type(int, 27),
+    Type = rufus_form:make_type(int, 27),
     {FormType, Context} = rufus_form:make_identifier(number, 13),
     Locals = #{number => Type},
     Form = {FormType, Context#{locals => Locals}},
@@ -65,7 +59,7 @@ element_type_test() ->
     ?assertEqual(ElementType, rufus_form:element_type(Form)).
 
 type_test() ->
-    Type = rufus_form:make_inferred_type(int, 27),
+    Type = rufus_form:make_type(int, 27),
     Form =
         {int_lit, #{
             spec => 42,
@@ -75,7 +69,7 @@ type_test() ->
     ?assertEqual(Type, rufus_form:type(Form)).
 
 type_spec_with_rufus_form_test() ->
-    Type = rufus_form:make_inferred_type(int, 27),
+    Type = rufus_form:make_type(int, 27),
     Form =
         {int_lit, #{
             spec => 42,
@@ -85,7 +79,7 @@ type_spec_with_rufus_form_test() ->
     ?assertEqual(int, rufus_form:type_spec(Form)).
 
 type_spec_with_type_form_test() ->
-    Type = rufus_form:make_inferred_type(int, 27),
+    Type = rufus_form:make_type(int, 27),
     ?assertEqual(int, rufus_form:type_spec(Type)).
 
 type_spec_with_locals_test() ->
@@ -254,7 +248,7 @@ make_literal_for_bool_lit_test() ->
         {bool_lit, #{
             spec => true,
             line => 7,
-            type => rufus_form:make_inferred_type(bool, 7)
+            type => rufus_form:make_type(bool, 7)
         }},
     ?assertEqual(Expected, rufus_form:make_literal(bool, true, 7)).
 
@@ -263,7 +257,7 @@ make_literal_for_float_lit_test() ->
         {float_lit, #{
             spec => "37.103",
             line => 92,
-            type => rufus_form:make_inferred_type(float, 92)
+            type => rufus_form:make_type(float, 92)
         }},
     ?assertEqual(Expected, rufus_form:make_literal(float, "37.103", 92)).
 
@@ -272,7 +266,7 @@ make_literal_for_int_lit_test() ->
         {int_lit, #{
             spec => "42",
             line => 5,
-            type => rufus_form:make_inferred_type(int, 5)
+            type => rufus_form:make_type(int, 5)
         }},
     ?assertEqual(Expected, rufus_form:make_literal(int, "42", 5)).
 
@@ -281,7 +275,7 @@ make_literal_for_string_lit_test() ->
         {string_lit, #{
             spec => <<"hello">>,
             line => 9,
-            type => rufus_form:make_inferred_type(string, 9)
+            type => rufus_form:make_type(string, 9)
         }},
     ?assertEqual(Expected, rufus_form:make_literal(string, <<"hello">>, 9)).
 
@@ -334,14 +328,8 @@ make_module_test() ->
         }},
     ?assertEqual(Expected, rufus_form:make_module(example, 1)).
 
-make_inferred_type_test() ->
-    ?assertEqual(
-        {type, #{spec => int, source => inferred, line => 4}},
-        rufus_form:make_inferred_type(int, 4)
-    ).
-
 make_type_test() ->
     ?assertEqual(
-        {type, #{spec => float, source => rufus_text, line => 37}},
-        rufus_form:make_type(float, 37)
+        {type, #{spec => int, line => 4}},
+        rufus_form:make_type(int, 4)
     ).

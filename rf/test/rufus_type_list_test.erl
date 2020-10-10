@@ -25,7 +25,6 @@ resolve_list_with_mismatched_element_type_test() ->
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => float
                             }}
                     }}
@@ -37,11 +36,9 @@ resolve_list_with_mismatched_element_type_test() ->
                         element_type =>
                             {type, #{
                                 line => 3,
-                                source => rufus_text,
                                 spec => int
                             }},
                         line => 3,
-                        source => rufus_text,
                         spec => 'list[int]'
                     }}
             }}

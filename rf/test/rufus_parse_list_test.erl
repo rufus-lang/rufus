@@ -18,11 +18,9 @@ parse_function_returning_empty_list_of_ints_test() ->
                             element_type =>
                                 {type, #{
                                     line => 1,
-                                    source => rufus_text,
                                     spec => int
                                 }},
                             line => 1,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -35,11 +33,9 @@ parse_function_returning_empty_list_of_ints_test() ->
                     element_type =>
                         {type, #{
                             line => 1,
-                            source => rufus_text,
                             spec => int
                         }},
                     line => 1,
-                    source => rufus_text,
                     spec => 'list[int]'
                 }},
             spec => 'EmptyNumbers'
@@ -62,7 +58,6 @@ parse_function_returning_list_of_int_with_one_element_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }}
@@ -74,11 +69,9 @@ parse_function_returning_list_of_int_with_one_element_test() ->
                             element_type =>
                                 {type, #{
                                     line => 1,
-                                    source => rufus_text,
                                     spec => int
                                 }},
                             line => 1,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -91,11 +84,9 @@ parse_function_returning_list_of_int_with_one_element_test() ->
                     element_type =>
                         {type, #{
                             line => 1,
-                            source => rufus_text,
                             spec => int
                         }},
                     line => 1,
-                    source => rufus_text,
                     spec => 'list[int]'
                 }},
             spec => 'OneNumber'
@@ -118,7 +109,6 @@ parse_function_returning_list_of_many_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }},
@@ -128,7 +118,6 @@ parse_function_returning_list_of_many_ints_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }}
@@ -140,11 +129,9 @@ parse_function_returning_list_of_many_ints_test() ->
                             element_type =>
                                 {type, #{
                                     line => 1,
-                                    source => rufus_text,
                                     spec => int
                                 }},
                             line => 1,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -157,11 +144,9 @@ parse_function_returning_list_of_many_ints_test() ->
                     element_type =>
                         {type, #{
                             line => 1,
-                            source => rufus_text,
                             spec => int
                         }},
                     line => 1,
-                    source => rufus_text,
                     spec => 'list[int]'
                 }},
             spec => 'ManyNumbers'
@@ -187,7 +172,6 @@ parse_function_returning_nested_list_of_list_of_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            source => inferred,
                                             spec => int
                                         }}
                                 }}
@@ -199,11 +183,9 @@ parse_function_returning_nested_list_of_list_of_ints_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 1,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     line => 1,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                         }},
@@ -215,7 +197,6 @@ parse_function_returning_nested_list_of_list_of_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            source => inferred,
                                             spec => int
                                         }}
                                 }},
@@ -225,7 +206,6 @@ parse_function_returning_nested_list_of_list_of_ints_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            source => inferred,
                                             spec => int
                                         }}
                                 }}
@@ -237,11 +217,9 @@ parse_function_returning_nested_list_of_list_of_ints_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 1,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     line => 1,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                         }}
@@ -256,15 +234,12 @@ parse_function_returning_nested_list_of_list_of_ints_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 1,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     line => 1,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }},
                             line => 1,
-                            source => rufus_text,
                             spec => 'list[list[int]]'
                         }}
                 }}
@@ -280,15 +255,12 @@ parse_function_returning_nested_list_of_list_of_ints_test() ->
                             element_type =>
                                 {type, #{
                                     line => 1,
-                                    source => rufus_text,
                                     spec => int
                                 }},
                             line => 1,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }},
                     line => 1,
-                    source => rufus_text,
                     spec => 'list[list[int]]'
                 }},
             spec => 'NestedNumbers'
@@ -319,11 +291,9 @@ parse_function_taking_and_returning_list_of_ints_test() ->
                             element_type =>
                                 {type, #{
                                     line => 1,
-                                    source => rufus_text,
                                     spec => int
                                 }},
                             line => 1,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -334,11 +304,9 @@ parse_function_taking_and_returning_list_of_ints_test() ->
                     element_type =>
                         {type, #{
                             line => 1,
-                            source => rufus_text,
                             spec => int
                         }},
                     line => 1,
-                    source => rufus_text,
                     spec => 'list[int]'
                 }},
             spec => 'Echo'
@@ -361,7 +329,6 @@ parse_function_returning_a_cons_expression_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }},
@@ -375,7 +342,6 @@ parse_function_returning_a_cons_expression_test() ->
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            source => inferred,
                                             spec => int
                                         }}
                                 }}
@@ -387,11 +353,9 @@ parse_function_returning_a_cons_expression_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 1,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     line => 1,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                         }},
@@ -401,11 +365,9 @@ parse_function_returning_a_cons_expression_test() ->
                             element_type =>
                                 {type, #{
                                     line => 1,
-                                    source => rufus_text,
                                     spec => int
                                 }},
                             line => 1,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -418,11 +380,9 @@ parse_function_returning_a_cons_expression_test() ->
                     element_type =>
                         {type, #{
                             line => 1,
-                            source => rufus_text,
                             spec => int
                         }},
                     line => 1,
-                    source => rufus_text,
                     spec => 'list[int]'
                 }},
             spec => 'Numbers'
@@ -453,7 +413,6 @@ parse_function_that_creates_cons_expression_from_a_variable_and_a_list_literal_t
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            source => inferred,
                                             spec => int
                                         }}
                                 }},
@@ -463,7 +422,6 @@ parse_function_that_creates_cons_expression_from_a_variable_and_a_list_literal_t
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            source => inferred,
                                             spec => int
                                         }}
                                 }},
@@ -473,7 +431,6 @@ parse_function_that_creates_cons_expression_from_a_variable_and_a_list_literal_t
                                     type =>
                                         {type, #{
                                             line => 1,
-                                            source => inferred,
                                             spec => int
                                         }}
                                 }}
@@ -485,11 +442,9 @@ parse_function_that_creates_cons_expression_from_a_variable_and_a_list_literal_t
                                     element_type =>
                                         {type, #{
                                             line => 1,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     line => 1,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                         }},
@@ -499,11 +454,9 @@ parse_function_that_creates_cons_expression_from_a_variable_and_a_list_literal_t
                             element_type =>
                                 {type, #{
                                     line => 1,
-                                    source => rufus_text,
                                     spec => int
                                 }},
                             line => 1,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -516,7 +469,6 @@ parse_function_that_creates_cons_expression_from_a_variable_and_a_list_literal_t
                     type =>
                         {type, #{
                             line => 1,
-                            source => rufus_text,
                             spec => int
                         }}
                 }}
@@ -527,11 +479,9 @@ parse_function_that_creates_cons_expression_from_a_variable_and_a_list_literal_t
                     element_type =>
                         {type, #{
                             line => 1,
-                            source => rufus_text,
                             spec => int
                         }},
                     line => 1,
-                    source => rufus_text,
                     spec => 'list[int]'
                 }},
             spec => 'Prepend'
@@ -567,7 +517,6 @@ parse_function_that_creates_cons_expression_from_head_and_tail_variables_test() 
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }}
@@ -588,7 +537,6 @@ parse_function_that_creates_cons_expression_from_head_and_tail_variables_test() 
                                     type =>
                                         {type, #{
                                             line => 4,
-                                            source => inferred,
                                             spec => int
                                         }}
                                 }},
@@ -598,7 +546,6 @@ parse_function_that_creates_cons_expression_from_head_and_tail_variables_test() 
                                     type =>
                                         {type, #{
                                             line => 4,
-                                            source => inferred,
                                             spec => int
                                         }}
                                 }},
@@ -608,7 +555,6 @@ parse_function_that_creates_cons_expression_from_head_and_tail_variables_test() 
                                     type =>
                                         {type, #{
                                             line => 4,
-                                            source => inferred,
                                             spec => int
                                         }}
                                 }}
@@ -620,11 +566,9 @@ parse_function_that_creates_cons_expression_from_head_and_tail_variables_test() 
                                     element_type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     line => 4,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                         }}
@@ -647,11 +591,9 @@ parse_function_that_creates_cons_expression_from_head_and_tail_variables_test() 
                             element_type =>
                                 {type, #{
                                     line => 5,
-                                    source => rufus_text,
                                     spec => int
                                 }},
                             line => 5,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -664,11 +606,9 @@ parse_function_that_creates_cons_expression_from_head_and_tail_variables_test() 
                     element_type =>
                         {type, #{
                             line => 2,
-                            source => rufus_text,
                             spec => int
                         }},
                     line => 2,
-                    source => rufus_text,
                     spec => 'list[int]'
                 }},
             spec => 'Numbers'
@@ -691,9 +631,8 @@ parse_function_taking_a_cons_pattern_test() ->
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 1, source => rufus_text, spec => int}},
+                                {type, #{line => 1, spec => int}},
                             line => 1,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -708,9 +647,8 @@ parse_function_taking_a_cons_pattern_test() ->
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 1, source => rufus_text, spec => int}},
+                                {type, #{line => 1, spec => int}},
                             line => 1,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -719,9 +657,8 @@ parse_function_taking_a_cons_pattern_test() ->
                 {type, #{
                     kind => list,
                     element_type =>
-                        {type, #{line => 1, source => rufus_text, spec => int}},
+                        {type, #{line => 1, spec => int}},
                     line => 1,
-                    source => rufus_text,
                     spec => 'list[int]'
                 }},
             spec => 'Echo'
@@ -754,9 +691,8 @@ parse_function_taking_a_list_pattern_test() ->
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 4, source => rufus_text, spec => int}},
+                                {type, #{line => 4, spec => int}},
                             line => 4,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -774,9 +710,8 @@ parse_function_taking_a_list_pattern_test() ->
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
+                                {type, #{line => 3, spec => int}},
                             line => 3,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -785,9 +720,8 @@ parse_function_taking_a_list_pattern_test() ->
                 {type, #{
                     kind => list,
                     element_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
+                        {type, #{line => 3, spec => int}},
                     line => 3,
-                    source => rufus_text,
                     spec => 'list[int]'
                 }},
             spec => 'Reverse'

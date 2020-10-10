@@ -21,13 +21,13 @@ typecheck_and_annotate_test() ->
                     line => 3,
                     spec => 42,
                     type =>
-                        {type, #{line => 3, source => inferred, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => int}},
+                {type, #{line => 3, spec => int}},
             spec => 'Number',
             type =>
                 {type, #{
@@ -35,8 +35,7 @@ typecheck_and_annotate_test() ->
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => int}},
                     spec => 'func() int'
                 }}
         }}
@@ -67,10 +66,8 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_function_scope_test() ->
                     return_type =>
                         {type, #{
                             line => 7,
-                            source => rufus_text,
                             spec => string
                         }},
-                    source => rufus_text,
                     spec => 'func() string'
                 }}
             ],
@@ -81,17 +78,14 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_function_scope_test() ->
                     param_types => [
                         {type, #{
                             line => 3,
-                            source => rufus_text,
                             spec => string
                         }}
                     ],
                     return_type =>
                         {type, #{
                             line => 3,
-                            source => rufus_text,
                             spec => string
                         }},
-                    source => rufus_text,
                     spec => 'func(string) string'
                 }}
             ]
@@ -105,7 +99,7 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_function_scope_test() ->
                 locals => #{},
                 params => [],
                 return_type =>
-                    {type, #{line => 7, source => rufus_text, spec => string}},
+                    {type, #{line => 7, spec => string}},
                 spec => 'Broken',
                 type =>
                     {type, #{
@@ -115,10 +109,8 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_function_scope_test() ->
                         return_type =>
                             {type, #{
                                 line => 7,
-                                source => rufus_text,
                                 spec => string
                             }},
-                        source => rufus_text,
                         spec => 'func() string'
                     }}
             }}
@@ -154,7 +146,6 @@ typecheck_and_annotate_does_not_rely_on_function_definition_order_test() ->
                                     type =>
                                         {type, #{
                                             line => 4,
-                                            source => inferred,
                                             spec => int
                                         }}
                                 }},
@@ -164,7 +155,6 @@ typecheck_and_annotate_does_not_rely_on_function_definition_order_test() ->
                                     type =>
                                         {type, #{
                                             line => 4,
-                                            source => inferred,
                                             spec => int
                                         }}
                                 }}
@@ -175,12 +165,10 @@ typecheck_and_annotate_does_not_rely_on_function_definition_order_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     kind => list,
                                     line => 4,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                         }}
@@ -190,10 +178,9 @@ typecheck_and_annotate_does_not_rely_on_function_definition_order_test() ->
                     type =>
                         {type, #{
                             element_type =>
-                                {type, #{line => 6, source => rufus_text, spec => int}},
+                                {type, #{line => 6, spec => int}},
                             kind => list,
                             line => 6,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -203,10 +190,9 @@ typecheck_and_annotate_does_not_rely_on_function_definition_order_test() ->
             return_type =>
                 {type, #{
                     element_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
+                        {type, #{line => 3, spec => int}},
                     kind => list,
                     line => 3,
-                    source => rufus_text,
                     spec => 'list[int]'
                 }},
             spec => 'EchoList',
@@ -218,13 +204,11 @@ typecheck_and_annotate_does_not_rely_on_function_definition_order_test() ->
                     return_type =>
                         {type, #{
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
+                                {type, #{line => 3, spec => int}},
                             kind => list,
                             line => 3,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }},
-                    source => rufus_text,
                     spec => 'func() list[int]'
                 }}
         }},
@@ -236,10 +220,9 @@ typecheck_and_annotate_does_not_rely_on_function_definition_order_test() ->
                     type =>
                         {type, #{
                             element_type =>
-                                {type, #{line => 6, source => rufus_text, spec => int}},
+                                {type, #{line => 6, spec => int}},
                             kind => list,
                             line => 6,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -256,7 +239,6 @@ typecheck_and_annotate_does_not_rely_on_function_definition_order_test() ->
                                     type =>
                                         {type, #{
                                             line => 6,
-                                            source => inferred,
                                             spec => int
                                         }}
                                 }},
@@ -266,7 +248,6 @@ typecheck_and_annotate_does_not_rely_on_function_definition_order_test() ->
                                     type =>
                                         {type, #{
                                             line => 6,
-                                            source => inferred,
                                             spec => int
                                         }}
                                 }}
@@ -277,12 +258,10 @@ typecheck_and_annotate_does_not_rely_on_function_definition_order_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 6,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     kind => list,
                                     line => 6,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                         }},
@@ -296,22 +275,19 @@ typecheck_and_annotate_does_not_rely_on_function_definition_order_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 6,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     kind => list,
                                     line => 6,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                         }},
                     type =>
                         {type, #{
                             element_type =>
-                                {type, #{line => 6, source => rufus_text, spec => int}},
+                                {type, #{line => 6, spec => int}},
                             kind => list,
                             line => 6,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -319,10 +295,9 @@ typecheck_and_annotate_does_not_rely_on_function_definition_order_test() ->
             return_type =>
                 {type, #{
                     element_type =>
-                        {type, #{line => 6, source => rufus_text, spec => int}},
+                        {type, #{line => 6, spec => int}},
                     kind => list,
                     line => 6,
-                    source => rufus_text,
                     spec => 'list[int]'
                 }},
             spec => 'MakeList',
@@ -333,23 +308,20 @@ typecheck_and_annotate_does_not_rely_on_function_definition_order_test() ->
                     param_types => [
                         {type, #{
                             element_type =>
-                                {type, #{line => 6, source => rufus_text, spec => int}},
+                                {type, #{line => 6, spec => int}},
                             kind => list,
                             line => 6,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                     ],
                     return_type =>
                         {type, #{
                             element_type =>
-                                {type, #{line => 6, source => rufus_text, spec => int}},
+                                {type, #{line => 6, spec => int}},
                             kind => list,
                             line => 6,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }},
-                    source => rufus_text,
                     spec => 'func(list[int]) list[int]'
                 }}
         }}
@@ -375,7 +347,7 @@ typecheck_and_annotate_for_function_taking_an_atom_and_returning_an_atom_literal
                     line => 3,
                     spec => pong,
                     type =>
-                        {type, #{line => 3, source => inferred, spec => atom}}
+                        {type, #{line => 3, spec => atom}}
                 }}
             ],
             line => 3,
@@ -384,20 +356,19 @@ typecheck_and_annotate_for_function_taking_an_atom_and_returning_an_atom_literal
                     line => 3,
                     spec => m,
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => atom}}
+                        {type, #{line => 3, spec => atom}}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => atom}},
+                {type, #{line => 3, spec => atom}},
             spec => 'Ping',
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => atom}}],
+                    param_types => [{type, #{line => 3, spec => atom}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => atom}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => atom}},
                     spec => 'func(atom) atom'
                 }}
         }}
@@ -421,7 +392,7 @@ typecheck_and_annotate_for_function_taking_a_bool_and_returning_a_bool_literal_t
                     line => 3,
                     spec => true,
                     type =>
-                        {type, #{line => 3, source => inferred, spec => bool}}
+                        {type, #{line => 3, spec => bool}}
                 }}
             ],
             line => 3,
@@ -430,20 +401,19 @@ typecheck_and_annotate_for_function_taking_a_bool_and_returning_a_bool_literal_t
                     line => 3,
                     spec => b,
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => bool}}
+                        {type, #{line => 3, spec => bool}}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => bool}},
+                {type, #{line => 3, spec => bool}},
             spec => 'MaybeEcho',
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => bool}}],
+                    param_types => [{type, #{line => 3, spec => bool}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => bool}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => bool}},
                     spec => 'func(bool) bool'
                 }}
         }}
@@ -467,7 +437,7 @@ typecheck_and_annotate_for_function_taking_a_float_and_returning_a_float_literal
                     line => 3,
                     spec => 3.14159265359,
                     type =>
-                        {type, #{line => 3, source => inferred, spec => float}}
+                        {type, #{line => 3, spec => float}}
                 }}
             ],
             line => 3,
@@ -478,22 +448,20 @@ typecheck_and_annotate_for_function_taking_a_float_and_returning_a_float_literal
                     type =>
                         {type, #{
                             line => 3,
-                            source => rufus_text,
                             spec => float
                         }}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => float}},
+                {type, #{line => 3, spec => float}},
             spec => 'MaybeEcho',
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => float}}],
+                    param_types => [{type, #{line => 3, spec => float}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => float}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => float}},
                     spec => 'func(float) float'
                 }}
         }}
@@ -517,7 +485,7 @@ typecheck_and_annotate_for_function_taking_an_int_and_returning_an_int_literal_t
                     line => 3,
                     spec => 42,
                     type =>
-                        {type, #{line => 3, source => inferred, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             line => 3,
@@ -526,20 +494,19 @@ typecheck_and_annotate_for_function_taking_an_int_and_returning_an_int_literal_t
                     line => 3,
                     spec => n,
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => int}},
+                {type, #{line => 3, spec => int}},
             spec => 'MaybeEcho',
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => int}}],
+                    param_types => [{type, #{line => 3, spec => int}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => int}},
                     spec => 'func(int) int'
                 }}
         }}
@@ -563,7 +530,7 @@ typecheck_and_annotate_for_function_taking_a_string_and_returning_a_string_liter
                     line => 3,
                     spec => <<"Hello">>,
                     type =>
-                        {type, #{line => 3, source => inferred, spec => string}}
+                        {type, #{line => 3, spec => string}}
                 }}
             ],
             line => 3,
@@ -574,22 +541,20 @@ typecheck_and_annotate_for_function_taking_a_string_and_returning_a_string_liter
                     type =>
                         {type, #{
                             line => 3,
-                            source => rufus_text,
                             spec => string
                         }}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => string}},
+                {type, #{line => 3, spec => string}},
             spec => 'MaybeEcho',
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
+                    param_types => [{type, #{line => 3, spec => string}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => string}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => string}},
                     spec => 'func(string) string'
                 }}
         }}
@@ -617,7 +582,6 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_a_list_literal_t
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }}
@@ -627,9 +591,8 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_a_list_literal_t
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
+                                {type, #{line => 3, spec => int}},
                             line => 3,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -643,9 +606,8 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_a_list_literal_t
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
+                                {type, #{line => 3, spec => int}},
                             line => 3,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -654,9 +616,8 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_a_list_literal_t
                 {type, #{
                     kind => list,
                     element_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
+                        {type, #{line => 3, spec => int}},
                     line => 3,
-                    source => rufus_text,
                     spec => 'list[int]'
                 }},
             spec => 'MaybeEcho',
@@ -668,9 +629,8 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_a_list_literal_t
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
+                                {type, #{line => 3, spec => int}},
                             line => 3,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                     ],
@@ -678,12 +638,10 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_a_list_literal_t
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
+                                {type, #{line => 3, spec => int}},
                             line => 3,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }},
-                    source => rufus_text,
                     spec => 'func(list[int]) list[int]'
                 }}
         }}
@@ -709,7 +667,7 @@ typecheck_and_annotate_for_function_taking_an_atom_and_returning_it_test() ->
                     line => 3,
                     spec => b,
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => atom}}
+                        {type, #{line => 3, spec => atom}}
                 }}
             ],
             line => 3,
@@ -718,20 +676,19 @@ typecheck_and_annotate_for_function_taking_an_atom_and_returning_it_test() ->
                     line => 3,
                     spec => b,
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => atom}}
+                        {type, #{line => 3, spec => atom}}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => atom}},
+                {type, #{line => 3, spec => atom}},
             spec => 'Echo',
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => atom}}],
+                    param_types => [{type, #{line => 3, spec => atom}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => atom}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => atom}},
                     spec => 'func(atom) atom'
                 }}
         }}
@@ -755,7 +712,7 @@ typecheck_and_annotate_for_function_taking_a_bool_and_returning_it_test() ->
                     line => 3,
                     spec => b,
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => bool}}
+                        {type, #{line => 3, spec => bool}}
                 }}
             ],
             line => 3,
@@ -764,20 +721,19 @@ typecheck_and_annotate_for_function_taking_a_bool_and_returning_it_test() ->
                     line => 3,
                     spec => b,
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => bool}}
+                        {type, #{line => 3, spec => bool}}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => bool}},
+                {type, #{line => 3, spec => bool}},
             spec => 'Echo',
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => bool}}],
+                    param_types => [{type, #{line => 3, spec => bool}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => bool}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => bool}},
                     spec => 'func(bool) bool'
                 }}
         }}
@@ -803,7 +759,6 @@ typecheck_and_annotate_for_function_taking_a_float_and_returning_it_test() ->
                     type =>
                         {type, #{
                             line => 3,
-                            source => rufus_text,
                             spec => float
                         }}
                 }}
@@ -816,22 +771,20 @@ typecheck_and_annotate_for_function_taking_a_float_and_returning_it_test() ->
                     type =>
                         {type, #{
                             line => 3,
-                            source => rufus_text,
                             spec => float
                         }}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => float}},
+                {type, #{line => 3, spec => float}},
             spec => 'Echo',
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => float}}],
+                    param_types => [{type, #{line => 3, spec => float}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => float}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => float}},
                     spec => 'func(float) float'
                 }}
         }}
@@ -855,7 +808,7 @@ typecheck_and_annotate_for_function_taking_an_int_and_returning_it_test() ->
                     line => 3,
                     spec => n,
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             line => 3,
@@ -864,20 +817,19 @@ typecheck_and_annotate_for_function_taking_an_int_and_returning_it_test() ->
                     line => 3,
                     spec => n,
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => int}},
+                {type, #{line => 3, spec => int}},
             spec => 'Echo',
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => int}}],
+                    param_types => [{type, #{line => 3, spec => int}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => int}},
                     spec => 'func(int) int'
                 }}
         }}
@@ -903,7 +855,6 @@ typecheck_and_annotate_for_function_taking_a_string_and_returning_it_test() ->
                     type =>
                         {type, #{
                             line => 3,
-                            source => rufus_text,
                             spec => string
                         }}
                 }}
@@ -916,22 +867,20 @@ typecheck_and_annotate_for_function_taking_a_string_and_returning_it_test() ->
                     type =>
                         {type, #{
                             line => 3,
-                            source => rufus_text,
                             spec => string
                         }}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => string}},
+                {type, #{line => 3, spec => string}},
             spec => 'Echo',
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
+                    param_types => [{type, #{line => 3, spec => string}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => string}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => string}},
                     spec => 'func(string) string'
                 }}
         }}
@@ -958,9 +907,8 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_it_test() ->
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
+                                {type, #{line => 3, spec => int}},
                             line => 3,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -974,9 +922,8 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_it_test() ->
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
+                                {type, #{line => 3, spec => int}},
                             line => 3,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -985,9 +932,8 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_it_test() ->
                 {type, #{
                     kind => list,
                     element_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
+                        {type, #{line => 3, spec => int}},
                     line => 3,
-                    source => rufus_text,
                     spec => 'list[int]'
                 }},
             spec => 'Echo',
@@ -999,9 +945,8 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_it_test() ->
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
+                                {type, #{line => 3, spec => int}},
                             line => 3,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                     ],
@@ -1009,12 +954,10 @@ typecheck_and_annotate_for_function_taking_a_list_and_returning_it_test() ->
                         {type, #{
                             kind => list,
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
+                                {type, #{line => 3, spec => int}},
                             line => 3,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }},
-                    source => rufus_text,
                     spec => 'func(list[int]) list[int]'
                 }}
         }}
@@ -1040,13 +983,13 @@ typecheck_and_annotate_function_with_literal_return_value_test() ->
                     line => 3,
                     spec => 42,
                     type =>
-                        {type, #{line => 3, source => inferred, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             line => 3,
             params => [],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => int}},
+                {type, #{line => 3, spec => int}},
             spec => 'Number',
             type =>
                 {type, #{
@@ -1054,8 +997,7 @@ typecheck_and_annotate_function_with_literal_return_value_test() ->
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => int}},
                     spec => 'func() int'
                 }}
         }}
@@ -1078,7 +1020,7 @@ typecheck_and_annotate_function_with_unmatched_return_types_test() ->
                 line => 3,
                 spec => 42.0,
                 type =>
-                    {type, #{line => 3, source => inferred, spec => float}}
+                    {type, #{line => 3, spec => float}}
             }},
         globals => #{
             'Number' => [
@@ -1087,14 +1029,13 @@ typecheck_and_annotate_function_with_unmatched_return_types_test() ->
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => int}},
                     spec => 'func() int'
                 }}
             ]
         },
         return_type =>
-            {type, #{line => 3, source => rufus_text, spec => int}}
+            {type, #{line => 3, spec => int}}
     },
     ?assertEqual({error, unmatched_return_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
@@ -1117,7 +1058,7 @@ typecheck_and_annotate_for_function_taking_an_atom_literal_test() ->
                     line => 3,
                     spec => ok,
                     type =>
-                        {type, #{line => 3, source => inferred, spec => atom}}
+                        {type, #{line => 3, spec => atom}}
                 }}
             ],
             line => 3,
@@ -1126,20 +1067,19 @@ typecheck_and_annotate_for_function_taking_an_atom_literal_test() ->
                     line => 3,
                     spec => ok,
                     type =>
-                        {type, #{line => 3, source => inferred, spec => atom}}
+                        {type, #{line => 3, spec => atom}}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => atom}},
+                {type, #{line => 3, spec => atom}},
             spec => 'Echo',
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => inferred, spec => atom}}],
+                    param_types => [{type, #{line => 3, spec => atom}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => atom}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => atom}},
                     spec => 'func(atom) atom'
                 }}
         }}
@@ -1163,7 +1103,7 @@ typecheck_and_annotate_for_function_taking_a_bool_literal_test() ->
                     line => 3,
                     spec => true,
                     type =>
-                        {type, #{line => 3, source => inferred, spec => bool}}
+                        {type, #{line => 3, spec => bool}}
                 }}
             ],
             line => 3,
@@ -1172,20 +1112,19 @@ typecheck_and_annotate_for_function_taking_a_bool_literal_test() ->
                     line => 3,
                     spec => true,
                     type =>
-                        {type, #{line => 3, source => inferred, spec => bool}}
+                        {type, #{line => 3, spec => bool}}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => bool}},
+                {type, #{line => 3, spec => bool}},
             spec => 'Echo',
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => inferred, spec => bool}}],
+                    param_types => [{type, #{line => 3, spec => bool}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => bool}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => bool}},
                     spec => 'func(bool) bool'
                 }}
         }}
@@ -1209,7 +1148,7 @@ typecheck_and_annotate_for_function_taking_a_float_literal_test() ->
                     line => 3,
                     spec => 1.0,
                     type =>
-                        {type, #{line => 3, source => inferred, spec => float}}
+                        {type, #{line => 3, spec => float}}
                 }}
             ],
             line => 3,
@@ -1218,20 +1157,19 @@ typecheck_and_annotate_for_function_taking_a_float_literal_test() ->
                     line => 3,
                     spec => 1.0,
                     type =>
-                        {type, #{line => 3, source => inferred, spec => float}}
+                        {type, #{line => 3, spec => float}}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => float}},
+                {type, #{line => 3, spec => float}},
             spec => 'Echo',
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => inferred, spec => float}}],
+                    param_types => [{type, #{line => 3, spec => float}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => float}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => float}},
                     spec => 'func(float) float'
                 }}
         }}
@@ -1255,7 +1193,7 @@ typecheck_and_annotate_for_function_taking_an_int_literal_test() ->
                     line => 3,
                     spec => 1,
                     type =>
-                        {type, #{line => 3, source => inferred, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             line => 3,
@@ -1264,20 +1202,19 @@ typecheck_and_annotate_for_function_taking_an_int_literal_test() ->
                     line => 3,
                     spec => 1,
                     type =>
-                        {type, #{line => 3, source => inferred, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => int}},
+                {type, #{line => 3, spec => int}},
             spec => 'Echo',
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => inferred, spec => int}}],
+                    param_types => [{type, #{line => 3, spec => int}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => int}},
                     spec => 'func(int) int'
                 }}
         }}
@@ -1301,7 +1238,7 @@ typecheck_and_annotate_for_function_taking_a_string_literal_test() ->
                     line => 3,
                     spec => <<"ok">>,
                     type =>
-                        {type, #{line => 3, source => inferred, spec => string}}
+                        {type, #{line => 3, spec => string}}
                 }}
             ],
             line => 3,
@@ -1310,20 +1247,19 @@ typecheck_and_annotate_for_function_taking_a_string_literal_test() ->
                     line => 3,
                     spec => <<"ok">>,
                     type =>
-                        {type, #{line => 3, source => inferred, spec => string}}
+                        {type, #{line => 3, spec => string}}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, source => rufus_text, spec => string}},
+                {type, #{line => 3, spec => string}},
             spec => 'Echo',
             type =>
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => inferred, spec => string}}],
+                    param_types => [{type, #{line => 3, spec => string}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => string}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => string}},
                     spec => 'func(string) string'
                 }}
         }}
@@ -1356,8 +1292,7 @@ typecheck_and_annotate_function_taking_and_returning_a_function_test() ->
                             line => 3,
                             param_types => [],
                             return_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
-                            source => rufus_text,
+                                {type, #{line => 3, spec => int}},
                             spec => 'func() int'
                         }}
                 }}
@@ -1373,8 +1308,7 @@ typecheck_and_annotate_function_taking_and_returning_a_function_test() ->
                             line => 3,
                             param_types => [],
                             return_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
-                            source => rufus_text,
+                                {type, #{line => 3, spec => int}},
                             spec => 'func() int'
                         }}
                 }}
@@ -1385,8 +1319,7 @@ typecheck_and_annotate_function_taking_and_returning_a_function_test() ->
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => int}},
                     spec => 'func() int'
                 }},
             spec => 'Echo',
@@ -1400,8 +1333,7 @@ typecheck_and_annotate_function_taking_and_returning_a_function_test() ->
                             line => 3,
                             param_types => [],
                             return_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
-                            source => rufus_text,
+                                {type, #{line => 3, spec => int}},
                             spec => 'func() int'
                         }}
                     ],
@@ -1411,11 +1343,9 @@ typecheck_and_annotate_function_taking_and_returning_a_function_test() ->
                             line => 3,
                             param_types => [],
                             return_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
-                            source => rufus_text,
+                                {type, #{line => 3, spec => int}},
                             spec => 'func() int'
                         }},
-                    source => rufus_text,
                     spec => 'func(func() int) func() int'
                 }}
         }}
@@ -1445,7 +1375,6 @@ typecheck_and_annotate_function_returning_a_function_test() ->
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }}
@@ -1453,15 +1382,14 @@ typecheck_and_annotate_function_returning_a_function_test() ->
                     line => 4,
                     params => [],
                     return_type =>
-                        {type, #{line => 4, source => rufus_text, spec => int}},
+                        {type, #{line => 4, spec => int}},
                     type =>
                         {type, #{
                             kind => func,
                             line => 4,
                             param_types => [],
                             return_type =>
-                                {type, #{line => 4, source => rufus_text, spec => int}},
-                            source => rufus_text,
+                                {type, #{line => 4, spec => int}},
                             spec => 'func() int'
                         }}
                 }}
@@ -1474,8 +1402,7 @@ typecheck_and_annotate_function_returning_a_function_test() ->
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => int}},
                     spec => 'func() int'
                 }},
             spec => 'NumberFunc',
@@ -1490,11 +1417,9 @@ typecheck_and_annotate_function_returning_a_function_test() ->
                             line => 3,
                             param_types => [],
                             return_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
-                            source => rufus_text,
+                                {type, #{line => 3, spec => int}},
                             spec => 'func() int'
                         }},
-                    source => rufus_text,
                     spec => 'func() func() int'
                 }}
         }}
@@ -1531,10 +1456,8 @@ typecheck_and_annotate_function_returning_a_function_variable_test() ->
                                     return_type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }},
-                                    source => rufus_text,
                                     spec => 'func() int'
                                 }}
                         }},
@@ -1550,7 +1473,6 @@ typecheck_and_annotate_function_returning_a_function_variable_test() ->
                                             type =>
                                                 {type, #{
                                                     line => 4,
-                                                    source => inferred,
                                                     spec => int
                                                 }}
                                         }},
@@ -1563,14 +1485,12 @@ typecheck_and_annotate_function_returning_a_function_variable_test() ->
                                             type =>
                                                 {type, #{
                                                     line => 4,
-                                                    source => inferred,
                                                     spec => int
                                                 }}
                                         }},
                                     type =>
                                         {type, #{
                                             line => 4,
-                                            source => inferred,
                                             spec => int
                                         }}
                                 }}
@@ -1578,7 +1498,7 @@ typecheck_and_annotate_function_returning_a_function_variable_test() ->
                             line => 4,
                             params => [],
                             return_type =>
-                                {type, #{line => 4, source => rufus_text, spec => int}},
+                                {type, #{line => 4, spec => int}},
                             type =>
                                 {type, #{
                                     kind => func,
@@ -1587,10 +1507,8 @@ typecheck_and_annotate_function_returning_a_function_variable_test() ->
                                     return_type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }},
-                                    source => rufus_text,
                                     spec => 'func() int'
                                 }}
                         }},
@@ -1600,8 +1518,7 @@ typecheck_and_annotate_function_returning_a_function_variable_test() ->
                             line => 4,
                             param_types => [],
                             return_type =>
-                                {type, #{line => 4, source => rufus_text, spec => int}},
-                            source => rufus_text,
+                                {type, #{line => 4, spec => int}},
                             spec => 'func() int'
                         }}
                 }},
@@ -1614,8 +1531,7 @@ typecheck_and_annotate_function_returning_a_function_variable_test() ->
                             line => 4,
                             param_types => [],
                             return_type =>
-                                {type, #{line => 4, source => rufus_text, spec => int}},
-                            source => rufus_text,
+                                {type, #{line => 4, spec => int}},
                             spec => 'func() int'
                         }}
                 }}
@@ -1628,8 +1544,7 @@ typecheck_and_annotate_function_returning_a_function_variable_test() ->
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => int}},
                     spec => 'func() int'
                 }},
             spec => 'NumberFunc',
@@ -1644,11 +1559,9 @@ typecheck_and_annotate_function_returning_a_function_variable_test() ->
                             line => 3,
                             param_types => [],
                             return_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
-                            source => rufus_text,
+                                {type, #{line => 3, spec => int}},
                             spec => 'func() int'
                         }},
-                    source => rufus_text,
                     spec => 'func() func() int'
                 }}
         }}
@@ -1692,13 +1605,10 @@ typecheck_and_annotate_function_returning_a_nested_function_test() ->
                                             return_type =>
                                                 {type, #{
                                                     line => 4,
-                                                    source => rufus_text,
                                                     spec => int
                                                 }},
-                                            source => rufus_text,
                                             spec => 'func() int'
                                         }},
-                                    source => rufus_text,
                                     spec => 'func() func() int'
                                 }}
                         }},
@@ -1714,7 +1624,6 @@ typecheck_and_annotate_function_returning_a_nested_function_test() ->
                                             type =>
                                                 {type, #{
                                                     line => 5,
-                                                    source => inferred,
                                                     spec => int
                                                 }}
                                         }}
@@ -1724,7 +1633,6 @@ typecheck_and_annotate_function_returning_a_nested_function_test() ->
                                     return_type =>
                                         {type, #{
                                             line => 5,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     type =>
@@ -1735,10 +1643,8 @@ typecheck_and_annotate_function_returning_a_nested_function_test() ->
                                             return_type =>
                                                 {type, #{
                                                     line => 5,
-                                                    source => rufus_text,
                                                     spec => int
                                                 }},
-                                            source => rufus_text,
                                             spec => 'func() int'
                                         }}
                                 }}
@@ -1753,10 +1659,8 @@ typecheck_and_annotate_function_returning_a_nested_function_test() ->
                                     return_type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }},
-                                    source => rufus_text,
                                     spec => 'func() int'
                                 }},
                             type =>
@@ -1772,13 +1676,10 @@ typecheck_and_annotate_function_returning_a_nested_function_test() ->
                                             return_type =>
                                                 {type, #{
                                                     line => 4,
-                                                    source => rufus_text,
                                                     spec => int
                                                 }},
-                                            source => rufus_text,
                                             spec => 'func() int'
                                         }},
-                                    source => rufus_text,
                                     spec => 'func() func() int'
                                 }}
                         }},
@@ -1795,13 +1696,10 @@ typecheck_and_annotate_function_returning_a_nested_function_test() ->
                                     return_type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }},
-                                    source => rufus_text,
                                     spec => 'func() int'
                                 }},
-                            source => rufus_text,
                             spec => 'func() func() int'
                         }}
                 }},
@@ -1816,8 +1714,7 @@ typecheck_and_annotate_function_returning_a_nested_function_test() ->
                             line => 4,
                             param_types => [],
                             return_type =>
-                                {type, #{line => 4, source => rufus_text, spec => int}},
-                            source => rufus_text,
+                                {type, #{line => 4, spec => int}},
                             spec => 'func() int'
                         }}
                 }}
@@ -1830,8 +1727,7 @@ typecheck_and_annotate_function_returning_a_nested_function_test() ->
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => int}},
                     spec => 'func() int'
                 }},
             spec => 'NumberFunc',
@@ -1846,11 +1742,9 @@ typecheck_and_annotate_function_returning_a_nested_function_test() ->
                             line => 3,
                             param_types => [],
                             return_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
-                            source => rufus_text,
+                                {type, #{line => 3, spec => int}},
                             spec => 'func() int'
                         }},
-                    source => rufus_text,
                     spec => 'func() func() int'
                 }}
         }}
@@ -1880,7 +1774,6 @@ typecheck_and_annotate_for_anonymous_function_taking_an_atom_and_returning_an_at
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => atom
                                 }}
                         }}
@@ -1893,13 +1786,12 @@ typecheck_and_annotate_for_anonymous_function_taking_an_atom_and_returning_an_at
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => atom
                                 }}
                         }}
                     ],
                     return_type =>
-                        {type, #{line => 4, source => rufus_text, spec => atom}},
+                        {type, #{line => 4, spec => atom}},
                     type =>
                         {type, #{
                             kind => func,
@@ -1907,17 +1799,14 @@ typecheck_and_annotate_for_anonymous_function_taking_an_atom_and_returning_an_at
                             param_types => [
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => atom
                                 }}
                             ],
                             return_type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => atom
                                 }},
-                            source => rufus_text,
                             spec => 'func(atom) atom'
                         }}
                 }}
@@ -1928,10 +1817,9 @@ typecheck_and_annotate_for_anonymous_function_taking_an_atom_and_returning_an_at
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => atom}}],
+                    param_types => [{type, #{line => 3, spec => atom}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => atom}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => atom}},
                     spec => 'func(atom) atom'
                 }},
             spec => 'EchoFunc',
@@ -1947,16 +1835,13 @@ typecheck_and_annotate_for_anonymous_function_taking_an_atom_and_returning_an_at
                             param_types => [
                                 {type, #{
                                     line => 3,
-                                    source => rufus_text,
                                     spec => atom
                                 }}
                             ],
                             return_type =>
-                                {type, #{line => 3, source => rufus_text, spec => atom}},
-                            source => rufus_text,
+                                {type, #{line => 3, spec => atom}},
                             spec => 'func(atom) atom'
                         }},
-                    source => rufus_text,
                     spec => 'func() func(atom) atom'
                 }}
         }}
@@ -1986,7 +1871,6 @@ typecheck_and_annotate_for_anonymous_function_taking_a_bool_and_returning_a_bool
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => bool
                                 }}
                         }}
@@ -1999,13 +1883,12 @@ typecheck_and_annotate_for_anonymous_function_taking_a_bool_and_returning_a_bool
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => bool
                                 }}
                         }}
                     ],
                     return_type =>
-                        {type, #{line => 4, source => rufus_text, spec => bool}},
+                        {type, #{line => 4, spec => bool}},
                     type =>
                         {type, #{
                             kind => func,
@@ -2013,17 +1896,14 @@ typecheck_and_annotate_for_anonymous_function_taking_a_bool_and_returning_a_bool
                             param_types => [
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => bool
                                 }}
                             ],
                             return_type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => bool
                                 }},
-                            source => rufus_text,
                             spec => 'func(bool) bool'
                         }}
                 }}
@@ -2034,10 +1914,9 @@ typecheck_and_annotate_for_anonymous_function_taking_a_bool_and_returning_a_bool
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => bool}}],
+                    param_types => [{type, #{line => 3, spec => bool}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => bool}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => bool}},
                     spec => 'func(bool) bool'
                 }},
             spec => 'EchoFunc',
@@ -2053,16 +1932,13 @@ typecheck_and_annotate_for_anonymous_function_taking_a_bool_and_returning_a_bool
                             param_types => [
                                 {type, #{
                                     line => 3,
-                                    source => rufus_text,
                                     spec => bool
                                 }}
                             ],
                             return_type =>
-                                {type, #{line => 3, source => rufus_text, spec => bool}},
-                            source => rufus_text,
+                                {type, #{line => 3, spec => bool}},
                             spec => 'func(bool) bool'
                         }},
-                    source => rufus_text,
                     spec => 'func() func(bool) bool'
                 }}
         }}
@@ -2092,7 +1968,6 @@ typecheck_and_annotate_for_anonymous_function_taking_a_float_and_returning_a_flo
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => float
                                 }}
                         }}
@@ -2105,13 +1980,12 @@ typecheck_and_annotate_for_anonymous_function_taking_a_float_and_returning_a_flo
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => float
                                 }}
                         }}
                     ],
                     return_type =>
-                        {type, #{line => 4, source => rufus_text, spec => float}},
+                        {type, #{line => 4, spec => float}},
                     type =>
                         {type, #{
                             kind => func,
@@ -2119,17 +1993,14 @@ typecheck_and_annotate_for_anonymous_function_taking_a_float_and_returning_a_flo
                             param_types => [
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => float
                                 }}
                             ],
                             return_type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => float
                                 }},
-                            source => rufus_text,
                             spec => 'func(float) float'
                         }}
                 }}
@@ -2140,10 +2011,9 @@ typecheck_and_annotate_for_anonymous_function_taking_a_float_and_returning_a_flo
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => float}}],
+                    param_types => [{type, #{line => 3, spec => float}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => float}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => float}},
                     spec => 'func(float) float'
                 }},
             spec => 'EchoFunc',
@@ -2159,16 +2029,13 @@ typecheck_and_annotate_for_anonymous_function_taking_a_float_and_returning_a_flo
                             param_types => [
                                 {type, #{
                                     line => 3,
-                                    source => rufus_text,
                                     spec => float
                                 }}
                             ],
                             return_type =>
-                                {type, #{line => 3, source => rufus_text, spec => float}},
-                            source => rufus_text,
+                                {type, #{line => 3, spec => float}},
                             spec => 'func(float) float'
                         }},
-                    source => rufus_text,
                     spec => 'func() func(float) float'
                 }}
         }}
@@ -2198,7 +2065,6 @@ typecheck_and_annotate_for_anonymous_function_taking_an_int_and_returning_an_int
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => int
                                 }}
                         }}
@@ -2211,13 +2077,12 @@ typecheck_and_annotate_for_anonymous_function_taking_an_int_and_returning_an_int
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => int
                                 }}
                         }}
                     ],
                     return_type =>
-                        {type, #{line => 4, source => rufus_text, spec => int}},
+                        {type, #{line => 4, spec => int}},
                     type =>
                         {type, #{
                             kind => func,
@@ -2225,17 +2090,14 @@ typecheck_and_annotate_for_anonymous_function_taking_an_int_and_returning_an_int
                             param_types => [
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => int
                                 }}
                             ],
                             return_type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => int
                                 }},
-                            source => rufus_text,
                             spec => 'func(int) int'
                         }}
                 }}
@@ -2246,10 +2108,9 @@ typecheck_and_annotate_for_anonymous_function_taking_an_int_and_returning_an_int
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => int}}],
+                    param_types => [{type, #{line => 3, spec => int}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => int}},
                     spec => 'func(int) int'
                 }},
             spec => 'EchoFunc',
@@ -2265,16 +2126,13 @@ typecheck_and_annotate_for_anonymous_function_taking_an_int_and_returning_an_int
                             param_types => [
                                 {type, #{
                                     line => 3,
-                                    source => rufus_text,
                                     spec => int
                                 }}
                             ],
                             return_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
-                            source => rufus_text,
+                                {type, #{line => 3, spec => int}},
                             spec => 'func(int) int'
                         }},
-                    source => rufus_text,
                     spec => 'func() func(int) int'
                 }}
         }}
@@ -2304,7 +2162,6 @@ typecheck_and_annotate_for_anonymous_function_taking_a_string_and_returning_a_st
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => string
                                 }}
                         }}
@@ -2317,13 +2174,12 @@ typecheck_and_annotate_for_anonymous_function_taking_a_string_and_returning_a_st
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => string
                                 }}
                         }}
                     ],
                     return_type =>
-                        {type, #{line => 4, source => rufus_text, spec => string}},
+                        {type, #{line => 4, spec => string}},
                     type =>
                         {type, #{
                             kind => func,
@@ -2331,17 +2187,14 @@ typecheck_and_annotate_for_anonymous_function_taking_a_string_and_returning_a_st
                             param_types => [
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => string
                                 }}
                             ],
                             return_type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => string
                                 }},
-                            source => rufus_text,
                             spec => 'func(string) string'
                         }}
                 }}
@@ -2352,10 +2205,9 @@ typecheck_and_annotate_for_anonymous_function_taking_a_string_and_returning_a_st
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => string}}],
+                    param_types => [{type, #{line => 3, spec => string}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => string}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => string}},
                     spec => 'func(string) string'
                 }},
             spec => 'EchoFunc',
@@ -2371,16 +2223,13 @@ typecheck_and_annotate_for_anonymous_function_taking_a_string_and_returning_a_st
                             param_types => [
                                 {type, #{
                                     line => 3,
-                                    source => rufus_text,
                                     spec => string
                                 }}
                             ],
                             return_type =>
-                                {type, #{line => 3, source => rufus_text, spec => string}},
-                            source => rufus_text,
+                                {type, #{line => 3, spec => string}},
                             spec => 'func(string) string'
                         }},
-                    source => rufus_text,
                     spec => 'func() func(string) string'
                 }}
         }}
@@ -2412,7 +2261,6 @@ typecheck_and_annotate_for_anonymous_function_taking_a_cons_expression_test() ->
                                     type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }}
                                 }},
@@ -2426,12 +2274,10 @@ typecheck_and_annotate_for_anonymous_function_taking_a_cons_expression_test() ->
                                             element_type =>
                                                 {type, #{
                                                     line => 4,
-                                                    source => rufus_text,
                                                     spec => int
                                                 }},
                                             kind => list,
                                             line => 4,
-                                            source => rufus_text,
                                             spec => 'list[int]'
                                         }}
                                 }},
@@ -2440,12 +2286,10 @@ typecheck_and_annotate_for_anonymous_function_taking_a_cons_expression_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     kind => list,
                                     line => 4,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                         }}
@@ -2461,7 +2305,6 @@ typecheck_and_annotate_for_anonymous_function_taking_a_cons_expression_test() ->
                                     type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }}
                                 }},
@@ -2473,7 +2316,6 @@ typecheck_and_annotate_for_anonymous_function_taking_a_cons_expression_test() ->
                                         head =>
                                             {type, #{
                                                 line => 4,
-                                                source => rufus_text,
                                                 spec => int
                                             }}
                                     },
@@ -2483,12 +2325,10 @@ typecheck_and_annotate_for_anonymous_function_taking_a_cons_expression_test() ->
                                             element_type =>
                                                 {type, #{
                                                     line => 4,
-                                                    source => rufus_text,
                                                     spec => int
                                                 }},
                                             kind => list,
                                             line => 4,
-                                            source => rufus_text,
                                             spec => 'list[int]'
                                         }}
                                 }},
@@ -2497,12 +2337,10 @@ typecheck_and_annotate_for_anonymous_function_taking_a_cons_expression_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     kind => list,
                                     line => 4,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                         }}
@@ -2510,10 +2348,9 @@ typecheck_and_annotate_for_anonymous_function_taking_a_cons_expression_test() ->
                     return_type =>
                         {type, #{
                             element_type =>
-                                {type, #{line => 4, source => rufus_text, spec => int}},
+                                {type, #{line => 4, spec => int}},
                             kind => list,
                             line => 4,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }},
                     type =>
@@ -2525,12 +2362,10 @@ typecheck_and_annotate_for_anonymous_function_taking_a_cons_expression_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     kind => list,
                                     line => 4,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                             ],
@@ -2539,15 +2374,12 @@ typecheck_and_annotate_for_anonymous_function_taking_a_cons_expression_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     kind => list,
                                     line => 4,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }},
-                            source => rufus_text,
                             spec => 'func(list[int]) list[int]'
                         }}
                 }}
@@ -2561,23 +2393,20 @@ typecheck_and_annotate_for_anonymous_function_taking_a_cons_expression_test() ->
                     param_types => [
                         {type, #{
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
+                                {type, #{line => 3, spec => int}},
                             kind => list,
                             line => 3,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                     ],
                     return_type =>
                         {type, #{
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
+                                {type, #{line => 3, spec => int}},
                             kind => list,
                             line => 3,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }},
-                    source => rufus_text,
                     spec => 'func(list[int]) list[int]'
                 }},
             spec => 'EchoNumberListFunc',
@@ -2595,12 +2424,10 @@ typecheck_and_annotate_for_anonymous_function_taking_a_cons_expression_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 3,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     kind => list,
                                     line => 3,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                             ],
@@ -2609,18 +2436,14 @@ typecheck_and_annotate_for_anonymous_function_taking_a_cons_expression_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 3,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     kind => list,
                                     line => 3,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }},
-                            source => rufus_text,
                             spec => 'func(list[int]) list[int]'
                         }},
-                    source => rufus_text,
                     spec => 'func() func(list[int]) list[int]'
                 }}
         }}
@@ -2652,12 +2475,10 @@ typecheck_and_annotate_for_anonymous_function_taking_a_list_literal_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     kind => list,
                                     line => 4,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                         }}
@@ -2675,12 +2496,10 @@ typecheck_and_annotate_for_anonymous_function_taking_a_list_literal_test() ->
                                             element_type =>
                                                 {type, #{
                                                     line => 4,
-                                                    source => rufus_text,
                                                     spec => int
                                                 }},
                                             kind => list,
                                             line => 4,
-                                            source => rufus_text,
                                             spec => 'list[int]'
                                         }}
                                 }},
@@ -2694,7 +2513,6 @@ typecheck_and_annotate_for_anonymous_function_taking_a_list_literal_test() ->
                                             type =>
                                                 {type, #{
                                                     line => 4,
-                                                    source => inferred,
                                                     spec => int
                                                 }}
                                         }},
@@ -2704,7 +2522,6 @@ typecheck_and_annotate_for_anonymous_function_taking_a_list_literal_test() ->
                                             type =>
                                                 {type, #{
                                                     line => 4,
-                                                    source => inferred,
                                                     spec => int
                                                 }}
                                         }},
@@ -2714,7 +2531,6 @@ typecheck_and_annotate_for_anonymous_function_taking_a_list_literal_test() ->
                                             type =>
                                                 {type, #{
                                                     line => 4,
-                                                    source => inferred,
                                                     spec => int
                                                 }}
                                         }}
@@ -2725,12 +2541,10 @@ typecheck_and_annotate_for_anonymous_function_taking_a_list_literal_test() ->
                                             element_type =>
                                                 {type, #{
                                                     line => 4,
-                                                    source => rufus_text,
                                                     spec => int
                                                 }},
                                             kind => list,
                                             line => 4,
-                                            source => rufus_text,
                                             spec => 'list[int]'
                                         }}
                                 }},
@@ -2739,12 +2553,10 @@ typecheck_and_annotate_for_anonymous_function_taking_a_list_literal_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     kind => list,
                                     line => 4,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                         }}
@@ -2752,10 +2564,9 @@ typecheck_and_annotate_for_anonymous_function_taking_a_list_literal_test() ->
                     return_type =>
                         {type, #{
                             element_type =>
-                                {type, #{line => 4, source => rufus_text, spec => int}},
+                                {type, #{line => 4, spec => int}},
                             kind => list,
                             line => 4,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }},
                     type =>
@@ -2767,12 +2578,10 @@ typecheck_and_annotate_for_anonymous_function_taking_a_list_literal_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     kind => list,
                                     line => 4,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                             ],
@@ -2781,15 +2590,12 @@ typecheck_and_annotate_for_anonymous_function_taking_a_list_literal_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     kind => list,
                                     line => 4,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }},
-                            source => rufus_text,
                             spec => 'func(list[int]) list[int]'
                         }}
                 }}
@@ -2803,23 +2609,20 @@ typecheck_and_annotate_for_anonymous_function_taking_a_list_literal_test() ->
                     param_types => [
                         {type, #{
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
+                                {type, #{line => 3, spec => int}},
                             kind => list,
                             line => 3,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                     ],
                     return_type =>
                         {type, #{
                             element_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
+                                {type, #{line => 3, spec => int}},
                             kind => list,
                             line => 3,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }},
-                    source => rufus_text,
                     spec => 'func(list[int]) list[int]'
                 }},
             spec => 'EchoNumberListFunc',
@@ -2837,12 +2640,10 @@ typecheck_and_annotate_for_anonymous_function_taking_a_list_literal_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 3,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     kind => list,
                                     line => 3,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                             ],
@@ -2851,18 +2652,14 @@ typecheck_and_annotate_for_anonymous_function_taking_a_list_literal_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 3,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     kind => list,
                                     line => 3,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }},
-                            source => rufus_text,
                             spec => 'func(list[int]) list[int]'
                         }},
-                    source => rufus_text,
                     spec => 'func() func(list[int]) list[int]'
                 }}
         }}
@@ -2894,7 +2691,6 @@ typecheck_and_annotate_for_anonymous_function_taking_a_match_param_test() ->
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => int
                                 }}
                         }}
@@ -2909,7 +2705,6 @@ typecheck_and_annotate_for_anonymous_function_taking_a_match_param_test() ->
                                     type =>
                                         {type, #{
                                             line => 4,
-                                            source => inferred,
                                             spec => int
                                         }}
                                 }},
@@ -2921,20 +2716,18 @@ typecheck_and_annotate_for_anonymous_function_taking_a_match_param_test() ->
                                     type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }}
                                 }},
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => int
                                 }}
                         }}
                     ],
                     return_type =>
-                        {type, #{line => 4, source => rufus_text, spec => int}},
+                        {type, #{line => 4, spec => int}},
                     type =>
                         {type, #{
                             kind => func,
@@ -2942,13 +2735,11 @@ typecheck_and_annotate_for_anonymous_function_taking_a_match_param_test() ->
                             param_types => [
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => int
                                 }}
                             ],
                             return_type =>
-                                {type, #{line => 4, source => rufus_text, spec => int}},
-                            source => rufus_text,
+                                {type, #{line => 4, spec => int}},
                             spec => 'func(int) int'
                         }}
                 }}
@@ -2959,10 +2750,9 @@ typecheck_and_annotate_for_anonymous_function_taking_a_match_param_test() ->
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => int}}],
+                    param_types => [{type, #{line => 3, spec => int}}],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => int}},
                     spec => 'func(int) int'
                 }},
             spec => 'EchoFortyTwoFunc',
@@ -2978,16 +2768,13 @@ typecheck_and_annotate_for_anonymous_function_taking_a_match_param_test() ->
                             param_types => [
                                 {type, #{
                                     line => 3,
-                                    source => rufus_text,
                                     spec => int
                                 }}
                             ],
                             return_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
-                            source => rufus_text,
+                                {type, #{line => 3, spec => int}},
                             spec => 'func(int) int'
                         }},
-                    source => rufus_text,
                     spec => 'func() func(int) int'
                 }}
         }}
@@ -3017,7 +2804,6 @@ typecheck_and_annotate_closure_test() ->
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => rufus_text,
                                     spec => int
                                 }}
                         }}
@@ -3025,15 +2811,14 @@ typecheck_and_annotate_closure_test() ->
                     line => 4,
                     params => [],
                     return_type =>
-                        {type, #{line => 4, source => rufus_text, spec => int}},
+                        {type, #{line => 4, spec => int}},
                     type =>
                         {type, #{
                             kind => func,
                             line => 4,
                             param_types => [],
                             return_type =>
-                                {type, #{line => 4, source => rufus_text, spec => int}},
-                            source => rufus_text,
+                                {type, #{line => 4, spec => int}},
                             spec => 'func() int'
                         }}
                 }}
@@ -3044,7 +2829,7 @@ typecheck_and_annotate_closure_test() ->
                     line => 3,
                     spec => num,
                     type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}}
+                        {type, #{line => 3, spec => int}}
                 }}
             ],
             return_type =>
@@ -3053,8 +2838,7 @@ typecheck_and_annotate_closure_test() ->
                     line => 3,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 3, source => rufus_text, spec => int}},
-                    source => rufus_text,
+                        {type, #{line => 3, spec => int}},
                     spec => 'func() int'
                 }},
             spec => 'Memoize',
@@ -3062,18 +2846,16 @@ typecheck_and_annotate_closure_test() ->
                 {type, #{
                     kind => func,
                     line => 3,
-                    param_types => [{type, #{line => 3, source => rufus_text, spec => int}}],
+                    param_types => [{type, #{line => 3, spec => int}}],
                     return_type =>
                         {type, #{
                             kind => func,
                             line => 3,
                             param_types => [],
                             return_type =>
-                                {type, #{line => 3, source => rufus_text, spec => int}},
-                            source => rufus_text,
+                                {type, #{line => 3, spec => int}},
                             spec => 'func() int'
                         }},
-                    source => rufus_text,
                     spec => 'func(int) func() int'
                 }}
         }}
@@ -3098,7 +2880,7 @@ typecheck_and_annotate_anonymous_function_with_unmatched_return_types_test() ->
                 line => 4,
                 spec => 42.0,
                 type =>
-                    {type, #{line => 4, source => inferred, spec => float}}
+                    {type, #{line => 4, spec => float}}
             }},
         globals => #{
             'EchoFunc' => [
@@ -3114,19 +2896,16 @@ typecheck_and_annotate_anonymous_function_with_unmatched_return_types_test() ->
                             return_type =>
                                 {type, #{
                                     line => 3,
-                                    source => rufus_text,
                                     spec => int
                                 }},
-                            source => rufus_text,
                             spec => 'func() int'
                         }},
-                    source => rufus_text,
                     spec => 'func() func() int'
                 }}
             ]
         },
         return_type =>
-            {type, #{line => 4, source => rufus_text, spec => int}}
+            {type, #{line => 4, spec => int}}
     },
     ?assertEqual({error, unmatched_return_type, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
@@ -3159,10 +2938,8 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_anonymous_function_scope_
                             return_type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => int
                                 }},
-                            source => rufus_text,
                             spec => 'func() int'
                         }}
                 },
@@ -3182,13 +2959,10 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_anonymous_function_scope_
                             return_type =>
                                 {type, #{
                                     line => 3,
-                                    source => rufus_text,
                                     spec => int
                                 }},
-                            source => rufus_text,
                             spec => 'func() int'
                         }},
-                    source => rufus_text,
                     spec => 'func() func() int'
                 }}
             ]
@@ -3200,8 +2974,7 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_anonymous_function_scope_
                     line => 4,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 4, source => rufus_text, spec => int}},
-                    source => rufus_text,
+                        {type, #{line => 4, spec => int}},
                     spec => 'func() int'
                 }}
         },
@@ -3232,7 +3005,6 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_anonymous_function_scope_
                                                 type =>
                                                     {type, #{
                                                         line => 5,
-                                                        source => inferred,
                                                         spec => int
                                                     }}
                                             }}
@@ -3244,7 +3016,6 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_anonymous_function_scope_
                                 return_type =>
                                     {type, #{
                                         line => 4,
-                                        source => rufus_text,
                                         spec => int
                                     }}
                             }}
@@ -3265,8 +3036,7 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_anonymous_function_scope_
                         line => 3,
                         param_types => [],
                         return_type =>
-                            {type, #{line => 3, source => rufus_text, spec => int}},
-                        source => rufus_text,
+                            {type, #{line => 3, spec => int}},
                         spec => 'func() int'
                     }},
                 spec => 'EchoFunc',
@@ -3283,13 +3053,10 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_anonymous_function_scope_
                                 return_type =>
                                     {type, #{
                                         line => 3,
-                                        source => rufus_text,
                                         spec => int
                                     }},
-                                source => rufus_text,
                                 spec => 'func() int'
                             }},
-                        source => rufus_text,
                         spec => 'func() func() int'
                     }}
             }}
