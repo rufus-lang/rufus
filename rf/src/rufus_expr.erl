@@ -174,8 +174,8 @@ typecheck_and_annotate_call(
     {ok, _NewLocals, AnnotatedArgs} = typecheck_and_annotate([], Stack, Globals, Locals, Args),
     Context1 = Context#{args => AnnotatedArgs},
     Context2 =
-        case maps:get(Spec, Locals, false) of
-            false ->
+        case maps:get(Spec, Locals, undefined) of
+            undefined ->
                 Context1;
             _Type ->
                 %% The identifier being invoked refers to a function defined in
