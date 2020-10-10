@@ -203,19 +203,8 @@ resolve_call_type(
                 stack => Stack
             },
             throw({error, unknown_func, Data});
-        Types1 ->
-            %% TODO(jkakar) Eliminate this transformation. The issue here is
-            %% that Locals is a map of identifer->type, while Globals is a map
-            %% of identifier->[type]. This is here to ensure we always pass a
-            %% list of types to find_matching_types.
-            Types2 =
-                case Types1 of
-                    Types1 when is_list(Types1) ->
-                        Types1;
-                    Types1 ->
-                        [Types1]
-                end,
-            case find_matching_types(Types2, Args) of
+        Types ->
+            case find_matching_types(Types, Args) of
                 {error, Reason1, Data1} ->
                     throw({error, Reason1, Data1});
                 {ok, MatchingTypes} when length(MatchingTypes) > 1 ->
@@ -320,7 +309,7 @@ pair_types_match_cons_type(_, _, _) ->
     {ok, type_form()} | no_return().
 resolve_identifier_type(Stack, Globals, Form = {identifier, #{spec := Spec, locals := Locals}}) ->
     case maps:get(Spec, Locals, undefined) of
-        {type, _Context} = Type ->
+        [{type, _Context}] = Type ->
             {ok, Type};
         undefined ->
             case lookup_identifier_type(Stack) of

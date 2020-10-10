@@ -64,7 +64,7 @@ has_type({_FormType, #{type := _Type}}) ->
     true;
 has_type({identifier, #{spec := Spec, locals := Locals}}) ->
     case maps:get(Spec, Locals, undefined) of
-        {type, _Context} ->
+        [{type, _Context}] ->
             true;
         undefined ->
             false
@@ -85,7 +85,7 @@ type({_, #{type := Type}}) ->
     Type;
 type(Form = {identifier, #{spec := Spec, locals := Locals}}) ->
     case maps:get(Spec, Locals, undefined) of
-        {type, Context} ->
+        [{type, Context}] ->
             {type, Context};
         undefined ->
             {error, unknown_form, #{form => Form}}
@@ -99,7 +99,7 @@ type_spec({_, #{type := {type, #{spec := TypeSpec}}}}) ->
     TypeSpec;
 type_spec(Form = {identifier, #{spec := Spec, locals := Locals}}) ->
     case maps:get(Spec, Locals, undefined) of
-        {type, #{spec := TypeSpec}} ->
+        [{type, #{spec := TypeSpec}}] ->
             TypeSpec;
         undefined ->
             {error, unknown_form, #{form => Form}}

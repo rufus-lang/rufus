@@ -168,7 +168,7 @@ typecheck_and_annotate_call(
         case maps:get(Spec, Locals, undefined) of
             undefined ->
                 Context1;
-            _Type ->
+            [_Type] ->
                 %% The identifier being invoked refers to a function defined in
                 %% the local scope, which means it must be an anonymous
                 %% function. We mark the form so that rufus_erlang:forms/1 can
@@ -402,7 +402,7 @@ typecheck_and_annotate_identifier(
                 {error, Reason, Data} ->
                     throw({error, Reason, Data})
             end;
-        TypeForm ->
+        [TypeForm] ->
             AnnotatedForm2 = {identifier, Context1#{type => TypeForm}},
             {ok, Locals, AnnotatedForm2}
     end.
@@ -569,4 +569,4 @@ annotate_locals(Locals, {FormType, Context}) ->
 %% push_local adds a form to the local scope.
 -spec push_local(locals(), rufus_form()) -> {ok, locals()}.
 push_local(Locals, {_FormType, #{spec := Spec, type := Type}}) ->
-    {ok, Locals#{Spec => Type}}.
+    {ok, Locals#{Spec => [Type]}}.

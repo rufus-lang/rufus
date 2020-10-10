@@ -306,8 +306,7 @@ eval_function_with_a_match_that_has_a_left_binary_op_operand_with_a_call_operand
             ]
         },
         locals => #{
-            n =>
-                {type, #{line => 5, spec => int}}
+            n => [{type, #{line => 5, spec => int}}]
         }
     },
     ?assertEqual({error, illegal_pattern, Data}, rufus_compile:eval(RufusText)).
@@ -409,8 +408,7 @@ eval_function_with_a_match_that_has_a_right_call_operand_with_a_mismatched_left_
                     {type, #{line => 5, spec => string}}
             }},
         locals => #{
-            n =>
-                {type, #{line => 5, spec => string}}
+            n => [{type, #{line => 5, spec => string}}]
         },
         right =>
             {call, #{
@@ -469,10 +467,7 @@ eval_function_with_a_match_that_has_an_unbound_variable_test() ->
         form =>
             {identifier, #{
                 line => 5,
-                locals => #{
-                    value =>
-                        {type, #{line => 4, spec => int}}
-                },
+                locals => #{value => [{type, #{line => 4, spec => int}}]},
                 spec => unbound
             }},
         globals => #{
@@ -481,16 +476,12 @@ eval_function_with_a_match_that_has_an_unbound_variable_test() ->
                     kind => func,
                     line => 3,
                     param_types => [],
-                    return_type =>
-                        {type, #{line => 3, spec => int}},
+                    return_type => {type, #{line => 3, spec => int}},
                     spec => 'func() int'
                 }}
             ]
         },
-        locals => #{
-            value =>
-                {type, #{line => 4, spec => int}}
-        },
+        locals => #{value => [{type, #{line => 4, spec => int}}]},
         stack => [
             {match_right, #{line => 5}},
             {match, #{
@@ -508,11 +499,7 @@ eval_function_with_a_match_that_has_an_unbound_variable_test() ->
                             {int_lit, #{
                                 line => 4,
                                 spec => 1,
-                                type =>
-                                    {type, #{
-                                        line => 4,
-                                        spec => int
-                                    }}
+                                type => {type, #{line => 4, spec => int}}
                             }}
                     }},
                     {match, #{
@@ -525,16 +512,14 @@ eval_function_with_a_match_that_has_an_unbound_variable_test() ->
                 line => 3,
                 locals => #{},
                 params => [],
-                return_type =>
-                    {type, #{line => 3, spec => int}},
+                return_type => {type, #{line => 3, spec => int}},
                 spec => 'Broken',
                 type =>
                     {type, #{
                         kind => func,
                         line => 3,
                         param_types => [],
-                        return_type =>
-                            {type, #{line => 3, spec => int}},
+                        return_type => {type, #{line => 3, spec => int}},
                         spec => 'func() int'
                     }}
             }}
@@ -636,10 +621,8 @@ eval_function_with_a_match_that_has_unmatched_types_test() ->
                     {type, #{line => 4, spec => atom}}
             }},
         locals => #{
-            a =>
-                {type, #{line => 4, spec => atom}},
-            i =>
-                {type, #{line => 5, spec => int}}
+            a => [{type, #{line => 4, spec => atom}}],
+            i => [{type, #{line => 5, spec => int}}]
         },
         right =>
             {identifier, #{
