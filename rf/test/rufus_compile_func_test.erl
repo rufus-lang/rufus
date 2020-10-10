@@ -521,4 +521,5 @@ typecheck_and_annotate_closure_test() ->
     ?assertEqual({ok, example}, Result),
     FortyTwoFunc = example:'Memoize'(42),
     ?assert(is_function(FortyTwoFunc)),
+    ?assertEqual(42, FortyTwoFunc()),
     ?assertEqual(42, FortyTwoFunc()).
