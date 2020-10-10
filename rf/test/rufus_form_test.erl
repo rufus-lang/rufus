@@ -38,7 +38,7 @@ has_type_test() ->
 has_type_infers_identifier_type_from_locals_test() ->
     Type = rufus_form:make_type(int, 27),
     {FormType, Context} = rufus_form:make_identifier(number, 13),
-    Locals = #{number => Type},
+    Locals = #{number => [Type]},
     Form = {FormType, Context#{locals => Locals}},
     ?assertEqual(true, rufus_form:has_type(Form)).
 
@@ -83,7 +83,7 @@ type_spec_with_type_form_test() ->
     ?assertEqual(int, rufus_form:type_spec(Type)).
 
 type_spec_with_locals_test() ->
-    Locals = #{t => rufus_form:make_type(string, 3)},
+    Locals = #{t => [rufus_form:make_type(string, 3)]},
     Form =
         {identifier, #{
             line => 3,
@@ -93,7 +93,7 @@ type_spec_with_locals_test() ->
     ?assertEqual(string, rufus_form:type_spec(Form)).
 
 type_spec_with_unknown_form_test() ->
-    Locals = #{other => rufus_form:make_type(string, 3)},
+    Locals = #{other => [rufus_form:make_type(string, 3)]},
     Form =
         {identifier, #{
             line => 3,

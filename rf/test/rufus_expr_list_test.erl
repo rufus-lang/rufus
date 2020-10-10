@@ -752,11 +752,12 @@ typecheck_and_annotate_with_function_returning_a_cons_literal_with_variable_pair
                         {identifier, #{
                             line => 5,
                             locals => #{
-                                head =>
+                                head => [
                                     {type, #{
                                         line => 4,
                                         spec => int
                                     }}
+                                ]
                             },
                             spec => tail,
                             type =>
@@ -1265,11 +1266,12 @@ typecheck_and_annotate_with_function_taking_a_cons_pattern_and_returning_it_test
                         {identifier, #{
                             line => 3,
                             locals => #{
-                                head =>
+                                head => [
                                     {type, #{
                                         line => 3,
                                         spec => int
                                     }}
+                                ]
                             },
                             spec => tail,
                             type =>
@@ -1371,11 +1373,12 @@ typecheck_and_annotate_with_function_taking_a_cons_pattern_and_returning_the_hea
                         {identifier, #{
                             line => 3,
                             locals => #{
-                                head =>
+                                head => [
                                     {type, #{
                                         line => 3,
                                         spec => int
                                     }}
+                                ]
                             },
                             spec => tail,
                             type =>
@@ -1702,11 +1705,12 @@ typecheck_and_annotate_with_function_taking_a_list_lit_pattern_test() ->
                         {identifier, #{
                             line => 3,
                             locals => #{
-                                a =>
+                                a => [
                                     {type, #{
                                         line => 3,
                                         spec => int
                                     }}
+                                ]
                             },
                             spec => b,
                             type =>
@@ -1718,16 +1722,18 @@ typecheck_and_annotate_with_function_taking_a_list_lit_pattern_test() ->
                         {identifier, #{
                             line => 3,
                             locals => #{
-                                a =>
-                                    {type, #{
-                                        line => 3,
-                                        spec => int
-                                    }},
-                                b =>
+                                a => [
                                     {type, #{
                                         line => 3,
                                         spec => int
                                     }}
+                                ],
+                                b => [
+                                    {type, #{
+                                        line => 3,
+                                        spec => int
+                                    }}
+                                ]
                             },
                             spec => c,
                             type =>

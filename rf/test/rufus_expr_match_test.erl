@@ -469,7 +469,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_literal_test() ->
                                 {identifier, #{
                                     line => 4,
                                     locals => #{
-                                        names =>
+                                        names => [
                                             {type, #{
                                                 kind => list,
                                                 element_type =>
@@ -480,6 +480,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_literal_test() ->
                                                 line => 3,
                                                 spec => 'list[string]'
                                             }}
+                                        ]
                                     },
                                     spec => name,
                                     type =>
@@ -609,7 +610,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
                                 {identifier, #{
                                     line => 4,
                                     locals => #{
-                                        items =>
+                                        items => [
                                             {type, #{
                                                 kind => list,
                                                 element_type =>
@@ -620,6 +621,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
                                                 line => 3,
                                                 spec => 'list[int]'
                                             }}
+                                        ]
                                     },
                                     spec => head,
                                     type =>
@@ -633,12 +635,13 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
                                 {identifier, #{
                                     line => 4,
                                     locals => #{
-                                        head =>
+                                        head => [
                                             {type, #{
                                                 line => 4,
                                                 spec => int
-                                            }},
-                                        items =>
+                                            }}
+                                        ],
+                                        items => [
                                             {type, #{
                                                 kind => list,
                                                 element_type =>
@@ -649,6 +652,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
                                                 line => 3,
                                                 spec => 'list[int]'
                                             }}
+                                        ]
                                     },
                                     spec => tail,
                                     type =>
@@ -813,7 +817,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_head_test() ->
                                 {identifier, #{
                                     line => 4,
                                     locals => #{
-                                        items =>
+                                        items => [
                                             {type, #{
                                                 kind => list,
                                                 element_type =>
@@ -824,6 +828,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_head_test() ->
                                                 line => 3,
                                                 spec => 'list[int]'
                                             }}
+                                        ]
                                     },
                                     spec => head,
                                     type =>
@@ -986,7 +991,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_test() ->
                                 {identifier, #{
                                     line => 4,
                                     locals => #{
-                                        items =>
+                                        items => [
                                             {type, #{
                                                 kind => list,
                                                 element_type =>
@@ -997,6 +1002,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_test() ->
                                                 line => 3,
                                                 spec => 'list[int]'
                                             }}
+                                        ]
                                     },
                                     spec => tail,
                                     type =>
@@ -1162,11 +1168,12 @@ typecheck_and_annotate_function_taking_a_match_pattern_test() ->
                         {identifier, #{
                             line => 3,
                             locals => #{
-                                a =>
+                                a => [
                                     {type, #{
                                         line => 3,
                                         spec => int
                                     }}
+                                ]
                             },
                             spec => b,
                             type =>
@@ -1300,7 +1307,7 @@ typecheck_and_annotate_function_taking_a_cons_in_match_pattern_test() ->
                                 {identifier, #{
                                     line => 3,
                                     locals => #{
-                                        items =>
+                                        items => [
                                             {type, #{
                                                 kind => list,
                                                 element_type =>
@@ -1311,6 +1318,7 @@ typecheck_and_annotate_function_taking_a_cons_in_match_pattern_test() ->
                                                 line => 3,
                                                 spec => 'list[int]'
                                             }}
+                                        ]
                                     },
                                     spec => head,
                                     type =>
@@ -1324,12 +1332,13 @@ typecheck_and_annotate_function_taking_a_cons_in_match_pattern_test() ->
                                 {identifier, #{
                                     line => 3,
                                     locals => #{
-                                        head =>
+                                        head => [
                                             {type, #{
                                                 line => 3,
                                                 spec => int
-                                            }},
-                                        items =>
+                                            }}
+                                        ],
+                                        items => [
                                             {type, #{
                                                 kind => list,
                                                 element_type =>
@@ -1340,6 +1349,7 @@ typecheck_and_annotate_function_taking_a_cons_in_match_pattern_test() ->
                                                 line => 3,
                                                 spec => 'list[int]'
                                             }}
+                                        ]
                                     },
                                     spec => tail,
                                     type =>
@@ -1939,8 +1949,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_binary_op_operand_w
             ]
         },
         locals => #{
-            n =>
-                {type, #{line => 5, spec => int}}
+            n => [{type, #{line => 5, spec => int}}]
         }
     },
     ?assertEqual({error, illegal_pattern, Data}, rufus_expr:typecheck_and_annotate(Forms)).
@@ -2010,8 +2019,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_binary_op_operand_w
             ]
         },
         locals => #{
-            n =>
-                {type, #{line => 4, spec => int}}
+            n => [{type, #{line => 4, spec => int}}]
         }
     },
     ?assertEqual({error, illegal_pattern, Data}, rufus_expr:typecheck_and_annotate(Forms)).
@@ -2117,8 +2125,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_right_call_operand_with_
                     {type, #{line => 5, spec => string}}
             }},
         locals => #{
-            n =>
-                {type, #{line => 5, spec => string}}
+            n => [{type, #{line => 5, spec => string}}]
         },
         right =>
             {call, #{
@@ -2182,8 +2189,7 @@ typecheck_and_annotate_function_with_a_match_that_has_an_unbound_variable_test()
             {identifier, #{
                 line => 5,
                 locals => #{
-                    value =>
-                        {type, #{line => 4, spec => int}}
+                    value => [{type, #{line => 4, spec => int}}]
                 },
                 spec => unbound
             }},
@@ -2200,8 +2206,7 @@ typecheck_and_annotate_function_with_a_match_that_has_an_unbound_variable_test()
             ]
         },
         locals => #{
-            value =>
-                {type, #{line => 4, spec => int}}
+            value => [{type, #{line => 4, spec => int}}]
         },
         stack => [
             {match_right, #{line => 5}},
@@ -2352,10 +2357,8 @@ typecheck_and_annotate_function_with_a_match_that_has_unmatched_types_test() ->
                     {type, #{line => 4, spec => atom}}
             }},
         locals => #{
-            a =>
-                {type, #{line => 4, spec => atom}},
-            i =>
-                {type, #{line => 5, spec => int}}
+            a => [{type, #{line => 4, spec => atom}}],
+            i => [{type, #{line => 5, spec => int}}]
         },
         right =>
             {identifier, #{

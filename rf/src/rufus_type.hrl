@@ -12,17 +12,18 @@
 
 -type rufus_text() :: string().
 
-%% State storage
-
--type globals() :: context().
--type locals() :: context().
-
 %% Types
 
 -type kind_spec() :: func | list.
 -type type_spec() :: atom().
 -type type_form() :: {type, context()}.
 -type type_source() :: inferred | rufus_text.
+
+%% Symbols
+
+-type symbols() :: #{atom() := list(type_form())}.
+-type globals() :: symbols().
+-type locals() :: symbols().
 
 %% Modules
 
@@ -39,20 +40,20 @@
 -type cons_form() :: {cons, context()}.
 
 -type literal_form() ::
-    atom_lit_form() |
-    bool_lit_form() |
-    float_lit_form() |
-    int_lit_form() |
-    string_lit_form() |
-    list_lit_form() |
-    cons_form().
+    atom_lit_form()
+    | bool_lit_form()
+    | float_lit_form()
+    | int_lit_form()
+    | string_lit_form()
+    | list_lit_form()
+    | cons_form().
 
 -type literal() ::
-    atom |
-    bool |
-    float |
-    int |
-    string.
+    atom
+    | bool
+    | float
+    | int
+    | string.
 
 %% Operators
 
@@ -84,21 +85,21 @@
 
 %% rufus_form represents a node in the parse tree.
 -type rufus_form() ::
-    atom_lit_form() |
-    bool_lit_form() |
-    float_lit_form() |
-    int_lit_form() |
-    string_lit_form() |
-    list_lit_form() |
-    cons_form() |
-    module_form() |
-    func_form() |
-    param_form() |
-    identifier_form() |
-    type_form() |
-    binary_op_form() |
-    match_form() |
-    call_form().
+    atom_lit_form()
+    | bool_lit_form()
+    | float_lit_form()
+    | int_lit_form()
+    | string_lit_form()
+    | list_lit_form()
+    | cons_form()
+    | module_form()
+    | func_form()
+    | param_form()
+    | identifier_form()
+    | type_form()
+    | binary_op_form()
+    | match_form()
+    | call_form().
 
 %% rufus_forms is a list of rufus_form instances and typically represents an
 %% entire module.
@@ -114,10 +115,10 @@
 -type unmatched_operand_type_error() :: unmatched_operand_type.
 -type unsupported_operand_type_error() :: unsupported_operand_type.
 -type rufus_error() ::
-    unknown_variable_error() |
-    unmatched_return_type_error() |
-    unmatched_operand_type_error() |
-    unsupported_operand_type_error().
+    unknown_variable_error()
+    | unmatched_return_type_error()
+    | unmatched_operand_type_error()
+    | unsupported_operand_type_error().
 
 %% Erlang forms
 
@@ -125,8 +126,8 @@
 -type erlang4_form() :: {_, _, _, _}.
 -type erlang5_form() :: {_, _, _, _, _}.
 -type erlang_form() ::
-    erlang3_form() |
-    erlang4_form() |
-    erlang5_form().
+    erlang3_form()
+    | erlang4_form()
+    | erlang5_form().
 
 -type export_attribute_erlang_form() :: {attribute, integer(), export, list()}.

@@ -2313,11 +2313,12 @@ typecheck_and_annotate_for_anonymous_function_taking_a_cons_expression_test() ->
                                 {identifier, #{
                                     line => 4,
                                     locals => #{
-                                        head =>
+                                        head => [
                                             {type, #{
                                                 line => 4,
                                                 spec => int
                                             }}
+                                        ]
                                     },
                                     spec => tail,
                                     type =>
@@ -2930,7 +2931,7 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_anonymous_function_scope_
             {identifier, #{
                 line => 8,
                 locals => #{
-                    fn =>
+                    fn => [
                         {type, #{
                             kind => func,
                             line => 4,
@@ -2942,6 +2943,7 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_anonymous_function_scope_
                                 }},
                             spec => 'func() int'
                         }}
+                    ]
                 },
                 spec => num
             }},
@@ -2968,7 +2970,7 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_anonymous_function_scope_
             ]
         },
         locals => #{
-            fn =>
+            fn => [
                 {type, #{
                     kind => func,
                     line => 4,
@@ -2977,6 +2979,7 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_anonymous_function_scope_
                         {type, #{line => 4, spec => int}},
                     spec => 'func() int'
                 }}
+            ]
         },
         stack => [
             {match_right, #{line => 8}},

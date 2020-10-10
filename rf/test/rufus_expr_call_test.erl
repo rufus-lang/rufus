@@ -17,11 +17,12 @@ typecheck_and_annotate_with_function_calling_an_unknown_function_test() ->
                 args => [],
                 line => 3,
                 locals => #{
-                    text =>
+                    text => [
                         {type, #{
                             line => 3,
                             spec => string
                         }}
+                    ]
                 },
                 spec => 'Ping'
             }},
