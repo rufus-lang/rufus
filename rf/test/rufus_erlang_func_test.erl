@@ -605,3 +605,131 @@ forms_for_anonymous_function_taking_an_atom_and_returning_an_atom_literal_test()
         ]}
     ],
     ?assertEqual(Expected, ErlangForms).
+
+typecheck_and_annotate_for_anonymous_function_taking_a_bool_and_returning_a_bool_literal_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func EchoFunc() func(bool) bool {\n"
+        "        func(value bool) bool { value }\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'EchoFunc', 0}]},
+        {function, 3, 'EchoFunc', 0, [
+            {clause, 3, [], [], [
+                {'fun', 4,
+                    {clauses, [
+                        {clause, 4, [{var, 4, value}],
+                            [
+                                [
+                                    {call, 4, {remote, 4, {atom, 4, erlang}, {atom, 4, is_boolean}},
+                                        [{var, 4, value}]}
+                                ]
+                            ],
+                            [{var, 4, value}]}
+                    ]}}
+            ]}
+        ]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+typecheck_and_annotate_for_anonymous_function_taking_a_float_and_returning_a_float_literal_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func EchoFunc() func(float) float {\n"
+        "        func(value float) float { value }\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'EchoFunc', 0}]},
+        {function, 3, 'EchoFunc', 0, [
+            {clause, 3, [], [], [
+                {'fun', 4,
+                    {clauses, [
+                        {clause, 4, [{var, 4, value}],
+                            [
+                                [
+                                    {call, 4, {remote, 4, {atom, 4, erlang}, {atom, 4, is_float}}, [
+                                        {var, 4, value}
+                                    ]}
+                                ]
+                            ],
+                            [{var, 4, value}]}
+                    ]}}
+            ]}
+        ]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+typecheck_and_annotate_for_anonymous_function_taking_an_int_and_returning_an_int_literal_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func EchoFunc() func(int) int {\n"
+        "        func(value int) int { value }\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'EchoFunc', 0}]},
+        {function, 3, 'EchoFunc', 0, [
+            {clause, 3, [], [], [
+                {'fun', 4,
+                    {clauses, [
+                        {clause, 4, [{var, 4, value}],
+                            [
+                                [
+                                    {call, 4, {remote, 4, {atom, 4, erlang}, {atom, 4, is_integer}},
+                                        [{var, 4, value}]}
+                                ]
+                            ],
+                            [{var, 4, value}]}
+                    ]}}
+            ]}
+        ]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
+
+typecheck_and_annotate_for_anonymous_function_taking_a_string_and_returning_a_string_literal_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func EchoFunc() func(string) string {\n"
+        "        func(value string) string { value }\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'EchoFunc', 0}]},
+        {function, 3, 'EchoFunc', 0, [
+            {clause, 3, [], [], [
+                {'fun', 4,
+                    {clauses, [
+                        {clause, 4, [{tuple, 4, [{atom, 4, string}, {var, 4, value}]}], [], [
+                            {tuple, 4, [{atom, 4, string}, {var, 4, value}]}
+                        ]}
+                    ]}}
+            ]}
+        ]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
