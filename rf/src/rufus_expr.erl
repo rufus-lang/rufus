@@ -165,9 +165,26 @@ typecheck_and_annotate_binary_op(
 %% returns a call form annotated with type information.
 -spec typecheck_and_annotate_call(rufus_stack(), globals(), locals(), call_form()) ->
     {ok, call_form()} | no_return().
-typecheck_and_annotate_call(Stack, Globals, Locals, {call, Context1 = #{args := Args}}) ->
+typecheck_and_annotate_call(
+    Stack,
+    Globals,
+    Locals,
+    {call, Context = #{args := Args, spec := Spec}}
+) ->
     {ok, _NewLocals, AnnotatedArgs} = typecheck_and_annotate([], Stack, Globals, Locals, Args),
-    Context2 = Context1#{args => AnnotatedArgs},
+    Context1 = Context#{args => AnnotatedArgs},
+    Context2 =
+        case maps:get(Spec, Locals, false) of
+            false ->
+                Context1;
+            _Type ->
+                %% The identifier being invoked refers to a function defined in
+                %% the local scope, which means it must be an anonymous
+                %% function. We mark the form so that rufus_erlang:forms/1 can
+                %% generate the correct Erlang abstract syntax to match the use
+                %% case of calling a named function vs. an anonymous function.
+                Context1#{kind => anonymous}
+        end,
     Form = {call, Context2#{locals => Locals}},
     case rufus_type:resolve(Globals, Form) of
         {ok, TypeForm} ->

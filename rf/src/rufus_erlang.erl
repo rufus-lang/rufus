@@ -67,9 +67,15 @@ forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}
 forms(Acc, [{bool_lit, _Context} = BoolLit | T]) ->
     Form = box(BoolLit),
     forms([Form | Acc], T);
-forms(Acc, [{call, #{spec := Spec, args := Args, line := Line}} | T]) ->
+forms(Acc, [{call, Context = #{spec := Spec, args := Args, line := Line}} | T]) ->
     {ok, ArgsForms} = forms([], Args),
-    Form = {call, Line, {atom, Line, Spec}, ArgsForms},
+    Form =
+        case maps:get(kind, Context, named) of
+            anonymous ->
+                {call, Line, {var, Line, Spec}, ArgsForms};
+            named ->
+                {call, Line, {atom, Line, Spec}, ArgsForms}
+        end,
     forms([Form | Acc], T);
 forms(Acc, [{cons, #{head := Head, tail := Tail, line := Line}} | T]) ->
     {ok, [HeadForm]} = forms([], [Head]),

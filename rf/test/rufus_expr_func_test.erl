@@ -1806,6 +1806,7 @@ typecheck_and_annotate_function_returning_a_nested_function_test() ->
                         }}
                 }},
                 {call, #{
+                    kind => anonymous,
                     args => [],
                     line => 7,
                     spec => f,

@@ -377,3 +377,20 @@ eval_function_returning_a_function_variable_test() ->
     NumberFunc = example:'NumberFunc'(),
     ?assert(is_function(NumberFunc)),
     ?assertEqual(42, NumberFunc()).
+
+eval_function_returning_a_nested_function_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func NumberFunc() func() int {\n"
+        "        f = func() func() int {\n"
+        "            func() int { 42 }\n"
+        "        }\n"
+        "        f()\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    NumberFunc = example:'NumberFunc'(),
+    ?assert(is_function(NumberFunc)),
+    ?assertEqual(42, NumberFunc()).

@@ -538,3 +538,36 @@ forms_for_function_returning_a_function_variable_test() ->
         ]}
     ],
     ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_returning_a_nested_function_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func NumberFunc() func() int {\n"
+        "        f = func() func() int {\n"
+        "            func() int { 42 }\n"
+        "        }\n"
+        "        f()\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
+    Expected = [
+        {attribute, 2, module, example},
+        {attribute, 3, export, [{'NumberFunc', 0}]},
+        {function, 3, 'NumberFunc', 0, [
+            {clause, 3, [], [], [
+                {match, 4, {var, 4, f},
+                    {'fun', 4,
+                        {clauses, [
+                            {clause, 4, [], [], [
+                                {'fun', 5, {clauses, [{clause, 5, [], [], [{integer, 5, 42}]}]}}
+                            ]}
+                        ]}}},
+                {call, 7, {var, 7, f}, []}
+            ]}
+        ]}
+    ],
+    ?assertEqual(Expected, ErlangForms).
