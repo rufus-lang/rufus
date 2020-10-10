@@ -123,7 +123,6 @@ resolve_unknown_arity_error_test() ->
                 param_types => [{type, #{line => 3, spec => string}}],
                 return_type =>
                     {type, #{line => 3, spec => string}},
-                source => rufus_text,
                 spec => 'func(string) string'
             }}
         ]
@@ -160,7 +159,6 @@ resolve_unmatched_args_error_test() ->
                 param_types => [{type, #{line => 3, spec => string}}],
                 return_type =>
                     {type, #{line => 3, spec => string}},
-                source => rufus_text,
                 spec => 'func(string) string'
             }}
         ]

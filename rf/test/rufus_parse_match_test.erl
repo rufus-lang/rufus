@@ -29,7 +29,6 @@ parse_function_with_a_match_that_binds_an_atom_literal_test() ->
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => inferred,
                                     spec => atom
                                 }}
                         }}
@@ -44,7 +43,6 @@ parse_function_with_a_match_that_binds_an_atom_literal_test() ->
             return_type =>
                 {type, #{
                     line => 2,
-                    source => rufus_text,
                     spec => atom
                 }},
             spec => 'Ping'
@@ -79,7 +77,6 @@ parse_function_with_a_match_that_binds_a_bool_literal_test() ->
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }}
@@ -94,7 +91,6 @@ parse_function_with_a_match_that_binds_a_bool_literal_test() ->
             return_type =>
                 {type, #{
                     line => 2,
-                    source => rufus_text,
                     spec => bool
                 }},
             spec => 'Truthy'
@@ -129,7 +125,6 @@ parse_function_with_a_match_that_binds_a_float_literal_test() ->
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => inferred,
                                     spec => float
                                 }}
                         }}
@@ -144,7 +139,6 @@ parse_function_with_a_match_that_binds_a_float_literal_test() ->
             return_type =>
                 {type, #{
                     line => 2,
-                    source => rufus_text,
                     spec => float
                 }},
             spec => 'FortyTwo'
@@ -179,7 +173,6 @@ parse_function_with_a_match_that_binds_a_string_literal_test() ->
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => inferred,
                                     spec => string
                                 }}
                         }}
@@ -194,7 +187,6 @@ parse_function_with_a_match_that_binds_a_string_literal_test() ->
             return_type =>
                 {type, #{
                     line => 2,
-                    source => rufus_text,
                     spec => string
                 }},
             spec => 'Ping'
@@ -226,11 +218,9 @@ parse_function_with_a_match_that_binds_a_list_literal_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 3,
-                                            source => rufus_text,
                                             spec => string
                                         }},
                                     line => 3,
-                                    source => rufus_text,
                                     spec => 'list[string]'
                                 }}
                         }},
@@ -250,11 +240,9 @@ parse_function_with_a_match_that_binds_a_list_literal_test() ->
                             element_type =>
                                 {type, #{
                                     line => 2,
-                                    source => rufus_text,
                                     spec => string
                                 }},
                             line => 2,
-                            source => rufus_text,
                             spec => 'list[string]'
                         }}
                 }}
@@ -293,11 +281,9 @@ parse_function_with_a_match_that_binds_a_cons_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     line => 4,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                         }},
@@ -314,7 +300,6 @@ parse_function_with_a_match_that_binds_a_cons_test() ->
                             element_type =>
                                 {type, #{line => 5, spec => int}},
                             line => 5,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -330,7 +315,6 @@ parse_function_with_a_match_that_binds_a_cons_test() ->
                             element_type =>
                                 {type, #{line => 3, spec => int}},
                             line => 3,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -341,7 +325,6 @@ parse_function_with_a_match_that_binds_a_cons_test() ->
                     element_type =>
                         {type, #{line => 3, spec => int}},
                     line => 3,
-                    source => rufus_text,
                     spec => 'list[int]'
                 }},
             spec => 'Echo'
@@ -378,7 +361,6 @@ parse_function_with_a_match_that_binds_a_cons_head_test() ->
                                             type =>
                                                 {type, #{
                                                     line => 4,
-                                                    source => inferred,
                                                     spec => int
                                                 }}
                                         }},
@@ -388,7 +370,6 @@ parse_function_with_a_match_that_binds_a_cons_head_test() ->
                                             type =>
                                                 {type, #{
                                                     line => 4,
-                                                    source => inferred,
                                                     spec => int
                                                 }}
                                         }}
@@ -400,11 +381,9 @@ parse_function_with_a_match_that_binds_a_cons_head_test() ->
                                             element_type =>
                                                 {type, #{
                                                     line => 4,
-                                                    source => rufus_text,
                                                     spec => int
                                                 }},
                                             line => 4,
-                                            source => rufus_text,
                                             spec => 'list[int]'
                                         }}
                                 }},
@@ -414,11 +393,9 @@ parse_function_with_a_match_that_binds_a_cons_head_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     line => 4,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                         }},
@@ -438,7 +415,6 @@ parse_function_with_a_match_that_binds_a_cons_head_test() ->
                             element_type =>
                                 {type, #{line => 3, spec => int}},
                             line => 3,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -475,7 +451,6 @@ parse_function_with_a_match_that_binds_a_cons_tail_test() ->
                                     type =>
                                         {type, #{
                                             line => 4,
-                                            source => inferred,
                                             spec => int
                                         }}
                                 }},
@@ -487,11 +462,9 @@ parse_function_with_a_match_that_binds_a_cons_tail_test() ->
                                     element_type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }},
                                     line => 4,
-                                    source => rufus_text,
                                     spec => 'list[int]'
                                 }}
                         }},
@@ -511,7 +484,6 @@ parse_function_with_a_match_that_binds_a_cons_tail_test() ->
                             element_type =>
                                 {type, #{line => 3, spec => int}},
                             line => 3,
-                            source => rufus_text,
                             spec => 'list[int]'
                         }}
                 }}
@@ -522,7 +494,6 @@ parse_function_with_a_match_that_binds_a_cons_tail_test() ->
                     element_type =>
                         {type, #{line => 3, spec => int}},
                     line => 3,
-                    source => rufus_text,
                     spec => 'list[int]'
                 }},
             spec => 'Rest'
@@ -570,7 +541,6 @@ parse_function_with_a_match_that_binds_a_variable_test() ->
                     type =>
                         {type, #{
                             line => 2,
-                            source => rufus_text,
                             spec => int
                         }}
                 }}
@@ -578,7 +548,6 @@ parse_function_with_a_match_that_binds_a_variable_test() ->
             return_type =>
                 {type, #{
                     line => 2,
-                    source => rufus_text,
                     spec => int
                 }},
             spec => 'Echo'
@@ -612,7 +581,6 @@ parse_function_taking_a_match_pattern_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => rufus_text,
                                     spec => int
                                 }}
                         }}

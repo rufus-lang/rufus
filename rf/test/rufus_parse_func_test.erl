@@ -181,7 +181,6 @@ forms_for_function_with_multiple_expressions_test() ->
                     type =>
                         {type, #{
                             line => 3,
-                            source => inferred,
                             spec => int
                         }}
                 }},
@@ -191,7 +190,6 @@ forms_for_function_with_multiple_expressions_test() ->
                     type =>
                         {type, #{
                             line => 4,
-                            source => inferred,
                             spec => atom
                         }}
                 }}
@@ -200,7 +198,6 @@ forms_for_function_with_multiple_expressions_test() ->
             return_type =>
                 {type, #{
                     line => 2,
-                    source => rufus_text,
                     spec => atom
                 }},
             spec => 'Multiple'
@@ -229,7 +226,6 @@ forms_for_function_with_multiple_expressions_with_blank_lines_test() ->
                     type =>
                         {type, #{
                             line => 3,
-                            source => inferred,
                             spec => int
                         }}
                 }},
@@ -239,7 +235,6 @@ forms_for_function_with_multiple_expressions_with_blank_lines_test() ->
                     type =>
                         {type, #{
                             line => 5,
-                            source => inferred,
                             spec => atom
                         }}
                 }}
@@ -248,7 +243,6 @@ forms_for_function_with_multiple_expressions_with_blank_lines_test() ->
             return_type =>
                 {type, #{
                     line => 2,
-                    source => rufus_text,
                     spec => atom
                 }},
             spec => 'Multiple'
@@ -270,7 +264,6 @@ forms_for_function_with_multiple_expressions_separated_by_semicolons_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            source => inferred,
                             spec => int
                         }}
                 }},
@@ -280,7 +273,6 @@ forms_for_function_with_multiple_expressions_separated_by_semicolons_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            source => inferred,
                             spec => atom
                         }}
                 }}
@@ -289,7 +281,6 @@ forms_for_function_with_multiple_expressions_separated_by_semicolons_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => atom
                 }},
             spec => 'Multiple'
@@ -530,7 +521,6 @@ parse_function_taking_an_atom_literal_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            source => inferred,
                             spec => atom
                         }}
                 }}
@@ -543,7 +533,6 @@ parse_function_taking_an_atom_literal_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            source => inferred,
                             spec => atom
                         }}
                 }}
@@ -551,7 +540,6 @@ parse_function_taking_an_atom_literal_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => atom
                 }},
             spec => 'Echo'
@@ -572,7 +560,6 @@ parse_function_taking_a_bool_literal_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            source => inferred,
                             spec => bool
                         }}
                 }}
@@ -585,7 +572,6 @@ parse_function_taking_a_bool_literal_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            source => inferred,
                             spec => bool
                         }}
                 }}
@@ -593,7 +579,6 @@ parse_function_taking_a_bool_literal_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => bool
                 }},
             spec => 'Echo'
@@ -614,7 +599,6 @@ parse_function_taking_a_float_literal_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            source => inferred,
                             spec => float
                         }}
                 }}
@@ -627,7 +611,6 @@ parse_function_taking_a_float_literal_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            source => inferred,
                             spec => float
                         }}
                 }}
@@ -635,7 +618,6 @@ parse_function_taking_a_float_literal_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => float
                 }},
             spec => 'Echo'
@@ -656,7 +638,6 @@ parse_function_taking_an_int_literal_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            source => inferred,
                             spec => int
                         }}
                 }}
@@ -669,7 +650,6 @@ parse_function_taking_an_int_literal_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            source => inferred,
                             spec => int
                         }}
                 }}
@@ -677,7 +657,6 @@ parse_function_taking_an_int_literal_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => int
                 }},
             spec => 'Echo'
@@ -698,7 +677,6 @@ parse_function_taking_a_string_literal_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            source => inferred,
                             spec => string
                         }}
                 }}
@@ -711,7 +689,6 @@ parse_function_taking_a_string_literal_test() ->
                     type =>
                         {type, #{
                             line => 1,
-                            source => inferred,
                             spec => string
                         }}
                 }}
@@ -719,7 +696,6 @@ parse_function_taking_a_string_literal_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => string
                 }},
             spec => 'Echo'
@@ -753,7 +729,6 @@ parse_function_taking_and_returning_a_function_test() ->
                             param_types => [],
                             return_type =>
                                 {type, #{line => 2, spec => int}},
-                            source => rufus_text,
                             spec => 'func() int'
                         }}
                 }}
@@ -765,7 +740,6 @@ parse_function_taking_and_returning_a_function_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 2, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }},
             spec => 'Echo'
@@ -793,7 +767,6 @@ parse_function_returning_a_function_test() ->
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }}
@@ -813,7 +786,6 @@ parse_function_returning_a_function_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 2, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }},
             spec => 'NumberFunc'
@@ -848,7 +820,6 @@ parse_function_returning_a_function_variable_test() ->
                                             type =>
                                                 {type, #{
                                                     line => 3,
-                                                    source => inferred,
                                                     spec => int
                                                 }}
                                         }},
@@ -861,7 +832,6 @@ parse_function_returning_a_function_variable_test() ->
                                             type =>
                                                 {type, #{
                                                     line => 3,
-                                                    source => inferred,
                                                     spec => int
                                                 }}
                                         }}
@@ -884,7 +854,6 @@ parse_function_returning_a_function_variable_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 2, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }},
             spec => 'NumberFunc'
@@ -923,7 +892,6 @@ parse_function_returning_a_nested_function_test() ->
                                             type =>
                                                 {type, #{
                                                     line => 5,
-                                                    source => inferred,
                                                     spec => int
                                                 }}
                                         }}
@@ -933,7 +901,6 @@ parse_function_returning_a_nested_function_test() ->
                                     return_type =>
                                         {type, #{
                                             line => 5,
-                                            source => rufus_text,
                                             spec => int
                                         }}
                                 }}
@@ -948,10 +915,8 @@ parse_function_returning_a_nested_function_test() ->
                                     return_type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }},
-                                    source => rufus_text,
                                     spec => 'func() int'
                                 }}
                         }}
@@ -967,7 +932,6 @@ parse_function_returning_a_nested_function_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }},
             spec => 'NumberFunc'

@@ -213,7 +213,6 @@ eval_function_with_a_match_that_has_a_left_call_operand_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 4, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }}
             ],
@@ -224,7 +223,6 @@ eval_function_with_a_match_that_has_a_left_call_operand_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }}
             ]
@@ -255,7 +253,6 @@ eval_function_with_a_match_that_has_a_left_binary_op_operand_with_a_call_operand
                                 type =>
                                     {type, #{
                                         line => 6,
-                                        source => inferred,
                                         spec => int
                                     }}
                             }},
@@ -269,7 +266,6 @@ eval_function_with_a_match_that_has_a_left_binary_op_operand_with_a_call_operand
                                 type =>
                                     {type, #{
                                         line => 3,
-                                        source => rufus_text,
                                         spec => int
                                     }}
                             }},
@@ -295,7 +291,6 @@ eval_function_with_a_match_that_has_a_left_binary_op_operand_with_a_call_operand
                     param_types => [],
                     return_type =>
                         {type, #{line => 4, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }}
             ],
@@ -306,7 +301,6 @@ eval_function_with_a_match_that_has_a_left_binary_op_operand_with_a_call_operand
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }}
             ]
@@ -356,7 +350,6 @@ eval_function_with_a_match_that_has_a_left_and_right_call_operand_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 4, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }}
             ],
@@ -367,7 +360,6 @@ eval_function_with_a_match_that_has_a_left_and_right_call_operand_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }}
             ]
@@ -395,7 +387,6 @@ eval_function_with_a_match_that_has_a_right_call_operand_with_a_mismatched_left_
                     param_types => [],
                     return_type =>
                         {type, #{line => 4, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }}
             ],
@@ -406,7 +397,6 @@ eval_function_with_a_match_that_has_a_right_call_operand_with_a_mismatched_left_
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }}
             ]
@@ -458,7 +448,6 @@ eval_function_with_a_match_that_has_a_right_call_operand_with_a_mismatched_arg_t
                 param_types => [{type, #{line => 3, spec => int}}],
                 return_type =>
                     {type, #{line => 3, spec => int}},
-                source => rufus_text,
                 spec => 'func(int) int'
             }}
         ]
@@ -494,7 +483,6 @@ eval_function_with_a_match_that_has_an_unbound_variable_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }}
             ]
@@ -523,7 +511,6 @@ eval_function_with_a_match_that_has_an_unbound_variable_test() ->
                                 type =>
                                     {type, #{
                                         line => 4,
-                                        source => inferred,
                                         spec => int
                                     }}
                             }}
@@ -548,7 +535,6 @@ eval_function_with_a_match_that_has_an_unbound_variable_test() ->
                         param_types => [],
                         return_type =>
                             {type, #{line => 3, spec => int}},
-                        source => rufus_text,
                         spec => 'func() int'
                     }}
             }}
@@ -575,7 +561,6 @@ eval_function_with_a_match_that_has_unbound_variables_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }}
             ]
@@ -612,7 +597,6 @@ eval_function_with_a_match_that_has_unbound_variables_test() ->
                         param_types => [],
                         return_type =>
                             {type, #{line => 3, spec => int}},
-                        source => rufus_text,
                         spec => 'func() int'
                     }}
             }}
@@ -640,7 +624,6 @@ eval_function_with_a_match_that_has_unmatched_types_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }}
             ]

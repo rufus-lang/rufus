@@ -50,7 +50,6 @@ typecheck_and_annotate_mathematical_operator_with_ints_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }}
         }}
@@ -78,7 +77,6 @@ typecheck_and_annotate_mathematical_operator_with_floats_test() ->
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => inferred,
                                     spec => float
                                 }}
                         }},
@@ -91,7 +89,6 @@ typecheck_and_annotate_mathematical_operator_with_floats_test() ->
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => inferred,
                                     spec => float
                                 }}
                         }},
@@ -111,7 +108,6 @@ typecheck_and_annotate_mathematical_operator_with_floats_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => float}},
-                    source => rufus_text,
                     spec => 'func() float'
                 }}
         }}
@@ -136,7 +132,6 @@ typecheck_and_annotate_mathematical_operator_with_float_and_int_test() ->
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => float
                             }}
                     }},
@@ -150,7 +145,6 @@ typecheck_and_annotate_mathematical_operator_with_float_and_int_test() ->
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => int
                             }}
                     }}
@@ -178,7 +172,6 @@ typecheck_and_annotate_mathematical_operator_with_float_and_float_and_int_test()
                                 type =>
                                     {type, #{
                                         line => 3,
-                                        source => inferred,
                                         spec => float
                                     }}
                             }},
@@ -191,14 +184,12 @@ typecheck_and_annotate_mathematical_operator_with_float_and_float_and_int_test()
                                 type =>
                                     {type, #{
                                         line => 3,
-                                        source => inferred,
                                         spec => float
                                     }}
                             }},
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => float
                             }}
                     }},
@@ -212,7 +203,6 @@ typecheck_and_annotate_mathematical_operator_with_float_and_float_and_int_test()
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => int
                             }}
                     }}
@@ -238,7 +228,6 @@ typecheck_and_annotate_mathematical_operator_with_bools_test() ->
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => bool
                             }}
                     }},
@@ -252,7 +241,6 @@ typecheck_and_annotate_mathematical_operator_with_bools_test() ->
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => bool
                             }}
                     }}
@@ -278,7 +266,6 @@ typecheck_and_annotate_mathematical_operator_with_strings_test() ->
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => string
                             }}
                     }},
@@ -292,7 +279,6 @@ typecheck_and_annotate_mathematical_operator_with_strings_test() ->
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => string
                             }}
                     }}
@@ -346,7 +332,6 @@ typecheck_and_annotate_remainder_mathematical_operator_with_ints_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }}
         }}
@@ -371,7 +356,6 @@ typecheck_and_annotate_remainder_mathematical_operator_with_floats_test() ->
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => float
                             }}
                     }},
@@ -385,7 +369,6 @@ typecheck_and_annotate_remainder_mathematical_operator_with_floats_test() ->
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => float
                             }}
                     }}
@@ -416,7 +399,6 @@ typecheck_and_annotate_conditional_operator_with_bools_test() ->
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }},
@@ -429,7 +411,6 @@ typecheck_and_annotate_conditional_operator_with_bools_test() ->
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }},
@@ -449,7 +430,6 @@ typecheck_and_annotate_conditional_operator_with_bools_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => bool}},
-                    source => rufus_text,
                     spec => 'func() bool'
                 }}
         }}
@@ -478,7 +458,6 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }},
@@ -493,7 +472,6 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
                                     type =>
                                         {type, #{
                                             line => 3,
-                                            source => inferred,
                                             spec => bool
                                         }}
                                 }},
@@ -506,14 +484,12 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
                                     type =>
                                         {type, #{
                                             line => 3,
-                                            source => inferred,
                                             spec => bool
                                         }}
                                 }},
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }},
@@ -533,7 +509,6 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => bool}},
-                    source => rufus_text,
                     spec => 'func() bool'
                 }}
         }},
@@ -549,7 +524,6 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
                                     type =>
                                         {type, #{
                                             line => 4,
-                                            source => inferred,
                                             spec => bool
                                         }}
                                 }},
@@ -562,14 +536,12 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
                                     type =>
                                         {type, #{
                                             line => 4,
-                                            source => inferred,
                                             spec => bool
                                         }}
                                 }},
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }},
@@ -582,7 +554,6 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }},
@@ -602,7 +573,6 @@ typecheck_and_annotate_conditional_operator_with_nested_bools_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 4, spec => bool}},
-                    source => rufus_text,
                     spec => 'func() bool'
                 }}
         }}
@@ -627,7 +597,6 @@ typecheck_and_annotate_conditional_operator_with_bool_and_int_test() ->
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => bool
                             }}
                     }},
@@ -641,7 +610,6 @@ typecheck_and_annotate_conditional_operator_with_bool_and_int_test() ->
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => int
                             }}
                     }}
@@ -697,7 +665,6 @@ typecheck_and_annotate_equality_comparison_operator_with_ints_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => bool}},
-                    source => rufus_text,
                     spec => 'func() bool'
                 }}
         }}
@@ -722,7 +689,6 @@ typecheck_and_annotate_equality_comparison_operator_with_mismatched_operands_tes
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => int
                             }}
                     }},
@@ -736,7 +702,6 @@ typecheck_and_annotate_equality_comparison_operator_with_mismatched_operands_tes
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => float
                             }}
                     }}
@@ -790,7 +755,6 @@ typecheck_and_annotate_inequality_comparison_operator_with_ints_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => bool}},
-                    source => rufus_text,
                     spec => 'func() bool'
                 }}
         }}
@@ -815,7 +779,6 @@ typecheck_and_annotate_inequality_comparison_operator_with_mismatched_operands_t
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => atom
                             }}
                     }},
@@ -829,7 +792,6 @@ typecheck_and_annotate_inequality_comparison_operator_with_mismatched_operands_t
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => float
                             }}
                     }}
@@ -883,7 +845,6 @@ typecheck_and_annotate_less_than_comparison_operator_with_ints_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => bool}},
-                    source => rufus_text,
                     spec => 'func() bool'
                 }}
         }}
@@ -908,7 +869,6 @@ typecheck_and_annotate_less_than_comparison_operator_with_mismatched_operands_te
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => int
                             }}
                     }},
@@ -922,7 +882,6 @@ typecheck_and_annotate_less_than_comparison_operator_with_mismatched_operands_te
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => float
                             }}
                     }}
@@ -948,7 +907,6 @@ typecheck_and_annotate_less_than_comparison_operator_with_unsupported_operand_ty
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => atom
                             }}
                     }},
@@ -962,7 +920,6 @@ typecheck_and_annotate_less_than_comparison_operator_with_unsupported_operand_ty
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => atom
                             }}
                     }}
@@ -1016,7 +973,6 @@ typecheck_and_annotate_less_than_or_equal_comparison_operator_with_ints_test() -
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => bool}},
-                    source => rufus_text,
                     spec => 'func() bool'
                 }}
         }}
@@ -1041,7 +997,6 @@ typecheck_and_annotate_less_than_or_equal_comparison_operator_with_mismatched_op
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => int
                             }}
                     }},
@@ -1055,7 +1010,6 @@ typecheck_and_annotate_less_than_or_equal_comparison_operator_with_mismatched_op
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => float
                             }}
                     }}
@@ -1081,7 +1035,6 @@ typecheck_and_annotate_less_than_or_equal_comparison_operator_with_unsupported_o
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => atom
                             }}
                     }},
@@ -1095,7 +1048,6 @@ typecheck_and_annotate_less_than_or_equal_comparison_operator_with_unsupported_o
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => atom
                             }}
                     }}
@@ -1149,7 +1101,6 @@ typecheck_and_annotate_greater_than_comparison_operator_with_ints_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => bool}},
-                    source => rufus_text,
                     spec => 'func() bool'
                 }}
         }}
@@ -1174,7 +1125,6 @@ typecheck_and_annotate_greater_than_comparison_operator_with_mismatched_operands
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => int
                             }}
                     }},
@@ -1188,7 +1138,6 @@ typecheck_and_annotate_greater_than_comparison_operator_with_mismatched_operands
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => float
                             }}
                     }}
@@ -1214,7 +1163,6 @@ typecheck_and_annotate_greater_than_comparison_operator_with_unsupported_operand
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => atom
                             }}
                     }},
@@ -1228,7 +1176,6 @@ typecheck_and_annotate_greater_than_comparison_operator_with_unsupported_operand
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => atom
                             }}
                     }}
@@ -1282,7 +1229,6 @@ typecheck_and_annotate_greater_than_or_equal_comparison_operator_with_ints_test(
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => bool}},
-                    source => rufus_text,
                     spec => 'func() bool'
                 }}
         }}
@@ -1307,7 +1253,6 @@ typecheck_and_annotate_greater_than_or_equal_comparison_operator_with_mismatched
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => int
                             }}
                     }},
@@ -1321,7 +1266,6 @@ typecheck_and_annotate_greater_than_or_equal_comparison_operator_with_mismatched
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => float
                             }}
                     }}
@@ -1347,7 +1291,6 @@ typecheck_and_annotate_greater_than_or_equal_comparison_operator_with_unsupporte
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => atom
                             }}
                     }},
@@ -1361,7 +1304,6 @@ typecheck_and_annotate_greater_than_or_equal_comparison_operator_with_unsupporte
                         type =>
                             {type, #{
                                 line => 3,
-                                source => inferred,
                                 spec => atom
                             }}
                     }}

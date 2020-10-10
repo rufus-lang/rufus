@@ -20,7 +20,6 @@ typecheck_and_annotate_with_function_calling_an_unknown_function_test() ->
                     text =>
                         {type, #{
                             line => 3,
-                            source => rufus_text,
                             spec => string
                         }}
                 },
@@ -34,17 +33,14 @@ typecheck_and_annotate_with_function_calling_an_unknown_function_test() ->
                     param_types => [
                         {type, #{
                             line => 3,
-                            source => rufus_text,
                             spec => string
                         }}
                     ],
                     return_type =>
                         {type, #{
                             line => 3,
-                            source => rufus_text,
                             spec => string
                         }},
-                    source => rufus_text,
                     spec => 'func(string) string'
                 }}
             ]
@@ -72,7 +68,6 @@ typecheck_and_annotate_with_function_calling_a_function_with_a_missing_argument_
                 param_types => [{type, #{line => 3, spec => string}}],
                 return_type =>
                     {type, #{line => 3, spec => string}},
-                source => rufus_text,
                 spec => 'func(string) string'
             }}
         ]
@@ -105,7 +100,6 @@ typecheck_and_annotate_with_function_calling_a_function_with_a_mismatched_argume
                 param_types => [{type, #{line => 3, spec => string}}],
                 return_type =>
                     {type, #{line => 3, spec => string}},
-                source => rufus_text,
                 spec => 'func(string) string'
             }}
         ]
@@ -132,7 +126,6 @@ typecheck_and_annotate_with_function_calling_a_function_with_one_argument_test()
                     type =>
                         {type, #{
                             line => 3,
-                            source => rufus_text,
                             spec => string
                         }}
                 }}
@@ -145,7 +138,6 @@ typecheck_and_annotate_with_function_calling_a_function_with_one_argument_test()
                     type =>
                         {type, #{
                             line => 3,
-                            source => rufus_text,
                             spec => string
                         }}
                 }}
@@ -160,7 +152,6 @@ typecheck_and_annotate_with_function_calling_a_function_with_one_argument_test()
                     param_types => [{type, #{line => 3, spec => string}}],
                     return_type =>
                         {type, #{line => 3, spec => string}},
-                    source => rufus_text,
                     spec => 'func(string) string'
                 }}
         }},
@@ -174,7 +165,6 @@ typecheck_and_annotate_with_function_calling_a_function_with_one_argument_test()
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => inferred,
                                     spec => string
                                 }}
                         }}
@@ -184,7 +174,6 @@ typecheck_and_annotate_with_function_calling_a_function_with_one_argument_test()
                     type =>
                         {type, #{
                             line => 3,
-                            source => rufus_text,
                             spec => string
                         }}
                 }}
@@ -201,7 +190,6 @@ typecheck_and_annotate_with_function_calling_a_function_with_one_argument_test()
                     param_types => [],
                     return_type =>
                         {type, #{line => 4, spec => string}},
-                    source => rufus_text,
                     spec => 'func() string'
                 }}
         }}
@@ -230,7 +218,6 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => rufus_text,
                                     spec => int
                                 }}
                         }},
@@ -243,7 +230,6 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => rufus_text,
                                     spec => int
                                 }}
                         }},
@@ -279,7 +265,6 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
                     ],
                     return_type =>
                         {type, #{line => 3, spec => int}},
-                    source => rufus_text,
                     spec => 'func(int, int) int'
                 }}
         }},
@@ -293,7 +278,6 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }},
@@ -303,7 +287,6 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }}
@@ -326,7 +309,6 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
                     param_types => [],
                     return_type =>
                         {type, #{line => 4, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }}
         }}
@@ -357,7 +339,6 @@ eval_with_function_call_with_binary_op_argument_test() ->
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => rufus_text,
                                     spec => int
                                 }}
                         }},
@@ -393,7 +374,6 @@ eval_with_function_call_with_binary_op_argument_test() ->
                     param_types => [{type, #{line => 3, spec => int}}],
                     return_type =>
                         {type, #{line => 3, spec => int}},
-                    source => rufus_text,
                     spec => 'func(int) int'
                 }}
         }},
@@ -409,7 +389,6 @@ eval_with_function_call_with_binary_op_argument_test() ->
                                     type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }}
                                 }},
@@ -422,14 +401,12 @@ eval_with_function_call_with_binary_op_argument_test() ->
                                     type =>
                                         {type, #{
                                             line => 4,
-                                            source => rufus_text,
                                             spec => int
                                         }}
                                 }},
                             type =>
                                 {type, #{
                                     line => 4,
-                                    source => rufus_text,
                                     spec => int
                                 }}
                         }}
@@ -468,7 +445,6 @@ eval_with_function_call_with_binary_op_argument_test() ->
                     ],
                     return_type =>
                         {type, #{line => 4, spec => int}},
-                    source => rufus_text,
                     spec => 'func(int, int) int'
                 }}
         }}
@@ -517,7 +493,6 @@ eval_with_function_call_with_match_argument_test() ->
                     param_types => [{type, #{line => 3, spec => int}}],
                     return_type =>
                         {type, #{line => 3, spec => int}},
-                    source => rufus_text,
                     spec => 'func(int) int'
                 }}
         }},
@@ -541,7 +516,6 @@ eval_with_function_call_with_match_argument_test() ->
                                     type =>
                                         {type, #{
                                             line => 4,
-                                            source => inferred,
                                             spec => int
                                         }}
                                 }}
@@ -551,7 +525,6 @@ eval_with_function_call_with_match_argument_test() ->
                             type =>
                                 {type, #{
                                     line => 3,
-                                    source => rufus_text,
                                     spec => int
                                 }}
                         }},
@@ -571,7 +544,6 @@ eval_with_function_call_with_match_argument_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 4, spec => int}},
-                    source => rufus_text,
                     spec => 'func() int'
                 }}
         }}

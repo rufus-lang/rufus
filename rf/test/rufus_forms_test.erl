@@ -15,7 +15,7 @@ map_test() ->
     Form = rufus_form:make_literal(bool, true, 7),
     Expected1 =
         {bool_lit,
-            Context = #{spec => true, line => 7, type => rufus_form:make_inferred_type(bool, 7)}},
+            Context = #{spec => true, line => 7, type => rufus_form:make_type(bool, 7)}},
     ?assertEqual(Expected1, Form),
     [AnnotatedForm] = rufus_forms:map([Form], fun annotate/1),
     Expected2 = {bool_lit, Context#{annotated => true}},
@@ -157,7 +157,6 @@ globals_test() ->
                 param_types => [{type, #{line => 3, spec => string}}],
                 return_type =>
                     {type, #{line => 3, spec => string}},
-                source => rufus_text,
                 spec => 'func(string) string'
             }}
         ],
@@ -168,7 +167,6 @@ globals_test() ->
                 param_types => [],
                 return_type =>
                     {type, #{line => 4, spec => int}},
-                source => rufus_text,
                 spec => 'func() int'
             }}
         ]
@@ -193,7 +191,6 @@ globals_with_multiple_function_heads_test() ->
                 param_types => [{type, #{line => 3, spec => string}}],
                 return_type =>
                     {type, #{line => 3, spec => string}},
-                source => rufus_text,
                 spec => 'func(string) string'
             }},
             {type, #{
@@ -202,7 +199,6 @@ globals_with_multiple_function_heads_test() ->
                 param_types => [{type, #{line => 4, spec => int}}],
                 return_type =>
                     {type, #{line => 4, spec => int}},
-                source => rufus_text,
                 spec => 'func(int) int'
             }}
         ]

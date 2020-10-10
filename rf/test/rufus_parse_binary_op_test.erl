@@ -571,7 +571,6 @@ parse_function_anding_two_bools_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }},
@@ -584,7 +583,6 @@ parse_function_anding_two_bools_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }}
@@ -595,7 +593,6 @@ parse_function_anding_two_bools_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => bool
                 }},
             spec => 'Falsy'
@@ -618,7 +615,6 @@ parse_function_oring_two_bools_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }},
@@ -631,7 +627,6 @@ parse_function_oring_two_bools_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }}
@@ -642,7 +637,6 @@ parse_function_oring_two_bools_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => bool
                 }},
             spec => 'Truthy'
@@ -667,7 +661,6 @@ parse_function_comparing_two_bools_for_equality_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }},
@@ -680,7 +673,6 @@ parse_function_comparing_two_bools_for_equality_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }}
@@ -691,7 +683,6 @@ parse_function_comparing_two_bools_for_equality_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => bool
                 }},
             spec => 'Falsy'
@@ -714,7 +705,6 @@ parse_function_comparing_two_bools_for_inequality_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }},
@@ -727,7 +717,6 @@ parse_function_comparing_two_bools_for_inequality_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => bool
                                 }}
                         }}
@@ -738,7 +727,6 @@ parse_function_comparing_two_bools_for_inequality_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => bool
                 }},
             spec => 'Falsy'
@@ -761,7 +749,6 @@ parse_function_comparing_two_ints_to_determine_which_is_lesser_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }},
@@ -774,7 +761,6 @@ parse_function_comparing_two_ints_to_determine_which_is_lesser_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }}
@@ -785,7 +771,6 @@ parse_function_comparing_two_ints_to_determine_which_is_lesser_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => bool
                 }},
             spec => 'Falsy'
@@ -808,7 +793,6 @@ parse_function_comparing_two_ints_to_determine_which_is_lesser_or_equal_test() -
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }},
@@ -821,7 +805,6 @@ parse_function_comparing_two_ints_to_determine_which_is_lesser_or_equal_test() -
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }}
@@ -832,7 +815,6 @@ parse_function_comparing_two_ints_to_determine_which_is_lesser_or_equal_test() -
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => bool
                 }},
             spec => 'Falsy'
@@ -855,7 +837,6 @@ parse_function_comparing_two_ints_to_determine_which_is_greater_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }},
@@ -868,7 +849,6 @@ parse_function_comparing_two_ints_to_determine_which_is_greater_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }}
@@ -879,7 +859,6 @@ parse_function_comparing_two_ints_to_determine_which_is_greater_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => bool
                 }},
             spec => 'Falsy'
@@ -902,7 +881,6 @@ parse_function_comparing_two_ints_to_determine_which_is_greater_or_equal_test() 
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }},
@@ -915,7 +893,6 @@ parse_function_comparing_two_ints_to_determine_which_is_greater_or_equal_test() 
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => int
                                 }}
                         }}
@@ -926,7 +903,6 @@ parse_function_comparing_two_ints_to_determine_which_is_greater_or_equal_test() 
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => bool
                 }},
             spec => 'Falsy'

@@ -194,7 +194,6 @@ eval_function_having_unmatched_return_types_test() ->
                     param_types => [],
                     return_type =>
                         {type, #{line => 3, spec => float}},
-                    source => rufus_text,
                     spec => 'func() float'
                 }}
             ]
@@ -231,13 +230,11 @@ eval_function_taking_a_bool_and_returning_it_with_a_mismatched_return_type_test(
                     param_types => [
                         {type, #{
                             line => 3,
-                            source => rufus_text,
                             spec => bool
                         }}
                     ],
                     return_type =>
                         {type, #{line => 3, spec => int}},
-                    source => rufus_text,
                     spec => 'func(bool) int'
                 }}
             ]

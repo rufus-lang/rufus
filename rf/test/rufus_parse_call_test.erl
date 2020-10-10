@@ -22,7 +22,6 @@ parse_function_calling_a_function_without_arguments_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => int
                 }},
             spec => 'Random'
@@ -48,7 +47,6 @@ parse_function_calling_a_function_with_an_argument_test() ->
                             type =>
                                 {type, #{
                                     line => 1,
-                                    source => inferred,
                                     spec => string
                                 }}
                         }}
@@ -61,7 +59,6 @@ parse_function_calling_a_function_with_an_argument_test() ->
             return_type =>
                 {type, #{
                     line => 1,
-                    source => rufus_text,
                     spec => string
                 }},
             spec => 'Echo'

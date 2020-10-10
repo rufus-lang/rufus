@@ -126,12 +126,12 @@ resolve_binary_op_type(
             {ok, Type}
     end.
 
-binary_op_type('==', Line) -> rufus_form:make_inferred_type(bool, Line);
-binary_op_type('!=', Line) -> rufus_form:make_inferred_type(bool, Line);
-binary_op_type('<', Line) -> rufus_form:make_inferred_type(bool, Line);
-binary_op_type('<=', Line) -> rufus_form:make_inferred_type(bool, Line);
-binary_op_type('>', Line) -> rufus_form:make_inferred_type(bool, Line);
-binary_op_type('>=', Line) -> rufus_form:make_inferred_type(bool, Line);
+binary_op_type('==', Line) -> rufus_form:make_type(bool, Line);
+binary_op_type('!=', Line) -> rufus_form:make_type(bool, Line);
+binary_op_type('<', Line) -> rufus_form:make_type(bool, Line);
+binary_op_type('<=', Line) -> rufus_form:make_type(bool, Line);
+binary_op_type('>', Line) -> rufus_form:make_type(bool, Line);
+binary_op_type('>=', Line) -> rufus_form:make_type(bool, Line);
 binary_op_type(_, _) -> default.
 
 %% allow_type_with_mathematical_operator returns true if the specified type may
