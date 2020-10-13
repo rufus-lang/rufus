@@ -114,9 +114,9 @@ list_type -> list '[' type ']'   : rufus_form:make_type(list, '$3', line('$1')).
 match -> expr '=' expr           : rufus_form:make_match('$1', '$3', line('$2')).
 match_param -> expr '=' param    : rufus_form:make_match('$1', '$3', line('$2')).
 
-params -> param params           : ['$1'|'$2'].
+params -> param ',' params       : ['$1'|'$3'].
+params -> param                  : ['$1'].
 params -> '$empty'               : [].
-param -> identifier type ','     : rufus_form:make_param(list_to_atom(text('$1')), '$2', line('$1')).
 param -> identifier type         : rufus_form:make_param(list_to_atom(text('$1')), '$2', line('$1')).
 param -> atom_lit                : rufus_form:make_literal(atom, text('$1'), line('$1')).
 param -> bool_lit                : rufus_form:make_literal(bool, text('$1'), line('$1')).

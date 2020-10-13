@@ -208,19 +208,47 @@ resolve_call_type(
                 {error, Reason1, Data1} ->
                     throw({error, Reason1, Data1});
                 {ok, MatchingTypes} when length(MatchingTypes) > 1 ->
-                    %% TODO(jkakar): We need to handle cases where more than one
-                    %% function matches a given set of parameters. For example,
-                    %% consider two functions:
-                    %%
-                    %% func Echo(:hello) atom { :hello }
-                    %% func Echo(:goodbye) string { "goodbye" }
-                    %%
-                    %% These both match an args list with a single atom arg
-                    %% type, but they have different return types. We need to
-                    %% account for all possible return types. When a callsite
-                    %% specifies a literal value such as :hello or :goodbye we
-                    %% should select the correct singular return type.
-                    erlang:error({not_implemented, [Stack, Globals, Form]});
+                    case
+                        length(
+                            lists:usort(
+                                fun
+                                    (
+                                        {type, #{
+                                            kind := func,
+                                            return_value := {type, #{spec := ReturnValueSpec}}
+                                        }},
+                                        {type, #{
+                                            kind := func,
+                                            return_value := {type, #{spec := ReturnValueSpec}}
+                                        }}
+                                    ) ->
+                                        false;
+                                    (_, _) ->
+                                        true
+                                end,
+                                MatchingTypes
+                            )
+                        )
+                    of
+                        1 ->
+                            [Type | _Tail] = MatchingTypes,
+                            {ok, rufus_form:return_type(Type)};
+                        _ ->
+                            %% TODO(jkakar): We need to handle cases where more
+                            %% than one function matches a given set of
+                            %% parameters. For example, consider two functions:
+                            %%
+                            %% func Echo(:hello) atom { :hello }
+                            %% func Echo(:goodbye) string { "goodbye" }
+                            %%
+                            %% These both match an args list with a single atom
+                            %% arg type, but they have different return types.
+                            %% We need to account for all possible return types.
+                            %% When a callsite specifies a literal value such as
+                            %% :hello or :goodbye we should select the correct
+                            %% singular return type.
+                            erlang:error({not_implemented, [Stack, Globals, Form]})
+                    end;
                 {ok, MatchingTypes} when length(MatchingTypes) =:= 1 ->
                     [Type] = MatchingTypes,
                     {ok, rufus_form:return_type(Type)}
