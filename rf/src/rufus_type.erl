@@ -205,31 +205,20 @@ resolve_call_type(
             throw({error, unknown_func, Data});
         Types ->
             case find_matching_types(Types, Args) of
-                {error, Reason1, Data1} ->
-                    throw({error, Reason1, Data1});
                 {ok, MatchingTypes} when length(MatchingTypes) > 1 ->
-                    case
-                        length(
-                            lists:usort(
-                                fun
-                                    (
-                                        {type, #{
-                                            kind := func,
-                                            return_value := {type, #{spec := ReturnValueSpec}}
-                                        }},
-                                        {type, #{
-                                            kind := func,
-                                            return_value := {type, #{spec := ReturnValueSpec}}
-                                        }}
-                                    ) ->
-                                        false;
-                                    (_, _) ->
-                                        true
-                                end,
-                                MatchingTypes
-                            )
-                        )
-                    of
+                    UniqueTypes = lists:usort(
+                        fun
+                            (
+                                {type, #{kind := func, spec := FuncSpec}},
+                                {type, #{kind := func, spec := FuncSpec}}
+                            ) ->
+                                true;
+                            (_, _) ->
+                                false
+                        end,
+                        MatchingTypes
+                    ),
+                    case length(UniqueTypes) of
                         1 ->
                             [Type | _Tail] = MatchingTypes,
                             {ok, rufus_form:return_type(Type)};
@@ -251,7 +240,9 @@ resolve_call_type(
                     end;
                 {ok, MatchingTypes} when length(MatchingTypes) =:= 1 ->
                     [Type] = MatchingTypes,
-                    {ok, rufus_form:return_type(Type)}
+                    {ok, rufus_form:return_type(Type)};
+                {error, Reason1, Data1} ->
+                    throw({error, Reason1, Data1})
             end
     end.
 
