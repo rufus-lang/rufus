@@ -913,3 +913,153 @@ parse_function_returning_a_nested_function_test() ->
         }}
     ],
     ?assertEqual(Expected, Forms).
+
+%% Functions with multiple parameters
+
+parse_function_with_mixed_params_and_patterns_in_parameter_list_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Map(acc list[int], list[int]{head|tail}, fn func(int) int) list[int] {\n"
+        "        item = fn(head)\n"
+        "        Map(list[int]{item|acc}, tail, fn)\n"
+        "    }\n"
+        "    func Map(acc list[int], list[int]{}, fn func(int) int) list[int] {\n"
+        "        acc\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            exprs => [
+                {match, #{
+                    left => {identifier, #{line => 4, spec => item}},
+                    line => 4,
+                    right =>
+                        {call, #{
+                            args => [{identifier, #{line => 4, spec => head}}],
+                            line => 4,
+                            spec => fn
+                        }}
+                }},
+                {call, #{
+                    args => [
+                        {cons, #{
+                            head => {identifier, #{line => 5, spec => item}},
+                            line => 5,
+                            tail => {identifier, #{line => 5, spec => acc}},
+                            type =>
+                                {type, #{
+                                    element_type =>
+                                        {type, #{line => 5, spec => int}},
+                                    kind => list,
+                                    line => 5,
+                                    spec => 'list[int]'
+                                }}
+                        }},
+                        {identifier, #{line => 5, spec => tail}},
+                        {identifier, #{line => 5, spec => fn}}
+                    ],
+                    line => 5,
+                    spec => 'Map'
+                }}
+            ],
+            line => 3,
+            params => [
+                {param, #{
+                    line => 3,
+                    spec => acc,
+                    type =>
+                        {type, #{
+                            element_type => {type, #{line => 3, spec => int}},
+                            kind => list,
+                            line => 3,
+                            spec => 'list[int]'
+                        }}
+                }},
+                {cons, #{
+                    head => {identifier, #{line => 3, spec => head}},
+                    line => 3,
+                    tail => {identifier, #{line => 3, spec => tail}},
+                    type =>
+                        {type, #{
+                            element_type => {type, #{line => 3, spec => int}},
+                            kind => list,
+                            line => 3,
+                            spec => 'list[int]'
+                        }}
+                }},
+                {param, #{
+                    line => 3,
+                    spec => fn,
+                    type =>
+                        {type, #{
+                            kind => func,
+                            line => 3,
+                            param_types => [{type, #{line => 3, spec => int}}],
+                            return_type => {type, #{line => 3, spec => int}},
+                            spec => 'func(int) int'
+                        }}
+                }}
+            ],
+            return_type =>
+                {type, #{
+                    element_type => {type, #{line => 3, spec => int}},
+                    kind => list,
+                    line => 3,
+                    spec => 'list[int]'
+                }},
+            spec => 'Map'
+        }},
+        {func, #{
+            exprs => [{identifier, #{line => 8, spec => acc}}],
+            line => 7,
+            params => [
+                {param, #{
+                    line => 7,
+                    spec => acc,
+                    type =>
+                        {type, #{
+                            element_type => {type, #{line => 7, spec => int}},
+                            kind => list,
+                            line => 7,
+                            spec => 'list[int]'
+                        }}
+                }},
+                {list_lit, #{
+                    elements => [],
+                    line => 7,
+                    type =>
+                        {type, #{
+                            element_type => {type, #{line => 7, spec => int}},
+                            kind => list,
+                            line => 7,
+                            spec => 'list[int]'
+                        }}
+                }},
+                {param, #{
+                    line => 7,
+                    spec => fn,
+                    type =>
+                        {type, #{
+                            kind => func,
+                            line => 7,
+                            param_types => [{type, #{line => 7, spec => int}}],
+                            return_type => {type, #{line => 7, spec => int}},
+                            spec => 'func(int) int'
+                        }}
+                }}
+            ],
+            return_type =>
+                {type, #{
+                    element_type => {type, #{line => 7, spec => int}},
+                    kind => list,
+                    line => 7,
+                    spec => 'list[int]'
+                }},
+            spec => 'Map'
+        }}
+    ],
+    ?assertEqual(Expected, Forms).

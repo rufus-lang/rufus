@@ -318,7 +318,7 @@ typecheck_and_annotate_with_function_calling_a_function_with_two_arguments_test(
 
 %% Function calls with binary_op arguments
 
-eval_with_function_call_with_binary_op_argument_test() ->
+typecheck_and_annotate_function_call_with_binary_op_argument_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -454,7 +454,7 @@ eval_with_function_call_with_binary_op_argument_test() ->
 
 %% Function calls with match arguments
 
-eval_with_function_call_with_match_argument_test() ->
+typecheck_and_annotate_function_call_with_match_argument_test() ->
     RufusText =
         "\n"
         "    module example\n"
