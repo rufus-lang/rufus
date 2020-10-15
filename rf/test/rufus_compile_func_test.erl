@@ -462,7 +462,7 @@ eval_for_anonymous_function_taking_a_string_and_returning_a_string_literal_test(
     ?assert(is_function(EchoFunc)),
     ?assertEqual({string, <<"rufus">>}, EchoFunc({string, <<"rufus">>})).
 
-typecheck_and_annotate_for_anonymous_function_taking_a_cons_expression_test() ->
+eval_for_anonymous_function_taking_a_cons_expression_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -476,7 +476,7 @@ typecheck_and_annotate_for_anonymous_function_taking_a_cons_expression_test() ->
     ?assert(is_function(EchoNumberListFunc)),
     ?assertEqual([1, 2, 3], EchoNumberListFunc([1, 2, 3])).
 
-typecheck_and_annotate_for_anonymous_function_taking_a_list_literal_test() ->
+eval_for_anonymous_function_taking_a_list_literal_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -490,7 +490,7 @@ typecheck_and_annotate_for_anonymous_function_taking_a_list_literal_test() ->
     ?assert(is_function(EchoNumberListFunc)),
     ?assertEqual([1, 2, 3], EchoNumberListFunc([1, 2, 3])).
 
-typecheck_and_annotate_for_anonymous_function_taking_a_match_param_test() ->
+eval_for_anonymous_function_taking_a_match_param_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -506,7 +506,7 @@ typecheck_and_annotate_for_anonymous_function_taking_a_match_param_test() ->
     ?assert(is_function(EchoFortyTwoFunc)),
     ?assertEqual(42, EchoFortyTwoFunc(42)).
 
-typecheck_and_annotate_closure_test() ->
+eval_closure_test() ->
     RufusText =
         "\n"
         "    module example\n"
@@ -520,3 +520,34 @@ typecheck_and_annotate_closure_test() ->
     ?assert(is_function(FortyTwoFunc)),
     ?assertEqual(42, FortyTwoFunc()),
     ?assertEqual(42, FortyTwoFunc()).
+
+%% Functions with multiple parameters
+
+eval_function_with_mixed_params_and_patterns_in_parameter_list_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Map(items list[int], fn func(int) int) list[int] {\n"
+        "        mapOver(list[int]{}, items, fn)\n"
+        "    }\n"
+        "    func mapOver(acc list[int], list[int]{head|tail}, fn func(int) int) list[int] {\n"
+        "        result = fn(head)\n"
+        "        mapOver(list[int]{result|acc}, tail, fn)\n"
+        "    }\n"
+        "    func mapOver(acc list[int], list[int]{}, fn func(int) int) list[int] {\n"
+        "        reverse(acc)\n"
+        "    }\n"
+        "    func reverse(items list[int]) list[int] {\n"
+        "        reverse(list[int]{}, items)\n"
+        "    }\n"
+        "    func reverse(acc list[int], list[int]{head|tail}) list[int] {\n"
+        "        reverse(list[int]{head|acc}, tail)\n"
+        "    }\n"
+        "    func reverse(acc list[int], list[int]{}) list[int] {\n"
+        "        acc\n"
+        "    }\n"
+        "    ",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    Items = example:'Map'([1, 2, 4], fun(Num) -> Num * 2 end),
+    ?assertEqual([2, 4, 8], Items).
