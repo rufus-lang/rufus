@@ -12,6 +12,9 @@ Module               = module
 Import               = import
 Const                = const
 Func                 = func
+Try                  = try
+Catch                = catch
+After                = after
 Match                = match
 Arrow                = \->
 
@@ -66,6 +69,9 @@ Rules.
 {Import}               : {token, {import, TokenLine}}.
 {Const}                : {token, {const, TokenLine}}.
 {Func}                 : {token, {func, TokenLine}}.
+{Try}                  : {token, {'try', TokenLine}}.
+{Catch}                : {token, {'catch', TokenLine}}.
+{After}                : {token, {'after', TokenLine}}.
 {Match}                : {token, {match, TokenLine}}.
 {Arrow}                : {token, {'->', TokenLine}}.
 
