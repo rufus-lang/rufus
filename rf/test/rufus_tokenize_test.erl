@@ -2,7 +2,7 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-%% %% Automatic semicolon insertion.
+%% Automatic semicolon insertion.
 
 string_inserts_semicolon_after_last_identifier_in_source_text_test() ->
     {ok, Tokens} = rufus_tokenize:string("module empty"),
@@ -256,7 +256,7 @@ string_does_not_insert_a_duplicate_semicolon_for_the_closing_brace_when_the_last
         Tokens
     ).
 
-%% %% Arbitrary whitespace.
+%% Arbitrary whitespace.
 
 string_with_newlines_test() ->
     RufusText =
@@ -325,7 +325,7 @@ string_with_newline_in_expression_after_reserved_word_test() ->
         Tokens
     ).
 
-%% %% Lists
+%% Lists
 
 string_with_list_test() ->
     RufusText = "func Numbers() list[int] { list[int]{42, 17, 3} }",

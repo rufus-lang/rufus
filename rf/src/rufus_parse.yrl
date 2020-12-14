@@ -4,7 +4,8 @@
 
 Nonterminals
     root decl
-    type types block param params args expr exprs
+    type types block param params args
+    expr exprs literal_expr catch_expr
     binary_op call cons match match_param
     list_lit list_type.
 
@@ -17,6 +18,7 @@ Terminals
     '<' '<=' '>' '>='
     module import
     func identifier
+    try catch
     atom atom_lit
     bool bool_lit
     float float_lit
@@ -88,11 +90,15 @@ cons -> list_type '{' expr '|' expr '}' :
 cons -> list_type '{' expr '|' '{' args '}' '}' :
                                    rufus_form:make_cons('$1', '$3', rufus_form:make_literal(list, '$1', '$6', line('$6')), line('$1')).
 
-expr  -> atom_lit                : rufus_form:make_literal(atom, text('$1'), line('$1')).
-expr  -> bool_lit                : rufus_form:make_literal(bool, text('$1'), line('$1')).
-expr  -> float_lit               : rufus_form:make_literal(float, text('$1'), line('$1')).
-expr  -> int_lit                 : rufus_form:make_literal(int, text('$1'), line('$1')).
-expr  -> string_lit              : rufus_form:make_literal(string, list_to_binary(text('$1')), line('$1')).
+literal_expr -> atom_lit         : rufus_form:make_literal(atom, text('$1'), line('$1')).
+literal_expr -> bool_lit         : rufus_form:make_literal(bool, text('$1'), line('$1')).
+literal_expr -> float_lit        : rufus_form:make_literal(float, text('$1'), line('$1')).
+literal_expr -> int_lit          : rufus_form:make_literal(int, text('$1'), line('$1')).
+literal_expr -> string_lit       : rufus_form:make_literal(string, list_to_binary(text('$1')), line('$1')).
+
+catch_expr -> literal_expr       : '$1'.
+
+expr  -> literal_expr            : '$1'.
 expr  -> identifier              : rufus_form:make_identifier(list_to_atom(text('$1')), line('$1')).
 expr  -> binary_op               : '$1'.
 expr  -> cons                    : '$1'.
@@ -101,6 +107,8 @@ expr  -> call                    : '$1'.
 expr  -> list_lit                : '$1'.
 expr  -> func '(' params ')' type '{' exprs '}' :
                                    rufus_form:make_func('$3', '$5', '$7', line('$1')).
+expr  -> try '{' exprs '}' catch catch_expr '{' exprs '}' :
+                                   rufus_form:make_try_catch('$3', [rufus_form:make_catch_clause('$6', '$8', line('$5'))], line('$1')).
 
 exprs -> expr ';' exprs          : ['$1'|'$3'].
 exprs -> expr                    : ['$1'].

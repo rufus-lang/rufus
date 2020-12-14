@@ -16,6 +16,7 @@
     make_binary_op_left/1,
     make_binary_op_right/1,
     make_call/3,
+    make_catch_clause/3,
     make_cons/4,
     make_cons_head/1,
     make_cons_tail/1,
@@ -32,6 +33,7 @@
     make_match_right/1,
     make_module/2,
     make_param/3,
+    make_try_catch_after/4,
     make_type/2,
     make_type/3,
     make_type/4
@@ -256,6 +258,19 @@ make_match_right({match, #{line := Line}}) ->
 -spec make_module(atom(), integer()) -> {module, #{spec => atom(), line => integer()}}.
 make_module(Spec, Line) ->
     {module, #{spec => Spec, line => Line}}.
+
+%% try/catch/after form builder API
+
+make_catch_clause(MatchExpr, Exprs, Line) ->
+    {catch_clause, #{match_expr => MatchExpr, expr => Exprs, line => Line}}.
+
+make_try_catch_after(TryExprs, CatchClauses, AfterExprs, Line) ->
+    {try_catch_after, #{
+        try_exprs => TryExprs,
+        catch_clauses => CatchClauses,
+        after_exprs => AfterExprs,
+        line => Line
+    }}.
 
 %% type form builder API
 
