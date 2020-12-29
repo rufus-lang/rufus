@@ -18,7 +18,7 @@ Terminals
     '<' '<=' '>' '>='
     module import
     func identifier
-    try catch
+    try catch after
     atom atom_lit
     bool bool_lit
     float float_lit
@@ -107,8 +107,12 @@ expr  -> call                    : '$1'.
 expr  -> list_lit                : '$1'.
 expr  -> func '(' params ')' type '{' exprs '}' :
                                    rufus_form:make_func('$3', '$5', '$7', line('$1')).
+expr  -> try '{' exprs '}' after '{' exprs '}' :
+                                   rufus_form:make_try_catch_after('$3', [], '$7', line('$1')).
+expr  -> try '{' exprs '}' catch catch_expr '{' exprs '}' after '{' exprs '}' :
+                                   rufus_form:make_try_catch_after('$3', [rufus_form:make_catch_clause('$6', '$8', line('$5'))], '$12', line('$1')).
 expr  -> try '{' exprs '}' catch catch_expr '{' exprs '}' :
-                                   rufus_form:make_try_catch('$3', [rufus_form:make_catch_clause('$6', '$8', line('$5'))], line('$1')).
+                                   rufus_form:make_try_catch_after('$3', [rufus_form:make_catch_clause('$6', '$8', line('$5'))], [], line('$1')).
 
 exprs -> expr ';' exprs          : ['$1'|'$3'].
 exprs -> expr                    : ['$1'].
