@@ -229,7 +229,7 @@ typecheck_and_annotate_does_not_rely_on_function_definition_order_test() ->
             ],
             line => 6,
             params => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {list_lit, #{
                             elements => [
@@ -1442,7 +1442,7 @@ typecheck_and_annotate_function_returning_a_function_variable_test() ->
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 4,
@@ -1586,7 +1586,7 @@ typecheck_and_annotate_function_returning_a_nested_function_test() ->
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 4,
@@ -2486,7 +2486,7 @@ typecheck_and_annotate_for_anonymous_function_taking_a_list_literal_test() ->
                     ],
                     line => 4,
                     params => [
-                        {match, #{
+                        {match_op, #{
                             left =>
                                 {identifier, #{
                                     line => 4,
@@ -2698,7 +2698,7 @@ typecheck_and_annotate_for_anonymous_function_taking_a_match_param_test() ->
                     ],
                     line => 4,
                     params => [
-                        {match, #{
+                        {match_op, #{
                             left =>
                                 {int_lit, #{
                                     line => 4,
@@ -2982,8 +2982,8 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_anonymous_function_scope_
             ]
         },
         stack => [
-            {match_right, #{line => 8}},
-            {match, #{
+            {match_op_right, #{line => 8}},
+            {match_op, #{
                 left => {identifier, #{line => 8, spec => escape}},
                 line => 8,
                 right => {identifier, #{line => 8, spec => num}}
@@ -2991,13 +2991,13 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_anonymous_function_scope_
             {func_exprs, #{line => 3}},
             {func, #{
                 exprs => [
-                    {match, #{
+                    {match_op, #{
                         left => {identifier, #{line => 4, spec => fn}},
                         line => 4,
                         right =>
                             {func, #{
                                 exprs => [
-                                    {match, #{
+                                    {match_op, #{
                                         left =>
                                             {identifier, #{line => 5, spec => num}},
                                         line => 5,
@@ -3023,7 +3023,7 @@ typecheck_and_annotate_does_not_allow_locals_to_escape_anonymous_function_scope_
                                     }}
                             }}
                     }},
-                    {match, #{
+                    {match_op, #{
                         left => {identifier, #{line => 8, spec => escape}},
                         line => 8,
                         right => {identifier, #{line => 8, spec => num}}
@@ -3088,7 +3088,7 @@ typecheck_and_annotate_function_with_mixed_params_and_patterns_in_parameter_list
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 4,

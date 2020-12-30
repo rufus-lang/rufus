@@ -20,7 +20,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_an_atom_literal_test() -
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 4,
@@ -87,7 +87,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_bool_literal_test() ->
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 4,
@@ -154,7 +154,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_float_literal_test() -
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 4,
@@ -221,7 +221,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_an_int_literal_test() ->
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 4,
@@ -282,7 +282,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_string_literal_test() 
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 4,
@@ -349,7 +349,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_of_int_literal_te
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 4,
@@ -462,7 +462,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_list_literal_test() ->
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {list_lit, #{
                             elements => [
@@ -603,7 +603,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_test() ->
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {cons, #{
                             head =>
@@ -810,7 +810,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_head_test() ->
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {cons, #{
                             head =>
@@ -973,7 +973,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_test() ->
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {cons, #{
                             head =>
@@ -1163,7 +1163,7 @@ typecheck_and_annotate_function_taking_a_match_pattern_test() ->
             ],
             line => 3,
             params => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 3,
@@ -1237,7 +1237,7 @@ typecheck_and_annotate_function_taking_a_match_pattern_with_a_literal_left_opera
             ],
             line => 3,
             params => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {int_lit, #{
                             line => 3,
@@ -1300,7 +1300,7 @@ typecheck_and_annotate_function_taking_a_cons_in_match_pattern_test() ->
             ],
             line => 3,
             params => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {cons, #{
                             head =>
@@ -1486,7 +1486,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_binary_op_operand_t
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 4,
@@ -1506,7 +1506,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_binary_op_operand_t
                     type =>
                         {type, #{line => 4, spec => int}}
                 }},
-                {match, #{
+                {match_op, #{
                     left =>
                         {binary_op, #{
                             left =>
@@ -1577,7 +1577,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_right_binary_op_operand_
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 3,
@@ -1651,7 +1651,7 @@ typecheck_and_annotate_function_with_a_match_that_has_left_and_right_binary_op_o
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {binary_op, #{
                             left =>
@@ -1769,7 +1769,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_right_call_operand_test(
         }},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 4,
@@ -1826,7 +1826,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_call_operand_test()
     {ok, Forms} = rufus_parse:parse(Tokens),
     Data = #{
         form =>
-            {match, #{
+            {match_op, #{
                 left =>
                     {call, #{
                         args => [],
@@ -1886,7 +1886,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_binary_op_operand_w
     {ok, Forms} = rufus_parse:parse(Tokens),
     Data = #{
         form =>
-            {match, #{
+            {match_op, #{
                 left =>
                     {binary_op, #{
                         left =>
@@ -1967,7 +1967,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_binary_op_operand_w
     {ok, Forms} = rufus_parse:parse(Tokens),
     Data = #{
         form =>
-            {match, #{
+            {match_op, #{
                 left =>
                     {binary_op, #{
                         left =>
@@ -2035,7 +2035,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_left_and_right_call_oper
     {ok, Forms} = rufus_parse:parse(Tokens),
     Data = #{
         form =>
-            {match, #{
+            {match_op, #{
                 left =>
                     {call, #{
                         args => [],
@@ -2209,8 +2209,8 @@ typecheck_and_annotate_function_with_a_match_that_has_an_unbound_variable_test()
             value => [{type, #{line => 4, spec => int}}]
         },
         stack => [
-            {match_right, #{line => 5}},
-            {match, #{
+            {match_op_right, #{line => 5}},
+            {match_op, #{
                 left => {identifier, #{line => 5, spec => value}},
                 line => 5,
                 right => {identifier, #{line => 5, spec => unbound}}
@@ -2218,7 +2218,7 @@ typecheck_and_annotate_function_with_a_match_that_has_an_unbound_variable_test()
             {func_exprs, #{line => 3}},
             {func, #{
                 exprs => [
-                    {match, #{
+                    {match_op, #{
                         left => {identifier, #{line => 4, spec => value}},
                         line => 4,
                         right =>
@@ -2232,7 +2232,7 @@ typecheck_and_annotate_function_with_a_match_that_has_an_unbound_variable_test()
                                     }}
                             }}
                     }},
-                    {match, #{
+                    {match_op, #{
                         left => {identifier, #{line => 5, spec => value}},
                         line => 5,
                         right =>
@@ -2286,8 +2286,8 @@ typecheck_and_annotate_function_with_a_match_that_has_unbound_variables_test() -
         },
         locals => #{},
         stack => [
-            {match_right, #{line => 4}},
-            {match, #{
+            {match_op_right, #{line => 4}},
+            {match_op, #{
                 left => {identifier, #{line => 4, spec => unbound1}},
                 line => 4,
                 right => {identifier, #{line => 4, spec => unbound2}}
@@ -2295,7 +2295,7 @@ typecheck_and_annotate_function_with_a_match_that_has_unbound_variables_test() -
             {func_exprs, #{line => 3}},
             {func, #{
                 exprs => [
-                    {match, #{
+                    {match_op, #{
                         left =>
                             {identifier, #{line => 4, spec => unbound1}},
                         line => 4,

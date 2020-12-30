@@ -503,7 +503,7 @@ parse_function_that_creates_cons_expression_from_head_and_tail_variables_test() 
     Expected = [
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 3,
@@ -521,7 +521,7 @@ parse_function_that_creates_cons_expression_from_head_and_tail_variables_test() 
                                 }}
                         }}
                 }},
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 4,

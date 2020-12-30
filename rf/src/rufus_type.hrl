@@ -40,20 +40,20 @@
 -type cons_form() :: {cons, context()}.
 
 -type literal_form() ::
-    atom_lit_form()
-    | bool_lit_form()
-    | float_lit_form()
-    | int_lit_form()
-    | string_lit_form()
-    | list_lit_form()
-    | cons_form().
+    atom_lit_form() |
+    bool_lit_form() |
+    float_lit_form() |
+    int_lit_form() |
+    string_lit_form() |
+    list_lit_form() |
+    cons_form().
 
 -type literal() ::
-    atom
-    | bool
-    | float
-    | int
-    | string.
+    atom |
+    bool |
+    float |
+    int |
+    string.
 
 %% Operators
 
@@ -67,7 +67,7 @@
 -type param_form() :: {param, context()}.
 -type identifier_form() :: {identifier, context()}.
 -type binary_op_form() :: {binary_op, context()}.
--type match_form() :: {match, context()}.
+-type match_op_form() :: {match_op, context()}.
 -type call_form() :: {call, context()}.
 
 %% Virtual forms
@@ -78,28 +78,28 @@
 -type cons_tail_form() :: {cons_tail, context()}.
 -type func_exprs_form() :: {func_exprs, context()}.
 -type func_params_form() :: {func_params, context()}.
--type match_left_form() :: {match_left, context()}.
--type match_right_form() :: {match_right, context()}.
+-type match_op_left_form() :: {match_op_left, context()}.
+-type match_op_right_form() :: {match_op_right, context()}.
 
 %% Rufus forms
 
 %% rufus_form represents a node in the parse tree.
 -type rufus_form() ::
-    atom_lit_form()
-    | bool_lit_form()
-    | float_lit_form()
-    | int_lit_form()
-    | string_lit_form()
-    | list_lit_form()
-    | cons_form()
-    | module_form()
-    | func_form()
-    | param_form()
-    | identifier_form()
-    | type_form()
-    | binary_op_form()
-    | match_form()
-    | call_form().
+    atom_lit_form() |
+    bool_lit_form() |
+    float_lit_form() |
+    int_lit_form() |
+    string_lit_form() |
+    list_lit_form() |
+    cons_form() |
+    module_form() |
+    func_form() |
+    param_form() |
+    identifier_form() |
+    type_form() |
+    binary_op_form() |
+    match_op_form() |
+    call_form().
 
 %% rufus_forms is a list of rufus_form instances and typically represents an
 %% entire module.
@@ -115,10 +115,10 @@
 -type unmatched_operand_type_error() :: unmatched_operand_type.
 -type unsupported_operand_type_error() :: unsupported_operand_type.
 -type rufus_error() ::
-    unknown_variable_error()
-    | unmatched_return_type_error()
-    | unmatched_operand_type_error()
-    | unsupported_operand_type_error().
+    unknown_variable_error() |
+    unmatched_return_type_error() |
+    unmatched_operand_type_error() |
+    unsupported_operand_type_error().
 
 %% Erlang forms
 
@@ -126,8 +126,8 @@
 -type erlang4_form() :: {_, _, _, _}.
 -type erlang5_form() :: {_, _, _, _, _}.
 -type erlang_form() ::
-    erlang3_form()
-    | erlang4_form()
-    | erlang5_form().
+    erlang3_form() |
+    erlang4_form() |
+    erlang5_form().
 
 -type export_attribute_erlang_form() :: {attribute, integer(), export, list()}.

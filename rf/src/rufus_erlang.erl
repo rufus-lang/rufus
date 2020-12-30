@@ -131,7 +131,7 @@ forms(Acc, [{int_lit, _Context} = IntLit | T]) ->
 forms(Acc, [{list_lit, _Context} = ListLit | T]) ->
     Form = box(ListLit),
     forms([Form | Acc], T);
-forms(Acc, [{match, #{line := Line, left := Left, right := Right}} | T]) ->
+forms(Acc, [{match_op, #{line := Line, left := Left, right := Right}} | T]) ->
     {ok, [LeftForm]} = forms([], [Left]),
     {ok, [RightForm]} = forms([], [Right]),
     Form = {match, Line, LeftForm, RightForm},

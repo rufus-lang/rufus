@@ -499,7 +499,7 @@ typecheck_and_annotate_function_call_with_match_argument_test() ->
         }},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {int_lit, #{
                             line => 4,

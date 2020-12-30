@@ -727,7 +727,7 @@ typecheck_and_annotate_with_function_returning_a_cons_literal_with_variable_pair
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 4,
@@ -747,7 +747,7 @@ typecheck_and_annotate_with_function_returning_a_cons_literal_with_variable_pair
                     type =>
                         {type, #{line => 4, spec => int}}
                 }},
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 5,

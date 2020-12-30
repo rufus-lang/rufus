@@ -6,7 +6,7 @@ Nonterminals
     root decl
     type types block param params args
     expr exprs literal_expr catch_expr
-    binary_op call cons match match_param
+    binary_op call cons match_op match_op_param
     list_lit list_type.
 
 Terminals
@@ -102,7 +102,7 @@ expr  -> literal_expr            : '$1'.
 expr  -> identifier              : rufus_form:make_identifier(list_to_atom(text('$1')), line('$1')).
 expr  -> binary_op               : '$1'.
 expr  -> cons                    : '$1'.
-expr  -> match                   : '$1'.
+expr  -> match_op                : '$1'.
 expr  -> call                    : '$1'.
 expr  -> list_lit                : '$1'.
 expr  -> func '(' params ')' type '{' exprs '}' :
@@ -123,8 +123,8 @@ list_lit -> list_type '{' args '}' :
 
 list_type -> list '[' type ']'   : rufus_form:make_type(list, '$3', line('$1')).
 
-match -> expr '=' expr           : rufus_form:make_match('$1', '$3', line('$2')).
-match_param -> expr '=' param    : rufus_form:make_match('$1', '$3', line('$2')).
+match_op -> expr '=' expr        : rufus_form:make_match_op('$1', '$3', line('$2')).
+match_op_param -> expr '=' param : rufus_form:make_match_op('$1', '$3', line('$2')).
 
 params -> param ',' params       : ['$1'|'$3'].
 params -> param                  : ['$1'].
@@ -137,7 +137,7 @@ param -> float_lit               : rufus_form:make_literal(float, text('$1'), li
 param -> int_lit                 : rufus_form:make_literal(int, text('$1'), line('$1')).
 param -> list_lit                : '$1'.
 param -> string_lit              : rufus_form:make_literal(string, list_to_binary(text('$1')), line('$1')).
-param -> match_param             : '$1'.
+param -> match_op_param          : '$1'.
 
 type -> atom                     : rufus_form:make_type(atom, line('$1')).
 type -> bool                     : rufus_form:make_type(bool, line('$1')).

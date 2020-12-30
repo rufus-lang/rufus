@@ -382,17 +382,17 @@ lookup_identifier_type([{list_lit, #{type := Type}} | _T], Stack) ->
             throw({error, unknown_identifier, Data})
     end;
 lookup_identifier_type(
-    [{match_left, _Context1} | [{match, #{right := {_FormSpec, #{type := Type}}}} | _T]],
+    [{match_op_left, _Context1} | [{match_op, #{right := {_FormSpec, #{type := Type}}}} | _T]],
     _Stack
 ) ->
     {ok, Type};
 lookup_identifier_type(
-    [{match_right, _Context1} | [{match, #{right := {_FormSpec, #{type := Type}}}} | _T]],
+    [{match_op_right, _Context1} | [{match_op, #{right := {_FormSpec, #{type := Type}}}} | _T]],
     _Stack
 ) ->
     {ok, Type};
 lookup_identifier_type(
-    [{match_right, _Context1} | [{match, #{right := _Context2}} | _T]],
+    [{match_op_right, _Context1} | [{match_op, #{right := _Context2}} | _T]],
     Stack
 ) ->
     Data = #{stack => Stack},
@@ -412,7 +412,7 @@ allow_variable_binding(Stack) ->
         fun
             ({func_params, _Context}) ->
                 true;
-            ({match_left, _Context}) ->
+            ({match_op_left, _Context}) ->
                 true;
             (_Form) ->
                 false

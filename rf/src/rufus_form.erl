@@ -28,9 +28,9 @@
     make_import/2,
     make_literal/3,
     make_literal/4,
-    make_match/3,
-    make_match_left/1,
-    make_match_right/1,
+    make_match_op/3,
+    make_match_op_left/1,
+    make_match_op_right/1,
     make_module/2,
     make_param/3,
     make_try_catch_after/4,
@@ -234,23 +234,23 @@ make_literal(list, Type, Elements, Line) ->
         line => Line
     }}.
 
-%% match form builder API
+%% match_op form builder API
 
-%% make_match returns a form for a match expression.
--spec make_match(rufus_form(), rufus_form(), integer()) ->
-    {match, #{left => rufus_form(), right => rufus_form(), line => integer()}}.
-make_match(Left, Right, Line) ->
-    {match, #{left => Left, right => Right, line => Line}}.
+%% make_match_op returns a form for a match_op expression.
+-spec make_match_op(rufus_form(), rufus_form(), integer()) ->
+    {match_op, #{left => rufus_form(), right => rufus_form(), line => integer()}}.
+make_match_op(Left, Right, Line) ->
+    {match_op, #{left => Left, right => Right, line => Line}}.
 
-%% make_match_left returns a left form from a binary_op or match expression.
--spec make_match_left(match_form()) -> match_left_form().
-make_match_left({match, #{line := Line}}) ->
-    {match_left, #{line => Line}}.
+%% make_match_op_left returns a left form from a binary_op or match_op expression.
+-spec make_match_op_left(match_op_form()) -> match_op_left_form().
+make_match_op_left({match_op, #{line := Line}}) ->
+    {match_op_left, #{line => Line}}.
 
-%% make_match_right returns a right form from a binary_op or match expression.
--spec make_match_right(match_form()) -> match_right_form().
-make_match_right({match, #{line := Line}}) ->
-    {match_right, #{line => Line}}.
+%% make_match_op_right returns a right form from a binary_op or match_op expression.
+-spec make_match_op_right(match_op_form()) -> match_op_right_form().
+make_match_op_right({match_op, #{line := Line}}) ->
+    {match_op_right, #{line => Line}}.
 
 %% module form builder API
 

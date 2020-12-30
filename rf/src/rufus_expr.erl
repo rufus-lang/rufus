@@ -105,8 +105,8 @@ typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {identifier, _Contex
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {list_lit, _Context} | T]) ->
     {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_list_lit(Stack, Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, NewLocals, T);
-typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {match, _Context} | T]) ->
-    {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_match(Stack, Globals, Locals, Form),
+typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {match_op, _Context} | T]) ->
+    {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_match_op(Stack, Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, NewLocals, T);
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {param, _Context} | T]) ->
     {ok, NewLocals} = push_local(Locals, Form),
@@ -440,27 +440,28 @@ typecheck_and_annotate_list_lit(
             throw(Error)
     end.
 
-%% match form helpers
+%% match_op form helpers
 
-%% typecheck_and_annotate_match ensures that match operands have matching types.
-%% Unknown identifiers in the left operand are treated as unbound variables and
-%% their type information is inferred from the right operand. Return values:
-%% - `{ok, Locals, AnnotatedForm}` if no issues are found. The match form and
+%% typecheck_and_annotate_match_op ensures that match_op operands have matching
+%% types. Unknown identifiers in the left operand are treated as unbound
+%% variables and their type information is inferred from the right operand.
+%% Return values:
+%% - `{ok, Locals, AnnotatedForm}` if no issues are found. The match_op form and
 %%   its operands are annotated with type information.
 %% - `{error, unknown_identifier, Data}` is thrown if the right operand is
 %%   unbound.
 %% - `{error, unmatched_types, Data}` is thrown when the left and right operand
 %%   have differing types.
--spec typecheck_and_annotate_match(rufus_stack(), globals(), locals(), match_form()) ->
-    {ok, locals(), match_form()} | no_return().
-typecheck_and_annotate_match(
+-spec typecheck_and_annotate_match_op(rufus_stack(), globals(), locals(), match_op_form()) ->
+    {ok, locals(), match_op_form()} | no_return().
+typecheck_and_annotate_match_op(
     Stack,
     Globals,
     Locals,
-    Form = {match, Context = #{left := Left, right := Right}}
+    Form = {match_op, Context = #{left := Left, right := Right}}
 ) ->
-    MatchStack1 = [Form | Stack],
-    RightStack = [rufus_form:make_match_right(Form) | MatchStack1],
+    MatchOpStack1 = [Form | Stack],
+    RightStack = [rufus_form:make_match_op_right(Form) | MatchOpStack1],
     {ok, NewLocals1, [AnnotatedRight]} = typecheck_and_annotate(
         [],
         RightStack,
@@ -468,10 +469,10 @@ typecheck_and_annotate_match(
         Locals,
         [Right]
     ),
-    AnnotatedForm1 = {match, Context#{right => AnnotatedRight}},
+    AnnotatedForm1 = {match_op, Context#{right => AnnotatedRight}},
 
-    MatchStack2 = [AnnotatedForm1 | Stack],
-    LeftStack = [rufus_form:make_match_left(Form) | MatchStack2],
+    MatchOpStack2 = [AnnotatedForm1 | Stack],
+    LeftStack = [rufus_form:make_match_op_left(Form) | MatchOpStack2],
     {ok, NewLocals2, [AnnotatedLeft]} = typecheck_and_annotate(
         [],
         LeftStack,
@@ -483,7 +484,7 @@ typecheck_and_annotate_match(
     case rufus_form:type_spec(AnnotatedLeft) == rufus_form:type_spec(AnnotatedRight) of
         true ->
             AnnotatedForm2 =
-                {match, Context#{
+                {match_op, Context#{
                     left => AnnotatedLeft,
                     right => AnnotatedRight,
                     type => rufus_form:type(AnnotatedRight)
@@ -500,13 +501,13 @@ typecheck_and_annotate_match(
             throw({error, unmatched_types, Data})
     end.
 
-%% validate_pattern checks the left hand side of a pattern match expression for
-%% valid expressions. An `{error, illegal_pattern, Data}` error triple is thrown
-%% if an invalid expression is found.
+%% validate_pattern checks the left hand side of a pattern match_op expression
+%% for valid expressions. An `{error, illegal_pattern, Data}` error triple is
+%% thrown if an invalid expression is found.
 %%
 %% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
-%% -spec validate_pattern(globals(), locals(), match_form()) -> ok | no_return().
-validate_pattern(Globals, Locals, Form = {match, _Context}) ->
+%% -spec validate_pattern(globals(), locals(), match_op_form()) -> ok | no_return().
+validate_pattern(Globals, Locals, Form = {match_op, _Context}) ->
     Data = #{
         globals => Globals,
         locals => Locals,
@@ -514,12 +515,12 @@ validate_pattern(Globals, Locals, Form = {match, _Context}) ->
     },
     validate_pattern(Data, Form).
 
-%% validate_pattern inspects the left hand operand of a match form to ensure
+%% validate_pattern inspects the left hand operand of a match_op form to ensure
 %% that its a valid pattern. A pattern has the same structure as a term but can
 %% contain unbound variables. An `{error, illegal_pattern, Data}` error triple
 %% is thrown if the left hand operand contains unsupported expressions.
 -spec validate_pattern(context(), rufus_form()) -> ok | no_return().
-validate_pattern(Data, {match, #{left := Left}}) ->
+validate_pattern(Data, {match_op, #{left := Left}}) ->
     validate_pattern(Data, Left);
 validate_pattern(_Data, {atom_lit, _Context}) ->
     ok;

@@ -115,10 +115,10 @@ map_with_list_lit_test() ->
 map_with_match_test() ->
     Left = rufus_form:make_identifier(n, 3),
     Right = rufus_form:make_identifier(m, 3),
-    Form = rufus_form:make_match(Left, Right, 3),
+    Form = rufus_form:make_match_op(Left, Right, 3),
     ?assertMatch(
         [
-            {match, #{
+            {match_op, #{
                 left := {_, #{annotated := true}},
                 right := {_, #{annotated := true}},
                 annotated := true
