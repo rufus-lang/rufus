@@ -99,7 +99,7 @@ literal_expr -> float_lit        : rufus_form:make_literal(float, text('$1'), li
 literal_expr -> int_lit          : rufus_form:make_literal(int, text('$1'), line('$1')).
 literal_expr -> string_lit       : rufus_form:make_literal(string, list_to_binary(text('$1')), line('$1')).
 
-catch_expr -> literal_expr       : '$1'.
+catch_expr -> param              : '$1'.
 
 expr  -> literal_expr            : '$1'.
 expr  -> identifier              : rufus_form:make_identifier(list_to_atom(text('$1')), line('$1')).
