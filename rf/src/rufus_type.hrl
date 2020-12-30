@@ -67,7 +67,7 @@
 -type param_form() :: {param, context()}.
 -type identifier_form() :: {identifier, context()}.
 -type binary_op_form() :: {binary_op, context()}.
--type match_form() :: {match, context()}.
+-type match_op_form() :: {match_op, context()}.
 -type call_form() :: {call, context()}.
 
 %% Virtual forms
@@ -78,8 +78,8 @@
 -type cons_tail_form() :: {cons_tail, context()}.
 -type func_exprs_form() :: {func_exprs, context()}.
 -type func_params_form() :: {func_params, context()}.
--type match_left_form() :: {match_left, context()}.
--type match_right_form() :: {match_right, context()}.
+-type match_op_left_form() :: {match_op_left, context()}.
+-type match_op_right_form() :: {match_op_right, context()}.
 
 %% Rufus forms
 
@@ -98,7 +98,7 @@
     | identifier_form()
     | type_form()
     | binary_op_form()
-    | match_form()
+    | match_op_form()
     | call_form().
 
 %% rufus_forms is a list of rufus_form instances and typically represents an
