@@ -40,7 +40,7 @@ each([Form = {list_lit, #{elements := Elements}} | T], Fun) ->
     each(Elements, Fun),
     Fun(Form),
     each(T, Fun);
-each([Form = {match, #{left := Left, right := Right}} | T], Fun) ->
+each([Form = {match_op, #{left := Left, right := Right}} | T], Fun) ->
     Fun(Left),
     Fun(Right),
     Fun(Form),
@@ -86,10 +86,10 @@ map(Acc, [{list_lit, Context = #{elements := Elements}} | T], Fun) ->
     AnnotatedElements = map(Elements, Fun),
     AnnotatedForm = Fun({list_lit, Context#{elements => AnnotatedElements}}),
     map([AnnotatedForm | Acc], T, Fun);
-map(Acc, [{match, Context = #{left := Left, right := Right}} | T], Fun) ->
+map(Acc, [{match_op, Context = #{left := Left, right := Right}} | T], Fun) ->
     AnnotatedLeft = Fun(Left),
     AnnotatedRight = Fun(Right),
-    AnnotatedForm = Fun({match, Context#{left => AnnotatedLeft, right => AnnotatedRight}}),
+    AnnotatedForm = Fun({match_op, Context#{left => AnnotatedLeft, right => AnnotatedRight}}),
     map([AnnotatedForm | Acc], T, Fun);
 map(Acc, [Form | T], Fun) ->
     AnnotatedForm = Fun(Form),

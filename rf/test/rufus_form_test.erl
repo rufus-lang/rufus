@@ -279,46 +279,46 @@ make_literal_for_string_lit_test() ->
         }},
     ?assertEqual(Expected, rufus_form:make_literal(string, <<"hello">>, 9)).
 
-make_match_test() ->
+make_match_op_test() ->
     Left = rufus_form:make_identifier(n, 3),
     Right = rufus_form:make_identifier(m, 3),
     Expected =
-        {match, #{
+        {match_op, #{
             left => Left,
             right => Right,
             line => 3
         }},
-    ?assertEqual(Expected, rufus_form:make_match(Left, Right, 3)).
+    ?assertEqual(Expected, rufus_form:make_match_op(Left, Right, 3)).
 
-make_match_left_test() ->
+make_match_op_left_test() ->
     Left = rufus_form:make_identifier(n, 3),
     Right = rufus_form:make_identifier(m, 3),
     Form =
-        {match, #{
+        {match_op, #{
             left => Left,
             right => Right,
             line => 3
         }},
     Expected =
-        {match_left, #{
+        {match_op_left, #{
             line => 3
         }},
-    ?assertEqual(Expected, rufus_form:make_match_left(Form)).
+    ?assertEqual(Expected, rufus_form:make_match_op_left(Form)).
 
-make_match_right_test() ->
+make_match_op_right_test() ->
     Left = rufus_form:make_identifier(n, 3),
     Right = rufus_form:make_identifier(m, 3),
     Form =
-        {match, #{
+        {match_op, #{
             left => Left,
             right => Right,
             line => 3
         }},
     Expected =
-        {match_right, #{
+        {match_op_right, #{
             line => 3
         }},
-    ?assertEqual(Expected, rufus_form:make_match_right(Form)).
+    ?assertEqual(Expected, rufus_form:make_match_op_right(Form)).
 
 make_module_test() ->
     Expected =

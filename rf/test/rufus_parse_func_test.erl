@@ -781,7 +781,7 @@ parse_function_returning_a_function_variable_test() ->
     Expected = [
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left => {identifier, #{line => 3, spec => fn}},
                     line => 3,
                     right =>
@@ -853,7 +853,7 @@ parse_function_returning_a_nested_function_test() ->
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left => {identifier, #{line => 4, spec => f}},
                     line => 4,
                     right =>
@@ -934,7 +934,7 @@ parse_function_with_mixed_params_and_patterns_in_parameter_list_test() ->
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left => {identifier, #{line => 4, spec => item}},
                     line => 4,
                     right =>

@@ -185,7 +185,7 @@ eval_function_with_a_match_that_has_a_left_call_operand_test() ->
         "    ",
     Data = #{
         form =>
-            {match, #{
+            {match_op, #{
                 left =>
                     {call, #{
                         args => [],
@@ -243,7 +243,7 @@ eval_function_with_a_match_that_has_a_left_binary_op_operand_with_a_call_operand
         "    ",
     Data = #{
         form =>
-            {match, #{
+            {match_op, #{
                 left =>
                     {binary_op, #{
                         left =>
@@ -320,7 +320,7 @@ eval_function_with_a_match_that_has_a_left_and_right_call_operand_test() ->
         "    ",
     Data = #{
         form =>
-            {match, #{
+            {match_op, #{
                 left =>
                     {call, #{
                         args => [],
@@ -483,8 +483,8 @@ eval_function_with_a_match_that_has_an_unbound_variable_test() ->
         },
         locals => #{value => [{type, #{line => 4, spec => int}}]},
         stack => [
-            {match_right, #{line => 5}},
-            {match, #{
+            {match_op_right, #{line => 5}},
+            {match_op, #{
                 left => {identifier, #{line => 5, spec => value}},
                 line => 5,
                 right => {identifier, #{line => 5, spec => unbound}}
@@ -492,7 +492,7 @@ eval_function_with_a_match_that_has_an_unbound_variable_test() ->
             {func_exprs, #{line => 3}},
             {func, #{
                 exprs => [
-                    {match, #{
+                    {match_op, #{
                         left => {identifier, #{line => 4, spec => value}},
                         line => 4,
                         right =>
@@ -502,7 +502,7 @@ eval_function_with_a_match_that_has_an_unbound_variable_test() ->
                                 type => {type, #{line => 4, spec => int}}
                             }}
                     }},
-                    {match, #{
+                    {match_op, #{
                         left => {identifier, #{line => 5, spec => value}},
                         line => 5,
                         right =>
@@ -552,8 +552,8 @@ eval_function_with_a_match_that_has_unbound_variables_test() ->
         },
         locals => #{},
         stack => [
-            {match_right, #{line => 4}},
-            {match, #{
+            {match_op_right, #{line => 4}},
+            {match_op, #{
                 left => {identifier, #{line => 4, spec => unbound1}},
                 line => 4,
                 right => {identifier, #{line => 4, spec => unbound2}}
@@ -561,7 +561,7 @@ eval_function_with_a_match_that_has_unbound_variables_test() ->
             {func_exprs, #{line => 3}},
             {func, #{
                 exprs => [
-                    {match, #{
+                    {match_op, #{
                         left =>
                             {identifier, #{line => 4, spec => unbound1}},
                         line => 4,

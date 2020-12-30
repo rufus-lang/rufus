@@ -15,7 +15,7 @@ parse_function_with_a_match_that_binds_an_atom_literal_test() ->
     Expected = [
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 3,
@@ -63,7 +63,7 @@ parse_function_with_a_match_that_binds_a_bool_literal_test() ->
     Expected = [
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 3,
@@ -111,7 +111,7 @@ parse_function_with_a_match_that_binds_a_float_literal_test() ->
     Expected = [
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 3,
@@ -159,7 +159,7 @@ parse_function_with_a_match_that_binds_a_string_literal_test() ->
     Expected = [
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 3,
@@ -207,7 +207,7 @@ parse_function_with_a_match_that_binds_a_list_literal_test() ->
     Expected = [
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {list_lit, #{
                             elements => [{identifier, #{line => 3, spec => name}}],
@@ -269,7 +269,7 @@ parse_function_with_a_match_that_binds_a_cons_test() ->
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {cons, #{
                             head => {identifier, #{line => 4, spec => head}},
@@ -347,7 +347,7 @@ parse_function_with_a_match_that_binds_a_cons_head_test() ->
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {cons, #{
                             head => {identifier, #{line => 4, spec => head}},
@@ -441,7 +441,7 @@ parse_function_with_a_match_that_binds_a_cons_tail_test() ->
         {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {cons, #{
                             head =>
@@ -515,7 +515,7 @@ parse_function_with_a_match_that_binds_a_variable_test() ->
     Expected = [
         {func, #{
             exprs => [
-                {match, #{
+                {match_op, #{
                     left =>
                         {identifier, #{
                             line => 3,
@@ -571,7 +571,7 @@ parse_function_taking_a_match_pattern_test() ->
             ],
             line => 1,
             params => [
-                {match, #{
+                {match_op, #{
                     left => {identifier, #{line => 1, spec => b}},
                     line => 1,
                     right =>
