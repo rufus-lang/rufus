@@ -83,6 +83,17 @@ func mapOver(acc list[int], list[int]{}, func(int) int) list[int] {
 }
 ```
 
+Anonymous function with multiple heads:
+
+```rufus
+fn = func {
+match (int) int ->
+    // ...
+match (string) string ->
+    // ...
+}
+```
+
 Named tuple:
 
 ```rufus
@@ -114,10 +125,10 @@ Pattern match expression:
 
 ```rufus
 point = Point{X => 3, Y => -6, Z => 13}
-switch Teleport(point) {
-case :ok =>
+case Teleport(point) {
+match :ok ->
     // ...
-case err error.T =>
+match err error.T ->
     // ...
 }
 ```
@@ -149,3 +160,36 @@ func mapOver(acc list[T?], list[T?]{}, func(T?) T?) list[T?] {
 ```
 
 The first type that binds to `T?` is substitued everywhere `T?` is mentioned.
+
+Error handling:
+
+```rufus
+file = os.OpenFile("/path/to/file")
+try {
+    // ...
+} catch os.ReadError {
+    // ...
+} after {
+    os.CloseFile(file)
+}
+```
+
+```rufus
+try {
+    os.OpenFile("/path/to/file")
+} catch {
+match os.FileNotFound ->
+    // ...
+match RuntimeError ->
+    // ...
+}
+```
+
+```rufus
+file = os.OpenFile("/path/to/file")
+try {
+    // ...
+} after {
+    os.CloseFile(file)
+}
+```
