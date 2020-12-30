@@ -1729,7 +1729,7 @@ typecheck_and_annotate_function_with_a_match_that_has_left_and_right_binary_op_o
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
-%% %% match expressions involving function calls
+%% match expressions involving function calls
 
 typecheck_and_annotate_function_with_a_match_that_has_a_right_call_operand_test() ->
     RufusText =
@@ -2171,7 +2171,7 @@ typecheck_and_annotate_function_with_a_match_that_has_a_right_call_operand_with_
     },
     ?assertEqual({error, unmatched_args, Data}, rufus_expr:typecheck_and_annotate(Forms)).
 
-%% %% match expressions with type constraint violations
+%% match expressions with type constraint violations
 
 typecheck_and_annotate_function_with_a_match_that_has_an_unbound_variable_test() ->
     RufusText =
