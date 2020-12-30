@@ -20,7 +20,7 @@ parse_function_with_try_catch_block_with_single_clause_test() ->
                     after_exprs => [],
                     catch_clauses => [
                         {catch_clause, #{
-                            expr => [
+                            exprs => [
                                 {atom_lit, #{
                                     line => 5,
                                     spec => error,
@@ -115,7 +115,7 @@ parse_function_with_try_catch_block_with_single_clause_and_after_block_test() ->
                     ],
                     catch_clauses => [
                         {catch_clause, #{
-                            expr => [
+                            exprs => [
                                 {atom_lit, #{
                                     line => 5,
                                     spec => error,

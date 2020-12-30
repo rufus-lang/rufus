@@ -262,7 +262,7 @@ make_module(Spec, Line) ->
 %% try/catch/after form builder API
 
 make_catch_clause(MatchExpr, Exprs, Line) ->
-    {catch_clause, #{match_expr => MatchExpr, expr => Exprs, line => Line}}.
+    {catch_clause, #{match_expr => MatchExpr, exprs => Exprs, line => Line}}.
 
 make_try_catch_after(TryExprs, CatchClauses, AfterExprs, Line) ->
     {try_catch_after, #{
