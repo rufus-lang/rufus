@@ -5,7 +5,8 @@
 Nonterminals
     root decl
     type types block param params args
-    expr exprs literal_expr catch_expr
+    expr exprs literal_expr
+    catch_expr catch_match_clause catch_match_clauses
     binary_op call cons match_op match_op_param
     list_lit list_type.
 
@@ -16,9 +17,11 @@ Terminals
     'and' 'or'
     '==' '!='
     '<' '<=' '>' '>='
+    '->'
     module import
     func identifier
     try catch after
+    match
     atom atom_lit
     bool bool_lit
     float float_lit
@@ -113,6 +116,16 @@ expr  -> try '{' exprs '}' catch catch_expr '{' exprs '}' after '{' exprs '}' :
                                    rufus_form:make_try_catch_after('$3', [rufus_form:make_catch_clause('$6', '$8', line('$5'))], '$12', line('$1')).
 expr  -> try '{' exprs '}' catch catch_expr '{' exprs '}' :
                                    rufus_form:make_try_catch_after('$3', [rufus_form:make_catch_clause('$6', '$8', line('$5'))], [], line('$1')).
+expr  -> try '{' exprs '}' catch '{' catch_match_clauses '}' after '{' exprs '}' :
+                                   rufus_form:make_try_catch_after('$3', '$7', '$11', line('$1')).
+expr  -> try '{' exprs '}' catch '{' catch_match_clauses '}' :
+                                   rufus_form:make_try_catch_after('$3', '$7', [], line('$1')).
+
+catch_match_clause -> match param '->' exprs :
+                                   rufus_form:make_catch_clause('$2', '$4', line('$1')).
+
+catch_match_clauses -> catch_match_clause catch_match_clauses : ['$1'|'$2'].
+catch_match_clauses -> '$empty'  : [].
 
 exprs -> expr ';' exprs          : ['$1'|'$3'].
 exprs -> expr                    : ['$1'].
@@ -126,9 +139,6 @@ list_type -> list '[' type ']'   : rufus_form:make_type(list, '$3', line('$1')).
 match_op -> expr '=' expr        : rufus_form:make_match_op('$1', '$3', line('$2')).
 match_op_param -> expr '=' param : rufus_form:make_match_op('$1', '$3', line('$2')).
 
-params -> param ',' params       : ['$1'|'$3'].
-params -> param                  : ['$1'].
-params -> '$empty'               : [].
 param -> identifier type         : rufus_form:make_param(list_to_atom(text('$1')), '$2', line('$1')).
 param -> atom_lit                : rufus_form:make_literal(atom, text('$1'), line('$1')).
 param -> bool_lit                : rufus_form:make_literal(bool, text('$1'), line('$1')).
@@ -138,6 +148,10 @@ param -> int_lit                 : rufus_form:make_literal(int, text('$1'), line
 param -> list_lit                : '$1'.
 param -> string_lit              : rufus_form:make_literal(string, list_to_binary(text('$1')), line('$1')).
 param -> match_op_param          : '$1'.
+
+params -> param ',' params       : ['$1'|'$3'].
+params -> param                  : ['$1'].
+params -> '$empty'               : [].
 
 type -> atom                     : rufus_form:make_type(atom, line('$1')).
 type -> bool                     : rufus_form:make_type(bool, line('$1')).
