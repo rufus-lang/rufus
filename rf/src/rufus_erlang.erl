@@ -237,12 +237,12 @@ guard_forms(Acc, []) ->
 %% float and int are all represented as scalar values in Erlang, while string is
 %% represented as an annotated {string, BinaryValue} tuple.
 -spec box(
-    atom_lit_form()
-    | bool_lit_form()
-    | float_lit_form()
-    | int_lit_form()
-    | list_lit_form()
-    | string_lit_form()
+    atom_lit_form() |
+    bool_lit_form() |
+    float_lit_form() |
+    int_lit_form() |
+    list_lit_form() |
+    string_lit_form()
 ) -> (erlang3_form() | erlang4_form()).
 box({atom_lit, #{spec := Value, line := Line}}) ->
     {atom, Line, Value};
