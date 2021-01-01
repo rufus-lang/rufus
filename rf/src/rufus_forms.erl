@@ -66,6 +66,13 @@ map(Acc, [{call, Context = #{args := Args}} | T], Fun) ->
     AnnotatedArgs = map(Args, Fun),
     AnnotatedForm = Fun({call, Context#{args => AnnotatedArgs}}),
     map([AnnotatedForm | Acc], T, Fun);
+map(Acc, [{catch_clause, Context = #{match_expr := MatchExpr, exprs := Exprs}} | T], Fun) ->
+    AnnotatedMatchExpr = Fun(MatchExpr),
+    AnnotatedExprs = map(Exprs, Fun),
+    AnnotatedForm = Fun(
+        {catch_clause, Context#{match_expr => AnnotatedMatchExpr, exprs => AnnotatedExprs}}
+    ),
+    map([AnnotatedForm | Acc], T, Fun);
 map(Acc, [{cons, Context = #{head := Head, tail := Tail}} | T], Fun) ->
     AnnotatedHead = Fun(Head),
     AnnotatedTail =
@@ -90,6 +97,30 @@ map(Acc, [{match_op, Context = #{left := Left, right := Right}} | T], Fun) ->
     AnnotatedLeft = Fun(Left),
     AnnotatedRight = Fun(Right),
     AnnotatedForm = Fun({match_op, Context#{left => AnnotatedLeft, right => AnnotatedRight}}),
+    map([AnnotatedForm | Acc], T, Fun);
+map(
+    Acc,
+    [
+        {try_catch_after,
+            Context = #{
+                try_exprs := TryExprs,
+                catch_clauses := CatchClauses,
+                after_exprs := AfterExprs
+            }}
+        | T
+    ],
+    Fun
+) ->
+    AnnotatedTryExprs = map(TryExprs, Fun),
+    AnnotatedCatchClauses = map(CatchClauses, Fun),
+    AnnotatedAfterExprs = map(AfterExprs, Fun),
+    AnnotatedForm = Fun(
+        {try_catch_after, Context#{
+            try_exprs => AnnotatedTryExprs,
+            catch_clauses => AnnotatedCatchClauses,
+            after_exprs => AnnotatedAfterExprs
+        }}
+    ),
     map([AnnotatedForm | Acc], T, Fun);
 map(Acc, [Form | T], Fun) ->
     AnnotatedForm = Fun(Form),
