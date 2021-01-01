@@ -495,6 +495,154 @@ typecheck_and_annotate_with_catch_block_matching_cons_expression_test() ->
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
+typecheck_and_annotate_with_catch_block_with_match_op_expression_test() ->
+    RufusText =
+        "module example\n"
+        "func Maybe() atom {\n"
+        "    try {\n"
+        "        :ok\n"
+        "    } catch list[atom]{head|tail} = items list[atom] {\n"
+        "        head\n"
+        "    }\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 1, spec => example}},
+        {func, #{
+            exprs => [
+                {try_catch_after, #{
+                    after_exprs => [],
+                    catch_clauses => [
+                        {catch_clause, #{
+                            exprs => [
+                                {identifier, #{
+                                    line => 6,
+                                    spec => head,
+                                    type =>
+                                        {type, #{line => 5, spec => atom}}
+                                }}
+                            ],
+                            line => 5,
+                            match_expr =>
+                                {match_op, #{
+                                    left =>
+                                        {cons, #{
+                                            head =>
+                                                {identifier, #{
+                                                    line => 5,
+                                                    locals => #{
+                                                        items => [
+                                                            {type, #{
+                                                                element_type =>
+                                                                    {type, #{
+                                                                        line => 5,
+                                                                        spec => atom
+                                                                    }},
+                                                                kind => list,
+                                                                line => 5,
+                                                                spec => 'list[atom]'
+                                                            }}
+                                                        ]
+                                                    },
+                                                    spec => head,
+                                                    type =>
+                                                        {type, #{line => 5, spec => atom}}
+                                                }},
+                                            line => 5,
+                                            tail =>
+                                                {identifier, #{
+                                                    line => 5,
+                                                    locals => #{
+                                                        head => [
+                                                            {type, #{line => 5, spec => atom}}
+                                                        ],
+                                                        items => [
+                                                            {type, #{
+                                                                element_type =>
+                                                                    {type, #{
+                                                                        line => 5,
+                                                                        spec => atom
+                                                                    }},
+                                                                kind => list,
+                                                                line => 5,
+                                                                spec => 'list[atom]'
+                                                            }}
+                                                        ]
+                                                    },
+                                                    spec => tail,
+                                                    type =>
+                                                        {type, #{
+                                                            element_type =>
+                                                                {type, #{line => 5, spec => atom}},
+                                                            kind => list,
+                                                            line => 5,
+                                                            spec => 'list[atom]'
+                                                        }}
+                                                }},
+                                            type =>
+                                                {type, #{
+                                                    element_type =>
+                                                        {type, #{line => 5, spec => atom}},
+                                                    kind => list,
+                                                    line => 5,
+                                                    spec => 'list[atom]'
+                                                }}
+                                        }},
+                                    line => 5,
+                                    right =>
+                                        {param, #{
+                                            line => 5,
+                                            spec => items,
+                                            type =>
+                                                {type, #{
+                                                    element_type =>
+                                                        {type, #{line => 5, spec => atom}},
+                                                    kind => list,
+                                                    line => 5,
+                                                    spec => 'list[atom]'
+                                                }}
+                                        }},
+                                    type =>
+                                        {type, #{
+                                            element_type =>
+                                                {type, #{line => 5, spec => atom}},
+                                            kind => list,
+                                            line => 5,
+                                            spec => 'list[atom]'
+                                        }}
+                                }},
+                            type => {type, #{line => 5, spec => atom}}
+                        }}
+                    ],
+                    line => 3,
+                    try_exprs => [
+                        {atom_lit, #{
+                            line => 4,
+                            spec => ok,
+                            type => {type, #{line => 4, spec => atom}}
+                        }}
+                    ],
+                    type => {type, #{line => 4, spec => atom}}
+                }}
+            ],
+            line => 2,
+            params => [],
+            return_type => {type, #{line => 2, spec => atom}},
+            spec => 'Maybe',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 2,
+                    param_types => [],
+                    return_type => {type, #{line => 2, spec => atom}},
+                    spec => 'func() atom'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
 typecheck_and_annotate_with_try_and_multiple_catch_blocks_returning_an_atom_literal_test() ->
     RufusText =
         "module example\n"
