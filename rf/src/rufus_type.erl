@@ -408,12 +408,14 @@ lookup_identifier_type([], Stack) ->
     throw({error, unknown_type, Data}).
 
 %% allow_variable_binding returns true if the identifier is part of an
-%% expression in a function parameter list or is part of the left operand of a match
-%% expression.
+%% expression in a function parameter list, is part of the left operand of a
+%% match expression, or is part of a catch clause expression.
 -spec allow_variable_binding(rufus_stack()) -> boolean().
 allow_variable_binding(Stack) ->
     lists:any(
         fun
+            ({catch_clause, _Context}) ->
+                true;
             ({func_params, _Context}) ->
                 true;
             ({match_op_left, _Context}) ->

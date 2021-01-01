@@ -585,15 +585,17 @@ typecheck_and_annotate_catch_clause(
     Stack,
     Globals,
     Locals,
-    {catch_clause, Context = #{match_expr := MatchExpr, exprs := Exprs}}
+    Form = {catch_clause, Context = #{match_expr := MatchExpr, exprs := Exprs}}
 ) ->
+    CatchClauseStack = [Form | Stack],
     {ok, NewLocals, [AnnotatedMatchExpr]} = typecheck_and_annotate(
         [],
-        Stack,
+        CatchClauseStack,
         Globals,
         Locals,
         [MatchExpr]
     ),
+
     {ok, _, AnnotatedExprs} = typecheck_and_annotate([], Stack, Globals, NewLocals, Exprs),
     AnnotatedForm1 =
         {catch_clause, Context#{
