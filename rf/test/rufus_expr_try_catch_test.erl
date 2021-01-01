@@ -332,3 +332,118 @@ typecheck_and_annotate_with_try_and_catch_blocks_both_returning_a_string_literal
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_with_try_and_catch_blocks_with_mismatched_catch_clause_return_type_test() ->
+    RufusText =
+        "module example\n"
+        "func Maybe() atom {\n"
+        "    try {\n"
+        "        :ok\n"
+        "    } catch :error {\n"
+        "        42\n"
+        "    }\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{
+        actual => int,
+        catch_clause =>
+            {catch_clause, #{
+                exprs => [
+                    {int_lit, #{
+                        line => 6,
+                        spec => 42,
+                        type => {type, #{line => 6, spec => int}}
+                    }}
+                ],
+                line => 5,
+                match_expr =>
+                    {atom_lit, #{
+                        line => 5,
+                        spec => error,
+                        type => {type, #{line => 5, spec => atom}}
+                    }},
+                type => {type, #{line => 6, spec => int}}
+            }},
+        expected => atom,
+        globals => #{
+            'Maybe' => [
+                {type, #{
+                    kind => func,
+                    line => 2,
+                    param_types => [],
+                    return_type =>
+                        {type, #{line => 2, spec => atom}},
+                    spec => 'func() atom'
+                }}
+            ]
+        },
+        try_exprs => [
+            {atom_lit, #{
+                line => 4,
+                spec => ok,
+                type => {type, #{line => 4, spec => atom}}
+            }}
+        ]
+    },
+    ?assertEqual(
+        {error, mismatched_try_catch_return_type, Data},
+        rufus_expr:typecheck_and_annotate(Forms)
+    ).
+
+typecheck_and_annotate_with_try_and_catch_blocks_with_mismatched_try_block_return_type_test() ->
+    RufusText =
+        "module example\n"
+        "func Maybe() atom {\n"
+        "    try {\n"
+        "        42\n"
+        "    } catch :error {\n"
+        "        :error\n"
+        "    }\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{
+        actual => atom,
+        catch_clause =>
+            {catch_clause, #{
+                exprs => [
+                    {atom_lit, #{
+                        line => 6,
+                        spec => error,
+                        type => {type, #{line => 6, spec => atom}}
+                    }}
+                ],
+                line => 5,
+                match_expr =>
+                    {atom_lit, #{
+                        line => 5,
+                        spec => error,
+                        type => {type, #{line => 5, spec => atom}}
+                    }},
+                type => {type, #{line => 6, spec => atom}}
+            }},
+        expected => int,
+        globals => #{
+            'Maybe' => [
+                {type, #{
+                    kind => func,
+                    line => 2,
+                    param_types => [],
+                    return_type => {type, #{line => 2, spec => atom}},
+                    spec => 'func() atom'
+                }}
+            ]
+        },
+        try_exprs => [
+            {int_lit, #{
+                line => 4,
+                spec => 42,
+                type => {type, #{line => 4, spec => int}}
+            }}
+        ]
+    },
+    ?assertEqual(
+        {error, mismatched_try_catch_return_type, Data},
+        rufus_expr:typecheck_and_annotate(Forms)
+    ).
