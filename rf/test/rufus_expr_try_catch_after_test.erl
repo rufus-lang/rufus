@@ -730,6 +730,91 @@ typecheck_and_annotate_with_try_and_multiple_catch_blocks_returning_an_atom_lite
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
+typecheck_and_annotate_with_try_block_in_match_op_test() ->
+    RufusText =
+        "module example\n"
+        "func Maybe() atom {\n"
+        "    result = try {\n"
+        "        :ok\n"
+        "    } catch :error {\n"
+        "        :error\n"
+        "    }\n"
+        "    result\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 1, spec => example}},
+        {func, #{
+            exprs => [
+                {match_op, #{
+                    left =>
+                        {identifier, #{
+                            line => 3,
+                            locals => #{},
+                            spec => result,
+                            type => {type, #{line => 4, spec => atom}}
+                        }},
+                    line => 3,
+                    right =>
+                        {try_catch_after, #{
+                            after_exprs => [],
+                            catch_clauses => [
+                                {catch_clause, #{
+                                    exprs => [
+                                        {atom_lit, #{
+                                            line => 6,
+                                            spec => error,
+                                            type =>
+                                                {type, #{line => 6, spec => atom}}
+                                        }}
+                                    ],
+                                    line => 5,
+                                    match_expr =>
+                                        {atom_lit, #{
+                                            line => 5,
+                                            spec => error,
+                                            type =>
+                                                {type, #{line => 5, spec => atom}}
+                                        }},
+                                    type => {type, #{line => 6, spec => atom}}
+                                }}
+                            ],
+                            line => 3,
+                            try_exprs => [
+                                {atom_lit, #{
+                                    line => 4,
+                                    spec => ok,
+                                    type => {type, #{line => 4, spec => atom}}
+                                }}
+                            ],
+                            type => {type, #{line => 4, spec => atom}}
+                        }},
+                    type => {type, #{line => 4, spec => atom}}
+                }},
+                {identifier, #{
+                    line => 8,
+                    spec => result,
+                    type => {type, #{line => 4, spec => atom}}
+                }}
+            ],
+            line => 2,
+            params => [],
+            return_type => {type, #{line => 2, spec => atom}},
+            spec => 'Maybe',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 2,
+                    param_types => [],
+                    return_type => {type, #{line => 2, spec => atom}},
+                    spec => 'func() atom'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
 %% typecheck_and_annotate scope tests
 
 typecheck_and_annotate_with_try_catch_and_after_blocks_accessing_variables_from_outer_scope_test() ->
