@@ -88,6 +88,9 @@ typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {binary_op, _Context
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {call, _Context} | T]) ->
     {ok, AnnotatedForm} = typecheck_and_annotate_call(Stack, Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
+typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {catch_clause, _Context} | T]) ->
+    {ok, AnnotatedForm} = typecheck_and_annotate_catch_clause(Stack, Globals, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {cons, _Context} | T]) ->
     {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_cons(Stack, Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, NewLocals, T);
@@ -111,6 +114,14 @@ typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {match_op, _Context}
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {param, _Context} | T]) ->
     {ok, NewLocals} = push_local(Locals, Form),
     typecheck_and_annotate([Form | Acc], Stack, Globals, NewLocals, T);
+typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {try_catch_after, _Context} | T]) ->
+    {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_try_catch_after(
+        Stack,
+        Globals,
+        Locals,
+        Form
+    ),
+    typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, NewLocals, T);
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [H | T]) ->
     typecheck_and_annotate([H | Acc], Stack, Globals, Locals, T);
 typecheck_and_annotate(Acc, _Stack, _Globals, Locals, []) ->
@@ -559,6 +570,165 @@ is_constant_expr({int_lit, _Context}) ->
     true;
 is_constant_expr(_Form) ->
     false.
+
+%% try/catch/after helpers
+
+%% typecheck_and_annotate_catch_clause typechecks and annotates the match
+%% expression and body expressions of a catch block. Return values:
+%% - `{ok, AnnotatedForm}` if no issues are found. The catch_clause form is
+%%   annotated with type information.
+%% - An error is thrown is `rufus_type:resolve/3` returns an error.
+-spec typecheck_and_annotate_catch_clause(
+    rufus_stack(),
+    globals(),
+    locals(),
+    catch_clause_form()
+) -> {ok, catch_clause_form()} | no_return().
+typecheck_and_annotate_catch_clause(
+    Stack,
+    Globals,
+    Locals,
+    Form = {catch_clause, Context = #{match_expr := MatchExpr, exprs := Exprs}}
+) ->
+    CatchClauseStack = [Form | Stack],
+    {ok, NewLocals, [AnnotatedMatchExpr]} = typecheck_and_annotate(
+        [],
+        CatchClauseStack,
+        Globals,
+        Locals,
+        [MatchExpr]
+    ),
+
+    {ok, _, AnnotatedExprs} = typecheck_and_annotate([], Stack, Globals, NewLocals, Exprs),
+    AnnotatedForm1 =
+        {catch_clause, Context#{
+            match_expr => AnnotatedMatchExpr,
+            exprs => AnnotatedExprs
+        }},
+    case rufus_type:resolve(Stack, Globals, AnnotatedForm1) of
+        {ok, TypeForm} ->
+            AnnotatedForm2 =
+                {catch_clause, Context#{
+                    match_expr => AnnotatedMatchExpr,
+                    exprs => AnnotatedExprs,
+                    type => TypeForm
+                }},
+            {ok, AnnotatedForm2};
+        Error ->
+            throw(Error)
+    end.
+
+%% typecheck_and_annotate_try_catch_after ensures that try and catch blocks have
+%% a valid sequence of expressions and matching return types. New identifiers in
+%% either the try or catch block are not visible in the surrounding scope.
+%% Return values:
+%% - `{ok, Locals, AnnotatedForm}` if no issues are found. The try_catch_after
+%%   form is annotated with type information.
+%% - `{error, mismatched_try_catch_return_types, Data}` is thrown if the try and
+%%   catch blocks have return values with different types.
+-spec typecheck_and_annotate_try_catch_after(
+    rufus_stack(),
+    globals(),
+    locals(),
+    try_catch_after_form()
+) -> {ok, locals(), try_catch_after_form()} | no_return().
+typecheck_and_annotate_try_catch_after(
+    Stack,
+    Globals,
+    Locals,
+    {try_catch_after,
+        Context = #{
+            try_exprs := TryExprs,
+            catch_clauses := CatchClauses,
+            after_exprs := AfterExprs
+        }}
+) ->
+    {ok, _NewLocals1, AnnotatedTryExprs} = typecheck_and_annotate(
+        [],
+        Stack,
+        Globals,
+        Locals,
+        TryExprs
+    ),
+
+    AnnotatedCatchClauses = lists:map(
+        fun(CatchClause) ->
+            {ok, _, [AnnotatedCatchClause]} = typecheck_and_annotate(
+                [],
+                Stack,
+                Globals,
+                Locals,
+                [CatchClause]
+            ),
+            AnnotatedCatchClause
+        end,
+        CatchClauses
+    ),
+
+    {ok, _NewLocals2, AnnotatedAfterExprs} = typecheck_and_annotate(
+        [],
+        Stack,
+        Globals,
+        Locals,
+        AfterExprs
+    ),
+
+    ok = typecheck_try_catch_return_types(Globals, AnnotatedTryExprs, AnnotatedCatchClauses),
+    AnnotatedForm1 =
+        {try_catch_after, Context#{
+            try_exprs => AnnotatedTryExprs,
+            catch_clauses => AnnotatedCatchClauses,
+            after_exprs => AnnotatedAfterExprs
+        }},
+    case rufus_type:resolve(Stack, Globals, AnnotatedForm1) of
+        {ok, TypeForm} ->
+            AnnotatedForm2 =
+                {try_catch_after, Context#{
+                    try_exprs => AnnotatedTryExprs,
+                    catch_clauses => AnnotatedCatchClauses,
+                    after_exprs => AnnotatedAfterExprs,
+                    type => TypeForm
+                }},
+            {ok, Locals, AnnotatedForm2};
+        Error ->
+            throw(Error)
+    end.
+
+%% typecheck_try_catch_return_types ensures that the try block and all catch
+%% blocks have the same return type.
+-spec typecheck_try_catch_return_types(
+    globals(),
+    rufus_forms(),
+    list(catch_clause_form())
+) -> ok | no_return().
+typecheck_try_catch_return_types(Globals, TryExprs, CatchClauses) ->
+    LastTryExpr = lists:last(TryExprs),
+    case rufus_type:resolve(Globals, LastTryExpr) of
+        {ok, {type, #{spec := TryExprTypeSpec}}} ->
+            lists:foreach(
+                fun(CatchClause) ->
+                    case rufus_type:resolve(Globals, CatchClause) of
+                        {ok, {type, #{spec := TryExprTypeSpec}}} ->
+                            ok;
+                        {ok, {type, #{spec := CatchClauseTypeSpec}}} ->
+                            Data = #{
+                                globals => Globals,
+                                try_exprs => TryExprs,
+                                catch_clause => CatchClause,
+                                actual => CatchClauseTypeSpec,
+                                expected => TryExprTypeSpec
+                            },
+                            throw({error, mismatched_try_catch_return_type, Data});
+                        Error ->
+                            throw(Error)
+                    end
+                end,
+                CatchClauses
+            ),
+            ok;
+        Error ->
+            throw(Error)
+    end.
 
 %% scope helpers
 

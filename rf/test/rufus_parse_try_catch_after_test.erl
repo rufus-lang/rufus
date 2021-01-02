@@ -1,4 +1,4 @@
--module(rufus_parse_try_catch_test).
+-module(rufus_parse_try_catch_after_test).
 
 -include_lib("eunit/include/eunit.hrl").
 

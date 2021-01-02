@@ -42,10 +42,14 @@ resolve_type(Stack, Globals, Form = {binary_op, _Context}) ->
     resolve_binary_op_type(Stack, Globals, Form);
 resolve_type(Stack, Globals, Form = {call, _Context}) ->
     resolve_call_type(Stack, Globals, Form);
+resolve_type(Stack, Globals, Form = {catch_clause, _Context}) ->
+    resolve_catch_clause_type(Stack, Globals, Form);
 resolve_type(_Stack, _Globals, {func, #{return_type := Type}}) ->
     {ok, Type};
 resolve_type(Stack, Globals, Form = {identifier, _Context}) ->
-    resolve_identifier_type(Stack, Globals, Form).
+    resolve_identifier_type(Stack, Globals, Form);
+resolve_type(Stack, Globals, Form = {try_catch_after, _Context}) ->
+    resolve_try_catch_after_type(Stack, Globals, Form).
 
 %% binary_op form helpers
 
@@ -404,12 +408,14 @@ lookup_identifier_type([], Stack) ->
     throw({error, unknown_type, Data}).
 
 %% allow_variable_binding returns true if the identifier is part of an
-%% expression in a function parameter list or is part of the left operand of a match
-%% expression.
+%% expression in a function parameter list, is part of the left operand of a
+%% match expression, or is part of a catch clause expression.
 -spec allow_variable_binding(rufus_stack()) -> boolean().
 allow_variable_binding(Stack) ->
     lists:any(
         fun
+            ({catch_clause, _Context}) ->
+                true;
             ({func_params, _Context}) ->
                 true;
             ({match_op_left, _Context}) ->
@@ -443,3 +449,16 @@ resolve_list_lit_type(Stack, Globals, Form = {list_lit, #{elements := Elements, 
             Data = #{form => Form},
             throw({error, unexpected_element_type, Data})
     end.
+
+%% try/catch/after helpers
+
+-spec resolve_catch_clause_type(rufus_stack(), globals(), catch_clause_form()) -> {ok, type_form()}.
+resolve_catch_clause_type(Stack, Globals, {catch_clause, #{exprs := Exprs}}) ->
+    LastExpr = lists:last(Exprs),
+    resolve_type(Stack, Globals, LastExpr).
+
+-spec resolve_try_catch_after_type(rufus_stack(), globals(), try_catch_after_form()) ->
+    {ok, type_form()}.
+resolve_try_catch_after_type(Stack, Globals, {try_catch_after, #{try_exprs := TryExprs}}) ->
+    LastTryExpr = lists:last(TryExprs),
+    resolve_type(Stack, Globals, LastTryExpr).

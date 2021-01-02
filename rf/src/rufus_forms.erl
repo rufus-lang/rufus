@@ -10,7 +10,8 @@
 
 %% Enumeration API
 
-%% each invokes Fun with each form in Forms. It always returns ok.
+%% each invokes Fun with each form in Forms. It always returns ok unless Fun
+%% throws an error.
 -spec each(rufus_forms(), fun((rufus_form()) -> any())) -> ok | no_return().
 each([Form = {binary_op, #{left := Left, right := Right}} | T], Fun) ->
     Fun(Left),
@@ -19,6 +20,11 @@ each([Form = {binary_op, #{left := Left, right := Right}} | T], Fun) ->
     each(T, Fun);
 each([Form = {call, #{args := Args}} | T], Fun) ->
     each(Args, Fun),
+    Fun(Form),
+    each(T, Fun);
+each([Form = {catch_clause, #{match_expr := MatchExpr, exprs := Exprs}} | T], Fun) ->
+    Fun(MatchExpr),
+    each(Exprs, Fun),
     Fun(Form),
     each(T, Fun);
 each([Form = {cons, #{head := Head, tail := Tail}} | T], Fun) ->
@@ -45,6 +51,23 @@ each([Form = {match_op, #{left := Left, right := Right}} | T], Fun) ->
     Fun(Right),
     Fun(Form),
     each(T, Fun);
+each(
+    [
+        Form =
+            {try_catch_after, #{
+                try_exprs := TryExprs,
+                catch_clauses := CatchClauses,
+                after_exprs := AfterExprs
+            }}
+        | T
+    ],
+    Fun
+) ->
+    each(TryExprs, Fun),
+    each(CatchClauses, Fun),
+    each(AfterExprs, Fun),
+    Fun(Form),
+    each(T, Fun);
 each([Form | T], Fun) ->
     Fun(Form),
     each(T, Fun);
@@ -65,6 +88,13 @@ map(Acc, [{binary_op, Context = #{left := Left, right := Right}} | T], Fun) ->
 map(Acc, [{call, Context = #{args := Args}} | T], Fun) ->
     AnnotatedArgs = map(Args, Fun),
     AnnotatedForm = Fun({call, Context#{args => AnnotatedArgs}}),
+    map([AnnotatedForm | Acc], T, Fun);
+map(Acc, [{catch_clause, Context = #{match_expr := MatchExpr, exprs := Exprs}} | T], Fun) ->
+    AnnotatedMatchExpr = Fun(MatchExpr),
+    AnnotatedExprs = map(Exprs, Fun),
+    AnnotatedForm = Fun(
+        {catch_clause, Context#{match_expr => AnnotatedMatchExpr, exprs => AnnotatedExprs}}
+    ),
     map([AnnotatedForm | Acc], T, Fun);
 map(Acc, [{cons, Context = #{head := Head, tail := Tail}} | T], Fun) ->
     AnnotatedHead = Fun(Head),
@@ -90,6 +120,30 @@ map(Acc, [{match_op, Context = #{left := Left, right := Right}} | T], Fun) ->
     AnnotatedLeft = Fun(Left),
     AnnotatedRight = Fun(Right),
     AnnotatedForm = Fun({match_op, Context#{left => AnnotatedLeft, right => AnnotatedRight}}),
+    map([AnnotatedForm | Acc], T, Fun);
+map(
+    Acc,
+    [
+        {try_catch_after,
+            Context = #{
+                try_exprs := TryExprs,
+                catch_clauses := CatchClauses,
+                after_exprs := AfterExprs
+            }}
+        | T
+    ],
+    Fun
+) ->
+    AnnotatedTryExprs = map(TryExprs, Fun),
+    AnnotatedCatchClauses = map(CatchClauses, Fun),
+    AnnotatedAfterExprs = map(AfterExprs, Fun),
+    AnnotatedForm = Fun(
+        {try_catch_after, Context#{
+            try_exprs => AnnotatedTryExprs,
+            catch_clauses => AnnotatedCatchClauses,
+            after_exprs => AnnotatedAfterExprs
+        }}
+    ),
     map([AnnotatedForm | Acc], T, Fun);
 map(Acc, [Form | T], Fun) ->
     AnnotatedForm = Fun(Form),
