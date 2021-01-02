@@ -450,7 +450,7 @@ resolve_list_lit_type(Stack, Globals, Form = {list_lit, #{elements := Elements, 
             throw({error, unexpected_element_type, Data})
     end.
 
-%% %% try/catch/after helpers
+%% try/catch/after helpers
 
 -spec resolve_catch_clause_type(rufus_stack(), globals(), catch_clause_form()) -> {ok, type_form()}.
 resolve_catch_clause_type(Stack, Globals, {catch_clause, #{exprs := Exprs}}) ->
