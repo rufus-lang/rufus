@@ -70,6 +70,7 @@
 -type match_op_form() :: {match_op, context()}.
 -type call_form() :: {call, context()}.
 -type try_catch_after_form() :: {try_catch_after, context()}.
+-type catch_clause_form() :: {catch_clause, context()}.
 
 %% Virtual forms
 
@@ -81,7 +82,6 @@
 -type func_params_form() :: {func_params, context()}.
 -type match_op_left_form() :: {match_op_left, context()}.
 -type match_op_right_form() :: {match_op_right, context()}.
--type catch_clause_form() :: {catch_clause, context()}.
 
 %% Rufus forms
 
