@@ -574,7 +574,10 @@ is_constant_expr(_Form) ->
 %% try/catch/after helpers
 
 %% typecheck_and_annotate_catch_clause typechecks and annotates the match
-%% expression and body expressions of a catch block.
+%% expression and body expressions of a catch block. Return values:
+%% - `{ok, AnnotatedForm}` if no issues are found. The catch_clause form is
+%%   annotated with type information.
+%% - An error is thrown is `rufus_type:resolve/3` returns an error.
 -spec typecheck_and_annotate_catch_clause(
     rufus_stack(),
     globals(),
