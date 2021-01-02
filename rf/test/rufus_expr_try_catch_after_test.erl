@@ -1175,6 +1175,87 @@ typecheck_and_annotate_with_catch_variable_accessed_outside_block_test() ->
         rufus_expr:typecheck_and_annotate(Forms)
     ).
 
+typecheck_and_annotate_with_after_variable_accessed_outside_block_test() ->
+    RufusText =
+        "module example\n"
+        "func Maybe() atom {\n"
+        "    try {\n"
+        "        :ok\n"
+        "    } after {\n"
+        "        cleanup = :cleanup\n"
+        "    }\n"
+        "    cleanup\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{
+        form =>
+            {identifier, #{line => 8, locals => #{}, spec => cleanup}},
+        globals => #{
+            'Maybe' => [
+                {type, #{
+                    kind => func,
+                    line => 2,
+                    param_types => [],
+                    return_type => {type, #{line => 2, spec => atom}},
+                    spec => 'func() atom'
+                }}
+            ]
+        },
+        locals => #{},
+        stack => [
+            {func_exprs, #{line => 2}},
+            {func, #{
+                exprs => [
+                    {try_catch_after, #{
+                        after_exprs => [
+                            {match_op, #{
+                                left =>
+                                    {identifier, #{line => 6, spec => cleanup}},
+                                line => 6,
+                                right =>
+                                    {atom_lit, #{
+                                        line => 6,
+                                        spec => cleanup,
+                                        type =>
+                                            {type, #{line => 6, spec => atom}}
+                                    }}
+                            }}
+                        ],
+                        catch_clauses => [],
+                        line => 3,
+                        try_exprs => [
+                            {atom_lit, #{
+                                line => 4,
+                                spec => ok,
+                                type =>
+                                    {type, #{line => 4, spec => atom}}
+                            }}
+                        ]
+                    }},
+                    {identifier, #{line => 8, spec => cleanup}}
+                ],
+                line => 2,
+                locals => #{},
+                params => [],
+                return_type => {type, #{line => 2, spec => atom}},
+                spec => 'Maybe',
+                type =>
+                    {type, #{
+                        kind => func,
+                        line => 2,
+                        param_types => [],
+                        return_type => {type, #{line => 2, spec => atom}},
+                        spec => 'func() atom'
+                    }}
+            }}
+        ]
+    },
+    ?assertEqual(
+        {error, unknown_identifier, Data},
+        rufus_expr:typecheck_and_annotate(Forms)
+    ).
+
 typecheck_and_annotate_with_try_variable_accessed_in_catch_block_test() ->
     RufusText =
         "module example\n"
