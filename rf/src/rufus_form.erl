@@ -261,6 +261,11 @@ make_match_op_right({match_op, #{line := Line}}) ->
 make_module(Spec, Line) ->
     {module, #{spec => Spec, line => Line}}.
 
+%% throw form builder API
+
+make_throw(Expr, Line) ->
+    {'throw', #{expr => Expr, line => Line}}.
+
 %% try/catch/after form builder API
 
 make_catch_clause(Exprs, Line) ->
@@ -268,9 +273,6 @@ make_catch_clause(Exprs, Line) ->
 
 make_catch_clause(MatchExpr, Exprs, Line) ->
     {catch_clause, #{match_expr => MatchExpr, exprs => Exprs, line => Line}}.
-
-make_throw(Expr, Line) ->
-    {'throw', #{expr => Expr, line => Line}}.
 
 make_try_catch_after(TryExprs, CatchClauses, AfterExprs, Line) ->
     {try_catch_after, #{

@@ -233,3 +233,13 @@ parse_function_that_throws_a_match_op_expression_test() ->
         }}
     ],
     ?assertEqual(Expected, Forms).
+
+%% Failure mode tests
+
+parse_function_with_throw_used_in_another_expression_test() ->
+    RufusText =
+        "func Explode() atom {\n"
+        "    a = throw :kaboom\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    ?assertMatch({error, _}, rufus_parse:parse(Tokens)).
