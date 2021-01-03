@@ -34,6 +34,7 @@
     make_match_op_right/1,
     make_module/2,
     make_param/3,
+    make_throw/2,
     make_try_catch_after/4,
     make_type/2,
     make_type/3,
@@ -267,6 +268,9 @@ make_catch_clause(Exprs, Line) ->
 
 make_catch_clause(MatchExpr, Exprs, Line) ->
     {catch_clause, #{match_expr => MatchExpr, exprs => Exprs, line => Line}}.
+
+make_throw(Expr, Line) ->
+    {'throw', #{expr => Expr, line => Line}}.
 
 make_try_catch_after(TryExprs, CatchClauses, AfterExprs, Line) ->
     {try_catch_after, #{

@@ -209,7 +209,7 @@ forms_for_function_with_try_after_block_test() ->
         "    } after {\n"
         "        cleanup()\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),
@@ -237,7 +237,7 @@ forms_for_function_with_bare_catch_block_and_an_after_block_test() ->
         "    } after {\n"
         "        cleanup()\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, ErlangForms} = rufus_erlang:forms(Forms),

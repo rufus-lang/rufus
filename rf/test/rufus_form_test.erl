@@ -328,6 +328,13 @@ make_module_test() ->
         }},
     ?assertEqual(Expected, rufus_form:make_module(example, 1)).
 
+make_throw_test() ->
+    Expr = rufus_form:make_literal(bool, true, 7),
+    ?assertEqual(
+        {'throw', #{expr => Expr, line => 7}},
+        rufus_form:make_throw(Expr, 7)
+    ).
+
 make_type_test() ->
     ?assertEqual(
         {type, #{spec => int, line => 4}},

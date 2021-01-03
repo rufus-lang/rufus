@@ -11,7 +11,7 @@ parse_function_with_bare_catch_block_test() ->
         "        log(\"oh no\")\n"
         "        :error\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -72,7 +72,7 @@ parse_function_with_try_catch_block_with_single_atom_clause_test() ->
         "        log(\"oh no\")\n"
         "        :error\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -139,7 +139,7 @@ parse_function_with_try_catch_block_with_single_bool_clause_test() ->
         "        log(\"oh no\")\n"
         "        :error\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -206,7 +206,7 @@ parse_function_with_try_catch_block_with_single_float_clause_test() ->
         "        log(\"oh no\")\n"
         "        :error\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -273,7 +273,7 @@ parse_function_with_try_catch_block_with_single_int_clause_test() ->
         "        log(\"oh no\")\n"
         "        :error\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -340,7 +340,7 @@ parse_function_with_try_catch_block_with_single_string_clause_test() ->
         "        log(\"oh no\")\n"
         "        :error\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -407,7 +407,7 @@ parse_function_with_try_catch_block_with_single_cons_clause_test() ->
         "        log(\"oh no\")\n"
         "        :error\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -488,7 +488,7 @@ parse_function_with_try_catch_block_with_single_identifier_and_type_clause_test(
         "        log(\"oh no\")\n"
         "        :error\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -555,7 +555,7 @@ parse_function_with_try_catch_block_with_single_match_op_clause_test() ->
         "        log(\"oh no\")\n"
         "        :error\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -633,7 +633,7 @@ parse_function_with_try_catch_block_with_single_atom_match_clause_test() ->
         "    match :error ->\n"
         "        :error\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -688,7 +688,7 @@ parse_function_with_try_catch_block_with_single_bool_match_clause_test() ->
         "    match false ->\n"
         "        :error\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -743,7 +743,7 @@ parse_function_with_try_catch_block_with_single_float_match_clause_test() ->
         "    match 42.0 ->\n"
         "        :error\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -798,7 +798,7 @@ parse_function_with_try_catch_block_with_single_int_match_clause_test() ->
         "    match 42 ->\n"
         "        :error\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -853,7 +853,7 @@ parse_function_with_try_catch_block_with_single_string_match_clause_test() ->
         "    match \"error\" ->\n"
         "        :error\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -908,7 +908,7 @@ parse_function_with_try_catch_block_with_single_cons_match_clause_test() ->
         "    match list[atom]{:error|tail} ->\n"
         "        :error\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -977,7 +977,7 @@ parse_function_with_try_catch_block_with_single_identifier_and_type_match_clause
         "    match errorCode atom ->\n"
         "        :error\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -1032,7 +1032,7 @@ parse_function_with_try_catch_block_with_single_match_op_match_clause_test() ->
         "    match :error = errorCode atom ->\n"
         "        :error\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -1101,7 +1101,7 @@ parse_function_with_try_catch_block_with_multiple_clauses_test() ->
         "    match :failure ->\n"
         "        :failure\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -1186,7 +1186,7 @@ parse_function_with_try_catch_block_with_single_match_clause_test() ->
         "    match :error ->\n"
         "        :error\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -1242,7 +1242,7 @@ parse_function_with_try_after_block_test() ->
         "        firstCleanup()\n"
         "        secondCleanup()\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -1283,7 +1283,7 @@ parse_function_with_bare_catch_block_and_an_after_block_test() ->
         "    } after {\n"
         "        cleanup()\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -1333,7 +1333,7 @@ parse_function_with_try_catch_block_with_single_clause_and_after_block_test() ->
         "    } after {\n"
         "        cleanup()\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -1392,7 +1392,7 @@ parse_function_with_try_catch_block_with_single_match_clause_and_after_block_tes
         "    } after {\n"
         "        cleanup()\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
@@ -1451,7 +1451,7 @@ parse_function_with_try_catch_block_with_multiple_clauses_and_after_block_test()
         "    } after {\n"
         "        cleanup()\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [

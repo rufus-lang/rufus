@@ -5,7 +5,7 @@
 Nonterminals
     root decl
     type types block param params args
-    expr exprs literal_expr
+    expr exprs literal_expr throw_expr
     catch_expr catch_match_clause catch_match_clauses
     binary_op call cons match_op match_op_param
     list_lit list_type.
@@ -20,7 +20,7 @@ Terminals
     '->'
     module import
     func identifier
-    try catch after
+    try catch after throw
     match
     atom atom_lit
     bool bool_lit
@@ -105,29 +105,31 @@ literal_expr -> string_lit       : rufus_form:make_literal(string, list_to_binar
 
 catch_expr -> param              : '$1'.
 
-expr  -> literal_expr            : '$1'.
-expr  -> identifier              : rufus_form:make_identifier(list_to_atom(text('$1')), line('$1')).
-expr  -> binary_op               : '$1'.
-expr  -> cons                    : '$1'.
-expr  -> match_op                : '$1'.
-expr  -> call                    : '$1'.
-expr  -> list_lit                : '$1'.
-expr  -> func '(' params ')' type '{' exprs '}' :
+expr -> literal_expr             : '$1'.
+expr -> identifier               : rufus_form:make_identifier(list_to_atom(text('$1')), line('$1')).
+expr -> binary_op                : '$1'.
+expr -> cons                     : '$1'.
+expr -> match_op                 : '$1'.
+expr -> call                     : '$1'.
+expr -> list_lit                 : '$1'.
+expr -> func '(' params ')' type '{' exprs '}' :
                                    rufus_form:make_func('$3', '$5', '$7', line('$1')).
-expr  -> try '{' exprs '}' after '{' exprs '}' :
+expr -> try '{' exprs '}' after '{' exprs '}' :
                                    rufus_form:make_try_catch_after('$3', [], '$7', line('$1')).
-expr  -> try '{' exprs '}' catch catch_expr '{' exprs '}' after '{' exprs '}' :
+expr -> try '{' exprs '}' catch catch_expr '{' exprs '}' after '{' exprs '}' :
                                    rufus_form:make_try_catch_after('$3', [rufus_form:make_catch_clause('$6', '$8', line('$5'))], '$12', line('$1')).
-expr  -> try '{' exprs '}' catch catch_expr '{' exprs '}' :
+expr -> try '{' exprs '}' catch catch_expr '{' exprs '}' :
                                    rufus_form:make_try_catch_after('$3', [rufus_form:make_catch_clause('$6', '$8', line('$5'))], [], line('$1')).
-expr  -> try '{' exprs '}' catch '{' exprs '}' after '{' exprs '}':
+expr -> try '{' exprs '}' catch '{' exprs '}' after '{' exprs '}':
                                    rufus_form:make_try_catch_after('$3', [rufus_form:make_catch_clause('$7', line('$5'))], '$11', line('$1')).
-expr  -> try '{' exprs '}' catch '{' exprs '}' :
+expr -> try '{' exprs '}' catch '{' exprs '}' :
                                    rufus_form:make_try_catch_after('$3', [rufus_form:make_catch_clause('$7', line('$5'))], [], line('$1')).
-expr  -> try '{' exprs '}' catch '{' catch_match_clauses '}' after '{' exprs '}' :
+expr -> try '{' exprs '}' catch '{' catch_match_clauses '}' after '{' exprs '}' :
                                    rufus_form:make_try_catch_after('$3', '$7', '$11', line('$1')).
-expr  -> try '{' exprs '}' catch '{' catch_match_clauses '}' :
+expr -> try '{' exprs '}' catch '{' catch_match_clauses '}' :
                                    rufus_form:make_try_catch_after('$3', '$7', [], line('$1')).
+
+throw_expr -> throw expr         : rufus_form:make_throw('$2', line('$1')).
 
 catch_match_clause -> match param '->' exprs :
                                    rufus_form:make_catch_clause('$2', '$4', line('$1')).
@@ -137,6 +139,8 @@ catch_match_clauses -> '$empty'  : [].
 
 exprs -> expr ';' exprs          : ['$1'|'$3'].
 exprs -> expr                    : ['$1'].
+exprs -> throw_expr ';' exprs    : ['$1'|'$3'].
+exprs -> throw_expr              : ['$1'].
 exprs -> '$empty'                : [].
 
 list_lit -> list_type '{' args '}' :
