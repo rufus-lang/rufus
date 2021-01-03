@@ -90,7 +90,7 @@ eval_function_with_try_after_block_test() ->
         "    } after {\n"
         "        cleanup()\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(ok, example:'Maybe'()).
 
@@ -106,7 +106,7 @@ eval_function_with_bare_catch_block_and_an_after_block_test() ->
         "    } after {\n"
         "        cleanup()\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(ok, example:'Maybe'()).
 

@@ -34,6 +34,7 @@
     make_match_op_right/1,
     make_module/2,
     make_param/3,
+    make_throw/2,
     make_try_catch_after/4,
     make_type/2,
     make_type/3,
@@ -260,14 +261,30 @@ make_match_op_right({match_op, #{line := Line}}) ->
 make_module(Spec, Line) ->
     {module, #{spec => Spec, line => Line}}.
 
+%% throw form builder API
+
+%% make_throw returns a form for a throw expression.
+-spec make_throw(rufus_form(), integer()) -> throw_form().
+make_throw(Expr, Line) ->
+    {'throw', #{expr => Expr, line => Line}}.
+
 %% try/catch/after form builder API
 
+%% make_catch_clause returns a form for a catch clause that matches any error.
+%% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
+%% -spec make_catch_clause(any(), integer()) -> catch_clause_form().
 make_catch_clause(Exprs, Line) ->
     make_catch_clause(undefined, Exprs, Line).
 
+%% make_catch_clause returns a form for a catch clause.
+%% TODO(jkakar): Define a type that correctly defines MatchExpr.
+-spec make_catch_clause(any() | undefined, rufus_forms(), integer()) -> catch_clause_form().
 make_catch_clause(MatchExpr, Exprs, Line) ->
     {catch_clause, #{match_expr => MatchExpr, exprs => Exprs, line => Line}}.
 
+%% make_try_catch_after returns a form for a try/catch/after expression.
+-spec make_try_catch_after(rufus_forms(), list(catch_clause_form()), rufus_forms(), integer()) ->
+    try_catch_after_form().
 make_try_catch_after(TryExprs, CatchClauses, AfterExprs, Line) ->
     {try_catch_after, #{
         try_exprs => TryExprs,

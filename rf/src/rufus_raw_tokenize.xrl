@@ -12,6 +12,7 @@ Module               = module
 Import               = import
 Const                = const
 Func                 = func
+Throw                = throw
 Try                  = try
 Catch                = catch
 After                = after
@@ -69,6 +70,7 @@ Rules.
 {Import}               : {token, {import, TokenLine}}.
 {Const}                : {token, {const, TokenLine}}.
 {Func}                 : {token, {func, TokenLine}}.
+{Throw}                : {token, {'throw', TokenLine}}.
 {Try}                  : {token, {'try', TokenLine}}.
 {Catch}                : {token, {'catch', TokenLine}}.
 {After}                : {token, {'after', TokenLine}}.

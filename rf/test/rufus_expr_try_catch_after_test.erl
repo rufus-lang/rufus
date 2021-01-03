@@ -912,7 +912,7 @@ typecheck_and_annotate_function_with_bare_catch_block_and_an_after_block_test() 
         "    } after {\n"
         "        cleanup()\n"
         "    }\n"
-        "}",
+        "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
