@@ -41,7 +41,8 @@ parse_function_with_bare_catch_block_test() ->
                                         {type, #{line => 6, spec => atom}}
                                 }}
                             ],
-                            line => 4
+                            line => 4,
+                            match_expr => undefined
                         }}
                     ],
                     line => 2,
