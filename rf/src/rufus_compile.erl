@@ -65,8 +65,8 @@ compile(ErlangForms) ->
 
 %% load creates or overwrites a module with a code binary.
 -spec load(atom(), binary()) ->
-    {ok, atom()} |
-    {error, badarg | badfile | nofile | not_purged | on_load_failure | sticky_directory}.
+    {ok, atom()}
+    | {error, badarg | badfile | nofile | not_purged | on_load_failure | sticky_directory}.
 load(Module, BinaryOrCode) ->
     case code:load_binary(Module, "nofile", BinaryOrCode) of
         {module, Module} ->
