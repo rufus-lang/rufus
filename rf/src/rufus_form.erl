@@ -16,6 +16,7 @@
     make_binary_op_left/1,
     make_binary_op_right/1,
     make_call/3,
+    make_catch_clause/2,
     make_catch_clause/3,
     make_cons/4,
     make_cons_head/1,
@@ -260,6 +261,9 @@ make_module(Spec, Line) ->
     {module, #{spec => Spec, line => Line}}.
 
 %% try/catch/after form builder API
+
+make_catch_clause(Exprs, Line) ->
+    make_catch_clause(undefined, Exprs, Line).
 
 make_catch_clause(MatchExpr, Exprs, Line) ->
     {catch_clause, #{match_expr => MatchExpr, exprs => Exprs, line => Line}}.

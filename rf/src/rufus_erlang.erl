@@ -77,6 +77,18 @@ forms(Acc, [{call, Context = #{spec := Spec, args := Args, line := Line}} | T]) 
                 {atom, Line, Spec}
         end,
     forms([{call, Line, Name, ArgsForms} | Acc], T);
+forms(Acc, [{catch_clause, #{match_expr := MatchExpr, exprs := Exprs, line := Line}} | T]) ->
+    {ok, [MatchExprForm]} =
+        case MatchExpr of
+            undefined ->
+                {ok, [{var, Line, '_'}]};
+            _ ->
+                forms([], [MatchExpr])
+        end,
+    {ok, ExprsForms} = forms([], Exprs),
+    MatchExprTupleForm = [{tuple, Line, [{atom, Line, throw}, MatchExprForm, {var, Line, '_'}]}],
+    Form = {clause, Line, MatchExprTupleForm, [], ExprsForms},
+    forms([Form | Acc], T);
 forms(Acc, [{cons, #{head := Head, tail := Tail, line := Line}} | T]) ->
     {ok, [HeadForm]} = forms([], [Head]),
     {ok, [TailForm]} = forms([], [Tail]),
@@ -162,6 +174,20 @@ forms(Acc, [{param, #{line := Line, spec := Spec, type := Type}} | T]) ->
 forms(Acc, [{string_lit, _Context} = StringLit | T]) ->
     Form = box(StringLit),
     forms([Form | Acc], T);
+forms(Acc, [
+    {try_catch_after, #{
+        line := Line,
+        try_exprs := TryExprs,
+        catch_clauses := CatchClauses,
+        after_exprs := AfterExprs
+    }}
+    | T
+]) ->
+    {ok, TryExprsForms} = forms([], TryExprs),
+    {ok, CatchClausesForms} = forms([], CatchClauses),
+    {ok, AfterExprsForms} = forms([], AfterExprs),
+    Form = {'try', Line, TryExprsForms, [], CatchClausesForms, AfterExprsForms},
+    forms([Form | Acc], T);
 forms(Acc, [{type, _Context} | T]) ->
     %% no-op to satisfy Dialyzer
     forms(Acc, T);
@@ -237,12 +263,12 @@ guard_forms(Acc, []) ->
 %% float and int are all represented as scalar values in Erlang, while string is
 %% represented as an annotated {string, BinaryValue} tuple.
 -spec box(
-    atom_lit_form() |
-    bool_lit_form() |
-    float_lit_form() |
-    int_lit_form() |
-    list_lit_form() |
-    string_lit_form()
+    atom_lit_form()
+    | bool_lit_form()
+    | float_lit_form()
+    | int_lit_form()
+    | list_lit_form()
+    | string_lit_form()
 ) -> (erlang3_form() | erlang4_form()).
 box({atom_lit, #{spec := Value, line := Line}}) ->
     {atom, Line, Value};

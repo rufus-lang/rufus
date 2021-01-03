@@ -2,9 +2,70 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
+parse_function_with_bare_catch_block_test() ->
+    RufusText =
+        "func Maybe() atom {\n"
+        "    try {\n"
+        "        :ok\n"
+        "    } catch {\n"
+        "        log(\"oh no\")\n"
+        "        :error\n"
+        "    }\n"
+        "}",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [
+        {func, #{
+            exprs => [
+                {try_catch_after, #{
+                    after_exprs => [],
+                    catch_clauses => [
+                        {catch_clause, #{
+                            exprs => [
+                                {call, #{
+                                    args => [
+                                        {string_lit, #{
+                                            line => 5,
+                                            spec => <<"oh no">>,
+                                            type =>
+                                                {type, #{line => 5, spec => string}}
+                                        }}
+                                    ],
+                                    line => 5,
+                                    spec => log
+                                }},
+                                {atom_lit, #{
+                                    line => 6,
+                                    spec => error,
+                                    type =>
+                                        {type, #{line => 6, spec => atom}}
+                                }}
+                            ],
+                            line => 4,
+                            match_expr => undefined
+                        }}
+                    ],
+                    line => 2,
+                    try_exprs => [
+                        {atom_lit, #{
+                            line => 3,
+                            spec => ok,
+                            type => {type, #{line => 3, spec => atom}}
+                        }}
+                    ]
+                }}
+            ],
+            line => 1,
+            params => [],
+            return_type => {type, #{line => 1, spec => atom}},
+            spec => 'Maybe'
+        }}
+    ],
+    ?assertEqual(Expected, Forms).
+
 parse_function_with_try_catch_block_with_single_atom_clause_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch :error {\n"
@@ -64,14 +125,14 @@ parse_function_with_try_catch_block_with_single_atom_clause_test() ->
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_single_bool_clause_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch true {\n"
@@ -131,14 +192,14 @@ parse_function_with_try_catch_block_with_single_bool_clause_test() ->
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_single_float_clause_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch 42.0 {\n"
@@ -198,14 +259,14 @@ parse_function_with_try_catch_block_with_single_float_clause_test() ->
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_single_int_clause_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch 42 {\n"
@@ -265,14 +326,14 @@ parse_function_with_try_catch_block_with_single_int_clause_test() ->
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_single_string_clause_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch \"error\" {\n"
@@ -332,14 +393,14 @@ parse_function_with_try_catch_block_with_single_string_clause_test() ->
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_single_cons_clause_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch list[atom]{:error|tail} {\n"
@@ -413,14 +474,14 @@ parse_function_with_try_catch_block_with_single_cons_clause_test() ->
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_single_identifier_and_type_clause_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch errorCode atom {\n"
@@ -480,14 +541,14 @@ parse_function_with_try_catch_block_with_single_identifier_and_type_clause_test(
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_single_match_op_clause_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch :error = errorCode atom {\n"
@@ -558,14 +619,14 @@ parse_function_with_try_catch_block_with_single_match_op_clause_test() ->
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_single_atom_match_clause_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch {\n"
@@ -613,14 +674,14 @@ parse_function_with_try_catch_block_with_single_atom_match_clause_test() ->
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_single_bool_match_clause_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch {\n"
@@ -668,14 +729,14 @@ parse_function_with_try_catch_block_with_single_bool_match_clause_test() ->
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_single_float_match_clause_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch {\n"
@@ -723,14 +784,14 @@ parse_function_with_try_catch_block_with_single_float_match_clause_test() ->
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_single_int_match_clause_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch {\n"
@@ -778,14 +839,14 @@ parse_function_with_try_catch_block_with_single_int_match_clause_test() ->
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_single_string_match_clause_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch {\n"
@@ -833,14 +894,14 @@ parse_function_with_try_catch_block_with_single_string_match_clause_test() ->
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_single_cons_match_clause_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch {\n"
@@ -902,14 +963,14 @@ parse_function_with_try_catch_block_with_single_cons_match_clause_test() ->
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_single_identifier_and_type_match_clause_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch {\n"
@@ -957,14 +1018,14 @@ parse_function_with_try_catch_block_with_single_identifier_and_type_match_clause
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_single_match_op_match_clause_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch {\n"
@@ -1023,14 +1084,14 @@ parse_function_with_try_catch_block_with_single_match_op_match_clause_test() ->
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_multiple_clauses_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch {\n"
@@ -1111,14 +1172,14 @@ parse_function_with_try_catch_block_with_multiple_clauses_test() ->
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_single_match_clause_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch {\n"
@@ -1166,14 +1227,14 @@ parse_function_with_try_catch_block_with_single_match_clause_test() ->
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_after_block_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        doSomething()\n"
         "        :ok\n"
@@ -1207,14 +1268,64 @@ parse_function_with_try_after_block_test() ->
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
+        }}
+    ],
+    ?assertEqual(Expected, Forms).
+
+parse_function_with_bare_catch_block_and_an_after_block_test() ->
+    RufusText =
+        "func Maybe() atom {\n"
+        "    try {\n"
+        "        :ok\n"
+        "    } catch {\n"
+        "        :error\n"
+        "    } after {\n"
+        "        cleanup()\n"
+        "    }\n"
+        "}",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [
+        {func, #{
+            exprs => [
+                {try_catch_after, #{
+                    after_exprs => [{call, #{args => [], line => 7, spec => cleanup}}],
+                    catch_clauses => [
+                        {catch_clause, #{
+                            exprs => [
+                                {atom_lit, #{
+                                    line => 5,
+                                    spec => error,
+                                    type =>
+                                        {type, #{line => 5, spec => atom}}
+                                }}
+                            ],
+                            line => 4,
+                            match_expr => undefined
+                        }}
+                    ],
+                    line => 2,
+                    try_exprs => [
+                        {atom_lit, #{
+                            line => 3,
+                            spec => ok,
+                            type => {type, #{line => 3, spec => atom}}
+                        }}
+                    ]
+                }}
+            ],
+            line => 1,
+            params => [],
+            return_type => {type, #{line => 1, spec => atom}},
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_single_clause_and_after_block_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch :error {\n"
@@ -1265,14 +1376,14 @@ parse_function_with_try_catch_block_with_single_clause_and_after_block_test() ->
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_single_match_clause_and_after_block_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch {\n"
@@ -1322,14 +1433,14 @@ parse_function_with_try_catch_block_with_single_match_clause_and_after_block_tes
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).
 
 parse_function_with_try_catch_block_with_multiple_clauses_and_after_block_test() ->
     RufusText =
-        "func example() atom {\n"
+        "func Maybe() atom {\n"
         "    try {\n"
         "        :ok\n"
         "    } catch {\n"
@@ -1399,7 +1510,7 @@ parse_function_with_try_catch_block_with_multiple_clauses_and_after_block_test()
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => example
+            spec => 'Maybe'
         }}
     ],
     ?assertEqual(Expected, Forms).

@@ -152,6 +152,30 @@ map_with_try_catch_after_test() ->
         rufus_forms:map([Form], fun annotate/1)
     ).
 
+map_with_try_catch_after_with_bare_catch_test() ->
+    TryExpr = rufus_form:make_identifier(j, 3),
+    CatchExpr = rufus_form:make_identifier(k, 3),
+    CatchClause = rufus_form:make_catch_clause([CatchExpr], 3),
+    AfterExpr = rufus_form:make_identifier(l, 3),
+    Form = rufus_form:make_try_catch_after([TryExpr], [CatchClause], [AfterExpr], 3),
+    ?assertMatch(
+        [
+            {try_catch_after, #{
+                try_exprs := [{_, #{annotated := true}}],
+                catch_clauses := [
+                    {catch_clause, #{
+                        match_expr := undefined,
+                        exprs := [{_, #{annotated := true}}],
+                        annotated := true
+                    }}
+                ],
+                after_exprs := [{_, #{annotated := true}}],
+                annotated := true
+            }}
+        ],
+        rufus_forms:map([Form], fun annotate/1)
+    ).
+
 annotate({FormType, Context}) ->
     {FormType, Context#{annotated => true}}.
 

@@ -23,7 +23,12 @@ each([Form = {call, #{args := Args}} | T], Fun) ->
     Fun(Form),
     each(T, Fun);
 each([Form = {catch_clause, #{match_expr := MatchExpr, exprs := Exprs}} | T], Fun) ->
-    Fun(MatchExpr),
+    case MatchExpr of
+        undefined ->
+            ok;
+        _ ->
+            Fun(MatchExpr)
+    end,
     each(Exprs, Fun),
     Fun(Form),
     each(T, Fun);
@@ -90,7 +95,13 @@ map(Acc, [{call, Context = #{args := Args}} | T], Fun) ->
     AnnotatedForm = Fun({call, Context#{args => AnnotatedArgs}}),
     map([AnnotatedForm | Acc], T, Fun);
 map(Acc, [{catch_clause, Context = #{match_expr := MatchExpr, exprs := Exprs}} | T], Fun) ->
-    AnnotatedMatchExpr = Fun(MatchExpr),
+    AnnotatedMatchExpr =
+        case MatchExpr of
+            undefined ->
+                undefined;
+            _ ->
+                Fun(MatchExpr)
+        end,
     AnnotatedExprs = map(Exprs, Fun),
     AnnotatedForm = Fun(
         {catch_clause, Context#{match_expr => AnnotatedMatchExpr, exprs => AnnotatedExprs}}

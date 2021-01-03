@@ -22,3 +22,6 @@ dialyzer:
 build:
 	@rebar3 escriptize
 	@cp _build/default/bin/rf .
+
+fmt:
+	@erlfmt -w src/*erl test/*erl
