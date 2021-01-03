@@ -917,7 +917,6 @@ typecheck_and_annotate_function_with_try_catch_and_after_blocks_accessing_variab
         "    } after {\n"
         "        cleanup(value)\n"
         "    }\n"
-        "    ok\n"
         "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
@@ -1051,11 +1050,6 @@ typecheck_and_annotate_function_with_try_catch_and_after_blocks_accessing_variab
                             type => {type, #{line => 4, spec => atom}}
                         }}
                     ],
-                    type => {type, #{line => 4, spec => atom}}
-                }},
-                {identifier, #{
-                    line => 14,
-                    spec => ok,
                     type => {type, #{line => 4, spec => atom}}
                 }}
             ],
