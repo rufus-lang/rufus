@@ -120,6 +120,8 @@ expr  -> try '{' exprs '}' catch catch_expr '{' exprs '}' after '{' exprs '}' :
                                    rufus_form:make_try_catch_after('$3', [rufus_form:make_catch_clause('$6', '$8', line('$5'))], '$12', line('$1')).
 expr  -> try '{' exprs '}' catch catch_expr '{' exprs '}' :
                                    rufus_form:make_try_catch_after('$3', [rufus_form:make_catch_clause('$6', '$8', line('$5'))], [], line('$1')).
+expr  -> try '{' exprs '}' catch '{' exprs '}' after '{' exprs '}':
+                                   rufus_form:make_try_catch_after('$3', [rufus_form:make_catch_clause('$7', line('$5'))], '$11', line('$1')).
 expr  -> try '{' exprs '}' catch '{' exprs '}' :
                                    rufus_form:make_try_catch_after('$3', [rufus_form:make_catch_clause('$7', line('$5'))], [], line('$1')).
 expr  -> try '{' exprs '}' catch '{' catch_match_clauses '}' after '{' exprs '}' :

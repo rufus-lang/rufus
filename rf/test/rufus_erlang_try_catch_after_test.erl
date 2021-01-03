@@ -198,3 +198,36 @@ forms_for_function_with_try_and_catch_blocks_both_returning_a_string_literal_tes
         ]}
     ],
     ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_with_bare_catch_block_and_an_after_block_test() ->
+    RufusText =
+        "module example\n"
+        "func cleanup() atom { :cleanup }\n"
+        "func Maybe() atom {\n"
+        "    try {\n"
+        "        :ok\n"
+        "    } catch {\n"
+        "        :error\n"
+        "    } after {\n"
+        "        cleanup()\n"
+        "    }\n"
+        "}",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    Expected = [
+        {attribute, 1, module, example},
+        {attribute, 3, export, [{'Maybe', 0}]},
+        {function, 3, 'Maybe', 0, [
+            {clause, 3, [], [], [
+                {'try', 4, [{atom, 5, ok}], [],
+                    [
+                        {clause, 6, [{tuple, 6, [{atom, 6, throw}, {var, 6, '_'}, {var, 6, '_'}]}],
+                            [], [{atom, 7, error}]}
+                    ],
+                    [{call, 9, {atom, 9, cleanup}, []}]}
+            ]}
+        ]},
+        {function, 2, cleanup, 0, [{clause, 2, [], [], [{atom, 2, cleanup}]}]}
+    ],
+    ?assertEqual(Expected, ErlangForms).

@@ -80,6 +80,22 @@ eval_function_with_try_and_catch_blocks_both_returning_a_string_literal_test() -
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual({string, <<"ok">>}, example:'Maybe'()).
 
+eval_function_with_bare_catch_block_and_an_after_block_test() ->
+    RufusText =
+        "module example\n"
+        "func cleanup() atom { :cleanup }\n"
+        "func Maybe() atom {\n"
+        "    try {\n"
+        "        :ok\n"
+        "    } catch {\n"
+        "        :error\n"
+        "    } after {\n"
+        "        cleanup()\n"
+        "    }\n"
+        "}",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual(ok, example:'Maybe'()).
+
 eval_function_with_try_and_multiple_catch_blocks_returning_an_atom_literal_test() ->
     RufusText =
         "module example\n"
