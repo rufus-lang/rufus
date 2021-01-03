@@ -54,6 +54,10 @@ Left     40 'and'.
 Left     30 'or'.
 Left     20 '='.
 
+%% Give exprs higher precedence than catch_match_clause to prevent collisions
+%% between a bare catch and a catch with one or more matchers.
+Left     10 exprs.
+
 %%
 %% Grammar rules
 %%
@@ -116,6 +120,8 @@ expr  -> try '{' exprs '}' catch catch_expr '{' exprs '}' after '{' exprs '}' :
                                    rufus_form:make_try_catch_after('$3', [rufus_form:make_catch_clause('$6', '$8', line('$5'))], '$12', line('$1')).
 expr  -> try '{' exprs '}' catch catch_expr '{' exprs '}' :
                                    rufus_form:make_try_catch_after('$3', [rufus_form:make_catch_clause('$6', '$8', line('$5'))], [], line('$1')).
+expr  -> try '{' exprs '}' catch '{' exprs '}' :
+                                   rufus_form:make_try_catch_after('$3', [rufus_form:make_catch_clause('$7', line('$5'))], [], line('$1')).
 expr  -> try '{' exprs '}' catch '{' catch_match_clauses '}' after '{' exprs '}' :
                                    rufus_form:make_try_catch_after('$3', '$7', '$11', line('$1')).
 expr  -> try '{' exprs '}' catch '{' catch_match_clauses '}' :
