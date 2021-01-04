@@ -48,6 +48,8 @@ resolve_type(_Stack, _Globals, {func, #{return_type := Type}}) ->
     {ok, Type};
 resolve_type(Stack, Globals, Form = {identifier, _Context}) ->
     resolve_identifier_type(Stack, Globals, Form);
+resolve_type(Stack, Globals, Form = {throw, _Context}) ->
+    resolve_throw_type(Stack, Globals, Form);
 resolve_type(Stack, Globals, Form = {try_catch_after, _Context}) ->
     resolve_try_catch_after_type(Stack, Globals, Form).
 
@@ -449,6 +451,13 @@ resolve_list_lit_type(Stack, Globals, Form = {list_lit, #{elements := Elements, 
             Data = #{form => Form},
             throw({error, unexpected_element_type, Data})
     end.
+
+%% throw helpers
+
+resolve_throw_type(Stack, Globals, {throw, #{expr := Expr, line := Line}}) ->
+    {ok, ExprTypeForm} = resolve_type(Stack, Globals, Expr),
+    TypeForm = rufus_form:make_type(throw, ExprTypeForm, Line),
+    {ok, TypeForm}.
 
 %% try/catch/after helpers
 
