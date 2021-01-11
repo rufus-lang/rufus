@@ -85,7 +85,7 @@ element_type({_, #{type := {type, #{kind := list, element_type := ElementType}}}
     ElementType.
 
 %% type returns type information for the form.
--spec type(rufus_form()) -> context().
+-spec type(rufus_form()) -> type_form().
 type({_, #{type := Type}}) ->
     Type;
 type(Form = {identifier, #{spec := Spec, locals := Locals}}) ->
@@ -97,10 +97,14 @@ type(Form = {identifier, #{spec := Spec, locals := Locals}}) ->
     end.
 
 %% type_kind returns the kind for the type of the form, one of func, list, primitive, or throw.
--spec type_kind({any(), context()}) -> func | list | primitive | throw.
+-spec type_kind(rufus_form() | type_form()) -> func | list | primitive | throw.
 type_kind({_, #{type := {type, #{kind := Kind}}}}) ->
     Kind;
 type_kind({_, #{type := {type, _Context}}}) ->
+    primitive;
+type_kind({type, #{kind := Kind}}) ->
+    Kind;
+type_kind({type, _Context}) ->
     primitive.
 
 %% type_spec returns the spec for the type of the form.

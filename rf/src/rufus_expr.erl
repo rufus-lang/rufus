@@ -734,8 +734,8 @@ typecheck_try_catch_return_types(TryExprs, CatchClauses) ->
         case TryExprTypeForm of
             {type, #{kind := throw}} ->
                 [];
-            TypeForm ->
-                [{LastTryExpr, TypeForm}]
+            _ ->
+                [{LastTryExpr, TryExprTypeForm}]
         end,
 
     CatchClauseTypeForms = lists:map(
@@ -758,8 +758,8 @@ typecheck_try_catch_return_types(TryExprs, CatchClauses) ->
 %% validate_try_catch_return_type iterates over {Form, TypeForm} 2-tuples and
 %% returns ok if the types for pairs match, or throws an {error,
 %% mismatched_try_catch_return_type, Data} 3-tuple.
--spec validate_try_catch_return_type(list(atom), list({rufus_form(), type_form()})) ->
-    ok | no_return.
+%% -spec validate_try_catch_return_type(list(atom), list({rufus_form(), type_form()})) ->
+%%     ok | no_return.
 validate_try_catch_return_type([Spec], [{_Form, {type, #{spec := Spec}}} | T]) ->
     validate_try_catch_return_type([Spec], T);
 validate_try_catch_return_type([], [{_Form, {type, #{spec := Spec}}} | T]) ->
