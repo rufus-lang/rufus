@@ -700,7 +700,7 @@ typecheck_and_annotate_try_catch_after(
         AfterExprs
     ),
 
-    ok = typecheck_try_catch_return_types(Globals, AnnotatedTryExprs, AnnotatedCatchClauses),
+    ok = typecheck_try_catch_return_types(AnnotatedTryExprs, AnnotatedCatchClauses),
     AnnotatedForm1 =
         {try_catch_after, Context#{
             try_exprs => AnnotatedTryExprs,
@@ -724,38 +724,55 @@ typecheck_and_annotate_try_catch_after(
 %% typecheck_try_catch_return_types ensures that the try block and all catch
 %% blocks have the same return type.
 -spec typecheck_try_catch_return_types(
-    globals(),
     rufus_forms(),
     list(catch_clause_form())
 ) -> ok | no_return().
-typecheck_try_catch_return_types(Globals, TryExprs, CatchClauses) ->
+typecheck_try_catch_return_types(TryExprs, CatchClauses) ->
     LastTryExpr = lists:last(TryExprs),
-    case rufus_type:resolve(Globals, LastTryExpr) of
-        {ok, {type, #{spec := TryExprTypeSpec}}} ->
-            lists:foreach(
-                fun(CatchClause) ->
-                    case rufus_type:resolve(Globals, CatchClause) of
-                        {ok, {type, #{spec := TryExprTypeSpec}}} ->
-                            ok;
-                        {ok, {type, #{spec := CatchClauseTypeSpec}}} ->
-                            Data = #{
-                                globals => Globals,
-                                try_exprs => TryExprs,
-                                catch_clause => CatchClause,
-                                actual => CatchClauseTypeSpec,
-                                expected => TryExprTypeSpec
-                            },
-                            throw({error, mismatched_try_catch_return_type, Data});
-                        Error ->
-                            throw(Error)
-                    end
-                end,
-                CatchClauses
-            ),
-            ok;
-        Error ->
-            throw(Error)
-    end.
+    TryExprTypeForm = rufus_form:type(LastTryExpr),
+    Acc1 =
+        case TryExprTypeForm of
+            {type, #{kind := throw}} ->
+                [];
+            TypeForm ->
+                [{LastTryExpr, TypeForm}]
+        end,
+
+    CatchClauseTypeForms = lists:map(
+        fun(CatchClauseForm) -> {CatchClauseForm, rufus_form:type(CatchClauseForm)} end,
+        CatchClauses
+    ),
+    FormPairs = lists:foldr(
+        fun(Element, Acc2) ->
+            case Element of
+                {_Form, {type, #{kind := throw}}} -> Acc2;
+                _ -> [Element | Acc2]
+            end
+        end,
+        Acc1,
+        CatchClauseTypeForms
+    ),
+
+    validate_try_catch_return_type([], FormPairs).
+
+%% validate_try_catch_return_type iterates over {Form, TypeForm} 2-tuples and
+%% returns ok if the types for pairs match, or throws an {error,
+%% mismatched_try_catch_return_type, Data} 3-tuple.
+-spec validate_try_catch_return_type(list(atom), list({rufus_form(), type_form()})) ->
+    ok | no_return.
+validate_try_catch_return_type([Spec], [{_Form, {type, #{spec := Spec}}} | T]) ->
+    validate_try_catch_return_type([Spec], T);
+validate_try_catch_return_type([], [{_Form, {type, #{spec := Spec}}} | T]) ->
+    validate_try_catch_return_type([Spec], T);
+validate_try_catch_return_type([ExpectedSpec], [{Form, {type, #{spec := ActualSpec}}} | _T]) ->
+    Data = #{
+        form => Form,
+        actual => ActualSpec,
+        expected => ExpectedSpec
+    },
+    throw({error, mismatched_try_catch_return_type, Data});
+validate_try_catch_return_type(_, []) ->
+    ok.
 
 %% scope helpers
 
