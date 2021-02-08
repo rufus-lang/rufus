@@ -33,8 +33,8 @@ Collection types will use a uniform syntax:
 - `set[float]`
 
 `[]int` is a common syntax shape for lists, and has the benefit of being a touch
-shorter, but `list[int]` is symmetrical with the expected syntax for `tuple` and
-`map` types.
+shorter, but `list[int]` is symmetrical with the expected syntax for `tuple`,
+`map`, and `set` types.
 
 ### Option 1
 
@@ -72,7 +72,15 @@ This syntax has some nice properties. It's regular, and it's also familiar, but
 it also has some downsides. Notably, assigning a type to `[]` is difficult. The
 compiler could treat this type as `list[<any>]` until the first time an element
 is added to it, but that would break the current assumption that expressions
-_always_ have a well-defined type.
+_always_ have a well-defined type. If the syntax allowed variables to declare a
+type, this problem might be easier to solve:
+
+```rufus
+func Empty() list[int] {
+    l list[int] = []
+    l
+}
+```
 
 ### Option 2
 
@@ -84,12 +92,12 @@ func Empty() list[int] { list[int]{} }
 func Echo(numbers list[int]) list[int] { numbers }
 
 func Sum(numbers list[int]) int { sum(0, numbers) }
-func sum(acc int, list[int]{}) { total }
-func sum(acc int, list[int]{head|tail}) { sum(acc + head, tail) }
+func sum(acc int, list[int]{head|tail}) int { sum(acc + head, tail) }
+func sum(acc int, list[int]{}) int { acc }
 
 func Prepend(v int) list[int] { list[int]{v|{2, 3, 4}} }
-func LossyCopy(list[int]{}) { list[int]{} }
-func LossyCopy(numbers list[int]) {
+func LossyCopy(list[int]{}) list[int] { list[int]{} }
+func LossyCopy(numbers list[int]) list[int] {
     list[int]{_|tail} = numbers
     tail
 }
@@ -112,10 +120,12 @@ type information is always explicit. The cons syntax avoids repeating the type
 when a list is specified as the tail, since the type is explicit in the cons
 expression itself. Similarly, for multidimensional lists, we don't need to
 duplicate type information for list elements, since the outer type communicates
-that information..
+that information.
 
 ## Decision outcome
 
 Chosen option: option 2, because it will simplify compiler implementation, and
 because making the list type explicit should make code easier to read because
-there will be less guessing about what the type is.
+there will be less guessing about what the type is. Furthermore, we continue to
+avoid needing to declare the type of a variable, which helps keep the syntax
+consistent and uncluttered.
