@@ -10,6 +10,7 @@
     return_type/1,
     spec/1,
     type/1,
+    type_kind/1,
     type_spec/1,
     %% Form builder API
     make_binary_op/4,
@@ -84,7 +85,7 @@ element_type({_, #{type := {type, #{kind := list, element_type := ElementType}}}
     ElementType.
 
 %% type returns type information for the form.
--spec type(rufus_form()) -> context().
+-spec type(rufus_form()) -> type_form().
 type({_, #{type := Type}}) ->
     Type;
 type(Form = {identifier, #{spec := Spec, locals := Locals}}) ->
@@ -94,6 +95,17 @@ type(Form = {identifier, #{spec := Spec, locals := Locals}}) ->
         undefined ->
             {error, unknown_form, #{form => Form}}
     end.
+
+%% type_kind returns the kind for the type of the form, one of func, list, primitive, or throw.
+-spec type_kind(rufus_form() | type_form()) -> func | list | primitive | throw.
+type_kind({_, #{type := {type, #{kind := Kind}}}}) ->
+    Kind;
+type_kind({_, #{type := {type, _Context}}}) ->
+    primitive;
+type_kind({type, #{kind := Kind}}) ->
+    Kind;
+type_kind({type, _Context}) ->
+    primitive.
 
 %% type_spec returns the spec for the type of the form.
 -spec type_spec({any(), context()}) -> atom() | error_triple().
@@ -266,7 +278,7 @@ make_module(Spec, Line) ->
 %% make_throw returns a form for a throw expression.
 -spec make_throw(rufus_form(), integer()) -> throw_form().
 make_throw(Expr, Line) ->
-    {'throw', #{expr => Expr, line => Line}}.
+    {throw, #{expr => Expr, line => Line}}.
 
 %% try/catch/after form builder API
 
@@ -315,6 +327,14 @@ make_type(list, ElementType, Line) ->
         kind => list,
         element_type => ElementType,
         spec => TypeSpec,
+        line => Line
+    }};
+make_type(throw, ExprType, Line) ->
+    ExprTypeSpec = type_spec(ExprType),
+    Spec = list_to_atom(unicode:characters_to_list(["throw ", atom_to_list(ExprTypeSpec)])),
+    {type, #{
+        kind => throw,
+        spec => Spec,
         line => Line
     }}.
 

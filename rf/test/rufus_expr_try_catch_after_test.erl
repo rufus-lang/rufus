@@ -1581,7 +1581,311 @@ typecheck_and_annotate_function_with_try_variable_accessed_in_after_block_test()
         rufus_expr:typecheck_and_annotate(Forms)
     ).
 
-%% typecheck_and_annotate failure mode tests
+%% Throw tests
+
+typecheck_and_annotate_function_with_throw_in_try_block_test() ->
+    RufusText =
+        "module example\n"
+        "func Explode() atom {\n"
+        "    try {\n"
+        "        throw :kaboom\n"
+        "    } catch {\n"
+        "        :error\n"
+        "    }\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 1, spec => example}},
+        {func, #{
+            exprs => [
+                {try_catch_after, #{
+                    after_exprs => [],
+                    catch_clauses => [
+                        {catch_clause, #{
+                            exprs => [
+                                {atom_lit, #{
+                                    line => 6,
+                                    spec => error,
+                                    type =>
+                                        {type, #{line => 6, spec => atom}}
+                                }}
+                            ],
+                            line => 5,
+                            match_expr => undefined,
+                            type => {type, #{line => 6, spec => atom}}
+                        }}
+                    ],
+                    line => 3,
+                    try_exprs => [
+                        {throw, #{
+                            expr =>
+                                {atom_lit, #{
+                                    line => 4,
+                                    spec => kaboom,
+                                    type => {type, #{line => 4, spec => atom}}
+                                }},
+                            line => 4,
+                            type =>
+                                {type, #{
+                                    kind => throw,
+                                    line => 4,
+                                    spec => 'throw atom'
+                                }}
+                        }}
+                    ],
+                    type =>
+                        {type, #{
+                            kind => throw,
+                            line => 4,
+                            spec => 'throw atom'
+                        }}
+                }}
+            ],
+            line => 2,
+            params => [],
+            return_type => {type, #{line => 2, spec => atom}},
+            spec => 'Explode',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 2,
+                    param_types => [],
+                    return_type => {type, #{line => 2, spec => atom}},
+                    spec => 'func() atom'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_function_with_throw_in_catch_block_test() ->
+    RufusText =
+        "module example\n"
+        "func Explode() atom {\n"
+        "    try {\n"
+        "        :ok\n"
+        "    } catch {\n"
+        "        throw :kaboom\n"
+        "    }\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 1, spec => example}},
+        {func, #{
+            exprs => [
+                {try_catch_after, #{
+                    after_exprs => [],
+                    catch_clauses => [
+                        {catch_clause, #{
+                            exprs => [
+                                {throw, #{
+                                    expr =>
+                                        {atom_lit, #{
+                                            line => 6,
+                                            spec => kaboom,
+                                            type =>
+                                                {type, #{line => 6, spec => atom}}
+                                        }},
+                                    line => 6,
+                                    type =>
+                                        {type, #{
+                                            kind => throw,
+                                            line => 6,
+                                            spec => 'throw atom'
+                                        }}
+                                }}
+                            ],
+                            line => 5,
+                            match_expr => undefined,
+                            type =>
+                                {type, #{
+                                    kind => throw,
+                                    line => 6,
+                                    spec => 'throw atom'
+                                }}
+                        }}
+                    ],
+                    line => 3,
+                    try_exprs => [
+                        {atom_lit, #{
+                            line => 4,
+                            spec => ok,
+                            type => {type, #{line => 4, spec => atom}}
+                        }}
+                    ],
+                    type => {type, #{line => 4, spec => atom}}
+                }}
+            ],
+            line => 2,
+            params => [],
+            return_type => {type, #{line => 2, spec => atom}},
+            spec => 'Explode',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 2,
+                    param_types => [],
+                    return_type => {type, #{line => 2, spec => atom}},
+                    spec => 'func() atom'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_function_with_throw_in_try_and_catch_blocks_test() ->
+    RufusText =
+        "module example\n"
+        "func Explode() atom {\n"
+        "    try {\n"
+        "        throw 42\n"
+        "    } catch {\n"
+        "        throw :kaboom\n"
+        "    }\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 1, spec => example}},
+        {func, #{
+            exprs => [
+                {try_catch_after, #{
+                    after_exprs => [],
+                    catch_clauses => [
+                        {catch_clause, #{
+                            exprs => [
+                                {throw, #{
+                                    expr =>
+                                        {atom_lit, #{
+                                            line => 6,
+                                            spec => kaboom,
+                                            type =>
+                                                {type, #{line => 6, spec => atom}}
+                                        }},
+                                    line => 6,
+                                    type =>
+                                        {type, #{
+                                            kind => throw,
+                                            line => 6,
+                                            spec => 'throw atom'
+                                        }}
+                                }}
+                            ],
+                            line => 5,
+                            match_expr => undefined,
+                            type =>
+                                {type, #{
+                                    kind => throw,
+                                    line => 6,
+                                    spec => 'throw atom'
+                                }}
+                        }}
+                    ],
+                    line => 3,
+                    try_exprs => [
+                        {throw, #{
+                            expr =>
+                                {int_lit, #{
+                                    line => 4,
+                                    spec => 42,
+                                    type => {type, #{line => 4, spec => int}}
+                                }},
+                            line => 4,
+                            type =>
+                                {type, #{
+                                    kind => throw,
+                                    line => 4,
+                                    spec => 'throw int'
+                                }}
+                        }}
+                    ],
+                    type =>
+                        {type, #{kind => throw, line => 4, spec => 'throw int'}}
+                }}
+            ],
+            line => 2,
+            params => [],
+            return_type => {type, #{line => 2, spec => atom}},
+            spec => 'Explode',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 2,
+                    param_types => [],
+                    return_type => {type, #{line => 2, spec => atom}},
+                    spec => 'func() atom'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_function_with_throw_in_after_block_test() ->
+    RufusText =
+        "module example\n"
+        "func Explode() atom {\n"
+        "    try {\n"
+        "        :ok\n"
+        "    } after {\n"
+        "        throw :kaboom\n"
+        "    }\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 1, spec => example}},
+        {func, #{
+            exprs => [
+                {try_catch_after, #{
+                    after_exprs => [
+                        {throw, #{
+                            expr =>
+                                {atom_lit, #{
+                                    line => 6,
+                                    spec => kaboom,
+                                    type => {type, #{line => 6, spec => atom}}
+                                }},
+                            line => 6,
+                            type =>
+                                {type, #{
+                                    kind => throw,
+                                    line => 6,
+                                    spec => 'throw atom'
+                                }}
+                        }}
+                    ],
+                    catch_clauses => [],
+                    line => 3,
+                    try_exprs => [
+                        {atom_lit, #{
+                            line => 4,
+                            spec => ok,
+                            type => {type, #{line => 4, spec => atom}}
+                        }}
+                    ],
+                    type => {type, #{line => 4, spec => atom}}
+                }}
+            ],
+            line => 2,
+            params => [],
+            return_type => {type, #{line => 2, spec => atom}},
+            spec => 'Explode',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 2,
+                    param_types => [],
+                    return_type => {type, #{line => 2, spec => atom}},
+                    spec => 'func() atom'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
+%% Failure mode tests
 
 typecheck_and_annotate_function_with_try_and_catch_blocks_with_mismatched_try_block_return_type_test() ->
     RufusText =
@@ -1596,44 +1900,14 @@ typecheck_and_annotate_function_with_try_and_catch_blocks_with_mismatched_try_bl
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Data = #{
-        actual => atom,
-        catch_clause =>
-            {catch_clause, #{
-                exprs => [
-                    {atom_lit, #{
-                        line => 6,
-                        spec => error,
-                        type => {type, #{line => 6, spec => atom}}
-                    }}
-                ],
-                line => 5,
-                match_expr =>
-                    {atom_lit, #{
-                        line => 5,
-                        spec => error,
-                        type => {type, #{line => 5, spec => atom}}
-                    }},
-                type => {type, #{line => 6, spec => atom}}
-            }},
-        expected => int,
-        globals => #{
-            'Maybe' => [
-                {type, #{
-                    kind => func,
-                    line => 2,
-                    param_types => [],
-                    return_type => {type, #{line => 2, spec => atom}},
-                    spec => 'func() atom'
-                }}
-            ]
-        },
-        try_exprs => [
+        actual => int,
+        expected => atom,
+        form =>
             {int_lit, #{
                 line => 4,
                 spec => 42,
                 type => {type, #{line => 4, spec => int}}
             }}
-        ]
     },
     ?assertEqual(
         {error, mismatched_try_catch_return_type, Data},
@@ -1653,45 +1927,14 @@ typecheck_and_annotate_function_with_try_and_catch_blocks_with_mismatched_catch_
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     Data = #{
-        actual => int,
-        catch_clause =>
-            {catch_clause, #{
-                exprs => [
-                    {int_lit, #{
-                        line => 6,
-                        spec => 42,
-                        type => {type, #{line => 6, spec => int}}
-                    }}
-                ],
-                line => 5,
-                match_expr =>
-                    {atom_lit, #{
-                        line => 5,
-                        spec => error,
-                        type => {type, #{line => 5, spec => atom}}
-                    }},
-                type => {type, #{line => 6, spec => int}}
-            }},
-        expected => atom,
-        globals => #{
-            'Maybe' => [
-                {type, #{
-                    kind => func,
-                    line => 2,
-                    param_types => [],
-                    return_type =>
-                        {type, #{line => 2, spec => atom}},
-                    spec => 'func() atom'
-                }}
-            ]
-        },
-        try_exprs => [
+        actual => atom,
+        expected => int,
+        form =>
             {atom_lit, #{
                 line => 4,
                 spec => ok,
                 type => {type, #{line => 4, spec => atom}}
             }}
-        ]
     },
     ?assertEqual(
         {error, mismatched_try_catch_return_type, Data},
@@ -1715,7 +1958,8 @@ typecheck_and_annotate_function_with_try_and_multiple_catch_blocks_with_a_mismat
     {ok, Forms} = rufus_parse:parse(Tokens),
     Data = #{
         actual => int,
-        catch_clause =>
+        expected => atom,
+        form =>
             {catch_clause, #{
                 exprs => [
                     {int_lit, #{
@@ -1732,26 +1976,7 @@ typecheck_and_annotate_function_with_try_and_multiple_catch_blocks_with_a_mismat
                         type => {type, #{line => 8, spec => atom}}
                     }},
                 type => {type, #{line => 9, spec => int}}
-            }},
-        expected => atom,
-        globals => #{
-            'Maybe' => [
-                {type, #{
-                    kind => func,
-                    line => 2,
-                    param_types => [],
-                    return_type => {type, #{line => 2, spec => atom}},
-                    spec => 'func() atom'
-                }}
-            ]
-        },
-        try_exprs => [
-            {atom_lit, #{
-                line => 4,
-                spec => ok,
-                type => {type, #{line => 4, spec => atom}}
             }}
-        ]
     },
     ?assertEqual(
         {error, mismatched_try_catch_return_type, Data},
