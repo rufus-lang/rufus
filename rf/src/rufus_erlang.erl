@@ -174,6 +174,10 @@ forms(Acc, [{param, #{line := Line, spec := Spec, type := Type}} | T]) ->
 forms(Acc, [{string_lit, _Context} = StringLit | T]) ->
     Form = box(StringLit),
     forms([Form | Acc], T);
+forms(Acc, [{throw, #{expr := Expr, line := Line}} | T]) ->
+    {ok, ThrowExprForms} = forms([], [Expr]),
+    Form = {call, Line, {atom, Line, throw}, ThrowExprForms},
+    forms([Form | Acc], T);
 forms(Acc, [
     {try_catch_after, #{
         line := Line,
