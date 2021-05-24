@@ -69,44 +69,70 @@ resolve_binary_op_type(
     {AllowType, AllowTypePair} =
         case Op of
             '+' ->
-                {fun allow_type_with_mathematical_operator/2,
-                    fun allow_type_pair_with_mathematical_operator/2};
+                {
+                    fun allow_type_with_mathematical_operator/2,
+                    fun allow_type_pair_with_mathematical_operator/2
+                };
             '-' ->
-                {fun allow_type_with_mathematical_operator/2,
-                    fun allow_type_pair_with_mathematical_operator/2};
+                {
+                    fun allow_type_with_mathematical_operator/2,
+                    fun allow_type_pair_with_mathematical_operator/2
+                };
             '*' ->
-                {fun allow_type_with_mathematical_operator/2,
-                    fun allow_type_pair_with_mathematical_operator/2};
+                {
+                    fun allow_type_with_mathematical_operator/2,
+                    fun allow_type_pair_with_mathematical_operator/2
+                };
             '/' ->
-                {fun allow_type_with_mathematical_operator/2,
-                    fun allow_type_pair_with_mathematical_operator/2};
+                {
+                    fun allow_type_with_mathematical_operator/2,
+                    fun allow_type_pair_with_mathematical_operator/2
+                };
             '%' ->
-                {fun allow_type_with_mathematical_operator/2,
-                    fun allow_type_pair_with_mathematical_operator/2};
+                {
+                    fun allow_type_with_mathematical_operator/2,
+                    fun allow_type_pair_with_mathematical_operator/2
+                };
             'and' ->
-                {fun allow_type_with_conditional_operator/2,
-                    fun allow_type_pair_with_conditional_operator/2};
+                {
+                    fun allow_type_with_conditional_operator/2,
+                    fun allow_type_pair_with_conditional_operator/2
+                };
             'or' ->
-                {fun allow_type_with_conditional_operator/2,
-                    fun allow_type_pair_with_conditional_operator/2};
+                {
+                    fun allow_type_with_conditional_operator/2,
+                    fun allow_type_pair_with_conditional_operator/2
+                };
             '==' ->
-                {fun allow_type_with_comparison_operator/2,
-                    fun allow_type_pair_with_comparison_operator/2};
+                {
+                    fun allow_type_with_comparison_operator/2,
+                    fun allow_type_pair_with_comparison_operator/2
+                };
             '!=' ->
-                {fun allow_type_with_comparison_operator/2,
-                    fun allow_type_pair_with_comparison_operator/2};
+                {
+                    fun allow_type_with_comparison_operator/2,
+                    fun allow_type_pair_with_comparison_operator/2
+                };
             '<' ->
-                {fun allow_type_with_comparison_operator/2,
-                    fun allow_type_pair_with_comparison_operator/2};
+                {
+                    fun allow_type_with_comparison_operator/2,
+                    fun allow_type_pair_with_comparison_operator/2
+                };
             '<=' ->
-                {fun allow_type_with_comparison_operator/2,
-                    fun allow_type_pair_with_comparison_operator/2};
+                {
+                    fun allow_type_with_comparison_operator/2,
+                    fun allow_type_pair_with_comparison_operator/2
+                };
             '>' ->
-                {fun allow_type_with_comparison_operator/2,
-                    fun allow_type_pair_with_comparison_operator/2};
+                {
+                    fun allow_type_with_comparison_operator/2,
+                    fun allow_type_pair_with_comparison_operator/2
+                };
             '>=' ->
-                {fun allow_type_with_comparison_operator/2,
-                    fun allow_type_pair_with_comparison_operator/2}
+                {
+                    fun allow_type_with_comparison_operator/2,
+                    fun allow_type_pair_with_comparison_operator/2
+                }
         end,
 
     ok =
