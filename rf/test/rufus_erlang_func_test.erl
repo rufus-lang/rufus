@@ -12,7 +12,8 @@ forms_for_function_returning_an_atom_literal_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     AtomExpr = {atom, 3, pong},
     Expected = [
         {attribute, 2, module, example},
@@ -29,7 +30,8 @@ forms_for_function_returning_a_bool_literal_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'False', 0}]},
@@ -45,7 +47,8 @@ forms_for_function_returning_a_float_literal_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Pi', 0}]},
@@ -61,7 +64,8 @@ forms_for_function_returning_an_int_literal_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Number', 0}]},
@@ -77,7 +81,8 @@ forms_for_function_returning_a_string_literal_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     StringExpr = {bin, 3, [{bin_element, 3, {string, 3, "Hello"}, default, default}]},
     BoxedStringExpr = {tuple, 3, [{atom, 3, string}, StringExpr]},
     Expected = [
@@ -100,7 +105,8 @@ forms_for_function_with_multiple_expressions_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     Exprs = [{integer, 4, 42}, {atom, 5, fortytwo}],
     Expected = [
         {attribute, 2, module, example},
@@ -121,7 +127,8 @@ forms_for_function_with_multiple_expressions_with_blank_lines_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     Exprs = [{integer, 4, 42}, {atom, 6, fortytwo}],
     Expected = [
         {attribute, 2, module, example},
@@ -140,7 +147,8 @@ forms_for_function_taking_an_unused_atom_and_returning_an_atom_literal_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'Ping', 1}]},
@@ -161,8 +169,8 @@ forms_for_function_taking_an_unused_bool_and_returning_a_bool_literal_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
-
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'MaybeEcho', 1}]},
@@ -182,7 +190,8 @@ forms_for_function_taking_an_unused_float_and_returning_a_float_literal_test() -
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'MaybeEcho', 1}]},
@@ -203,7 +212,8 @@ forms_for_function_taking_an_unused_int_and_returning_an_int_literal_test() ->
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 2, module, example},
         {attribute, 3, export, [{'MaybeEcho', 1}]},
@@ -223,7 +233,8 @@ forms_for_function_taking_an_unused_string_and_returning_a_string_literal_test()
         "    ",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     StringExpr = {bin_element, 3, {string, 3, "Hello"}, default, default},
     Expected = [
         {attribute, 2, module, example},

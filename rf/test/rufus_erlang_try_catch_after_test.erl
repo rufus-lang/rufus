@@ -44,7 +44,8 @@ forms_for_function_with_try_and_catch_blocks_both_returning_an_atom_literal_test
         "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 1, module, example},
         {attribute, 2, export, [{'Maybe', 0}]},
@@ -75,7 +76,8 @@ forms_for_function_with_try_and_catch_blocks_both_returning_a_bool_literal_test(
         "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 1, module, example},
         {attribute, 2, export, [{'Maybe', 0}]},
@@ -106,7 +108,8 @@ forms_for_function_with_try_and_catch_blocks_both_returning_a_float_literal_test
         "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 1, module, example},
         {attribute, 2, export, [{'Maybe', 0}]},
@@ -137,7 +140,8 @@ forms_for_function_with_try_and_catch_blocks_both_returning_an_int_literal_test(
         "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 1, module, example},
         {attribute, 2, export, [{'Maybe', 0}]},
@@ -168,7 +172,8 @@ forms_for_function_with_try_and_catch_blocks_both_returning_a_string_literal_tes
         "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 1, module, example},
         {attribute, 2, export, [{'Maybe', 0}]},
@@ -212,7 +217,8 @@ forms_for_function_with_try_after_block_test() ->
         "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 1, module, example},
         {attribute, 3, export, [{'Maybe', 0}]},
@@ -240,7 +246,8 @@ forms_for_function_with_bare_catch_block_and_an_after_block_test() ->
         "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    {ok, ErlangForms} = rufus_erlang:forms(Forms),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
     Expected = [
         {attribute, 1, module, example},
         {attribute, 3, export, [{'Maybe', 0}]},
