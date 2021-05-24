@@ -2,6 +2,8 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
+%% Bare try/catch/after blocks
+
 eval_function_with_bare_catch_block_test() ->
     RufusText =
         "module example\n"
@@ -158,3 +160,62 @@ eval_function_with_try_catch_and_after_blocks_accessing_variables_from_outer_sco
         "}\n",
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(ok, example:'Maybe'()).
+
+%% try/catch/after blocks with throws
+
+eval_function_with_try_and_catch_blocks_that_catch_a_throw_test() ->
+    RufusText =
+        "module example\n"
+        "func Explode() atom {\n"
+        "    try {\n"
+        "        throw :error\n"
+        "    } catch :error {\n"
+        "        :kaboom\n"
+        "    }\n"
+        "}\n",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual(kaboom, example:'Explode'()).
+
+eval_function_with_try_and_catch_blocks_that_catch_a_throw_with_different_types_test() ->
+    RufusText =
+        "module example\n"
+        "func Explode() atom {\n"
+        "    try {\n"
+        "        throw 42\n"
+        "    } catch 42 {\n"
+        "        :kaboom\n"
+        "    }\n"
+        "}\n",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual(kaboom, example:'Explode'()).
+
+eval_function_with_try_catch_and_after_blocks_that_catch_a_throw_with_different_types_test() ->
+    RufusText =
+        "module example\n"
+        "func Explode() atom {\n"
+        "    try {\n"
+        "        throw 42\n"
+        "    } catch 42 {\n"
+        "        :kaboom\n"
+        "    } after {\n"
+        "        :after\n"
+        "    }\n"
+        "}\n",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual(kaboom, example:'Explode'()).
+
+eval_function_with_try_catch_and_after_blocks_accessing_variables_from_outer_scope_in_a_throw_expression_test() ->
+    RufusText =
+        "module example\n"
+        "func Explode() atom {\n"
+        "    value = 42\n"
+        "    try {\n"
+        "        throw value\n"
+        "    } catch 42 {\n"
+        "        :kaboom\n"
+        "    } after {\n"
+        "        13\n"
+        "    }\n"
+        "}\n",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual(kaboom, example:'Explode'()).

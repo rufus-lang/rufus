@@ -2,6 +2,8 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
+%% Bare throws
+
 eval_function_with_throw_atom_expression_test() ->
     RufusText =
         "module example\n"
