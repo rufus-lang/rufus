@@ -219,3 +219,38 @@ eval_function_with_try_catch_and_after_blocks_accessing_variables_from_outer_sco
         "}\n",
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(kaboom, example:'Explode'()).
+
+eval_function_with_try_catch_and_after_blocks_accessing_variables_from_outer_scope_in_throw_and_catch_expressions_test() ->
+    RufusText =
+        "module example\n"
+        "func Explode() atom {\n"
+        "    value = 42\n"
+        "    try {\n"
+        "        throw value\n"
+        "    } catch value {\n"
+        "        :kaboom\n"
+        "    } after {\n"
+        "        13\n"
+        "    }\n"
+        "}\n",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual(kaboom, example:'Explode'()).
+
+eval_function_with_try_catch_and_after_blocks_accessing_variables_from_outer_scope_in_throw_and_catch_expressions_with_multiple_match_expressions_test() ->
+    RufusText =
+        "module example\n"
+        "func Explode() atom {\n"
+        "    value = 42\n"
+        "    try {\n"
+        "        throw value\n"
+        "    } catch {\n"
+        "    match value ->\n"
+        "        :kaboom\n"
+        "    match 42 ->\n"
+        "        :explode\n"
+        "    } after {\n"
+        "        13\n"
+        "    }\n"
+        "}\n",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual(kaboom, example:'Explode'()).

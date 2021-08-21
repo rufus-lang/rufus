@@ -104,6 +104,7 @@ literal_expr -> int_lit          : rufus_form:make_literal(int, text('$1'), line
 literal_expr -> string_lit       : rufus_form:make_literal(string, list_to_binary(text('$1')), line('$1')).
 
 catch_expr -> param              : '$1'.
+catch_expr -> identifier         : '$1'.
 
 expr -> literal_expr             : '$1'.
 expr -> identifier               : rufus_form:make_identifier(list_to_atom(text('$1')), line('$1')).
@@ -183,7 +184,7 @@ text({_TokenType, _Line, Text}) ->
     Text.
 
 %% line returns the line number from the token.
-line([{_TokenType, #{line := Line}}|_]) ->
+line([{_TokenType, #{line := Line}} | _]) ->
     Line;
 line({_TokenType, #{line := Line}}) ->
     Line;
