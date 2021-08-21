@@ -2081,3 +2081,133 @@ typecheck_and_annotate_function_with_try_and_catch_blocks_accessing_variables_fr
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_function_with_try_catch_and_after_blocks_accessing_variables_from_outer_scope_in_throw_and_catch_expressions_with_multiple_match_expressions_test() ->
+    RufusText =
+        "module example\n"
+        "func Explode() atom {\n"
+        "    value = 42\n"
+        "    try {\n"
+        "        throw value\n"
+        "    } catch {\n"
+        "    match value ->\n"
+        "        :kaboom\n"
+        "    match 42 ->\n"
+        "        :explode\n"
+        "    } after {\n"
+        "        13\n"
+        "    }\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 1, spec => example}},
+        {func, #{
+            exprs =>
+                [
+                    {match_op, #{
+                        left =>
+                            {identifier, #{
+                                line => 3,
+                                locals => #{},
+                                spec => value,
+                                type => {type, #{line => 3, spec => int}}
+                            }},
+                        line => 3,
+                        right =>
+                            {int_lit, #{
+                                line => 3,
+                                spec => 42,
+                                type => {type, #{line => 3, spec => int}}
+                            }},
+                        type => {type, #{line => 3, spec => int}}
+                    }},
+                    {try_catch_after, #{
+                        after_exprs =>
+                            [
+                                {int_lit, #{
+                                    line => 12,
+                                    spec => 13,
+                                    type => {type, #{line => 12, spec => int}}
+                                }}
+                            ],
+                        catch_clauses =>
+                            [
+                                {catch_clause, #{
+                                    exprs =>
+                                        [
+                                            {atom_lit, #{
+                                                line => 8,
+                                                spec => kaboom,
+                                                type =>
+                                                    {type, #{line => 8, spec => atom}}
+                                            }}
+                                        ],
+                                    line => 7,
+                                    match_expr =>
+                                        {identifier, #{
+                                            line => 7,
+                                            spec => value,
+                                            type => {type, #{line => 3, spec => int}}
+                                        }},
+                                    type => {type, #{line => 8, spec => atom}}
+                                }},
+                                {catch_clause, #{
+                                    exprs =>
+                                        [
+                                            {atom_lit, #{
+                                                line => 10,
+                                                spec => explode,
+                                                type =>
+                                                    {type, #{line => 10, spec => atom}}
+                                            }}
+                                        ],
+                                    line => 9,
+                                    match_expr =>
+                                        {int_lit, #{
+                                            line => 9,
+                                            spec => 42,
+                                            type => {type, #{line => 9, spec => int}}
+                                        }},
+                                    type => {type, #{line => 10, spec => atom}}
+                                }}
+                            ],
+                        line => 4,
+                        try_exprs =>
+                            [
+                                {throw, #{
+                                    expr =>
+                                        {identifier, #{
+                                            line => 5,
+                                            spec => value,
+                                            type => {type, #{line => 3, spec => int}}
+                                        }},
+                                    line => 5,
+                                    type =>
+                                        {type, #{
+                                            kind => throw,
+                                            line => 5,
+                                            spec => 'throw int'
+                                        }}
+                                }}
+                            ],
+                        type =>
+                            {type, #{kind => throw, line => 5, spec => 'throw int'}}
+                    }}
+                ],
+            line => 2,
+            params => [],
+            return_type => {type, #{line => 2, spec => atom}},
+            spec => 'Explode',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 2,
+                    param_types => [],
+                    return_type => {type, #{line => 2, spec => atom}},
+                    spec => 'func() atom'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).

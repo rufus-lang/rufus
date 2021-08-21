@@ -134,6 +134,8 @@ throw_expr -> throw expr         : rufus_form:make_throw('$2', line('$1')).
 
 catch_match_clause -> match param '->' exprs :
                                    rufus_form:make_catch_clause('$2', '$4', line('$1')).
+catch_match_clause -> match identifier '->' exprs :
+                                   rufus_form:make_catch_clause(rufus_form:make_identifier(list_to_atom(text('$2')), line('$2')), '$4', line('$1')).
 
 catch_match_clauses -> catch_match_clause catch_match_clauses : ['$1'|'$2'].
 catch_match_clauses -> '$empty'  : [].
