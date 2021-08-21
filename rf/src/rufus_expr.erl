@@ -24,7 +24,6 @@
 %%   unmatched.
 -spec typecheck_and_annotate(rufus_forms()) -> {ok, rufus_forms()} | error_triple().
 typecheck_and_annotate(RufusForms) ->
-    io:format("~n", []),
     Acc = [],
     Stack = [],
     Locals = #{},
@@ -90,9 +89,7 @@ typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {call, _Context} | T
     {ok, AnnotatedForm} = typecheck_and_annotate_call(Stack, Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {catch_clause, _Context} | T]) ->
-    io:format("Form => ~p~n", [Form]),
     {ok, AnnotatedForm} = typecheck_and_annotate_catch_clause(Stack, Globals, Locals, Form),
-    io:format("AnnotatedForm => ~p~n", [AnnotatedForm]),
     typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {cons, _Context} | T]) ->
     {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_cons(Stack, Globals, Locals, Form),
@@ -107,7 +104,6 @@ typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {identifier, _Contex
         Locals,
         Form
     ),
-    io:format("AnnotatedForm identifier => ~p~n", [AnnotatedForm]),
     typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, NewLocals, T);
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {list_lit, _Context} | T]) ->
     {ok, NewLocals, AnnotatedForm} = typecheck_and_annotate_list_lit(Stack, Globals, Locals, Form),
@@ -422,7 +418,6 @@ typecheck_and_annotate_identifier(
             end;
         [TypeForm] ->
             AnnotatedForm2 = {identifier, Context1#{type => TypeForm}},
-            io:format("{ok, Locals, AnnotatedForm2} => ~p~n", [{ok, Locals, AnnotatedForm2}]),
             {ok, Locals, AnnotatedForm2}
     end.
 
@@ -616,8 +611,6 @@ typecheck_and_annotate_catch_clause(
     Locals,
     Form = {catch_clause, Context = #{match_expr := MatchExpr, exprs := Exprs}}
 ) ->
-    io:format("Locals => ~p~n", [Locals]),
-    io:format("MatchExpr => ~p~n", [MatchExpr]),
     CatchClauseStack = [Form | Stack],
     {ok, NewLocals, [AnnotatedMatchExpr]} =
         case MatchExpr of
@@ -632,8 +625,6 @@ typecheck_and_annotate_catch_clause(
                     [MatchExpr]
                 )
         end,
-    io:format("NewLocals => ~p~n", [NewLocals]),
-    io:format("AnnotatedMatchExpr => ~p~n", [AnnotatedMatchExpr]),
 
     {ok, _, AnnotatedExprs} = typecheck_and_annotate([], Stack, Globals, NewLocals, Exprs),
     AnnotatedForm1 =
@@ -649,7 +640,6 @@ typecheck_and_annotate_catch_clause(
                     exprs => AnnotatedExprs,
                     type => TypeForm
                 }},
-            io:format("AnnotatedForm2 => ~p~n", [AnnotatedForm2]),
             {ok, AnnotatedForm2};
         Error ->
             throw(Error)
