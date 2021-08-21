@@ -104,6 +104,7 @@ literal_expr -> int_lit          : rufus_form:make_literal(int, text('$1'), line
 literal_expr -> string_lit       : rufus_form:make_literal(string, list_to_binary(text('$1')), line('$1')).
 
 catch_expr -> param              : '$1'.
+catch_expr -> identifier         : rufus_form:make_identifier(list_to_atom(text('$1')), line('$1')).
 
 expr -> literal_expr             : '$1'.
 expr -> identifier               : rufus_form:make_identifier(list_to_atom(text('$1')), line('$1')).
@@ -133,6 +134,8 @@ throw_expr -> throw expr         : rufus_form:make_throw('$2', line('$1')).
 
 catch_match_clause -> match param '->' exprs :
                                    rufus_form:make_catch_clause('$2', '$4', line('$1')).
+catch_match_clause -> match identifier '->' exprs :
+                                   rufus_form:make_catch_clause(rufus_form:make_identifier(list_to_atom(text('$2')), line('$2')), '$4', line('$1')).
 
 catch_match_clauses -> catch_match_clause catch_match_clauses : ['$1'|'$2'].
 catch_match_clauses -> '$empty'  : [].
@@ -183,7 +186,7 @@ text({_TokenType, _Line, Text}) ->
     Text.
 
 %% line returns the line number from the token.
-line([{_TokenType, #{line := Line}}|_]) ->
+line([{_TokenType, #{line := Line}} | _]) ->
     Line;
 line({_TokenType, #{line := Line}}) ->
     Line;

@@ -1514,3 +1514,67 @@ parse_function_with_try_catch_block_with_multiple_clauses_and_after_block_test()
         }}
     ],
     ?assertEqual(Expected, Forms).
+
+parse_function_with_try_and_catch_blocks_accessing_variables_from_outer_scope_in_throw_and_catch_expressions_test() ->
+    RufusText =
+        "module example\n"
+        "func Explode() atom {\n"
+        "    value = 42\n"
+        "    try {\n"
+        "        throw value\n"
+        "    } catch value {\n"
+        "        :kaboom\n"
+        "    }\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [
+        {module, #{line => 1, spec => example}},
+        {func, #{
+            exprs =>
+                [
+                    {match_op, #{
+                        left => {identifier, #{line => 3, spec => value}},
+                        line => 3,
+                        right =>
+                            {int_lit, #{
+                                line => 3,
+                                spec => 42,
+                                type => {type, #{line => 3, spec => int}}
+                            }}
+                    }},
+                    {try_catch_after, #{
+                        after_exprs => [],
+                        catch_clauses =>
+                            [
+                                {catch_clause, #{
+                                    exprs =>
+                                        [
+                                            {atom_lit, #{
+                                                line => 7,
+                                                spec => kaboom,
+                                                type =>
+                                                    {type, #{line => 7, spec => atom}}
+                                            }}
+                                        ],
+                                    line => 6,
+                                    match_expr => {identifier, #{line => 6, spec => value}}
+                                }}
+                            ],
+                        line => 4,
+                        try_exprs =>
+                            [
+                                {throw, #{
+                                    expr => {identifier, #{line => 5, spec => value}},
+                                    line => 5
+                                }}
+                            ]
+                    }}
+                ],
+            line => 2,
+            params => [],
+            return_type => {type, #{line => 2, spec => atom}},
+            spec => 'Explode'
+        }}
+    ],
+    ?assertEqual(Expected, Forms).
