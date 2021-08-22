@@ -6,6 +6,7 @@ Nonterminals
     root decl
     type types block param params args
     expr exprs literal_expr throw_expr
+    case_match_clause case_match_clauses
     catch_expr catch_match_clause catch_match_clauses
     binary_op call cons match_op match_op_param
     list_lit list_type.
@@ -21,7 +22,7 @@ Terminals
     module import
     func identifier
     try catch after throw
-    match
+    case match
     atom atom_lit
     bool bool_lit
     float float_lit
@@ -129,6 +130,8 @@ expr -> try '{' exprs '}' catch '{' catch_match_clauses '}' after '{' exprs '}' 
                                    rufus_form:make_try_catch_after('$3', '$7', '$11', line('$1')).
 expr -> try '{' exprs '}' catch '{' catch_match_clauses '}' :
                                    rufus_form:make_try_catch_after('$3', '$7', [], line('$1')).
+expr -> case expr '{' case_match_clauses '}' :
+                                   rufus_form:make_case('$2', '$3', line('$1')).
 
 throw_expr -> throw expr         : rufus_form:make_throw('$2', line('$1')).
 
@@ -139,6 +142,14 @@ catch_match_clause -> match identifier '->' exprs :
 
 catch_match_clauses -> catch_match_clause catch_match_clauses : ['$1'|'$2'].
 catch_match_clauses -> '$empty'  : [].
+
+case_match_clause -> match param '->' exprs :
+                                   rufus_form:make_case_clause('$2', '$4', line('$1')).
+case_match_clause -> match identifier '->' exprs :
+                                   rufus_form:make_case_clause(rufus_form:make_identifier(list_to_atom(text('$2')), line('$2')), '$4', line('$1')).
+
+case_match_clauses -> case_match_clause case_match_clauses : ['$1'|'$2'].
+case_match_clauses -> '$empty'  : [].
 
 exprs -> expr ';' exprs          : ['$1'|'$3'].
 exprs -> expr                    : ['$1'].
