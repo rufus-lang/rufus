@@ -131,7 +131,7 @@ expr -> try '{' exprs '}' catch '{' catch_match_clauses '}' after '{' exprs '}' 
 expr -> try '{' exprs '}' catch '{' catch_match_clauses '}' :
                                    rufus_form:make_try_catch_after('$3', '$7', [], line('$1')).
 expr -> case expr '{' case_match_clauses '}' :
-                                   rufus_form:make_case('$2', '$3', line('$1')).
+                                   rufus_form:make_case('$2', '$4', line('$1')).
 
 throw_expr -> throw expr         : rufus_form:make_throw('$2', line('$1')).
 
