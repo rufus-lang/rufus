@@ -13,6 +13,7 @@ Import               = import
 Const                = const
 Func                 = func
 Case                 = case
+Default              = default
 Throw                = throw
 Try                  = try
 Catch                = catch
@@ -72,6 +73,7 @@ Rules.
 {Const}                : {token, {const, TokenLine}}.
 {Func}                 : {token, {func, TokenLine}}.
 {Case}                 : {token, {'case', TokenLine}}.
+{Default}              : {token, {default, TokenLine}}.
 {Throw}                : {token, {throw, TokenLine}}.
 {Try}                  : {token, {'try', TokenLine}}.
 {Catch}                : {token, {'catch', TokenLine}}.

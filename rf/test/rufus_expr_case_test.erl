@@ -489,3 +489,89 @@ typecheck_and_annotate_function_with_case_block_with_mismatched_clause_return_ty
             }}
     },
     ?assertEqual({error, mismatched_case_clause_return_type, Data}, Result).
+
+typecheck_and_annotate_function_with_case_block_with_default_clause_test() ->
+    RufusText =
+        "func Convert(value atom) string {\n"
+        "    case value {\n"
+        "    match :true ->\n"
+        "        \"true\"\n"
+        "    default ->\n"
+        "        \"false\"\n"
+        "    }\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {func, #{
+            exprs =>
+                [
+                    {'case', #{
+                        clauses =>
+                            [
+                                {case_clause, #{
+                                    exprs =>
+                                        [
+                                            {string_lit, #{
+                                                line => 4,
+                                                spec => <<"true">>,
+                                                type =>
+                                                    {type, #{line => 4, spec => string}}
+                                            }}
+                                        ],
+                                    line => 3,
+                                    match_expr =>
+                                        {atom_lit, #{
+                                            line => 3,
+                                            spec => true,
+                                            type => {type, #{line => 3, spec => atom}}
+                                        }},
+                                    type => {type, #{line => 4, spec => string}}
+                                }},
+                                {case_clause, #{
+                                    exprs =>
+                                        [
+                                            {string_lit, #{
+                                                line => 6,
+                                                spec => <<"false">>,
+                                                type =>
+                                                    {type, #{line => 6, spec => string}}
+                                            }}
+                                        ],
+                                    line => 5,
+                                    type => {type, #{line => 6, spec => string}}
+                                }}
+                            ],
+                        line => 2,
+                        match_expr =>
+                            {identifier, #{
+                                line => 2,
+                                spec => value,
+                                type => {type, #{line => 1, spec => atom}}
+                            }},
+                        type => {type, #{line => 6, spec => string}}
+                    }}
+                ],
+            line => 1,
+            params =>
+                [
+                    {param, #{
+                        line => 1,
+                        spec => value,
+                        type => {type, #{line => 1, spec => atom}}
+                    }}
+                ],
+            return_type => {type, #{line => 1, spec => string}},
+            spec => 'Convert',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 1,
+                    param_types => [{type, #{line => 1, spec => atom}}],
+                    return_type => {type, #{line => 1, spec => string}},
+                    spec => 'func(atom) string'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).

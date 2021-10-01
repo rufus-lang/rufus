@@ -295,6 +295,28 @@ typecheck_and_annotate_case_clause(
             {ok, AnnotatedForm2};
         Error ->
             throw(Error)
+    end;
+typecheck_and_annotate_case_clause(
+    Stack,
+    Globals,
+    Locals,
+    {case_clause, Context = #{exprs := Exprs}}
+) ->
+    {ok, _, AnnotatedExprs} = typecheck_and_annotate([], Stack, Globals, Locals, Exprs),
+    AnnotatedForm1 =
+        {case_clause, Context#{
+            exprs => AnnotatedExprs
+        }},
+    case rufus_type:resolve(Stack, Globals, AnnotatedForm1) of
+        {ok, TypeForm} ->
+            AnnotatedForm2 =
+                {case_clause, Context#{
+                    exprs => AnnotatedExprs,
+                    type => TypeForm
+                }},
+            {ok, AnnotatedForm2};
+        Error ->
+            throw(Error)
     end.
 
 %% typecheck_case_clause_return_types ensures that the try block and all case
