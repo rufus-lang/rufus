@@ -12,6 +12,7 @@ Module               = module
 Import               = import
 Const                = const
 Func                 = func
+Case                 = case
 Throw                = throw
 Try                  = try
 Catch                = catch
@@ -70,6 +71,7 @@ Rules.
 {Import}               : {token, {import, TokenLine}}.
 {Const}                : {token, {const, TokenLine}}.
 {Func}                 : {token, {func, TokenLine}}.
+{Case}                 : {token, {'case', TokenLine}}.
 {Throw}                : {token, {throw, TokenLine}}.
 {Try}                  : {token, {'try', TokenLine}}.
 {Catch}                : {token, {'catch', TokenLine}}.

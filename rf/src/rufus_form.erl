@@ -17,6 +17,8 @@
     make_binary_op_left/1,
     make_binary_op_right/1,
     make_call/3,
+    make_case/3,
+    make_case_clause/3,
     make_catch_clause/2,
     make_catch_clause/3,
     make_cons/4,
@@ -146,6 +148,19 @@ make_binary_op_right({binary_op, #{line := Line}}) ->
     {call, #{spec => atom(), args => list(), line => integer()}}.
 make_call(Spec, Args, Line) ->
     {call, #{spec => Spec, args => Args, line => Line}}.
+
+%% case form builder API
+
+%% TODO(jkakar): Define a type that correctly defines MatchExpr.
+-spec make_case(any() | undefined, list(case_clause_form()), integer()) -> case_form().
+make_case(MatchExpr, MatchClauses, Line) ->
+    {'case', #{match_expr => MatchExpr, clauses => MatchClauses, line => Line}}.
+
+%% make_case_clause returns a form for a case match clause.
+%% TODO(jkakar): Define a type that correctly defines MatchExpr.
+-spec make_case_clause(any() | undefined, rufus_forms(), integer()) -> case_clause_form().
+make_case_clause(MatchExpr, Exprs, Line) ->
+    {case_clause, #{match_expr => MatchExpr, exprs => Exprs, line => Line}}.
 
 %% cons form builder API
 
