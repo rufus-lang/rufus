@@ -11,7 +11,7 @@ string_with_case_block_with_single_clause_test() ->
     ),
     ?assertEqual(
         [
-            {identifier, 1, "case"},
+            {'case', 1},
             {int_lit, 1, 42},
             {'{', 1},
             {eol, 1},
@@ -38,7 +38,7 @@ string_with_case_block_with_multiple_clauses_test() ->
     ),
     ?assertEqual(
         [
-            {identifier, 1, "case"},
+            {'case', 1},
             {int_lit, 1, 42},
             {'{', 1},
             {eol, 1},
