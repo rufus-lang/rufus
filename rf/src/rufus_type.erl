@@ -42,6 +42,10 @@ resolve_type(Stack, Globals, Form = {binary_op, _Context}) ->
     resolve_binary_op_type(Stack, Globals, Form);
 resolve_type(Stack, Globals, Form = {call, _Context}) ->
     resolve_call_type(Stack, Globals, Form);
+resolve_type(Stack, Globals, Form = {'case', _Context}) ->
+    resolve_case_type(Stack, Globals, Form);
+resolve_type(Stack, Globals, Form = {case_clause, _Context}) ->
+    resolve_case_clause_type(Stack, Globals, Form);
 resolve_type(Stack, Globals, Form = {catch_clause, _Context}) ->
     resolve_catch_clause_type(Stack, Globals, Form);
 resolve_type(_Stack, _Globals, {func, #{return_type := Type}}) ->
@@ -324,6 +328,19 @@ find_matching_types(Types, Args) ->
         _ ->
             {error, unknown_arity, #{types => Types, args => Args}}
     end.
+
+%% case form helpers
+
+-spec resolve_case_type(rufus_stack(), globals(), case_form()) -> {ok, type_form()} | no_return().
+resolve_case_type(Stack, Globals, {'case', #{clauses := Clauses}}) ->
+    LastClause = lists:last(Clauses),
+    resolve_type(Stack, Globals, LastClause).
+
+-spec resolve_case_clause_type(rufus_stack(), globals(), case_clause_form()) ->
+    {ok, type_form()} | no_return().
+resolve_case_clause_type(Stack, Globals, {case_clause, #{exprs := Exprs}}) ->
+    LastExpr = lists:last(Exprs),
+    resolve_type(Stack, Globals, LastExpr).
 
 %% cons form helpers
 
