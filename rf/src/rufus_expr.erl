@@ -207,8 +207,9 @@ typecheck_and_annotate_call(
 
 %% case form helpers
 
--spec typecheck_and_annotate_case(rufus_stack(), globals(), locals(), case_form()) ->
-    {ok, locals(), cons_form()} | no_return().
+%% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
+%% -spec typecheck_and_annotate_case(rufus_stack(), globals(), locals(), case_form()) ->
+%%     {ok, locals(), case_form()} | no_return().
 typecheck_and_annotate_case(
     Stack,
     Globals,
