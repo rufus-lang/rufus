@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.com/rufus-lang/rufus.svg?branch=main)](https://travis-ci.com/rufus-lang/rufus)
 # Rufus
 
 Rufus is a programming language for people that build and operate fault tolerant
