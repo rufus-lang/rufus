@@ -232,6 +232,7 @@ typecheck_and_annotate_case(
         end,
 
     {ok, _, AnnotatedClauses} = typecheck_and_annotate([], Stack, Globals, NewLocals, Clauses),
+    ok = typecheck_case_clause_return_types(AnnotatedClauses),
     AnnotatedForm1 =
         {'case', Context#{
             match_expr => AnnotatedMatchExpr,
@@ -295,6 +296,46 @@ typecheck_and_annotate_case_clause(
         Error ->
             throw(Error)
     end.
+
+%% typecheck_case_clause_return_types ensures that the try block and all case
+%% clause blocks have the same return type.
+-spec typecheck_case_clause_return_types(list(case_clause_form())) -> ok | no_return().
+typecheck_case_clause_return_types(CaseClauses) ->
+    CaseClauseTypeForms = lists:map(
+        fun(CaseClauseForm) -> {CaseClauseForm, rufus_form:type(CaseClauseForm)} end,
+        CaseClauses
+    ),
+    FormPairs = lists:foldr(
+        fun(Element, Acc) ->
+            case Element of
+                {_Form, {type, #{kind := throw}}} -> Acc;
+                _ -> [Element | Acc]
+            end
+        end,
+        [],
+        CaseClauseTypeForms
+    ),
+
+    validate_case_clause_return_type([], FormPairs).
+
+%% validate_case_clause_return_type iterates over {Form, TypeForm} 2-tuples and
+%% returns ok if the types for pairs match, or throws an {error,
+%% mismatched_case_clause_return_type, Data} 3-tuple.
+%% -spec validate_case_clause_return_type(list(atom), list({rufus_form(), type_form()})) ->
+%%     ok | no_return.
+validate_case_clause_return_type([Spec], [{_Form, {type, #{spec := Spec}}} | T]) ->
+    validate_case_clause_return_type([Spec], T);
+validate_case_clause_return_type([], [{_Form, {type, #{spec := Spec}}} | T]) ->
+    validate_case_clause_return_type([Spec], T);
+validate_case_clause_return_type([ExpectedSpec], [{Form, {type, #{spec := ActualSpec}}} | _T]) ->
+    Data = #{
+        form => Form,
+        actual => ActualSpec,
+        expected => ExpectedSpec
+    },
+    throw({error, mismatched_case_clause_return_type, Data});
+validate_case_clause_return_type(_, []) ->
+    ok.
 
 %% cons form helpers
 

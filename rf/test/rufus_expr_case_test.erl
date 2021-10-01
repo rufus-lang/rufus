@@ -359,3 +359,41 @@ typecheck_and_annotate_function_with_case_block_with_single_string_clause_test()
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_function_with_case_block_with_mismatched_clause_return_types_test() ->
+    RufusText =
+        "func MaybeConvert(value bool) atom {\n"
+        "    case value {\n"
+        "    match false ->\n"
+        "        \"false\"\n"
+        "    match true ->\n"
+        "        :ok\n"
+        "    }\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Result = rufus_expr:typecheck_and_annotate(Forms),
+    Data = #{
+        actual => atom,
+        expected => string,
+        form =>
+            {case_clause, #{
+                exprs =>
+                    [
+                        {atom_lit, #{
+                            line => 6,
+                            spec => ok,
+                            type => {type, #{line => 6, spec => atom}}
+                        }}
+                    ],
+                line => 5,
+                match_expr =>
+                    {bool_lit, #{
+                        line => 5,
+                        spec => true,
+                        type => {type, #{line => 5, spec => bool}}
+                    }},
+                type => {type, #{line => 6, spec => atom}}
+            }}
+    },
+    ?assertEqual({error, mismatched_case_clause_return_type, Data}, Result).
