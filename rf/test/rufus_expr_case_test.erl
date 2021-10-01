@@ -360,6 +360,98 @@ typecheck_and_annotate_function_with_case_block_with_single_string_clause_test()
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
+typecheck_and_annotate_function_with_case_block_with_multiple_clauses_test() ->
+    RufusText =
+        "func Convert(value bool) atom {\n"
+        "    case value {\n"
+        "    match false ->\n"
+        "        :error\n"
+        "    match true ->\n"
+        "        :ok\n"
+        "    }\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {func, #{
+            exprs =>
+                [
+                    {'case', #{
+                        clauses =>
+                            [
+                                {case_clause, #{
+                                    exprs =>
+                                        [
+                                            {atom_lit, #{
+                                                line => 4,
+                                                spec => error,
+                                                type =>
+                                                    {type, #{line => 4, spec => atom}}
+                                            }}
+                                        ],
+                                    line => 3,
+                                    match_expr =>
+                                        {bool_lit, #{
+                                            line => 3,
+                                            spec => false,
+                                            type => {type, #{line => 3, spec => bool}}
+                                        }},
+                                    type => {type, #{line => 4, spec => atom}}
+                                }},
+                                {case_clause, #{
+                                    exprs =>
+                                        [
+                                            {atom_lit, #{
+                                                line => 6,
+                                                spec => ok,
+                                                type =>
+                                                    {type, #{line => 6, spec => atom}}
+                                            }}
+                                        ],
+                                    line => 5,
+                                    match_expr =>
+                                        {bool_lit, #{
+                                            line => 5,
+                                            spec => true,
+                                            type => {type, #{line => 5, spec => bool}}
+                                        }},
+                                    type => {type, #{line => 6, spec => atom}}
+                                }}
+                            ],
+                        line => 2,
+                        match_expr =>
+                            {identifier, #{
+                                line => 2,
+                                spec => value,
+                                type => {type, #{line => 1, spec => bool}}
+                            }},
+                        type => {type, #{line => 6, spec => atom}}
+                    }}
+                ],
+            line => 1,
+            params =>
+                [
+                    {param, #{
+                        line => 1,
+                        spec => value,
+                        type => {type, #{line => 1, spec => bool}}
+                    }}
+                ],
+            return_type => {type, #{line => 1, spec => atom}},
+            spec => 'Convert',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 1,
+                    param_types => [{type, #{line => 1, spec => bool}}],
+                    return_type => {type, #{line => 1, spec => atom}},
+                    spec => 'func(bool) atom'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
 typecheck_and_annotate_function_with_case_block_with_mismatched_clause_return_types_test() ->
     RufusText =
         "func MaybeConvert(value bool) atom {\n"
