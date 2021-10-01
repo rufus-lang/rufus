@@ -18,6 +18,7 @@
     make_binary_op_right/1,
     make_call/3,
     make_case/3,
+    make_case_clause/2,
     make_case_clause/3,
     make_catch_clause/2,
     make_catch_clause/3,
@@ -156,7 +157,12 @@ make_call(Spec, Args, Line) ->
 make_case(MatchExpr, MatchClauses, Line) ->
     {'case', #{match_expr => MatchExpr, clauses => MatchClauses, line => Line}}.
 
-%% make_case_clause returns a form for a case match clause.
+%% make_case_clause returns a form for a default clause in a case block.
+%% TODO(jkakar): Define a type that correctly defines MatchExpr.
+-spec make_case_clause(rufus_forms(), integer()) -> case_clause_form().
+make_case_clause(Exprs, Line) ->
+    {case_clause, #{exprs => Exprs, line => Line}}.
+%% make_case_clause returns a form for a match clause in a case block.
 %% TODO(jkakar): Define a type that correctly defines MatchExpr.
 -spec make_case_clause(any() | undefined, rufus_forms(), integer()) -> case_clause_form().
 make_case_clause(MatchExpr, Exprs, Line) ->

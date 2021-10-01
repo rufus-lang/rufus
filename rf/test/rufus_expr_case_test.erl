@@ -1,8 +1,10 @@
--module(rufus_parse_case_test).
+-module(rufus_expr_case_test).
 
 -include_lib("eunit/include/eunit.hrl").
 
-parse_function_with_case_block_with_single_atom_clause_test() ->
+%% typecheck_and_annotate tests
+
+typecheck_and_annotate_function_with_case_block_with_single_atom_clause_test() ->
     RufusText =
         "func MaybeConvert(value atom) string {\n"
         "    case value {\n"
@@ -12,6 +14,7 @@ parse_function_with_case_block_with_single_atom_clause_test() ->
         "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
         {func, #{
             exprs =>
@@ -34,14 +37,19 @@ parse_function_with_case_block_with_single_atom_clause_test() ->
                                         {atom_lit, #{
                                             line => 3,
                                             spec => true,
-                                            type =>
-                                                {type, #{line => 3, spec => atom}}
-                                        }}
+                                            type => {type, #{line => 3, spec => atom}}
+                                        }},
+                                    type => {type, #{line => 4, spec => string}}
                                 }}
                             ],
                         line => 2,
                         match_expr =>
-                            {identifier, #{line => 2, spec => value}}
+                            {identifier, #{
+                                line => 2,
+                                spec => value,
+                                type => {type, #{line => 1, spec => atom}}
+                            }},
+                        type => {type, #{line => 4, spec => string}}
                     }}
                 ],
             line => 1,
@@ -54,12 +62,20 @@ parse_function_with_case_block_with_single_atom_clause_test() ->
                     }}
                 ],
             return_type => {type, #{line => 1, spec => string}},
-            spec => 'MaybeConvert'
+            spec => 'MaybeConvert',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 1,
+                    param_types => [{type, #{line => 1, spec => atom}}],
+                    return_type => {type, #{line => 1, spec => string}},
+                    spec => 'func(atom) string'
+                }}
         }}
     ],
-    ?assertEqual(Expected, Forms).
+    ?assertEqual(Expected, AnnotatedForms).
 
-parse_function_with_case_block_with_single_bool_clause_test() ->
+typecheck_and_annotate_function_with_case_block_with_single_bool_clause_test() ->
     RufusText =
         "func MaybeConvert(value bool) string {\n"
         "    case value {\n"
@@ -69,6 +85,7 @@ parse_function_with_case_block_with_single_bool_clause_test() ->
         "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
         {func, #{
             exprs =>
@@ -91,14 +108,19 @@ parse_function_with_case_block_with_single_bool_clause_test() ->
                                         {bool_lit, #{
                                             line => 3,
                                             spec => true,
-                                            type =>
-                                                {type, #{line => 3, spec => bool}}
-                                        }}
+                                            type => {type, #{line => 3, spec => bool}}
+                                        }},
+                                    type => {type, #{line => 4, spec => string}}
                                 }}
                             ],
                         line => 2,
                         match_expr =>
-                            {identifier, #{line => 2, spec => value}}
+                            {identifier, #{
+                                line => 2,
+                                spec => value,
+                                type => {type, #{line => 1, spec => bool}}
+                            }},
+                        type => {type, #{line => 4, spec => string}}
                     }}
                 ],
             line => 1,
@@ -111,12 +133,20 @@ parse_function_with_case_block_with_single_bool_clause_test() ->
                     }}
                 ],
             return_type => {type, #{line => 1, spec => string}},
-            spec => 'MaybeConvert'
+            spec => 'MaybeConvert',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 1,
+                    param_types => [{type, #{line => 1, spec => bool}}],
+                    return_type => {type, #{line => 1, spec => string}},
+                    spec => 'func(bool) string'
+                }}
         }}
     ],
-    ?assertEqual(Expected, Forms).
+    ?assertEqual(Expected, AnnotatedForms).
 
-parse_function_with_case_block_with_single_float_clause_test() ->
+typecheck_and_annotate_function_with_case_block_with_single_float_clause_test() ->
     RufusText =
         "func MaybeConvert(value float) string {\n"
         "    case value {\n"
@@ -126,6 +156,7 @@ parse_function_with_case_block_with_single_float_clause_test() ->
         "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
         {func, #{
             exprs =>
@@ -148,14 +179,19 @@ parse_function_with_case_block_with_single_float_clause_test() ->
                                         {float_lit, #{
                                             line => 3,
                                             spec => 1.0,
-                                            type =>
-                                                {type, #{line => 3, spec => float}}
-                                        }}
+                                            type => {type, #{line => 3, spec => float}}
+                                        }},
+                                    type => {type, #{line => 4, spec => string}}
                                 }}
                             ],
                         line => 2,
                         match_expr =>
-                            {identifier, #{line => 2, spec => value}}
+                            {identifier, #{
+                                line => 2,
+                                spec => value,
+                                type => {type, #{line => 1, spec => float}}
+                            }},
+                        type => {type, #{line => 4, spec => string}}
                     }}
                 ],
             line => 1,
@@ -168,12 +204,20 @@ parse_function_with_case_block_with_single_float_clause_test() ->
                     }}
                 ],
             return_type => {type, #{line => 1, spec => string}},
-            spec => 'MaybeConvert'
+            spec => 'MaybeConvert',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 1,
+                    param_types => [{type, #{line => 1, spec => float}}],
+                    return_type => {type, #{line => 1, spec => string}},
+                    spec => 'func(float) string'
+                }}
         }}
     ],
-    ?assertEqual(Expected, Forms).
+    ?assertEqual(Expected, AnnotatedForms).
 
-parse_function_with_case_block_with_single_int_clause_test() ->
+typecheck_and_annotate_function_with_case_block_with_single_int_clause_test() ->
     RufusText =
         "func MaybeConvert(value int) string {\n"
         "    case value {\n"
@@ -183,6 +227,7 @@ parse_function_with_case_block_with_single_int_clause_test() ->
         "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
         {func, #{
             exprs =>
@@ -205,14 +250,19 @@ parse_function_with_case_block_with_single_int_clause_test() ->
                                         {int_lit, #{
                                             line => 3,
                                             spec => 1,
-                                            type =>
-                                                {type, #{line => 3, spec => int}}
-                                        }}
+                                            type => {type, #{line => 3, spec => int}}
+                                        }},
+                                    type => {type, #{line => 4, spec => string}}
                                 }}
                             ],
                         line => 2,
                         match_expr =>
-                            {identifier, #{line => 2, spec => value}}
+                            {identifier, #{
+                                line => 2,
+                                spec => value,
+                                type => {type, #{line => 1, spec => int}}
+                            }},
+                        type => {type, #{line => 4, spec => string}}
                     }}
                 ],
             line => 1,
@@ -225,78 +275,30 @@ parse_function_with_case_block_with_single_int_clause_test() ->
                     }}
                 ],
             return_type => {type, #{line => 1, spec => string}},
-            spec => 'MaybeConvert'
+            spec => 'MaybeConvert',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 1,
+                    param_types => [{type, #{line => 1, spec => int}}],
+                    return_type => {type, #{line => 1, spec => string}},
+                    spec => 'func(int) string'
+                }}
         }}
     ],
-    ?assertEqual(Expected, Forms).
+    ?assertEqual(Expected, AnnotatedForms).
 
-parse_function_with_case_block_with_single_string_clause_test() ->
+typecheck_and_annotate_function_with_case_block_with_single_string_clause_test() ->
     RufusText =
-        "func MaybeConvert(value string) string {\n"
+        "func MaybeConvert(value string) atom {\n"
         "    case value {\n"
-        "    match \"1\" ->\n"
-        "        \"true\"\n"
-        "    }\n"
-        "}\n",
-    {ok, Tokens} = rufus_tokenize:string(RufusText),
-    {ok, Forms} = rufus_parse:parse(Tokens),
-    Expected = [
-        {func, #{
-            exprs =>
-                [
-                    {'case', #{
-                        clauses =>
-                            [
-                                {case_clause, #{
-                                    exprs =>
-                                        [
-                                            {string_lit, #{
-                                                line => 4,
-                                                spec => <<"true">>,
-                                                type =>
-                                                    {type, #{line => 4, spec => string}}
-                                            }}
-                                        ],
-                                    line => 3,
-                                    match_expr =>
-                                        {string_lit, #{
-                                            line => 3,
-                                            spec => <<"1">>,
-                                            type =>
-                                                {type, #{line => 3, spec => string}}
-                                        }}
-                                }}
-                            ],
-                        line => 2,
-                        match_expr =>
-                            {identifier, #{line => 2, spec => value}}
-                    }}
-                ],
-            line => 1,
-            params =>
-                [
-                    {param, #{
-                        line => 1,
-                        spec => value,
-                        type => {type, #{line => 1, spec => string}}
-                    }}
-                ],
-            return_type => {type, #{line => 1, spec => string}},
-            spec => 'MaybeConvert'
-        }}
-    ],
-    ?assertEqual(Expected, Forms).
-
-parse_function_with_case_block_with_single_cons_clause_test() ->
-    RufusText =
-        "func MaybeConvert(value list[string]) atom {\n"
-        "    case value {\n"
-        "    match list[string]{head|tail} ->\n"
+        "    match \"ok\" ->\n"
         "        :ok\n"
         "    }\n"
         "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
         {func, #{
             exprs =>
@@ -316,26 +318,23 @@ parse_function_with_case_block_with_single_cons_clause_test() ->
                                         ],
                                     line => 3,
                                     match_expr =>
-                                        {cons, #{
-                                            head =>
-                                                {identifier, #{line => 3, spec => head}},
+                                        {string_lit, #{
                                             line => 3,
-                                            tail =>
-                                                {identifier, #{line => 3, spec => tail}},
+                                            spec => <<"ok">>,
                                             type =>
-                                                {type, #{
-                                                    element_type =>
-                                                        {type, #{line => 3, spec => string}},
-                                                    kind => list,
-                                                    line => 3,
-                                                    spec => 'list[string]'
-                                                }}
-                                        }}
+                                                {type, #{line => 3, spec => string}}
+                                        }},
+                                    type => {type, #{line => 4, spec => atom}}
                                 }}
                             ],
                         line => 2,
                         match_expr =>
-                            {identifier, #{line => 2, spec => value}}
+                            {identifier, #{
+                                line => 2,
+                                spec => value,
+                                type => {type, #{line => 1, spec => string}}
+                            }},
+                        type => {type, #{line => 4, spec => atom}}
                     }}
                 ],
             line => 1,
@@ -344,47 +343,40 @@ parse_function_with_case_block_with_single_cons_clause_test() ->
                     {param, #{
                         line => 1,
                         spec => value,
-                        type =>
-                            {type, #{
-                                element_type =>
-                                    {type, #{line => 1, spec => string}},
-                                kind => list,
-                                line => 1,
-                                spec => 'list[string]'
-                            }}
+                        type => {type, #{line => 1, spec => string}}
                     }}
                 ],
             return_type => {type, #{line => 1, spec => atom}},
-            spec => 'MaybeConvert'
+            spec => 'MaybeConvert',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 1,
+                    param_types => [{type, #{line => 1, spec => string}}],
+                    return_type => {type, #{line => 1, spec => atom}},
+                    spec => 'func(string) atom'
+                }}
         }}
     ],
-    ?assertEqual(Expected, Forms).
+    ?assertEqual(Expected, AnnotatedForms).
 
-parse_function_with_case_block_with_identifier_clause_test() ->
+typecheck_and_annotate_function_with_case_block_with_multiple_clauses_test() ->
     RufusText =
-        "func Maybe() atom {\n"
-        "    value = true\n"
+        "func Convert(value bool) atom {\n"
         "    case value {\n"
+        "    match false ->\n"
+        "        :error\n"
         "    match true ->\n"
         "        :ok\n"
         "    }\n"
         "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
         {func, #{
             exprs =>
                 [
-                    {match_op, #{
-                        left => {identifier, #{line => 2, spec => value}},
-                        line => 2,
-                        right =>
-                            {bool_lit, #{
-                                line => 2,
-                                spec => true,
-                                type => {type, #{line => 2, spec => bool}}
-                            }}
-                    }},
                     {'case', #{
                         clauses =>
                             [
@@ -392,68 +384,49 @@ parse_function_with_case_block_with_identifier_clause_test() ->
                                     exprs =>
                                         [
                                             {atom_lit, #{
-                                                line => 5,
-                                                spec => ok,
+                                                line => 4,
+                                                spec => error,
                                                 type =>
-                                                    {type, #{line => 5, spec => atom}}
+                                                    {type, #{line => 4, spec => atom}}
                                             }}
                                         ],
-                                    line => 4,
-                                    match_expr =>
-                                        {bool_lit, #{
-                                            line => 4,
-                                            spec => true,
-                                            type =>
-                                                {type, #{line => 4, spec => bool}}
-                                        }}
-                                }}
-                            ],
-                        line => 3,
-                        match_expr =>
-                            {identifier, #{line => 3, spec => value}}
-                    }}
-                ],
-            line => 1,
-            params => [],
-            return_type => {type, #{line => 1, spec => atom}},
-            spec => 'Maybe'
-        }}
-    ],
-    ?assertEqual(Expected, Forms).
-
-parse_function_with_case_block_with_identifier_and_type_clause_test() ->
-    RufusText =
-        "func Echo(value bool) bool {\n"
-        "    case value {\n"
-        "    match value bool ->\n"
-        "        value\n"
-        "    }\n"
-        "}\n",
-    {ok, Tokens} = rufus_tokenize:string(RufusText),
-    {ok, Forms} = rufus_parse:parse(Tokens),
-    Expected = [
-        {func, #{
-            exprs =>
-                [
-                    {'case', #{
-                        clauses =>
-                            [
-                                {case_clause, #{
-                                    exprs =>
-                                        [{identifier, #{line => 4, spec => value}}],
                                     line => 3,
                                     match_expr =>
-                                        {param, #{
+                                        {bool_lit, #{
                                             line => 3,
-                                            spec => value,
-                                            type =>
-                                                {type, #{line => 3, spec => bool}}
-                                        }}
+                                            spec => false,
+                                            type => {type, #{line => 3, spec => bool}}
+                                        }},
+                                    type => {type, #{line => 4, spec => atom}}
+                                }},
+                                {case_clause, #{
+                                    exprs =>
+                                        [
+                                            {atom_lit, #{
+                                                line => 6,
+                                                spec => ok,
+                                                type =>
+                                                    {type, #{line => 6, spec => atom}}
+                                            }}
+                                        ],
+                                    line => 5,
+                                    match_expr =>
+                                        {bool_lit, #{
+                                            line => 5,
+                                            spec => true,
+                                            type => {type, #{line => 5, spec => bool}}
+                                        }},
+                                    type => {type, #{line => 6, spec => atom}}
                                 }}
                             ],
                         line => 2,
                         match_expr =>
-                            {identifier, #{line => 2, spec => value}}
+                            {identifier, #{
+                                line => 2,
+                                spec => value,
+                                type => {type, #{line => 1, spec => bool}}
+                            }},
+                        type => {type, #{line => 6, spec => atom}}
                     }}
                 ],
             line => 1,
@@ -465,66 +438,59 @@ parse_function_with_case_block_with_identifier_and_type_clause_test() ->
                         type => {type, #{line => 1, spec => bool}}
                     }}
                 ],
-            return_type => {type, #{line => 1, spec => bool}},
-            spec => 'Echo'
+            return_type => {type, #{line => 1, spec => atom}},
+            spec => 'Convert',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 1,
+                    param_types => [{type, #{line => 1, spec => bool}}],
+                    return_type => {type, #{line => 1, spec => atom}},
+                    spec => 'func(bool) atom'
+                }}
         }}
     ],
-    ?assertEqual(Expected, Forms).
+    ?assertEqual(Expected, AnnotatedForms).
 
-parse_function_with_case_block_with_match_clause_test() ->
+typecheck_and_annotate_function_with_case_block_with_mismatched_clause_return_types_test() ->
     RufusText =
-        "func Maybe() bool {\n"
-        "    case true {\n"
-        "    match value = true ->\n"
-        "        value\n"
+        "func MaybeConvert(value bool) atom {\n"
+        "    case value {\n"
+        "    match false ->\n"
+        "        \"false\"\n"
+        "    match true ->\n"
+        "        :ok\n"
         "    }\n"
         "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
-    Expected = [
-        {func, #{
-            exprs =>
-                [
-                    {'case', #{
-                        clauses =>
-                            [
-                                {case_clause, #{
-                                    exprs =>
-                                        [{identifier, #{line => 4, spec => value}}],
-                                    line => 3,
-                                    match_expr =>
-                                        {match_op, #{
-                                            left =>
-                                                {identifier, #{line => 3, spec => value}},
-                                            line => 3,
-                                            right =>
-                                                {bool_lit, #{
-                                                    line => 3,
-                                                    spec => true,
-                                                    type =>
-                                                        {type, #{line => 3, spec => bool}}
-                                                }}
-                                        }}
-                                }}
-                            ],
-                        line => 2,
-                        match_expr =>
-                            {bool_lit, #{
-                                line => 2,
-                                spec => true,
-                                type => {type, #{line => 2, spec => bool}}
-                            }}
-                    }}
-                ],
-            line => 1,
-            params => [],
-            return_type => {type, #{line => 1, spec => bool}},
-            spec => 'Maybe'
-        }}
-    ],
-    ?assertEqual(Expected, Forms).
+    Result = rufus_expr:typecheck_and_annotate(Forms),
+    Data = #{
+        actual => atom,
+        expected => string,
+        form =>
+            {case_clause, #{
+                exprs =>
+                    [
+                        {atom_lit, #{
+                            line => 6,
+                            spec => ok,
+                            type => {type, #{line => 6, spec => atom}}
+                        }}
+                    ],
+                line => 5,
+                match_expr =>
+                    {bool_lit, #{
+                        line => 5,
+                        spec => true,
+                        type => {type, #{line => 5, spec => bool}}
+                    }},
+                type => {type, #{line => 6, spec => atom}}
+            }}
+    },
+    ?assertEqual({error, mismatched_case_clause_return_type, Data}, Result).
 
-parse_function_with_case_block_with_default_clause_test() ->
+typecheck_and_annotate_function_with_case_block_with_default_clause_test() ->
     RufusText =
         "func Convert(value atom) string {\n"
         "    case value {\n"
@@ -536,6 +502,7 @@ parse_function_with_case_block_with_default_clause_test() ->
         "}\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
         {func, #{
             exprs =>
@@ -558,9 +525,9 @@ parse_function_with_case_block_with_default_clause_test() ->
                                         {atom_lit, #{
                                             line => 3,
                                             spec => true,
-                                            type =>
-                                                {type, #{line => 3, spec => atom}}
-                                        }}
+                                            type => {type, #{line => 3, spec => atom}}
+                                        }},
+                                    type => {type, #{line => 4, spec => string}}
                                 }},
                                 {case_clause, #{
                                     exprs =>
@@ -572,12 +539,18 @@ parse_function_with_case_block_with_default_clause_test() ->
                                                     {type, #{line => 6, spec => string}}
                                             }}
                                         ],
-                                    line => 5
+                                    line => 5,
+                                    type => {type, #{line => 6, spec => string}}
                                 }}
                             ],
                         line => 2,
                         match_expr =>
-                            {identifier, #{line => 2, spec => value}}
+                            {identifier, #{
+                                line => 2,
+                                spec => value,
+                                type => {type, #{line => 1, spec => atom}}
+                            }},
+                        type => {type, #{line => 6, spec => string}}
                     }}
                 ],
             line => 1,
@@ -590,7 +563,15 @@ parse_function_with_case_block_with_default_clause_test() ->
                     }}
                 ],
             return_type => {type, #{line => 1, spec => string}},
-            spec => 'Convert'
+            spec => 'Convert',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 1,
+                    param_types => [{type, #{line => 1, spec => atom}}],
+                    return_type => {type, #{line => 1, spec => string}},
+                    spec => 'func(atom) string'
+                }}
         }}
     ],
-    ?assertEqual(Expected, Forms).
+    ?assertEqual(Expected, AnnotatedForms).

@@ -550,3 +550,134 @@ typecheck_and_annotate_function_call_with_match_argument_test() ->
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
+
+%% Function calls with case arguments
+
+typecheck_and_annotate_function_call_with_case_argument_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Echo(s string) string { s }\n"
+        "    func Name(n int) string {\n"
+        "        Echo(case n {\n"
+        "        match 1 -> \"one\"\n"
+        "        default -> \"not one\"\n"
+        "        })\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            exprs =>
+                [
+                    {identifier, #{
+                        line => 3,
+                        spec => s,
+                        type => {type, #{line => 3, spec => string}}
+                    }}
+                ],
+            line => 3,
+            params =>
+                [
+                    {param, #{
+                        line => 3,
+                        spec => s,
+                        type => {type, #{line => 3, spec => string}}
+                    }}
+                ],
+            return_type => {type, #{line => 3, spec => string}},
+            spec => 'Echo',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [{type, #{line => 3, spec => string}}],
+                    return_type => {type, #{line => 3, spec => string}},
+                    spec => 'func(string) string'
+                }}
+        }},
+        {func, #{
+            exprs =>
+                [
+                    {call, #{
+                        args =>
+                            [
+                                {'case', #{
+                                    clauses =>
+                                        [
+                                            {case_clause, #{
+                                                exprs =>
+                                                    [
+                                                        {string_lit, #{
+                                                            line => 6,
+                                                            spec => <<"one">>,
+                                                            type =>
+                                                                {type, #{line => 6, spec => string}}
+                                                        }}
+                                                    ],
+                                                line => 6,
+                                                match_expr =>
+                                                    {int_lit, #{
+                                                        line => 6,
+                                                        spec => 1,
+                                                        type =>
+                                                            {type, #{line => 6, spec => int}}
+                                                    }},
+                                                type =>
+                                                    {type, #{line => 6, spec => string}}
+                                            }},
+                                            {case_clause, #{
+                                                exprs =>
+                                                    [
+                                                        {string_lit, #{
+                                                            line => 7,
+                                                            spec => <<"not one">>,
+                                                            type =>
+                                                                {type, #{line => 7, spec => string}}
+                                                        }}
+                                                    ],
+                                                line => 7,
+                                                type =>
+                                                    {type, #{line => 7, spec => string}}
+                                            }}
+                                        ],
+                                    line => 5,
+                                    match_expr =>
+                                        {identifier, #{
+                                            line => 5,
+                                            spec => n,
+                                            type => {type, #{line => 4, spec => int}}
+                                        }},
+                                    type => {type, #{line => 7, spec => string}}
+                                }}
+                            ],
+                        line => 5,
+                        spec => 'Echo',
+                        type => {type, #{line => 3, spec => string}}
+                    }}
+                ],
+            line => 4,
+            params =>
+                [
+                    {param, #{
+                        line => 4,
+                        spec => n,
+                        type => {type, #{line => 4, spec => int}}
+                    }}
+                ],
+            return_type => {type, #{line => 4, spec => string}},
+            spec => 'Name',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 4,
+                    param_types => [{type, #{line => 4, spec => int}}],
+                    return_type => {type, #{line => 4, spec => string}},
+                    spec => 'func(int) string'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).

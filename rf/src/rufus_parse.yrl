@@ -22,7 +22,7 @@ Terminals
     module import
     func identifier
     try catch after throw
-    case match
+    case match default
     atom atom_lit
     bool bool_lit
     float float_lit
@@ -147,6 +147,8 @@ case_match_clause -> match param '->' exprs :
                                    rufus_form:make_case_clause('$2', '$4', line('$1')).
 case_match_clause -> match identifier '->' exprs :
                                    rufus_form:make_case_clause(rufus_form:make_identifier(list_to_atom(text('$2')), line('$2')), '$4', line('$1')).
+case_match_clause -> default '->' exprs :
+                                   rufus_form:make_case_clause('$3', line('$1')).
 
 case_match_clauses -> case_match_clause case_match_clauses : ['$1'|'$2'].
 case_match_clauses -> '$empty'  : [].

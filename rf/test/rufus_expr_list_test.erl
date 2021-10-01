@@ -1789,3 +1789,123 @@ typecheck_and_annotate_with_function_taking_a_list_lit_pattern_test() ->
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_with_function_returning_a_list_with_a_value_from_a_case_expression_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Listify(n int) list[string] {\n"
+        "        list[string]{\n"
+        "            case n {\n"
+        "            match 1 -> \"one\"\n"
+        "            default -> \"not one\"\n"
+        "            },\n"
+        "        }\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            exprs =>
+                [
+                    {list_lit, #{
+                        elements =>
+                            [
+                                {'case', #{
+                                    clauses =>
+                                        [
+                                            {case_clause, #{
+                                                exprs =>
+                                                    [
+                                                        {string_lit, #{
+                                                            line => 6,
+                                                            spec => <<"one">>,
+                                                            type =>
+                                                                {type, #{line => 6, spec => string}}
+                                                        }}
+                                                    ],
+                                                line => 6,
+                                                match_expr =>
+                                                    {int_lit, #{
+                                                        line => 6,
+                                                        spec => 1,
+                                                        type =>
+                                                            {type, #{line => 6, spec => int}}
+                                                    }},
+                                                type =>
+                                                    {type, #{line => 6, spec => string}}
+                                            }},
+                                            {case_clause, #{
+                                                exprs =>
+                                                    [
+                                                        {string_lit, #{
+                                                            line => 7,
+                                                            spec => <<"not one">>,
+                                                            type =>
+                                                                {type, #{line => 7, spec => string}}
+                                                        }}
+                                                    ],
+                                                line => 7,
+                                                type =>
+                                                    {type, #{line => 7, spec => string}}
+                                            }}
+                                        ],
+                                    line => 5,
+                                    match_expr =>
+                                        {identifier, #{
+                                            line => 5,
+                                            spec => n,
+                                            type => {type, #{line => 3, spec => int}}
+                                        }},
+                                    type => {type, #{line => 7, spec => string}}
+                                }}
+                            ],
+                        line => 4,
+                        type =>
+                            {type, #{
+                                element_type =>
+                                    {type, #{line => 4, spec => string}},
+                                kind => list,
+                                line => 4,
+                                spec => 'list[string]'
+                            }}
+                    }}
+                ],
+            line => 3,
+            params =>
+                [
+                    {param, #{
+                        line => 3,
+                        spec => n,
+                        type => {type, #{line => 3, spec => int}}
+                    }}
+                ],
+            return_type =>
+                {type, #{
+                    element_type => {type, #{line => 3, spec => string}},
+                    kind => list,
+                    line => 3,
+                    spec => 'list[string]'
+                }},
+            spec => 'Listify',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [{type, #{line => 3, spec => int}}],
+                    return_type =>
+                        {type, #{
+                            element_type =>
+                                {type, #{line => 3, spec => string}},
+                            kind => list,
+                            line => 3,
+                            spec => 'list[string]'
+                        }},
+                    spec => 'func(int) list[string]'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).

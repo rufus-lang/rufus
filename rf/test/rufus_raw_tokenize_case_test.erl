@@ -59,3 +59,35 @@ string_with_case_block_with_multiple_clauses_test() ->
         ],
         Tokens
     ).
+
+string_with_case_block_with_default_clause_test() ->
+    {ok, Tokens, _} = rufus_raw_tokenize:string(
+        "case n {\n"
+        "match 42 ->\n"
+        "    :pass\n"
+        "default ->\n"
+        "    :fail\n"
+        "}\n"
+    ),
+    ?assertEqual(
+        [
+            {'case', 1},
+            {identifier, 1, "n"},
+            {'{', 1},
+            {eol, 1},
+            {match, 2},
+            {int_lit, 2, 42},
+            {'->', 2},
+            {eol, 2},
+            {atom_lit, 3, pass},
+            {eol, 3},
+            {default, 4},
+            {'->', 4},
+            {eol, 4},
+            {atom_lit, 5, fail},
+            {eol, 5},
+            {'}', 6},
+            {eol, 6}
+        ],
+        Tokens
+    ).

@@ -88,6 +88,12 @@ typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {binary_op, _Context
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {call, _Context} | T]) ->
     {ok, AnnotatedForm} = typecheck_and_annotate_call(Stack, Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
+typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {'case', _Context} | T]) ->
+    {ok, AnnotatedForm} = typecheck_and_annotate_case(Stack, Globals, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
+typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {case_clause, _Context} | T]) ->
+    {ok, AnnotatedForm} = typecheck_and_annotate_case_clause(Stack, Globals, Locals, Form),
+    typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
 typecheck_and_annotate(Acc, Stack, Globals, Locals, [Form = {catch_clause, _Context} | T]) ->
     {ok, AnnotatedForm} = typecheck_and_annotate_catch_clause(Stack, Globals, Locals, Form),
     typecheck_and_annotate([AnnotatedForm | Acc], Stack, Globals, Locals, T);
@@ -198,6 +204,160 @@ typecheck_and_annotate_call(
         Error ->
             throw(Error)
     end.
+
+%% case form helpers
+
+%% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
+%% -spec typecheck_and_annotate_case(rufus_stack(), globals(), locals(), case_form()) ->
+%%     {ok, locals(), case_form()} | no_return().
+typecheck_and_annotate_case(
+    Stack,
+    Globals,
+    Locals,
+    Form = {'case', Context = #{match_expr := MatchExpr, clauses := Clauses}}
+) ->
+    CaseClauseStack = [Form | Stack],
+    {ok, NewLocals, [AnnotatedMatchExpr]} =
+        case MatchExpr of
+            undefined ->
+                {ok, Locals, [undefined]};
+            _ ->
+                typecheck_and_annotate(
+                    [],
+                    CaseClauseStack,
+                    Globals,
+                    Locals,
+                    [MatchExpr]
+                )
+        end,
+
+    {ok, _, AnnotatedClauses} = typecheck_and_annotate([], Stack, Globals, NewLocals, Clauses),
+    ok = typecheck_case_clause_return_types(AnnotatedClauses),
+    AnnotatedForm1 =
+        {'case', Context#{
+            match_expr => AnnotatedMatchExpr,
+            clauses => AnnotatedClauses
+        }},
+    case rufus_type:resolve(Stack, Globals, AnnotatedForm1) of
+        {ok, TypeForm} ->
+            AnnotatedForm2 =
+                {'case', Context#{
+                    match_expr => AnnotatedMatchExpr,
+                    clauses => AnnotatedClauses,
+                    type => TypeForm
+                }},
+            {ok, AnnotatedForm2};
+        Error ->
+            throw(Error)
+    end.
+
+-spec typecheck_and_annotate_case_clause(
+    rufus_stack(),
+    globals(),
+    locals(),
+    case_clause_form()
+) -> {ok, case_clause_form()} | no_return().
+typecheck_and_annotate_case_clause(
+    Stack,
+    Globals,
+    Locals,
+    Form = {case_clause, Context = #{match_expr := MatchExpr, exprs := Exprs}}
+) ->
+    CaseClauseStack = [Form | Stack],
+    {ok, NewLocals, [AnnotatedMatchExpr]} =
+        case MatchExpr of
+            undefined ->
+                {ok, Locals, [undefined]};
+            _ ->
+                typecheck_and_annotate(
+                    [],
+                    CaseClauseStack,
+                    Globals,
+                    Locals,
+                    [MatchExpr]
+                )
+        end,
+
+    {ok, _, AnnotatedExprs} = typecheck_and_annotate([], Stack, Globals, NewLocals, Exprs),
+    AnnotatedForm1 =
+        {case_clause, Context#{
+            match_expr => AnnotatedMatchExpr,
+            exprs => AnnotatedExprs
+        }},
+    case rufus_type:resolve(Stack, Globals, AnnotatedForm1) of
+        {ok, TypeForm} ->
+            AnnotatedForm2 =
+                {case_clause, Context#{
+                    match_expr => AnnotatedMatchExpr,
+                    exprs => AnnotatedExprs,
+                    type => TypeForm
+                }},
+            {ok, AnnotatedForm2};
+        Error ->
+            throw(Error)
+    end;
+typecheck_and_annotate_case_clause(
+    Stack,
+    Globals,
+    Locals,
+    {case_clause, Context = #{exprs := Exprs}}
+) ->
+    {ok, _, AnnotatedExprs} = typecheck_and_annotate([], Stack, Globals, Locals, Exprs),
+    AnnotatedForm1 =
+        {case_clause, Context#{
+            exprs => AnnotatedExprs
+        }},
+    case rufus_type:resolve(Stack, Globals, AnnotatedForm1) of
+        {ok, TypeForm} ->
+            AnnotatedForm2 =
+                {case_clause, Context#{
+                    exprs => AnnotatedExprs,
+                    type => TypeForm
+                }},
+            {ok, AnnotatedForm2};
+        Error ->
+            throw(Error)
+    end.
+
+%% typecheck_case_clause_return_types ensures that the try block and all case
+%% clause blocks have the same return type.
+-spec typecheck_case_clause_return_types(list(case_clause_form())) -> ok | no_return().
+typecheck_case_clause_return_types(CaseClauses) ->
+    CaseClauseTypeForms = lists:map(
+        fun(CaseClauseForm) -> {CaseClauseForm, rufus_form:type(CaseClauseForm)} end,
+        CaseClauses
+    ),
+    FormPairs = lists:foldr(
+        fun(Element, Acc) ->
+            case Element of
+                {_Form, {type, #{kind := throw}}} -> Acc;
+                _ -> [Element | Acc]
+            end
+        end,
+        [],
+        CaseClauseTypeForms
+    ),
+
+    validate_case_clause_return_type([], FormPairs).
+
+%% validate_case_clause_return_type iterates over {Form, TypeForm} 2-tuples and
+%% returns ok if the types for pairs match, or throws an {error,
+%% mismatched_case_clause_return_type, Data} 3-tuple.
+%% -spec validate_case_clause_return_type(list(atom), list({rufus_form(), type_form()})) ->
+%%     ok | no_return.
+validate_case_clause_return_type([Spec], [{_Form, {type, #{spec := Spec}}} | T]) ->
+    validate_case_clause_return_type([Spec], T);
+validate_case_clause_return_type([], [{_Form, {type, #{spec := Spec}}} | T]) ->
+    validate_case_clause_return_type([Spec], T);
+validate_case_clause_return_type([ExpectedSpec], [{Form, {type, #{spec := ActualSpec}}} | _T]) ->
+    Data = #{
+        form => Form,
+        actual => ActualSpec,
+        expected => ExpectedSpec
+    },
+    throw({error, mismatched_case_clause_return_type, Data});
+validate_case_clause_return_type(_, []) ->
+    ok.
 
 %% cons form helpers
 

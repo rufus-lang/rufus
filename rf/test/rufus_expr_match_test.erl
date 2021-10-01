@@ -2369,3 +2369,116 @@ typecheck_and_annotate_function_with_a_match_that_has_unmatched_types_test() ->
             }}
     },
     ?assertEqual({error, unmatched_types, Data}, rufus_expr:typecheck_and_annotate(Forms)).
+
+%% match expressions with case expressions
+
+typecheck_and_annotate_function_with_a_match_that_binds_a_case_expression_test() ->
+    RufusText =
+        "\n"
+        "    module example\n"
+        "    func Authenticate(password string) atom {\n"
+        "        response = case password {\n"
+        "        match \"hunter2\" -> :allow\n"
+        "        default -> :deny\n"
+        "        }\n"
+        "        response\n"
+        "    }\n"
+        "    ",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {module, #{line => 2, spec => example}},
+        {func, #{
+            exprs =>
+                [
+                    {match_op, #{
+                        left =>
+                            {identifier, #{
+                                line => 4,
+                                locals =>
+                                    #{
+                                        password =>
+                                            [{type, #{line => 3, spec => string}}]
+                                    },
+                                spec => response,
+                                type => {type, #{line => 6, spec => atom}}
+                            }},
+                        line => 4,
+                        right =>
+                            {'case', #{
+                                clauses =>
+                                    [
+                                        {case_clause, #{
+                                            exprs =>
+                                                [
+                                                    {atom_lit, #{
+                                                        line => 5,
+                                                        spec => allow,
+                                                        type =>
+                                                            {type, #{line => 5, spec => atom}}
+                                                    }}
+                                                ],
+                                            line => 5,
+                                            match_expr =>
+                                                {string_lit, #{
+                                                    line => 5,
+                                                    spec => <<"hunter2">>,
+                                                    type =>
+                                                        {type, #{line => 5, spec => string}}
+                                                }},
+                                            type => {type, #{line => 5, spec => atom}}
+                                        }},
+                                        {case_clause, #{
+                                            exprs =>
+                                                [
+                                                    {atom_lit, #{
+                                                        line => 6,
+                                                        spec => deny,
+                                                        type =>
+                                                            {type, #{line => 6, spec => atom}}
+                                                    }}
+                                                ],
+                                            line => 6,
+                                            type => {type, #{line => 6, spec => atom}}
+                                        }}
+                                    ],
+                                line => 4,
+                                match_expr =>
+                                    {identifier, #{
+                                        line => 4,
+                                        spec => password,
+                                        type => {type, #{line => 3, spec => string}}
+                                    }},
+                                type => {type, #{line => 6, spec => atom}}
+                            }},
+                        type => {type, #{line => 6, spec => atom}}
+                    }},
+                    {identifier, #{
+                        line => 8,
+                        spec => response,
+                        type => {type, #{line => 6, spec => atom}}
+                    }}
+                ],
+            line => 3,
+            params =>
+                [
+                    {param, #{
+                        line => 3,
+                        spec => password,
+                        type => {type, #{line => 3, spec => string}}
+                    }}
+                ],
+            return_type => {type, #{line => 3, spec => atom}},
+            spec => 'Authenticate',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 3,
+                    param_types => [{type, #{line => 3, spec => string}}],
+                    return_type => {type, #{line => 3, spec => atom}},
+                    spec => 'func(string) atom'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
