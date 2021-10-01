@@ -43,6 +43,27 @@ map_with_call_test() ->
         rufus_forms:map([Form], fun annotate/1)
     ).
 
+map_with_case_test() ->
+    MatchExpr = rufus_form:make_literal(int, 3, 1),
+    Expr = rufus_form:make_literal(int, 5, 3),
+    Clause = rufus_form:make_case_clause(MatchExpr, [Expr], 2),
+    Form = rufus_form:make_case(MatchExpr, [Clause], 1),
+    ?assertMatch(
+        [
+            {'case', #{
+                match_expr := {_, #{annotated := true}},
+                clauses := [
+                    {case_clause, #{
+                        match_expr := {_, #{annotated := true}},
+                        exprs := [{_, #{annotated := true}}]
+                    }}
+                ],
+                annotated := true
+            }}
+        ],
+        rufus_forms:map([Form], fun annotate/1)
+    ).
+
 map_with_cons_test() ->
     Line = 17,
     Type = rufus_form:make_type(list, rufus_form:make_type(int, Line), Line),
