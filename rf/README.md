@@ -1,3 +1,4 @@
+[![CI](https://github.com/rufus-lang/rufus/actions/workflows/github-actions.yml/badge.svg)](https://github.com/rufus-lang/rufus/actions/workflows/github-actions.yml)
 # rf
 
 `rf` provides tools for working with Rufus programs.

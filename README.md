@@ -1,3 +1,4 @@
+[![CI](https://github.com/rufus-lang/rufus/actions/workflows/github-actions.yml/badge.svg)](https://github.com/rufus-lang/rufus/actions/workflows/github-actions.yml)
 # Rufus
 
 Rufus is a programming language for people that build and operate fault tolerant
