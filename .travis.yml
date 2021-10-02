@@ -1,6 +1,0 @@
-dist: xenial
-language: erlang
-otp_release:
-  - 21.2
-before_script:
-  kerl list installations
