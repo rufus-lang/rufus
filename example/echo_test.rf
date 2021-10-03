@@ -1,7 +1,10 @@
 module example
 
-import t "Testing"
+import (
+    "testing"
+    "testing/assert"
+)
 
-func TestEcho(c t.C) {
-    t.AssertEqual(c, "Hello, world!", Echo("Hello, world!"))
+func TestEcho(t testing.T) {
+    assert.Equal(t, "Hello, world!", Echo("Hello, world!"))
 }

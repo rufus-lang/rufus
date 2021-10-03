@@ -3,10 +3,10 @@
 ```rufus
 module main
 
-import "Fmt"
+import "fmt"
 
 func main(args list[string]) {
-    Fmt.Println("Hello, world!")
+    fmt.Println("Hello, world!")
 }
 ```
 
