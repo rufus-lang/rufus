@@ -7,10 +7,10 @@ systems.
 ```rufus
 module main
 
-import "Fmt"
+import "fmt"
 
 func main() {
-    Fmt.Println("Hello, world!")
+    fmt.Println("Hello, world!")
 }
 ```
 
@@ -57,7 +57,7 @@ type Person struct {
     Age  int
 }
 alice = Person{Name => "Alice", Age => 34}
-Fmt.Printf("%s is age %d", [alice.Name, alice.Age])
+fmt.Printf("%s is age %d", [alice.Name, alice.Age])
 ```
 
 Function types:

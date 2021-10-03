@@ -27,8 +27,8 @@ Rufus provide for users to manage encapsulation?
 ### Option 1
 
 Idenifiers for types, constants, and functions defined in the module block that
-start with an `_` or a Unicode lower case letter (Unicode class "Ll") are
-private. All other identifiers for types, constants, and functions are exported.
+start with a lower case letter are private. All other identifiers for types,
+constants, and functions are exported.
 
 Example: A public module called `math` with a public `Pi` constant and a private
 `quarter` constant, both `float`s:
@@ -98,12 +98,6 @@ filesystems. A private `math` module in `math.rf` could conflict with a public
 
 ## Decision outcome
 
-Chosen option: option 2, because it uses one unified pattern instead of two
-different patterns. It also has the benefit of making private modules more
-obvious when reading code because they start with an `_` or a lowercase letter.
-We will fail a build if two or more Rufus source files in the same directory
-have names that differ only by case. This will prevent collision issues on
-case-insensitive filesystems.
-
-Open question: will a leading `_` for module, type, constant, or function cause
-parser grammer conflicts with `_` in pattern matching syntax and semantics?
+Chosen option: option 1, because it avoids Rufus source files in the same
+directory have names that differ only by case, which is likely to lead to
+confusion.

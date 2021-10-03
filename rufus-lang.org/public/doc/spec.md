@@ -602,17 +602,17 @@ Here is a complete Rufus module that implements a prime sieve.
 ```rufus
 module main
 
-import "std/List"
+import "lists"
 
 sieve([] list[int]) list[int] {
     []
 }
 sieve([h|t] list[int]) list[int] {
-    result = List.Filter(func(n int) bool { n % h != 0 }, t)
+    result = lists.Filter(func(n int) bool { n % h != 0 }, t)
     [h|sieve(result)]
 }
 
 main() {
-    sieve(List.Seq(2, 30))
+    sieve(lists.Seq(2, 30))
 }
 ```
