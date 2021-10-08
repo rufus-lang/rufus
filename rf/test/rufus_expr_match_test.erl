@@ -1203,6 +1203,160 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_head_test() ->
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
+typecheck_and_annotate_function_with_a_match_that_binds_a_cons_head_with_the_anonymous_variable_test() ->
+    RufusText =
+        "func Rest(items list[int]) list[int] {\n"
+        "    list[int]{_|tail} = items\n"
+        "    tail\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {func, #{
+            exprs =>
+                [
+                    {match_op, #{
+                        left =>
+                            {cons, #{
+                                head =>
+                                    {identifier, #{
+                                        line => 2,
+                                        locals =>
+                                            #{
+                                                items =>
+                                                    [
+                                                        {type, #{
+                                                            element_type =>
+                                                                {type, #{line => 1, spec => int}},
+                                                            kind => list,
+                                                            line => 1,
+                                                            spec => 'list[int]'
+                                                        }}
+                                                    ]
+                                            },
+                                        spec => '_',
+                                        type => {type, #{line => 2, spec => int}}
+                                    }},
+                                line => 2,
+                                tail =>
+                                    {identifier, #{
+                                        line => 2,
+                                        locals =>
+                                            #{
+                                                items =>
+                                                    [
+                                                        {type, #{
+                                                            element_type =>
+                                                                {type, #{line => 1, spec => int}},
+                                                            kind => list,
+                                                            line => 1,
+                                                            spec => 'list[int]'
+                                                        }}
+                                                    ]
+                                            },
+                                        spec => tail,
+                                        type =>
+                                            {type, #{
+                                                element_type =>
+                                                    {type, #{line => 2, spec => int}},
+                                                kind => list,
+                                                line => 2,
+                                                spec => 'list[int]'
+                                            }}
+                                    }},
+                                type =>
+                                    {type, #{
+                                        element_type =>
+                                            {type, #{line => 2, spec => int}},
+                                        kind => list,
+                                        line => 2,
+                                        spec => 'list[int]'
+                                    }}
+                            }},
+                        line => 2,
+                        right =>
+                            {identifier, #{
+                                line => 2,
+                                spec => items,
+                                type =>
+                                    {type, #{
+                                        element_type =>
+                                            {type, #{line => 1, spec => int}},
+                                        kind => list,
+                                        line => 1,
+                                        spec => 'list[int]'
+                                    }}
+                            }},
+                        type =>
+                            {type, #{
+                                element_type => {type, #{line => 1, spec => int}},
+                                kind => list,
+                                line => 1,
+                                spec => 'list[int]'
+                            }}
+                    }},
+                    {identifier, #{
+                        line => 3,
+                        spec => tail,
+                        type =>
+                            {type, #{
+                                element_type => {type, #{line => 2, spec => int}},
+                                kind => list,
+                                line => 2,
+                                spec => 'list[int]'
+                            }}
+                    }}
+                ],
+            line => 1,
+            params =>
+                [
+                    {param, #{
+                        line => 1,
+                        spec => items,
+                        type =>
+                            {type, #{
+                                element_type => {type, #{line => 1, spec => int}},
+                                kind => list,
+                                line => 1,
+                                spec => 'list[int]'
+                            }}
+                    }}
+                ],
+            return_type =>
+                {type, #{
+                    element_type => {type, #{line => 1, spec => int}},
+                    kind => list,
+                    line => 1,
+                    spec => 'list[int]'
+                }},
+            spec => 'Rest',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 1,
+                    param_types =>
+                        [
+                            {type, #{
+                                element_type => {type, #{line => 1, spec => int}},
+                                kind => list,
+                                line => 1,
+                                spec => 'list[int]'
+                            }}
+                        ],
+                    return_type =>
+                        {type, #{
+                            element_type => {type, #{line => 1, spec => int}},
+                            kind => list,
+                            line => 1,
+                            spec => 'list[int]'
+                        }},
+                    spec => 'func(list[int]) list[int]'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
 typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_test() ->
     RufusText =
         "\n"
@@ -1360,6 +1514,143 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_test() ->
                             spec => 'list[int]'
                         }},
                     spec => 'func(list[int]) list[int]'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_with_the_anonymous_variable_test() ->
+    RufusText =
+        "func First(items list[int]) int {\n"
+        "    list[int]{head|_} = items\n"
+        "    head\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {func, #{
+            exprs =>
+                [
+                    {match_op, #{
+                        left =>
+                            {cons, #{
+                                head =>
+                                    {identifier, #{
+                                        line => 2,
+                                        locals =>
+                                            #{
+                                                items =>
+                                                    [
+                                                        {type, #{
+                                                            element_type =>
+                                                                {type, #{line => 1, spec => int}},
+                                                            kind => list,
+                                                            line => 1,
+                                                            spec => 'list[int]'
+                                                        }}
+                                                    ]
+                                            },
+                                        spec => head,
+                                        type => {type, #{line => 2, spec => int}}
+                                    }},
+                                line => 2,
+                                tail =>
+                                    {identifier, #{
+                                        line => 2,
+                                        locals =>
+                                            #{
+                                                head => [{type, #{line => 2, spec => int}}],
+                                                items =>
+                                                    [
+                                                        {type, #{
+                                                            element_type =>
+                                                                {type, #{line => 1, spec => int}},
+                                                            kind => list,
+                                                            line => 1,
+                                                            spec => 'list[int]'
+                                                        }}
+                                                    ]
+                                            },
+                                        spec => '_',
+                                        type =>
+                                            {type, #{
+                                                element_type =>
+                                                    {type, #{line => 2, spec => int}},
+                                                kind => list,
+                                                line => 2,
+                                                spec => 'list[int]'
+                                            }}
+                                    }},
+                                type =>
+                                    {type, #{
+                                        element_type =>
+                                            {type, #{line => 2, spec => int}},
+                                        kind => list,
+                                        line => 2,
+                                        spec => 'list[int]'
+                                    }}
+                            }},
+                        line => 2,
+                        right =>
+                            {identifier, #{
+                                line => 2,
+                                spec => items,
+                                type =>
+                                    {type, #{
+                                        element_type =>
+                                            {type, #{line => 1, spec => int}},
+                                        kind => list,
+                                        line => 1,
+                                        spec => 'list[int]'
+                                    }}
+                            }},
+                        type =>
+                            {type, #{
+                                element_type => {type, #{line => 1, spec => int}},
+                                kind => list,
+                                line => 1,
+                                spec => 'list[int]'
+                            }}
+                    }},
+                    {identifier, #{
+                        line => 3,
+                        spec => head,
+                        type => {type, #{line => 2, spec => int}}
+                    }}
+                ],
+            line => 1,
+            params =>
+                [
+                    {param, #{
+                        line => 1,
+                        spec => items,
+                        type =>
+                            {type, #{
+                                element_type => {type, #{line => 1, spec => int}},
+                                kind => list,
+                                line => 1,
+                                spec => 'list[int]'
+                            }}
+                    }}
+                ],
+            return_type => {type, #{line => 1, spec => int}},
+            spec => 'First',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 1,
+                    param_types =>
+                        [
+                            {type, #{
+                                element_type => {type, #{line => 1, spec => int}},
+                                kind => list,
+                                line => 1,
+                                spec => 'list[int]'
+                            }}
+                        ],
+                    return_type => {type, #{line => 1, spec => int}},
+                    spec => 'func(list[int]) int'
                 }}
         }}
     ],
