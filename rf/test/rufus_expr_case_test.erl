@@ -507,6 +507,102 @@ typecheck_and_annotate_function_with_case_block_with_single_identifier_and_type_
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
+typecheck_and_annotate_function_with_case_block_with_single_identifier_and_incorrect_type_clause_test() ->
+    RufusText =
+        "func Echo(value atom) atom {\n"
+        "    case value {\n"
+        "    match v int ->\n"
+        "        v\n"
+        "    }\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{
+        actual => int,
+        expected => atom,
+        match_expr =>
+            {param, #{
+                line => 3,
+                spec => v,
+                type => {type, #{line => 3, spec => int}}
+            }},
+        stack =>
+            [
+                {'case', #{
+                    clauses =>
+                        [
+                            {case_clause, #{
+                                exprs => [{identifier, #{line => 4, spec => v}}],
+                                line => 3,
+                                match_expr =>
+                                    {param, #{
+                                        line => 3,
+                                        spec => v,
+                                        type => {type, #{line => 3, spec => int}}
+                                    }}
+                            }}
+                        ],
+                    line => 2,
+                    match_expr =>
+                        {identifier, #{
+                            line => 2,
+                            spec => value,
+                            type => {type, #{line => 1, spec => atom}}
+                        }}
+                }},
+                {func_exprs, #{line => 1}},
+                {func, #{
+                    exprs =>
+                        [
+                            {'case', #{
+                                clauses =>
+                                    [
+                                        {case_clause, #{
+                                            exprs =>
+                                                [{identifier, #{line => 4, spec => v}}],
+                                            line => 3,
+                                            match_expr =>
+                                                {param, #{
+                                                    line => 3,
+                                                    spec => v,
+                                                    type =>
+                                                        {type, #{line => 3, spec => int}}
+                                                }}
+                                        }}
+                                    ],
+                                line => 2,
+                                match_expr =>
+                                    {identifier, #{line => 2, spec => value}}
+                            }}
+                        ],
+                    line => 1,
+                    locals =>
+                        #{value => [{type, #{line => 1, spec => atom}}]},
+                    params =>
+                        [
+                            {param, #{
+                                line => 1,
+                                spec => value,
+                                type => {type, #{line => 1, spec => atom}}
+                            }}
+                        ],
+                    return_type => {type, #{line => 1, spec => atom}},
+                    spec => 'Echo',
+                    type =>
+                        {type, #{
+                            kind => func,
+                            line => 1,
+                            param_types => [{type, #{line => 1, spec => atom}}],
+                            return_type => {type, #{line => 1, spec => atom}},
+                            spec => 'func(atom) atom'
+                        }}
+                }}
+            ]
+    },
+    ?assertEqual(
+        {error, unmatched_case_clause_type, Data}, rufus_expr:typecheck_and_annotate(Forms)
+    ).
+
 typecheck_and_annotate_function_with_case_block_with_multiple_clauses_test() ->
     RufusText =
         "func Convert(value bool) atom {\n"

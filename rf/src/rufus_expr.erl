@@ -282,6 +282,8 @@ typecheck_and_annotate_case_clause(
                 )
         end,
 
+    ok = typecheck_case_clause_match_expr(Stack, AnnotatedMatchExpr),
+
     {ok, _, AnnotatedExprs} = typecheck_and_annotate([], Stack, Globals, NewLocals, Exprs),
     AnnotatedForm1 =
         {case_clause, Context#{
@@ -321,6 +323,25 @@ typecheck_and_annotate_case_clause(
             {ok, AnnotatedForm2};
         Error ->
             throw(Error)
+    end.
+
+%% typecheck_case_clause_match_expr ensures that the match expression is
+%% compatible with the case value type.
+-spec typecheck_case_clause_match_expr(rufus_stack(), rufus_form()) -> ok | no_return().
+typecheck_case_clause_match_expr(
+    Stack = [{'case', #{match_expr := CaseMatchExpr}} | _T], MatchExpr
+) ->
+    case {rufus_form:type_spec(CaseMatchExpr), rufus_form:type_spec(MatchExpr)} of
+        {T, T} ->
+            ok;
+        {Expected, Actual} ->
+            Data = #{
+                stack => Stack,
+                match_expr => MatchExpr,
+                actual => Actual,
+                expected => Expected
+            },
+            throw({error, unmatched_case_clause_type, Data})
     end.
 
 %% typecheck_case_clause_return_types ensures that the try block and all case
