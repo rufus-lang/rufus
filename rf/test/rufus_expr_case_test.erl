@@ -490,13 +490,13 @@ typecheck_and_annotate_function_with_case_block_with_mismatched_clause_return_ty
     },
     ?assertEqual({error, mismatched_case_clause_return_type, Data}, Result).
 
-typecheck_and_annotate_function_with_case_block_with_default_clause_test() ->
+typecheck_and_annotate_function_with_case_block_with_catch_all_clause_test() ->
     RufusText =
         "func Convert(value atom) string {\n"
         "    case value {\n"
         "    match :true ->\n"
         "        \"true\"\n"
-        "    default ->\n"
+        "    match _ ->\n"
         "        \"false\"\n"
         "    }\n"
         "}\n",

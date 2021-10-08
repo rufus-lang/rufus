@@ -65,7 +65,7 @@ string_with_case_block_with_default_clause_test() ->
         "case n {\n"
         "match 42 ->\n"
         "    :pass\n"
-        "default ->\n"
+        "match _ ->\n"
         "    :fail\n"
         "}\n"
     ),
@@ -81,7 +81,8 @@ string_with_case_block_with_default_clause_test() ->
             {eol, 2},
             {atom_lit, 3, pass},
             {eol, 3},
-            {default, 4},
+            {match, 4},
+            {identifier, 4, "_"},
             {'->', 4},
             {eol, 4},
             {atom_lit, 5, fail},
