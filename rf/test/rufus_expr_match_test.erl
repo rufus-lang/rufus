@@ -50,6 +50,204 @@ typecheck_and_annotate_function_with_a_match_that_binds_the_anonymous_variable_t
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
+typecheck_and_annotate_function_with_multiple_matches_that_bind_the_anonymous_variable_test() ->
+    RufusText =
+        "func Ignore() atom {\n"
+        "    _ = 42\n"
+        "    _ = :ok\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {func, #{
+            exprs =>
+                [
+                    {match_op, #{
+                        left =>
+                            {identifier, #{
+                                line => 2,
+                                locals => #{},
+                                spec => '_',
+                                type => {type, #{line => 2, spec => int}}
+                            }},
+                        line => 2,
+                        right =>
+                            {int_lit, #{
+                                line => 2,
+                                spec => 42,
+                                type => {type, #{line => 2, spec => int}}
+                            }},
+                        type => {type, #{line => 2, spec => int}}
+                    }},
+                    {match_op, #{
+                        left =>
+                            {identifier, #{
+                                line => 3,
+                                locals => #{},
+                                spec => '_',
+                                type => {type, #{line => 3, spec => atom}}
+                            }},
+                        line => 3,
+                        right =>
+                            {atom_lit, #{
+                                line => 3,
+                                spec => ok,
+                                type => {type, #{line => 3, spec => atom}}
+                            }},
+                        type => {type, #{line => 3, spec => atom}}
+                    }}
+                ],
+            line => 1,
+            params => [],
+            return_type => {type, #{line => 1, spec => atom}},
+            spec => 'Ignore',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 1,
+                    param_types => [],
+                    return_type => {type, #{line => 1, spec => atom}},
+                    spec => 'func() atom'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_function_with_a_match_that_binds_a_list_literal_with_the_anonymous_variable_test() ->
+    RufusText =
+        "func PartiallyBind() list[int] {\n"
+        "    list[int]{a, b, _, d} = list[int]{1, 2, 3, 4}\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {func, #{
+            exprs =>
+                [
+                    {match_op, #{
+                        left =>
+                            {list_lit, #{
+                                elements =>
+                                    [
+                                        {identifier, #{
+                                            line => 2,
+                                            locals => #{},
+                                            spec => a,
+                                            type => {type, #{line => 2, spec => int}}
+                                        }},
+                                        {identifier, #{
+                                            line => 2,
+                                            locals =>
+                                                #{a => [{type, #{line => 2, spec => int}}]},
+                                            spec => b,
+                                            type => {type, #{line => 2, spec => int}}
+                                        }},
+                                        {identifier, #{
+                                            line => 2,
+                                            locals =>
+                                                #{
+                                                    a => [{type, #{line => 2, spec => int}}],
+                                                    b => [{type, #{line => 2, spec => int}}]
+                                                },
+                                            spec => '_',
+                                            type => {type, #{line => 2, spec => int}}
+                                        }},
+                                        {identifier, #{
+                                            line => 2,
+                                            locals =>
+                                                #{
+                                                    a => [{type, #{line => 2, spec => int}}],
+                                                    b => [{type, #{line => 2, spec => int}}]
+                                                },
+                                            spec => d,
+                                            type => {type, #{line => 2, spec => int}}
+                                        }}
+                                    ],
+                                line => 2,
+                                type =>
+                                    {type, #{
+                                        element_type =>
+                                            {type, #{line => 2, spec => int}},
+                                        kind => list,
+                                        line => 2,
+                                        spec => 'list[int]'
+                                    }}
+                            }},
+                        line => 2,
+                        right =>
+                            {list_lit, #{
+                                elements =>
+                                    [
+                                        {int_lit, #{
+                                            line => 2,
+                                            spec => 1,
+                                            type => {type, #{line => 2, spec => int}}
+                                        }},
+                                        {int_lit, #{
+                                            line => 2,
+                                            spec => 2,
+                                            type => {type, #{line => 2, spec => int}}
+                                        }},
+                                        {int_lit, #{
+                                            line => 2,
+                                            spec => 3,
+                                            type => {type, #{line => 2, spec => int}}
+                                        }},
+                                        {int_lit, #{
+                                            line => 2,
+                                            spec => 4,
+                                            type => {type, #{line => 2, spec => int}}
+                                        }}
+                                    ],
+                                line => 2,
+                                type =>
+                                    {type, #{
+                                        element_type =>
+                                            {type, #{line => 2, spec => int}},
+                                        kind => list,
+                                        line => 2,
+                                        spec => 'list[int]'
+                                    }}
+                            }},
+                        type =>
+                            {type, #{
+                                element_type => {type, #{line => 2, spec => int}},
+                                kind => list,
+                                line => 2,
+                                spec => 'list[int]'
+                            }}
+                    }}
+                ],
+            line => 1,
+            params => [],
+            return_type =>
+                {type, #{
+                    element_type => {type, #{line => 1, spec => int}},
+                    kind => list,
+                    line => 1,
+                    spec => 'list[int]'
+                }},
+            spec => 'PartiallyBind',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 1,
+                    param_types => [],
+                    return_type =>
+                        {type, #{
+                            element_type => {type, #{line => 1, spec => int}},
+                            kind => list,
+                            line => 1,
+                            spec => 'list[int]'
+                        }},
+                    spec => 'func() list[int]'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
 %% match expressions that bind variables
 
 typecheck_and_annotate_function_with_a_match_that_binds_an_atom_literal_test() ->

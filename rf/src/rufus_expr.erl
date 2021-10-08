@@ -970,7 +970,9 @@ annotate_locals(Locals, {FormType, Context}) ->
 
 %% push_local adds a form to the local scope. Anonymous variables are ignored.
 -spec push_local(locals(), rufus_form()) -> {ok, locals()}.
-push_local(Locals, {_FormType, #{spec := '_'}}) ->
+push_local(Locals, {identifier, #{spec := '_'}}) ->
+    {ok, Locals};
+push_local(Locals, {param, #{spec := '_'}}) ->
     {ok, Locals};
 push_local(Locals, {_FormType, #{spec := Spec, type := Type}}) ->
     {ok, Locals#{Spec => [Type]}}.

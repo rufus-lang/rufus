@@ -373,6 +373,57 @@ typecheck_and_annotate_for_function_taking_an_anonymous_argument_and_returning_a
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
+typecheck_and_annotate_for_function_taking_more_than_one_anonymous_argument_and_returning_an_atom_literal_test() ->
+    RufusText =
+        "func Ignore(_ atom, _ atom) atom {\n"
+        "    :ok\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {func, #{
+            exprs =>
+                [
+                    {atom_lit, #{
+                        line => 2,
+                        spec => ok,
+                        type => {type, #{line => 2, spec => atom}}
+                    }}
+                ],
+            line => 1,
+            params =>
+                [
+                    {param, #{
+                        line => 1,
+                        spec => '_',
+                        type => {type, #{line => 1, spec => atom}}
+                    }},
+                    {param, #{
+                        line => 1,
+                        spec => '_',
+                        type => {type, #{line => 1, spec => atom}}
+                    }}
+                ],
+            return_type => {type, #{line => 1, spec => atom}},
+            spec => 'Ignore',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 1,
+                    param_types =>
+                        [
+                            {type, #{line => 1, spec => atom}},
+                            {type, #{line => 1, spec => atom}}
+                        ],
+                    return_type =>
+                        {type, #{line => 1, spec => atom}},
+                    spec => 'func(atom, atom) atom'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
 typecheck_and_annotate_for_function_taking_an_anonymous_argument_and_using_it_test() ->
     RufusText =
         "func Broken(_ atom) atom {\n"
