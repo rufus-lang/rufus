@@ -968,7 +968,7 @@ typecheck_and_annotate_catch_clause(
 annotate_locals(Locals, {FormType, Context}) ->
     {ok, {FormType, Context#{locals => Locals}}}.
 
-%% push_local adds a form to the local scope.
+%% push_local adds a form to the local scope. Anonymous variables are ignored.
 -spec push_local(locals(), rufus_form()) -> {ok, locals()}.
 push_local(Locals, {_FormType, #{spec := '_'}}) ->
     {ok, Locals};
