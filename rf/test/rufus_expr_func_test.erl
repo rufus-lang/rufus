@@ -328,6 +328,51 @@ typecheck_and_annotate_does_not_rely_on_function_definition_order_test() ->
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
+%% Arity-1 functions taking an anonymous argument and returning a literal
+
+typecheck_and_annotate_for_function_taking_an_anonymous_argument_and_returning_an_atom_literal_test() ->
+    RufusText =
+        "func Ignore(_ atom) atom {\n"
+        "    :ok\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {func, #{
+            exprs =>
+                [
+                    {atom_lit, #{
+                        line => 2,
+                        spec => ok,
+                        type => {type, #{line => 2, spec => atom}}
+                    }}
+                ],
+            line => 1,
+            params =>
+                [
+                    {param, #{
+                        line => 1,
+                        spec => '_',
+                        type => {type, #{line => 1, spec => atom}}
+                    }}
+                ],
+            return_type => {type, #{line => 1, spec => atom}},
+            spec => 'Ignore',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 1,
+                    param_types =>
+                        [{type, #{line => 1, spec => atom}}],
+                    return_type =>
+                        {type, #{line => 1, spec => atom}},
+                    spec => 'func(atom) atom'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
 %% Arity-1 functions taking an argument and returning a literal
 
 typecheck_and_annotate_for_function_taking_an_atom_and_returning_an_atom_literal_test() ->

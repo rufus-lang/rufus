@@ -2,6 +2,54 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
+%% match expressions that bind the anonymous variable
+
+typecheck_and_annotate_function_with_a_match_that_binds_the_anonymous_variable_test() ->
+    RufusText =
+        "func Ignore() atom {\n"
+        "    _ = :ok\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {func, #{
+            exprs =>
+                [
+                    {match_op, #{
+                        left =>
+                            {identifier, #{
+                                line => 2,
+                                locals => #{},
+                                spec => '_',
+                                type => {type, #{line => 2, spec => atom}}
+                            }},
+                        line => 2,
+                        right =>
+                            {atom_lit, #{
+                                line => 2,
+                                spec => ok,
+                                type => {type, #{line => 2, spec => atom}}
+                            }},
+                        type => {type, #{line => 2, spec => atom}}
+                    }}
+                ],
+            line => 1,
+            params => [],
+            return_type => {type, #{line => 1, spec => atom}},
+            spec => 'Ignore',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 1,
+                    param_types => [],
+                    return_type => {type, #{line => 1, spec => atom}},
+                    spec => 'func() atom'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
 %% match expressions that bind variables
 
 typecheck_and_annotate_function_with_a_match_that_binds_an_atom_literal_test() ->
