@@ -214,9 +214,8 @@ typecheck_and_annotate_case(
     Stack,
     Globals,
     Locals,
-    Form = {'case', Context = #{match_expr := MatchExpr, clauses := Clauses}}
+    {'case', Context = #{match_expr := MatchExpr, clauses := Clauses}}
 ) ->
-    CaseClauseStack = [Form | Stack],
     {ok, NewLocals, [AnnotatedMatchExpr]} =
         case MatchExpr of
             undefined ->
@@ -224,29 +223,34 @@ typecheck_and_annotate_case(
             _ ->
                 typecheck_and_annotate(
                     [],
-                    CaseClauseStack,
+                    Stack,
                     Globals,
                     Locals,
                     [MatchExpr]
                 )
         end,
 
-    {ok, _, AnnotatedClauses} = typecheck_and_annotate([], Stack, Globals, NewLocals, Clauses),
+    AnnotatedForm1 = {'case', Context#{match_expr => AnnotatedMatchExpr}},
+    CaseStack = [AnnotatedForm1 | Stack],
+    {ok, _, AnnotatedClauses} = typecheck_and_annotate(
+        [], CaseStack, Globals, NewLocals, Clauses
+    ),
     ok = typecheck_case_clause_return_types(AnnotatedClauses),
-    AnnotatedForm1 =
+
+    AnnotatedForm2 =
         {'case', Context#{
             match_expr => AnnotatedMatchExpr,
             clauses => AnnotatedClauses
         }},
-    case rufus_type:resolve(Stack, Globals, AnnotatedForm1) of
+    case rufus_type:resolve(Stack, Globals, AnnotatedForm2) of
         {ok, TypeForm} ->
-            AnnotatedForm2 =
+            AnnotatedForm3 =
                 {'case', Context#{
                     match_expr => AnnotatedMatchExpr,
                     clauses => AnnotatedClauses,
                     type => TypeForm
                 }},
-            {ok, AnnotatedForm2};
+            {ok, AnnotatedForm3};
         Error ->
             throw(Error)
     end.
