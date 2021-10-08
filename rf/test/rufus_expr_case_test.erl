@@ -461,22 +461,17 @@ typecheck_and_annotate_function_with_case_block_with_single_identifier_and_type_
                                                 line => 4,
                                                 spec => v,
                                                 type =>
-                                                    {type, #{line => 1, spec => atom}}
+                                                    {type, #{line => 3, spec => atom}}
                                             }}
                                         ],
                                     line => 3,
                                     match_expr =>
-                                        {identifier, #{
+                                        {param, #{
                                             line => 3,
-                                            locals =>
-                                                #{
-                                                    value =>
-                                                        [{type, #{line => 1, spec => atom}}]
-                                                },
                                             spec => v,
-                                            type => {type, #{line => 1, spec => atom}}
+                                            type => {type, #{line => 3, spec => atom}}
                                         }},
-                                    type => {type, #{line => 1, spec => atom}}
+                                    type => {type, #{line => 3, spec => atom}}
                                 }}
                             ],
                         line => 2,
@@ -486,7 +481,7 @@ typecheck_and_annotate_function_with_case_block_with_single_identifier_and_type_
                                 spec => value,
                                 type => {type, #{line => 1, spec => atom}}
                             }},
-                        type => {type, #{line => 1, spec => atom}}
+                        type => {type, #{line => 3, spec => atom}}
                     }}
                 ],
             line => 1,
