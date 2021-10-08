@@ -456,44 +456,40 @@ typecheck_and_annotate_function_call_with_binary_op_argument_test() ->
 
 typecheck_and_annotate_function_call_with_match_argument_test() ->
     RufusText =
-        "\n"
-        "    module example\n"
-        "    func Echo(n int) int { n }\n"
-        "    func Random() int { 42 = Echo(42) }\n"
-        "    ",
+        "func Echo(n int) int { n }\n"
+        "func Random() int { 42 = Echo(42) }\n",
     {ok, Tokens} = rufus_tokenize:string(RufusText),
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{line => 2, spec => example}},
         {func, #{
             exprs => [
                 {identifier, #{
-                    line => 3,
+                    line => 1,
                     spec => n,
                     type =>
-                        {type, #{line => 3, spec => int}}
+                        {type, #{line => 1, spec => int}}
                 }}
             ],
-            line => 3,
+            line => 1,
             params => [
                 {param, #{
-                    line => 3,
+                    line => 1,
                     spec => n,
                     type =>
-                        {type, #{line => 3, spec => int}}
+                        {type, #{line => 1, spec => int}}
                 }}
             ],
             return_type =>
-                {type, #{line => 3, spec => int}},
+                {type, #{line => 1, spec => int}},
             spec => 'Echo',
             type =>
                 {type, #{
                     kind => func,
-                    line => 3,
-                    param_types => [{type, #{line => 3, spec => int}}],
+                    line => 1,
+                    param_types => [{type, #{line => 1, spec => int}}],
                     return_type =>
-                        {type, #{line => 3, spec => int}},
+                        {type, #{line => 1, spec => int}},
                     spec => 'func(int) int'
                 }}
         }},
@@ -502,49 +498,49 @@ typecheck_and_annotate_function_call_with_match_argument_test() ->
                 {match_op, #{
                     left =>
                         {int_lit, #{
-                            line => 4,
+                            line => 2,
                             spec => 42,
                             type =>
-                                {type, #{line => 4, spec => int}}
+                                {type, #{line => 2, spec => int}}
                         }},
-                    line => 4,
+                    line => 2,
                     right =>
                         {call, #{
                             args => [
                                 {int_lit, #{
-                                    line => 4,
+                                    line => 2,
                                     spec => 42,
                                     type =>
                                         {type, #{
-                                            line => 4,
+                                            line => 2,
                                             spec => int
                                         }}
                                 }}
                             ],
-                            line => 4,
+                            line => 2,
                             spec => 'Echo',
                             type =>
                                 {type, #{
-                                    line => 3,
+                                    line => 1,
                                     spec => int
                                 }}
                         }},
                     type =>
-                        {type, #{line => 3, spec => int}}
+                        {type, #{line => 1, spec => int}}
                 }}
             ],
-            line => 4,
+            line => 2,
             params => [],
             return_type =>
-                {type, #{line => 4, spec => int}},
+                {type, #{line => 2, spec => int}},
             spec => 'Random',
             type =>
                 {type, #{
                     kind => func,
-                    line => 4,
+                    line => 2,
                     param_types => [],
                     return_type =>
-                        {type, #{line => 4, spec => int}},
+                        {type, #{line => 2, spec => int}},
                     spec => 'func() int'
                 }}
         }}
