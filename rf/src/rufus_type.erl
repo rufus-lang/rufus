@@ -406,6 +406,16 @@ lookup_identifier_type(Stack) ->
     end.
 
 -spec lookup_identifier_type(rufus_stack(), rufus_stack()) -> {ok, type_form()} | no_return().
+lookup_identifier_type(
+    [{case_clause, _Context1} | [{'case', #{match_expr := CaseMatchExpr}} | _T]], Stack
+) ->
+    case allow_variable_binding(Stack) of
+        true ->
+            {ok, rufus_form:type(CaseMatchExpr)};
+        false ->
+            Data = #{stack => Stack},
+            throw({error, unknown_identifier, Data})
+    end;
 lookup_identifier_type([{cons_head, _Context1} | [{cons, #{type := Type}} | _T]], Stack) ->
     case allow_variable_binding(Stack) of
         true ->
@@ -454,11 +464,14 @@ lookup_identifier_type([], Stack) ->
 
 %% allow_variable_binding returns true if the identifier is part of an
 %% expression in a function parameter list, is part of the left operand of a
-%% match expression, or is part of a catch clause expression.
+%% match expression, is part of a catch clause expression, or is part of a case
+%% clause expression.
 -spec allow_variable_binding(rufus_stack()) -> boolean().
 allow_variable_binding(Stack) ->
     lists:any(
         fun
+            ({case_clause, _Context}) ->
+                true;
             ({catch_clause, _Context}) ->
                 true;
             ({func_params, _Context}) ->
