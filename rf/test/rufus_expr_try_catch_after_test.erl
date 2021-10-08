@@ -815,6 +815,97 @@ typecheck_and_annotate_function_with_try_and_multiple_catch_blocks_returning_an_
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
+typecheck_and_annotate_function_with_try_and_catch_blocks_with_anonymous_variable_test() ->
+    RufusText =
+        "func Maybe() atom {\n"
+        "    try {\n"
+        "        :ok\n"
+        "    } catch {\n"
+        "    match :error ->\n"
+        "        :error\n"
+        "    match _ ->\n"
+        "        :failure\n"
+        "    }\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    Expected = [
+        {func, #{
+            exprs =>
+                [
+                    {try_catch_after, #{
+                        after_exprs => [],
+                        catch_clauses =>
+                            [
+                                {catch_clause, #{
+                                    exprs =>
+                                        [
+                                            {atom_lit, #{
+                                                line => 6,
+                                                spec => error,
+                                                type =>
+                                                    {type, #{line => 6, spec => atom}}
+                                            }}
+                                        ],
+                                    line => 5,
+                                    match_expr =>
+                                        {atom_lit, #{
+                                            line => 5,
+                                            spec => error,
+                                            type => {type, #{line => 5, spec => atom}}
+                                        }},
+                                    type => {type, #{line => 6, spec => atom}}
+                                }},
+                                {catch_clause, #{
+                                    exprs =>
+                                        [
+                                            {atom_lit, #{
+                                                line => 8,
+                                                spec => failure,
+                                                type =>
+                                                    {type, #{line => 8, spec => atom}}
+                                            }}
+                                        ],
+                                    line => 7,
+                                    match_expr =>
+                                        {identifier, #{
+                                            line => 7,
+                                            locals => #{},
+                                            spec => '_',
+                                            type => {type, #{line => 3, spec => atom}}
+                                        }},
+                                    type => {type, #{line => 8, spec => atom}}
+                                }}
+                            ],
+                        line => 2,
+                        try_exprs =>
+                            [
+                                {atom_lit, #{
+                                    line => 3,
+                                    spec => ok,
+                                    type => {type, #{line => 3, spec => atom}}
+                                }}
+                            ],
+                        type => {type, #{line => 3, spec => atom}}
+                    }}
+                ],
+            line => 1,
+            params => [],
+            return_type => {type, #{line => 1, spec => atom}},
+            spec => 'Maybe',
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 1,
+                    param_types => [],
+                    return_type => {type, #{line => 1, spec => atom}},
+                    spec => 'func() atom'
+                }}
+        }}
+    ],
+    ?assertEqual(Expected, AnnotatedForms).
+
 typecheck_and_annotate_function_with_try_block_in_match_op_test() ->
     RufusText =
         "module example\n"
@@ -1441,25 +1532,26 @@ typecheck_and_annotate_function_with_try_variable_accessed_in_catch_block_test()
     {ok, Forms} = rufus_parse:parse(Tokens),
     Data = #{
         form => {identifier, #{line => 6, locals => #{}, spec => ok}},
-        globals => #{
-            'Maybe' => [
-                {type, #{
-                    kind => func,
-                    line => 2,
-                    param_types => [],
-                    return_type => {type, #{line => 2, spec => atom}},
-                    spec => 'func() atom'
-                }}
-            ]
-        },
+        globals =>
+            #{
+                'Maybe' =>
+                    [
+                        {type, #{
+                            kind => func,
+                            line => 2,
+                            param_types => [],
+                            return_type => {type, #{line => 2, spec => atom}},
+                            spec => 'func() atom'
+                        }}
+                    ]
+            },
         locals => #{},
-        stack => [
-            {func_exprs, #{line => 2}},
-            {func, #{
-                exprs => [
-                    {try_catch_after, #{
-                        after_exprs => [],
-                        catch_clauses => [
+        stack =>
+            [
+                {try_catch_after, #{
+                    after_exprs => [],
+                    catch_clauses =>
+                        [
                             {catch_clause, #{
                                 exprs => [{identifier, #{line => 6, spec => ok}}],
                                 line => 5,
@@ -1472,38 +1564,82 @@ typecheck_and_annotate_function_with_try_variable_accessed_in_catch_block_test()
                                     }}
                             }}
                         ],
-                        line => 3,
-                        try_exprs => [
+                    line => 3,
+                    try_exprs =>
+                        [
                             {match_op, #{
                                 left =>
-                                    {identifier, #{line => 4, spec => ok}},
+                                    {identifier, #{
+                                        line => 4,
+                                        locals => #{},
+                                        spec => ok,
+                                        type => {type, #{line => 4, spec => atom}}
+                                    }},
                                 line => 4,
                                 right =>
                                     {atom_lit, #{
                                         line => 4,
                                         spec => ok,
-                                        type =>
-                                            {type, #{line => 4, spec => atom}}
-                                    }}
+                                        type => {type, #{line => 4, spec => atom}}
+                                    }},
+                                type => {type, #{line => 4, spec => atom}}
                             }}
                         ]
-                    }}
-                ],
-                line => 2,
-                locals => #{},
-                params => [],
-                return_type => {type, #{line => 2, spec => atom}},
-                spec => 'Maybe',
-                type =>
-                    {type, #{
-                        kind => func,
-                        line => 2,
-                        param_types => [],
-                        return_type => {type, #{line => 2, spec => atom}},
-                        spec => 'func() atom'
-                    }}
-            }}
-        ]
+                }},
+                {func_exprs, #{line => 2}},
+                {func, #{
+                    exprs =>
+                        [
+                            {try_catch_after, #{
+                                after_exprs => [],
+                                catch_clauses =>
+                                    [
+                                        {catch_clause, #{
+                                            exprs =>
+                                                [{identifier, #{line => 6, spec => ok}}],
+                                            line => 5,
+                                            match_expr =>
+                                                {atom_lit, #{
+                                                    line => 5,
+                                                    spec => error,
+                                                    type =>
+                                                        {type, #{line => 5, spec => atom}}
+                                                }}
+                                        }}
+                                    ],
+                                line => 3,
+                                try_exprs =>
+                                    [
+                                        {match_op, #{
+                                            left =>
+                                                {identifier, #{line => 4, spec => ok}},
+                                            line => 4,
+                                            right =>
+                                                {atom_lit, #{
+                                                    line => 4,
+                                                    spec => ok,
+                                                    type =>
+                                                        {type, #{line => 4, spec => atom}}
+                                                }}
+                                        }}
+                                    ]
+                            }}
+                        ],
+                    line => 2,
+                    locals => #{},
+                    params => [],
+                    return_type => {type, #{line => 2, spec => atom}},
+                    spec => 'Maybe',
+                    type =>
+                        {type, #{
+                            kind => func,
+                            line => 2,
+                            param_types => [],
+                            return_type => {type, #{line => 2, spec => atom}},
+                            spec => 'func() atom'
+                        }}
+                }}
+            ]
     },
     ?assertEqual(
         {error, unknown_identifier, Data},

@@ -373,6 +373,64 @@ typecheck_and_annotate_for_function_taking_an_anonymous_argument_and_returning_a
     ],
     ?assertEqual(Expected, AnnotatedForms).
 
+typecheck_and_annotate_for_function_taking_an_anonymous_argument_and_using_it_test() ->
+    RufusText =
+        "func Broken(_ atom) atom {\n"
+        "    _\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{
+        form =>
+            {identifier, #{line => 2, locals => #{}, spec => '_'}},
+        globals =>
+            #{
+                'Broken' =>
+                    [
+                        {type, #{
+                            kind => func,
+                            line => 1,
+                            param_types =>
+                                [{type, #{line => 1, spec => atom}}],
+                            return_type =>
+                                {type, #{line => 1, spec => atom}},
+                            spec => 'func(atom) atom'
+                        }}
+                    ]
+            },
+        locals => #{},
+        stack =>
+            [
+                {func_exprs, #{line => 1}},
+                {func, #{
+                    exprs => [{identifier, #{line => 2, spec => '_'}}],
+                    line => 1,
+                    locals => #{},
+                    params =>
+                        [
+                            {param, #{
+                                line => 1,
+                                spec => '_',
+                                type => {type, #{line => 1, spec => atom}}
+                            }}
+                        ],
+                    return_type => {type, #{line => 1, spec => atom}},
+                    spec => 'Broken',
+                    type =>
+                        {type, #{
+                            kind => func,
+                            line => 1,
+                            param_types =>
+                                [{type, #{line => 1, spec => atom}}],
+                            return_type =>
+                                {type, #{line => 1, spec => atom}},
+                            spec => 'func(atom) atom'
+                        }}
+                }}
+            ]
+    },
+    ?assertEqual({error, unknown_identifier, Data}, rufus_expr:typecheck_and_annotate(Forms)).
+
 %% Arity-1 functions taking an argument and returning a literal
 
 typecheck_and_annotate_for_function_taking_an_atom_and_returning_an_atom_literal_test() ->
