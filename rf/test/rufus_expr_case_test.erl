@@ -783,6 +783,17 @@ typecheck_and_annotate_function_with_case_block_with_catch_all_clause_test() ->
                                             }}
                                         ],
                                     line => 5,
+                                    match_expr =>
+                                        {identifier, #{
+                                            line => 5,
+                                            locals =>
+                                                #{
+                                                    value =>
+                                                        [{type, #{line => 1, spec => atom}}]
+                                                },
+                                            spec => '_',
+                                            type => {type, #{line => 1, spec => atom}}
+                                        }},
                                     type => {type, #{line => 6, spec => string}}
                                 }}
                             ],

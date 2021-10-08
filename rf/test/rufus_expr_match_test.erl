@@ -2379,7 +2379,7 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_case_expression_test()
         "    func Authenticate(password string) atom {\n"
         "        response = case password {\n"
         "        match \"hunter2\" -> :allow\n"
-        "        default -> :deny\n"
+        "        match _ -> :deny\n"
         "        }\n"
         "        response\n"
         "    }\n"
@@ -2440,6 +2440,22 @@ typecheck_and_annotate_function_with_a_match_that_binds_a_case_expression_test()
                                                     }}
                                                 ],
                                             line => 6,
+                                            match_expr =>
+                                                {identifier, #{
+                                                    line => 6,
+                                                    locals =>
+                                                        #{
+                                                            password =>
+                                                                [
+                                                                    {type, #{
+                                                                        line => 3, spec => string
+                                                                    }}
+                                                                ]
+                                                        },
+                                                    spec => '_',
+                                                    type =>
+                                                        {type, #{line => 3, spec => string}}
+                                                }},
                                             type => {type, #{line => 6, spec => atom}}
                                         }}
                                     ],
