@@ -417,12 +417,16 @@ lookup_identifier_type(
             throw({error, unknown_identifier, Data})
     end;
 lookup_identifier_type(
-    [{catch_clause, _Context1} | [{try_catch_after, #{try_exprs := TryExprs}} | _T]], Stack
+    [
+        {catch_clause, #{match_expr := {_, #{spec := '_'}}, line := Line}}
+        | [{try_catch_after, #{try_exprs := TryExprs}} | _T]
+    ],
+    Stack
 ) ->
     case allow_variable_binding(Stack) of
         true ->
-            LastTryExpr = lists:last(TryExprs),
-            {ok, rufus_form:type(LastTryExpr)};
+            UnknownType = rufus_form:make_type(unknown, Line),
+            {ok, UnknownType};
         false ->
             Data = #{stack => Stack},
             throw({error, unknown_identifier, Data})

@@ -873,7 +873,8 @@ typecheck_and_annotate_function_with_try_and_catch_blocks_with_anonymous_variabl
                                             line => 7,
                                             locals => #{},
                                             spec => '_',
-                                            type => {type, #{line => 3, spec => atom}}
+                                            type =>
+                                                {type, #{line => 7, spec => unknown}}
                                         }},
                                     type => {type, #{line => 8, spec => atom}}
                                 }}
