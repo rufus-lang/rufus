@@ -28,18 +28,12 @@ each([Form = {'case', #{match_expr := MatchExpr, clauses := Clauses}} | T], Fun)
     Fun(Form),
     each(T, Fun);
 each([Form = {case_clause, #{match_expr := MatchExpr, exprs := Exprs}} | T], Fun) ->
-    %% Handle a match clause.
     case MatchExpr of
         undefined ->
             ok;
         _ ->
             Fun(MatchExpr)
     end,
-    each(Exprs, Fun),
-    Fun(Form),
-    each(T, Fun);
-each([Form = {case_clause, #{exprs := Exprs}} | T], Fun) ->
-    %% Handle a default clause.
     each(Exprs, Fun),
     Fun(Form),
     each(T, Fun);
@@ -123,17 +117,11 @@ map(Acc, [{'case', Context = #{match_expr := MatchExpr, clauses := Clauses}} | T
     ),
     map([AnnotatedForm | Acc], T, Fun);
 map(Acc, [{case_clause, Context = #{match_expr := MatchExpr, exprs := Exprs}} | T], Fun) ->
-    %% Handle a match clause.
     AnnotatedMatchExpr = Fun(MatchExpr),
     AnnotatedExprs = map(Exprs, Fun),
     AnnotatedForm = Fun(
         {case_clause, Context#{match_expr => AnnotatedMatchExpr, exprs => AnnotatedExprs}}
     ),
-    map([AnnotatedForm | Acc], T, Fun);
-map(Acc, [{case_clause, Context = #{exprs := Exprs}} | T], Fun) ->
-    %% Handle a default clause.
-    AnnotatedExprs = map(Exprs, Fun),
-    AnnotatedForm = Fun({case_clause, Context#{exprs => AnnotatedExprs}}),
     map([AnnotatedForm | Acc], T, Fun);
 map(Acc, [{catch_clause, Context = #{match_expr := MatchExpr, exprs := Exprs}} | T], Fun) ->
     AnnotatedMatchExpr =

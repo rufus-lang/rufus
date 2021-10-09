@@ -733,13 +733,13 @@ typecheck_and_annotate_function_with_case_block_with_mismatched_clause_return_ty
     },
     ?assertEqual({error, mismatched_case_clause_return_type, Data}, Result).
 
-typecheck_and_annotate_function_with_case_block_with_default_clause_test() ->
+typecheck_and_annotate_function_with_case_block_with_clause_matching_the_anonymous_variable_test() ->
     RufusText =
         "func Convert(value atom) string {\n"
         "    case value {\n"
         "    match :true ->\n"
         "        \"true\"\n"
-        "    default ->\n"
+        "    match _ ->\n"
         "        \"false\"\n"
         "    }\n"
         "}\n",
@@ -783,6 +783,17 @@ typecheck_and_annotate_function_with_case_block_with_default_clause_test() ->
                                             }}
                                         ],
                                     line => 5,
+                                    match_expr =>
+                                        {identifier, #{
+                                            line => 5,
+                                            locals =>
+                                                #{
+                                                    value =>
+                                                        [{type, #{line => 1, spec => atom}}]
+                                                },
+                                            spec => '_',
+                                            type => {type, #{line => 1, spec => atom}}
+                                        }},
                                     type => {type, #{line => 6, spec => string}}
                                 }}
                             ],
@@ -818,3 +829,79 @@ typecheck_and_annotate_function_with_case_block_with_default_clause_test() ->
         }}
     ],
     ?assertEqual(Expected, AnnotatedForms).
+
+typecheck_and_annotate_function_with_case_block_with_anonymous_variable_match_expression_test() ->
+    RufusText =
+        "func Broken() atom {\n"
+        "    case _ {\n"
+        "    match _ ->\n"
+        "        :ok\n"
+        "    }\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Data = #{
+        form =>
+            {identifier, #{line => 2, locals => #{}, spec => '_'}},
+        globals =>
+            #{
+                'Broken' =>
+                    [
+                        {type, #{
+                            kind => func,
+                            line => 1,
+                            param_types => [],
+                            return_type =>
+                                {type, #{line => 1, spec => atom}},
+                            spec => 'func() atom'
+                        }}
+                    ]
+            },
+        locals => #{},
+        stack =>
+            [
+                {func_exprs, #{line => 1}},
+                {func, #{
+                    exprs =>
+                        [
+                            {'case', #{
+                                clauses =>
+                                    [
+                                        {case_clause, #{
+                                            exprs =>
+                                                [
+                                                    {atom_lit, #{
+                                                        line => 4,
+                                                        spec => ok,
+                                                        type =>
+                                                            {type, #{line => 4, spec => atom}}
+                                                    }}
+                                                ],
+                                            line => 3,
+                                            match_expr =>
+                                                {identifier, #{line => 3, spec => '_'}}
+                                        }}
+                                    ],
+                                line => 2,
+                                match_expr =>
+                                    {identifier, #{line => 2, spec => '_'}}
+                            }}
+                        ],
+                    line => 1,
+                    locals => #{},
+                    params => [],
+                    return_type => {type, #{line => 1, spec => atom}},
+                    spec => 'Broken',
+                    type =>
+                        {type, #{
+                            kind => func,
+                            line => 1,
+                            param_types => [],
+                            return_type =>
+                                {type, #{line => 1, spec => atom}},
+                            spec => 'func() atom'
+                        }}
+                }}
+            ]
+    },
+    ?assertEqual({error, unknown_identifier, Data}, rufus_expr:typecheck_and_annotate(Forms)).

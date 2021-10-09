@@ -1798,7 +1798,7 @@ typecheck_and_annotate_with_function_returning_a_list_with_a_value_from_a_case_e
         "        list[string]{\n"
         "            case n {\n"
         "            match 1 -> \"one\"\n"
-        "            default -> \"not one\"\n"
+        "            match _ -> \"not one\"\n"
         "            },\n"
         "        }\n"
         "    }\n"
@@ -1849,6 +1849,22 @@ typecheck_and_annotate_with_function_returning_a_list_with_a_value_from_a_case_e
                                                         }}
                                                     ],
                                                 line => 7,
+                                                match_expr =>
+                                                    {identifier, #{
+                                                        line => 7,
+                                                        locals =>
+                                                            #{
+                                                                n =>
+                                                                    [
+                                                                        {type, #{
+                                                                            line => 3, spec => int
+                                                                        }}
+                                                                    ]
+                                                            },
+                                                        spec => '_',
+                                                        type =>
+                                                            {type, #{line => 3, spec => int}}
+                                                    }},
                                                 type =>
                                                     {type, #{line => 7, spec => string}}
                                             }}

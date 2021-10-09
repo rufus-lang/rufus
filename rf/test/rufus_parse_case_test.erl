@@ -524,13 +524,13 @@ parse_function_with_case_block_with_match_clause_test() ->
     ],
     ?assertEqual(Expected, Forms).
 
-parse_function_with_case_block_with_default_clause_test() ->
+parse_function_with_case_block_with_catch_all_clause_test() ->
     RufusText =
         "func Convert(value atom) string {\n"
         "    case value {\n"
         "    match :true ->\n"
         "        \"true\"\n"
-        "    default ->\n"
+        "    match _ ->\n"
         "        \"false\"\n"
         "    }\n"
         "}\n",
@@ -572,7 +572,9 @@ parse_function_with_case_block_with_default_clause_test() ->
                                                     {type, #{line => 6, spec => string}}
                                             }}
                                         ],
-                                    line => 5
+                                    line => 5,
+                                    match_expr =>
+                                        {identifier, #{line => 5, spec => '_'}}
                                 }}
                             ],
                         line => 2,
