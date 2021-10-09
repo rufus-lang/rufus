@@ -407,7 +407,7 @@ lookup_identifier_type(Stack) ->
 
 -spec lookup_identifier_type(rufus_stack(), rufus_stack()) -> {ok, type_form()} | no_return().
 lookup_identifier_type(
-    [{case_clause, _Context1} | [{'case', #{match_expr := CaseMatchExpr}} | _T]], Stack
+    [{case_clause, _Context} | [{'case', #{match_expr := CaseMatchExpr}} | _T]], Stack
 ) ->
     case allow_variable_binding(Stack) of
         true ->
@@ -418,8 +418,8 @@ lookup_identifier_type(
     end;
 lookup_identifier_type(
     [
-        {catch_clause, #{match_expr := {_, #{spec := '_'}}, line := Line}}
-        | [{try_catch_after, #{try_exprs := TryExprs}} | _T]
+        {catch_clause, #{match_expr := {_FormSpec, #{spec := '_'}}, line := Line}}
+        | [{try_catch_after, _Context} | _T]
     ],
     Stack
 ) ->
@@ -431,7 +431,7 @@ lookup_identifier_type(
             Data = #{stack => Stack},
             throw({error, unknown_identifier, Data})
     end;
-lookup_identifier_type([{cons_head, _Context1} | [{cons, #{type := Type}} | _T]], Stack) ->
+lookup_identifier_type([{cons_head, _Context} | [{cons, #{type := Type}} | _T]], Stack) ->
     case allow_variable_binding(Stack) of
         true ->
             {ok, rufus_form:element_type(Type)};
@@ -439,7 +439,7 @@ lookup_identifier_type([{cons_head, _Context1} | [{cons, #{type := Type}} | _T]]
             Data = #{stack => Stack},
             throw({error, unknown_identifier, Data})
     end;
-lookup_identifier_type([{cons_tail, _Context1} | [{cons, #{type := Type}} | _T]], Stack) ->
+lookup_identifier_type([{cons_tail, _Context} | [{cons, #{type := Type}} | _T]], Stack) ->
     case allow_variable_binding(Stack) of
         true ->
             {ok, Type};
@@ -456,17 +456,17 @@ lookup_identifier_type([{list_lit, #{type := Type}} | _T], Stack) ->
             throw({error, unknown_identifier, Data})
     end;
 lookup_identifier_type(
-    [{match_op_left, _Context1} | [{match_op, #{right := {_FormSpec, #{type := Type}}}} | _T]],
+    [{match_op_left, _Context} | [{match_op, #{right := {_FormSpec, #{type := Type}}}} | _T]],
     _Stack
 ) ->
     {ok, Type};
 lookup_identifier_type(
-    [{match_op_right, _Context1} | [{match_op, #{right := {_FormSpec, #{type := Type}}}} | _T]],
+    [{match_op_right, _Context} | [{match_op, #{right := {_FormSpec, #{type := Type}}}} | _T]],
     _Stack
 ) ->
     {ok, Type};
 lookup_identifier_type(
-    [{match_op_right, _Context1} | [{match_op, #{right := _Context2}} | _T]],
+    [{match_op_right, _Context} | [{match_op, #{right := _Context2}} | _T]],
     Stack
 ) ->
     Data = #{stack => Stack},
