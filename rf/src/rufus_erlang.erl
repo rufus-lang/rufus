@@ -76,7 +76,18 @@ forms(Acc, [{call, Context = #{spec := Spec, args := Args, line := Line}} | T]) 
             named ->
                 {atom, Line, Spec}
         end,
-    forms([{call, Line, Name, ArgsForms} | Acc], T);
+    Form = {call, Line, Name, ArgsForms},
+    forms([Form | Acc], T);
+forms(Acc, [{'case', #{match_expr := MatchExpr, clauses := Clauses, line := Line}} | T]) ->
+    {ok, [MatchExprForm]} = forms([], [MatchExpr]),
+    {ok, ClauseForms} = forms([], Clauses),
+    Form = {'case', Line, MatchExprForm, ClauseForms},
+    forms([Form | Acc], T);
+forms(Acc, [{case_clause, #{match_expr := MatchExpr, exprs := Exprs, line := Line}} | T]) ->
+    {ok, [MatchExprForm]} = forms([], [MatchExpr]),
+    {ok, ExprsForms} = forms([], Exprs),
+    Form = {clause, Line, [MatchExprForm], [], ExprsForms},
+    forms([Form | Acc], T);
 forms(Acc, [{catch_clause, #{match_expr := MatchExpr, exprs := Exprs, line := Line}} | T]) ->
     {ok, [MatchExprForm]} =
         case MatchExpr of
