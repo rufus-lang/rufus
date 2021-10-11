@@ -6,7 +6,6 @@
 
 typecheck_and_annotate_function_with_bare_catch_block_test() ->
     RufusText =
-        "module example\n"
         "func MaybeDivideBy(n int) atom {\n"
         "    try {\n"
         "        1 / n\n"
@@ -19,70 +18,82 @@ typecheck_and_annotate_function_with_bare_catch_block_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{line => 1, spec => example}},
         {func, #{
-            exprs => [
-                {try_catch_after, #{
-                    after_exprs => [],
-                    catch_clauses => [
-                        {catch_clause, #{
-                            exprs => [
-                                {atom_lit, #{
-                                    line => 7,
-                                    spec => error,
-                                    type =>
-                                        {type, #{line => 7, spec => atom}}
+            exprs =>
+                [
+                    {try_catch_after, #{
+                        after_exprs => [],
+                        catch_clauses =>
+                            [
+                                {catch_clause, #{
+                                    exprs =>
+                                        [
+                                            {atom_lit, #{
+                                                line => 6,
+                                                spec => error,
+                                                type =>
+                                                    {type, #{line => 6, spec => atom}}
+                                            }}
+                                        ],
+                                    line => 5,
+                                    match_expr =>
+                                        {identifier, #{
+                                            line => 5,
+                                            locals =>
+                                                #{n => [{type, #{line => 1, spec => int}}]},
+                                            spec => '_',
+                                            type =>
+                                                {type, #{line => 5, spec => unknown}}
+                                        }},
+                                    type => {type, #{line => 6, spec => atom}}
                                 }}
                             ],
-                            line => 6,
-                            match_expr => undefined,
-                            type => {type, #{line => 7, spec => atom}}
-                        }}
-                    ],
-                    line => 3,
-                    try_exprs => [
-                        {binary_op, #{
-                            left =>
-                                {int_lit, #{
-                                    line => 4,
-                                    spec => 1,
-                                    type => {type, #{line => 4, spec => int}}
+                        line => 2,
+                        try_exprs =>
+                            [
+                                {binary_op, #{
+                                    left =>
+                                        {int_lit, #{
+                                            line => 3,
+                                            spec => 1,
+                                            type => {type, #{line => 3, spec => int}}
+                                        }},
+                                    line => 3,
+                                    op => '/',
+                                    right =>
+                                        {identifier, #{
+                                            line => 3,
+                                            spec => n,
+                                            type => {type, #{line => 1, spec => int}}
+                                        }},
+                                    type => {type, #{line => 3, spec => int}}
                                 }},
-                            line => 4,
-                            op => '/',
-                            right =>
-                                {identifier, #{
+                                {atom_lit, #{
                                     line => 4,
-                                    spec => n,
-                                    type => {type, #{line => 2, spec => int}}
-                                }},
-                            type => {type, #{line => 4, spec => int}}
-                        }},
-                        {atom_lit, #{
-                            line => 5,
-                            spec => ok,
-                            type => {type, #{line => 5, spec => atom}}
-                        }}
-                    ],
-                    type => {type, #{line => 5, spec => atom}}
-                }}
-            ],
-            line => 2,
-            params => [
-                {param, #{
-                    line => 2,
-                    spec => n,
-                    type => {type, #{line => 2, spec => int}}
-                }}
-            ],
-            return_type => {type, #{line => 2, spec => atom}},
+                                    spec => ok,
+                                    type => {type, #{line => 4, spec => atom}}
+                                }}
+                            ],
+                        type => {type, #{line => 4, spec => atom}}
+                    }}
+                ],
+            line => 1,
+            params =>
+                [
+                    {param, #{
+                        line => 1,
+                        spec => n,
+                        type => {type, #{line => 1, spec => int}}
+                    }}
+                ],
+            return_type => {type, #{line => 1, spec => atom}},
             spec => 'MaybeDivideBy',
             type =>
                 {type, #{
                     kind => func,
-                    line => 2,
-                    param_types => [{type, #{line => 2, spec => int}}],
-                    return_type => {type, #{line => 2, spec => atom}},
+                    line => 1,
+                    param_types => [{type, #{line => 1, spec => int}}],
+                    return_type => {type, #{line => 1, spec => atom}},
                     spec => 'func(int) atom'
                 }}
         }}
@@ -994,7 +1005,6 @@ typecheck_and_annotate_function_with_try_block_in_match_op_test() ->
 
 typecheck_and_annotate_function_with_bare_catch_block_and_an_after_block_test() ->
     RufusText =
-        "module example\n"
         "func cleanup() atom { :cleanup }\n"
         "func Maybe() atom {\n"
         "    try {\n"
@@ -1009,75 +1019,87 @@ typecheck_and_annotate_function_with_bare_catch_block_and_an_after_block_test() 
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{line => 1, spec => example}},
         {func, #{
-            exprs => [
-                {atom_lit, #{
-                    line => 2,
-                    spec => cleanup,
-                    type => {type, #{line => 2, spec => atom}}
+            exprs =>
+                [
+                    {atom_lit, #{
+                        line => 1,
+                        spec => cleanup,
+                        type => {type, #{line => 1, spec => atom}}
+                    }}
+                ],
+            line => 1,
+            params => [],
+            return_type => {type, #{line => 1, spec => atom}},
+            spec => cleanup,
+            type =>
+                {type, #{
+                    kind => func,
+                    line => 1,
+                    param_types => [],
+                    return_type => {type, #{line => 1, spec => atom}},
+                    spec => 'func() atom'
                 }}
-            ],
+        }},
+        {func, #{
+            exprs =>
+                [
+                    {try_catch_after, #{
+                        after_exprs =>
+                            [
+                                {call, #{
+                                    args => [],
+                                    line => 8,
+                                    spec => cleanup,
+                                    type => {type, #{line => 1, spec => atom}}
+                                }}
+                            ],
+                        catch_clauses =>
+                            [
+                                {catch_clause, #{
+                                    exprs =>
+                                        [
+                                            {atom_lit, #{
+                                                line => 6,
+                                                spec => error,
+                                                type =>
+                                                    {type, #{line => 6, spec => atom}}
+                                            }}
+                                        ],
+                                    line => 5,
+                                    match_expr =>
+                                        {identifier, #{
+                                            line => 5,
+                                            locals => #{},
+                                            spec => '_',
+                                            type =>
+                                                {type, #{line => 5, spec => unknown}}
+                                        }},
+                                    type => {type, #{line => 6, spec => atom}}
+                                }}
+                            ],
+                        line => 3,
+                        try_exprs =>
+                            [
+                                {atom_lit, #{
+                                    line => 4,
+                                    spec => ok,
+                                    type => {type, #{line => 4, spec => atom}}
+                                }}
+                            ],
+                        type => {type, #{line => 4, spec => atom}}
+                    }}
+                ],
             line => 2,
             params => [],
             return_type => {type, #{line => 2, spec => atom}},
-            spec => cleanup,
+            spec => 'Maybe',
             type =>
                 {type, #{
                     kind => func,
                     line => 2,
                     param_types => [],
                     return_type => {type, #{line => 2, spec => atom}},
-                    spec => 'func() atom'
-                }}
-        }},
-        {func, #{
-            exprs => [
-                {try_catch_after, #{
-                    after_exprs => [
-                        {call, #{
-                            args => [],
-                            line => 9,
-                            spec => cleanup,
-                            type => {type, #{line => 2, spec => atom}}
-                        }}
-                    ],
-                    catch_clauses => [
-                        {catch_clause, #{
-                            exprs => [
-                                {atom_lit, #{
-                                    line => 7,
-                                    spec => error,
-                                    type =>
-                                        {type, #{line => 7, spec => atom}}
-                                }}
-                            ],
-                            line => 6,
-                            match_expr => undefined,
-                            type => {type, #{line => 7, spec => atom}}
-                        }}
-                    ],
-                    line => 4,
-                    try_exprs => [
-                        {atom_lit, #{
-                            line => 5,
-                            spec => ok,
-                            type => {type, #{line => 5, spec => atom}}
-                        }}
-                    ],
-                    type => {type, #{line => 5, spec => atom}}
-                }}
-            ],
-            line => 3,
-            params => [],
-            return_type => {type, #{line => 3, spec => atom}},
-            spec => 'Maybe',
-            type =>
-                {type, #{
-                    kind => func,
-                    line => 3,
-                    param_types => [],
-                    return_type => {type, #{line => 3, spec => atom}},
                     spec => 'func() atom'
                 }}
         }}
@@ -1722,7 +1744,6 @@ typecheck_and_annotate_function_with_try_variable_accessed_in_after_block_test()
 
 typecheck_and_annotate_function_with_throw_in_try_block_test() ->
     RufusText =
-        "module example\n"
         "func Explode() atom {\n"
         "    try {\n"
         "        throw :kaboom\n"
@@ -1734,62 +1755,72 @@ typecheck_and_annotate_function_with_throw_in_try_block_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{line => 1, spec => example}},
         {func, #{
-            exprs => [
-                {try_catch_after, #{
-                    after_exprs => [],
-                    catch_clauses => [
-                        {catch_clause, #{
-                            exprs => [
-                                {atom_lit, #{
-                                    line => 6,
-                                    spec => error,
-                                    type =>
-                                        {type, #{line => 6, spec => atom}}
+            exprs =>
+                [
+                    {try_catch_after, #{
+                        after_exprs => [],
+                        catch_clauses =>
+                            [
+                                {catch_clause, #{
+                                    exprs =>
+                                        [
+                                            {atom_lit, #{
+                                                line => 5,
+                                                spec => error,
+                                                type =>
+                                                    {type, #{line => 5, spec => atom}}
+                                            }}
+                                        ],
+                                    line => 4,
+                                    match_expr =>
+                                        {identifier, #{
+                                            line => 4,
+                                            locals => #{},
+                                            spec => '_',
+                                            type =>
+                                                {type, #{line => 4, spec => unknown}}
+                                        }},
+                                    type => {type, #{line => 5, spec => atom}}
                                 }}
                             ],
-                            line => 5,
-                            match_expr => undefined,
-                            type => {type, #{line => 6, spec => atom}}
-                        }}
-                    ],
-                    line => 3,
-                    try_exprs => [
-                        {throw, #{
-                            expr =>
-                                {atom_lit, #{
-                                    line => 4,
-                                    spec => kaboom,
-                                    type => {type, #{line => 4, spec => atom}}
-                                }},
-                            line => 4,
-                            type =>
-                                {type, #{
-                                    kind => throw,
-                                    line => 4,
-                                    spec => 'throw atom'
+                        line => 2,
+                        try_exprs =>
+                            [
+                                {throw, #{
+                                    expr =>
+                                        {atom_lit, #{
+                                            line => 3,
+                                            spec => kaboom,
+                                            type => {type, #{line => 3, spec => atom}}
+                                        }},
+                                    line => 3,
+                                    type =>
+                                        {type, #{
+                                            kind => throw,
+                                            line => 3,
+                                            spec => 'throw atom'
+                                        }}
                                 }}
-                        }}
-                    ],
-                    type =>
-                        {type, #{
-                            kind => throw,
-                            line => 4,
-                            spec => 'throw atom'
-                        }}
-                }}
-            ],
-            line => 2,
+                            ],
+                        type =>
+                            {type, #{
+                                kind => throw,
+                                line => 3,
+                                spec => 'throw atom'
+                            }}
+                    }}
+                ],
+            line => 1,
             params => [],
-            return_type => {type, #{line => 2, spec => atom}},
+            return_type => {type, #{line => 1, spec => atom}},
             spec => 'Explode',
             type =>
                 {type, #{
                     kind => func,
-                    line => 2,
+                    line => 1,
                     param_types => [],
-                    return_type => {type, #{line => 2, spec => atom}},
+                    return_type => {type, #{line => 1, spec => atom}},
                     spec => 'func() atom'
                 }}
         }}
@@ -1798,7 +1829,6 @@ typecheck_and_annotate_function_with_throw_in_try_block_test() ->
 
 typecheck_and_annotate_function_with_throw_in_catch_block_test() ->
     RufusText =
-        "module example\n"
         "func Explode() atom {\n"
         "    try {\n"
         "        :ok\n"
@@ -1810,62 +1840,72 @@ typecheck_and_annotate_function_with_throw_in_catch_block_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{line => 1, spec => example}},
         {func, #{
-            exprs => [
-                {try_catch_after, #{
-                    after_exprs => [],
-                    catch_clauses => [
-                        {catch_clause, #{
-                            exprs => [
-                                {throw, #{
-                                    expr =>
-                                        {atom_lit, #{
-                                            line => 6,
-                                            spec => kaboom,
+            exprs =>
+                [
+                    {try_catch_after, #{
+                        after_exprs => [],
+                        catch_clauses =>
+                            [
+                                {catch_clause, #{
+                                    exprs =>
+                                        [
+                                            {throw, #{
+                                                expr =>
+                                                    {atom_lit, #{
+                                                        line => 5,
+                                                        spec => kaboom,
+                                                        type =>
+                                                            {type, #{line => 5, spec => atom}}
+                                                    }},
+                                                line => 5,
+                                                type =>
+                                                    {type, #{
+                                                        kind => throw,
+                                                        line => 5,
+                                                        spec => 'throw atom'
+                                                    }}
+                                            }}
+                                        ],
+                                    line => 4,
+                                    match_expr =>
+                                        {identifier, #{
+                                            line => 4,
+                                            locals => #{},
+                                            spec => '_',
                                             type =>
-                                                {type, #{line => 6, spec => atom}}
+                                                {type, #{line => 4, spec => unknown}}
                                         }},
-                                    line => 6,
                                     type =>
                                         {type, #{
                                             kind => throw,
-                                            line => 6,
+                                            line => 5,
                                             spec => 'throw atom'
                                         }}
                                 }}
                             ],
-                            line => 5,
-                            match_expr => undefined,
-                            type =>
-                                {type, #{
-                                    kind => throw,
-                                    line => 6,
-                                    spec => 'throw atom'
+                        line => 2,
+                        try_exprs =>
+                            [
+                                {atom_lit, #{
+                                    line => 3,
+                                    spec => ok,
+                                    type => {type, #{line => 3, spec => atom}}
                                 }}
-                        }}
-                    ],
-                    line => 3,
-                    try_exprs => [
-                        {atom_lit, #{
-                            line => 4,
-                            spec => ok,
-                            type => {type, #{line => 4, spec => atom}}
-                        }}
-                    ],
-                    type => {type, #{line => 4, spec => atom}}
-                }}
-            ],
-            line => 2,
+                            ],
+                        type => {type, #{line => 3, spec => atom}}
+                    }}
+                ],
+            line => 1,
             params => [],
-            return_type => {type, #{line => 2, spec => atom}},
+            return_type => {type, #{line => 1, spec => atom}},
             spec => 'Explode',
             type =>
                 {type, #{
                     kind => func,
-                    line => 2,
+                    line => 1,
                     param_types => [],
-                    return_type => {type, #{line => 2, spec => atom}},
+                    return_type => {type, #{line => 1, spec => atom}},
                     spec => 'func() atom'
                 }}
         }}
@@ -1874,7 +1914,6 @@ typecheck_and_annotate_function_with_throw_in_catch_block_test() ->
 
 typecheck_and_annotate_function_with_throw_in_try_and_catch_blocks_test() ->
     RufusText =
-        "module example\n"
         "func Explode() atom {\n"
         "    try {\n"
         "        throw 42\n"
@@ -1886,73 +1925,83 @@ typecheck_and_annotate_function_with_throw_in_try_and_catch_blocks_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
     Expected = [
-        {module, #{line => 1, spec => example}},
         {func, #{
-            exprs => [
-                {try_catch_after, #{
-                    after_exprs => [],
-                    catch_clauses => [
-                        {catch_clause, #{
-                            exprs => [
-                                {throw, #{
-                                    expr =>
-                                        {atom_lit, #{
-                                            line => 6,
-                                            spec => kaboom,
+            exprs =>
+                [
+                    {try_catch_after, #{
+                        after_exprs => [],
+                        catch_clauses =>
+                            [
+                                {catch_clause, #{
+                                    exprs =>
+                                        [
+                                            {throw, #{
+                                                expr =>
+                                                    {atom_lit, #{
+                                                        line => 5,
+                                                        spec => kaboom,
+                                                        type =>
+                                                            {type, #{line => 5, spec => atom}}
+                                                    }},
+                                                line => 5,
+                                                type =>
+                                                    {type, #{
+                                                        kind => throw,
+                                                        line => 5,
+                                                        spec => 'throw atom'
+                                                    }}
+                                            }}
+                                        ],
+                                    line => 4,
+                                    match_expr =>
+                                        {identifier, #{
+                                            line => 4,
+                                            locals => #{},
+                                            spec => '_',
                                             type =>
-                                                {type, #{line => 6, spec => atom}}
+                                                {type, #{line => 4, spec => unknown}}
                                         }},
-                                    line => 6,
                                     type =>
                                         {type, #{
                                             kind => throw,
-                                            line => 6,
+                                            line => 5,
                                             spec => 'throw atom'
                                         }}
                                 }}
                             ],
-                            line => 5,
-                            match_expr => undefined,
-                            type =>
-                                {type, #{
-                                    kind => throw,
-                                    line => 6,
-                                    spec => 'throw atom'
+                        line => 2,
+                        try_exprs =>
+                            [
+                                {throw, #{
+                                    expr =>
+                                        {int_lit, #{
+                                            line => 3,
+                                            spec => 42,
+                                            type => {type, #{line => 3, spec => int}}
+                                        }},
+                                    line => 3,
+                                    type =>
+                                        {type, #{
+                                            kind => throw,
+                                            line => 3,
+                                            spec => 'throw int'
+                                        }}
                                 }}
-                        }}
-                    ],
-                    line => 3,
-                    try_exprs => [
-                        {throw, #{
-                            expr =>
-                                {int_lit, #{
-                                    line => 4,
-                                    spec => 42,
-                                    type => {type, #{line => 4, spec => int}}
-                                }},
-                            line => 4,
-                            type =>
-                                {type, #{
-                                    kind => throw,
-                                    line => 4,
-                                    spec => 'throw int'
-                                }}
-                        }}
-                    ],
-                    type =>
-                        {type, #{kind => throw, line => 4, spec => 'throw int'}}
-                }}
-            ],
-            line => 2,
+                            ],
+                        type =>
+                            {type, #{kind => throw, line => 3, spec => 'throw int'}}
+                    }}
+                ],
+            line => 1,
             params => [],
-            return_type => {type, #{line => 2, spec => atom}},
+            return_type => {type, #{line => 1, spec => atom}},
             spec => 'Explode',
             type =>
                 {type, #{
                     kind => func,
-                    line => 2,
+                    line => 1,
                     param_types => [],
-                    return_type => {type, #{line => 2, spec => atom}},
+                    return_type => {type, #{line => 1, spec => atom}},
                     spec => 'func() atom'
                 }}
         }}

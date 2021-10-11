@@ -301,7 +301,10 @@ make_throw(Expr, Line) ->
 %% TODO(jkakar) Figure out why Dialyzer doesn't like this spec:
 %% -spec make_catch_clause(any(), integer()) -> catch_clause_form().
 make_catch_clause(Exprs, Line) ->
-    make_catch_clause(undefined, Exprs, Line).
+    {FormType, Context} = make_identifier('_', Line),
+    UnknownType = make_type(unknown, Line),
+    MatchExpr = {FormType, Context#{type => UnknownType}},
+    make_catch_clause(MatchExpr, Exprs, Line).
 
 %% make_catch_clause returns a form for a catch clause.
 %% TODO(jkakar): Define a type that correctly defines MatchExpr.

@@ -132,7 +132,7 @@ forms(Acc, [{identifier, #{line := Line, spec := Spec, type := Type}} | T]) ->
     Form =
         case Type of
             {type, #{spec := unknown}} ->
-                {var, Line, '_'};
+                {var, Line, Spec};
             {type, #{spec := atom}} ->
                 {var, Line, Spec};
             {type, #{spec := bool}} ->
