@@ -131,6 +131,8 @@ forms(Acc, [{func_group, #{line := Line1, spec := Spec, arity := Arity, forms :=
 forms(Acc, [{identifier, #{line := Line, spec := Spec, type := Type}} | T]) ->
     Form =
         case Type of
+            {type, #{spec := unknown}} ->
+                {var, Line, '_'};
             {type, #{spec := atom}} ->
                 {var, Line, Spec};
             {type, #{spec := bool}} ->

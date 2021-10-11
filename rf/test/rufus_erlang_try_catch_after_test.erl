@@ -264,3 +264,48 @@ forms_for_function_with_bare_catch_block_and_an_after_block_test() ->
         {function, 2, cleanup, 0, [{clause, 2, [], [], [{atom, 2, cleanup}]}]}
     ],
     ?assertEqual(Expected, ErlangForms).
+
+forms_for_function_with_try_and_catch_blocks_with_anonymous_variable_test() ->
+    RufusText =
+        "module example\n"
+        "func Classify(error atom) atom {\n"
+        "    try {\n"
+        "        throw error\n"
+        "    } catch {\n"
+        "    match :error ->\n"
+        "        :error\n"
+        "    match _ ->\n"
+        "        :failure\n"
+        "    }\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    {ok, AnnotatedForms} = rufus_expr:typecheck_and_annotate(Forms),
+    {ok, ErlangForms} = rufus_erlang:forms(AnnotatedForms),
+    Expected = [
+        {attribute, 1, module, example},
+        {attribute, 2, export, [{'Classify', 1}]},
+        {function, 2, 'Classify', 1, [
+            {clause, 2, [{var, 2, error}],
+                [
+                    [
+                        {call, 2, {remote, 2, {atom, 2, erlang}, {atom, 2, is_atom}}, [
+                            {var, 2, error}
+                        ]}
+                    ]
+                ],
+                [
+                    {'try', 3, [{call, 4, {atom, 4, throw}, [{var, 4, error}]}], [],
+                        [
+                            {clause, 6,
+                                [{tuple, 6, [{atom, 6, throw}, {atom, 6, error}, {var, 6, '_'}]}],
+                                [], [{atom, 7, error}]},
+                            {clause, 8,
+                                [{tuple, 8, [{atom, 8, throw}, {var, 8, '_'}, {var, 8, '_'}]}], [],
+                                [{atom, 9, failure}]}
+                        ],
+                        []}
+                ]}
+        ]}
+    ],
+    ?assertEqual(Expected, ErlangForms).

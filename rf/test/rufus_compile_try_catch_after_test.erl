@@ -254,3 +254,21 @@ eval_function_with_try_catch_and_after_blocks_accessing_variables_from_outer_sco
         "}\n",
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(kaboom, example:'Explode'()).
+
+eval_function_with_try_and_catch_blocks_with_anonymous_variable_test() ->
+    RufusText =
+        "module example\n"
+        "func Classify(error atom) atom {\n"
+        "    try {\n"
+        "        throw error\n"
+        "    } catch {\n"
+        "    match :error ->\n"
+        "        :error\n"
+        "    match _ ->\n"
+        "        :failure\n"
+        "    }\n"
+        "}\n",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual(error, example:'Classify'(error)),
+    ?assertEqual(failure, example:'Classify'(failure)),
+    ?assertEqual(failure, example:'Classify'(warning)).
