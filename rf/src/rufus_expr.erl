@@ -216,19 +216,13 @@ typecheck_and_annotate_case(
     Locals,
     {'case', Context = #{match_expr := MatchExpr, clauses := Clauses}}
 ) ->
-    {ok, NewLocals, [AnnotatedMatchExpr]} =
-        case MatchExpr of
-            undefined ->
-                {ok, Locals, [undefined]};
-            _ ->
-                typecheck_and_annotate(
-                    [],
-                    Stack,
-                    Globals,
-                    Locals,
-                    [MatchExpr]
-                )
-        end,
+    {ok, NewLocals, [AnnotatedMatchExpr]} = typecheck_and_annotate(
+        [],
+        Stack,
+        Globals,
+        Locals,
+        [MatchExpr]
+    ),
 
     AnnotatedForm1 = {'case', Context#{match_expr => AnnotatedMatchExpr}},
     CaseStack = [AnnotatedForm1 | Stack],
@@ -268,19 +262,13 @@ typecheck_and_annotate_case_clause(
     Form = {case_clause, Context = #{match_expr := MatchExpr, exprs := Exprs}}
 ) ->
     CaseClauseStack = [Form | Stack],
-    {ok, NewLocals, [AnnotatedMatchExpr]} =
-        case MatchExpr of
-            undefined ->
-                {ok, Locals, [undefined]};
-            _ ->
-                typecheck_and_annotate(
-                    [],
-                    CaseClauseStack,
-                    Globals,
-                    Locals,
-                    [MatchExpr]
-                )
-        end,
+    {ok, NewLocals, [AnnotatedMatchExpr]} = typecheck_and_annotate(
+        [],
+        CaseClauseStack,
+        Globals,
+        Locals,
+        [MatchExpr]
+    ),
 
     ok = typecheck_case_clause_match_expr(Stack, AnnotatedMatchExpr),
 
@@ -928,19 +916,13 @@ typecheck_and_annotate_catch_clause(
     Form = {catch_clause, Context = #{match_expr := MatchExpr, exprs := Exprs}}
 ) ->
     CatchClauseStack = [Form | Stack],
-    {ok, NewLocals, [AnnotatedMatchExpr]} =
-        case MatchExpr of
-            undefined ->
-                {ok, Locals, [undefined]};
-            _ ->
-                typecheck_and_annotate(
-                    [],
-                    CatchClauseStack,
-                    Globals,
-                    Locals,
-                    [MatchExpr]
-                )
-        end,
+    {ok, NewLocals, [AnnotatedMatchExpr]} = typecheck_and_annotate(
+        [],
+        CatchClauseStack,
+        Globals,
+        Locals,
+        [MatchExpr]
+    ),
 
     {ok, _, AnnotatedExprs} = typecheck_and_annotate([], Stack, Globals, NewLocals, Exprs),
     AnnotatedForm1 =

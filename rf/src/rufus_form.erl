@@ -152,13 +152,13 @@ make_call(Spec, Args, Line) ->
 %% case form builder API
 
 %% TODO(jkakar): Define a type that correctly defines MatchExpr.
--spec make_case(any() | undefined, list(case_clause_form()), integer()) -> case_form().
+-spec make_case(any(), list(case_clause_form()), integer()) -> case_form().
 make_case(MatchExpr, MatchClauses, Line) ->
     {'case', #{match_expr => MatchExpr, clauses => MatchClauses, line => Line}}.
 
 %% make_case_clause returns a form for a match clause in a case block.
 %% TODO(jkakar): Define a type that correctly defines MatchExpr.
--spec make_case_clause(any() | undefined, rufus_forms(), integer()) -> case_clause_form().
+-spec make_case_clause(any(), rufus_forms(), integer()) -> case_clause_form().
 make_case_clause(MatchExpr, Exprs, Line) ->
     {case_clause, #{match_expr => MatchExpr, exprs => Exprs, line => Line}}.
 
@@ -308,7 +308,7 @@ make_catch_clause(Exprs, Line) ->
 
 %% make_catch_clause returns a form for a catch clause.
 %% TODO(jkakar): Define a type that correctly defines MatchExpr.
--spec make_catch_clause(any() | undefined, rufus_forms(), integer()) -> catch_clause_form().
+-spec make_catch_clause(any(), rufus_forms(), integer()) -> catch_clause_form().
 make_catch_clause(MatchExpr, Exprs, Line) ->
     {catch_clause, #{match_expr => MatchExpr, exprs => Exprs, line => Line}}.
 
