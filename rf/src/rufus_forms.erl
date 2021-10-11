@@ -28,22 +28,12 @@ each([Form = {'case', #{match_expr := MatchExpr, clauses := Clauses}} | T], Fun)
     Fun(Form),
     each(T, Fun);
 each([Form = {case_clause, #{match_expr := MatchExpr, exprs := Exprs}} | T], Fun) ->
-    case MatchExpr of
-        undefined ->
-            ok;
-        _ ->
-            Fun(MatchExpr)
-    end,
+    Fun(MatchExpr),
     each(Exprs, Fun),
     Fun(Form),
     each(T, Fun);
 each([Form = {catch_clause, #{match_expr := MatchExpr, exprs := Exprs}} | T], Fun) ->
-    case MatchExpr of
-        undefined ->
-            ok;
-        _ ->
-            Fun(MatchExpr)
-    end,
+    Fun(MatchExpr),
     each(Exprs, Fun),
     Fun(Form),
     each(T, Fun);
@@ -124,13 +114,7 @@ map(Acc, [{case_clause, Context = #{match_expr := MatchExpr, exprs := Exprs}} | 
     ),
     map([AnnotatedForm | Acc], T, Fun);
 map(Acc, [{catch_clause, Context = #{match_expr := MatchExpr, exprs := Exprs}} | T], Fun) ->
-    AnnotatedMatchExpr =
-        case MatchExpr of
-            undefined ->
-                undefined;
-            _ ->
-                Fun(MatchExpr)
-        end,
+    AnnotatedMatchExpr = Fun(MatchExpr),
     AnnotatedExprs = map(Exprs, Fun),
     AnnotatedForm = Fun(
         {catch_clause, Context#{match_expr => AnnotatedMatchExpr, exprs => AnnotatedExprs}}
@@ -139,10 +123,10 @@ map(Acc, [{catch_clause, Context = #{match_expr := MatchExpr, exprs := Exprs}} |
 map(Acc, [{cons, Context = #{head := Head, tail := Tail}} | T], Fun) ->
     AnnotatedHead = Fun(Head),
     AnnotatedTail =
-        case Tail of
-            Tail when is_list(Tail) ->
+        case is_list(Tail) of
+            true ->
                 map(Tail, Fun);
-            Tail ->
+            false ->
                 Fun(Tail)
         end,
     AnnotatedForm = Fun({cons, Context#{head => AnnotatedHead, tail => AnnotatedTail}}),

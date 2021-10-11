@@ -2,6 +2,38 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
+%% match expressions that bind the anonymous variable
+
+eval_function_with_a_match_that_binds_the_anonymous_variable_test() ->
+    RufusText =
+        "module example\n"
+        "func Ignore() atom {\n"
+        "    _ = :ok\n"
+        "}\n",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual(ok, example:'Ignore'()).
+
+eval_function_with_multiple_matches_that_bind_the_anonymous_variable_test() ->
+    RufusText =
+        "module example\n"
+        "func Ignore() atom {\n"
+        "    _ = 42\n"
+        "    _ = :ok\n"
+        "}\n",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual(ok, example:'Ignore'()).
+
+eval_function_with_a_match_that_binds_a_list_literal_with_the_anonymous_variable_test() ->
+    RufusText =
+        "module example\n"
+        "func PartiallyBind() list[int] {\n"
+        "    list[int]{a, b, _, d} = list[int]{1, 2, 3, 4}\n"
+        "}\n",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual([1, 2, 3, 4], example:'PartiallyBind'()).
+
+%% match expressions that bind variables
+
 eval_function_with_a_match_that_binds_an_atom_literal_test() ->
     RufusText =
         "\n"
@@ -98,6 +130,16 @@ eval_function_with_a_match_that_binds_a_cons_head_test() ->
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual(1, example:'First'([1, 2, 3])).
 
+eval_function_with_a_match_that_binds_a_cons_head_with_the_anonymous_variable_test() ->
+    RufusText =
+        "module example\n"
+        "func Rest(items list[int]) list[int] {\n"
+        "    list[int]{_|tail} = items\n"
+        "    tail\n"
+        "}\n",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual([2, 3], example:'Rest'([1, 2, 3])).
+
 eval_function_with_a_match_that_binds_a_cons_tail_test() ->
     RufusText =
         "\n"
@@ -109,6 +151,16 @@ eval_function_with_a_match_that_binds_a_cons_tail_test() ->
         "    ",
     {ok, example} = rufus_compile:eval(RufusText),
     ?assertEqual([2, 3], example:'Rest'([1, 2, 3])).
+
+typecheck_and_annotate_function_with_a_match_that_binds_a_cons_tail_with_the_anonymous_variable_test() ->
+    RufusText =
+        "module example\n"
+        "func First(items list[int]) int {\n"
+        "    list[int]{head|_} = items\n"
+        "    head\n"
+        "}\n",
+    {ok, example} = rufus_compile:eval(RufusText),
+    ?assertEqual(1, example:'First'([1, 2, 3])).
 
 %% match expressions involving binary_op expressions
 

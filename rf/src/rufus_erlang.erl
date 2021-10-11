@@ -89,13 +89,7 @@ forms(Acc, [{case_clause, #{match_expr := MatchExpr, exprs := Exprs, line := Lin
     Form = {clause, Line, [MatchExprForm], [], ExprsForms},
     forms([Form | Acc], T);
 forms(Acc, [{catch_clause, #{match_expr := MatchExpr, exprs := Exprs, line := Line}} | T]) ->
-    {ok, [MatchExprForm]} =
-        case MatchExpr of
-            undefined ->
-                {ok, [{var, Line, '_'}]};
-            _ ->
-                forms([], [MatchExpr])
-        end,
+    {ok, [MatchExprForm]} = forms([], [MatchExpr]),
     {ok, ExprsForms} = forms([], Exprs),
     MatchExprTupleForm = [{tuple, Line, [{atom, Line, throw}, MatchExprForm, {var, Line, '_'}]}],
     Form = {clause, Line, MatchExprTupleForm, [], ExprsForms},
@@ -131,6 +125,8 @@ forms(Acc, [{func_group, #{line := Line1, spec := Spec, arity := Arity, forms :=
 forms(Acc, [{identifier, #{line := Line, spec := Spec, type := Type}} | T]) ->
     Form =
         case Type of
+            {type, #{spec := unknown}} ->
+                {var, Line, Spec};
             {type, #{spec := atom}} ->
                 {var, Line, Spec};
             {type, #{spec := bool}} ->

@@ -16,45 +16,56 @@ parse_function_with_bare_catch_block_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
         {func, #{
-            exprs => [
-                {try_catch_after, #{
-                    after_exprs => [],
-                    catch_clauses => [
-                        {catch_clause, #{
-                            exprs => [
-                                {call, #{
-                                    args => [
-                                        {string_lit, #{
-                                            line => 5,
-                                            spec => <<"oh no">>,
+            exprs =>
+                [
+                    {try_catch_after, #{
+                        after_exprs => [],
+                        catch_clauses =>
+                            [
+                                {catch_clause, #{
+                                    exprs =>
+                                        [
+                                            {call, #{
+                                                args =>
+                                                    [
+                                                        {string_lit, #{
+                                                            line => 5,
+                                                            spec => <<"oh no">>,
+                                                            type =>
+                                                                {type, #{line => 5, spec => string}}
+                                                        }}
+                                                    ],
+                                                line => 5,
+                                                spec => log
+                                            }},
+                                            {atom_lit, #{
+                                                line => 6,
+                                                spec => error,
+                                                type =>
+                                                    {type, #{line => 6, spec => atom}}
+                                            }}
+                                        ],
+                                    line => 4,
+                                    match_expr =>
+                                        {identifier, #{
+                                            line => 4,
+                                            spec => '_',
                                             type =>
-                                                {type, #{line => 5, spec => string}}
+                                                {type, #{line => 4, spec => unknown}}
                                         }}
-                                    ],
-                                    line => 5,
-                                    spec => log
-                                }},
-                                {atom_lit, #{
-                                    line => 6,
-                                    spec => error,
-                                    type =>
-                                        {type, #{line => 6, spec => atom}}
                                 }}
                             ],
-                            line => 4,
-                            match_expr => undefined
-                        }}
-                    ],
-                    line => 2,
-                    try_exprs => [
-                        {atom_lit, #{
-                            line => 3,
-                            spec => ok,
-                            type => {type, #{line => 3, spec => atom}}
-                        }}
-                    ]
-                }}
-            ],
+                        line => 2,
+                        try_exprs =>
+                            [
+                                {atom_lit, #{
+                                    line => 3,
+                                    spec => ok,
+                                    type => {type, #{line => 3, spec => atom}}
+                                }}
+                            ]
+                    }}
+                ],
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
@@ -1288,33 +1299,44 @@ parse_function_with_bare_catch_block_and_an_after_block_test() ->
     {ok, Forms} = rufus_parse:parse(Tokens),
     Expected = [
         {func, #{
-            exprs => [
-                {try_catch_after, #{
-                    after_exprs => [{call, #{args => [], line => 7, spec => cleanup}}],
-                    catch_clauses => [
-                        {catch_clause, #{
-                            exprs => [
-                                {atom_lit, #{
-                                    line => 5,
-                                    spec => error,
-                                    type =>
-                                        {type, #{line => 5, spec => atom}}
+            exprs =>
+                [
+                    {try_catch_after, #{
+                        after_exprs =>
+                            [{call, #{args => [], line => 7, spec => cleanup}}],
+                        catch_clauses =>
+                            [
+                                {catch_clause, #{
+                                    exprs =>
+                                        [
+                                            {atom_lit, #{
+                                                line => 5,
+                                                spec => error,
+                                                type =>
+                                                    {type, #{line => 5, spec => atom}}
+                                            }}
+                                        ],
+                                    line => 4,
+                                    match_expr =>
+                                        {identifier, #{
+                                            line => 4,
+                                            spec => '_',
+                                            type =>
+                                                {type, #{line => 4, spec => unknown}}
+                                        }}
                                 }}
                             ],
-                            line => 4,
-                            match_expr => undefined
-                        }}
-                    ],
-                    line => 2,
-                    try_exprs => [
-                        {atom_lit, #{
-                            line => 3,
-                            spec => ok,
-                            type => {type, #{line => 3, spec => atom}}
-                        }}
-                    ]
-                }}
-            ],
+                        line => 2,
+                        try_exprs =>
+                            [
+                                {atom_lit, #{
+                                    line => 3,
+                                    spec => ok,
+                                    type => {type, #{line => 3, spec => atom}}
+                                }}
+                            ]
+                    }}
+                ],
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},

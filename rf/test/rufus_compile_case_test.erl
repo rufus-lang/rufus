@@ -105,3 +105,35 @@ eval_function_with_case_block_and_unmatched_clause_test() ->
     Result = rufus_compile:eval(RufusText),
     ?assertEqual({ok, example}, Result),
     ?assertException(error, {case_clause, false}, example:'MaybeConvert'(false)).
+
+eval_function_with_case_block_with_clause_matching_the_anonymous_variable_test() ->
+    RufusText =
+        "module example\n"
+        "func Convert(value atom) bool {\n"
+        "    case value {\n"
+        "    match :true ->\n"
+        "        true\n"
+        "    match _ ->\n"
+        "        false\n"
+        "    }\n"
+        "}\n",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(true, example:'Convert'(true)),
+    ?assertEqual(false, example:'Convert'(false)),
+    ?assertEqual(false, example:'Convert'(untrue)).
+
+eval_function_with_case_block_with_anonymous_variable_match_expression_test() ->
+    RufusText =
+        "module example\n"
+        "func Echo(value atom) atom {\n"
+        "    case value {\n"
+        "    match _ ->\n"
+        "        value\n"
+        "    }\n"
+        "}\n",
+    Result = rufus_compile:eval(RufusText),
+    ?assertEqual({ok, example}, Result),
+    ?assertEqual(true, example:'Echo'(true)),
+    ?assertEqual(false, example:'Echo'(false)),
+    ?assertEqual(untrue, example:'Echo'(untrue)).

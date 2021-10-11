@@ -185,7 +185,7 @@ map_with_try_catch_after_with_bare_catch_test() ->
                 try_exprs := [{_, #{annotated := true}}],
                 catch_clauses := [
                     {catch_clause, #{
-                        match_expr := undefined,
+                        match_expr := {_, #{annotated := true}},
                         exprs := [{_, #{annotated := true}}],
                         annotated := true
                     }}
