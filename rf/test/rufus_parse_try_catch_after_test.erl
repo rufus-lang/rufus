@@ -1468,7 +1468,7 @@ parse_function_with_try_catch_block_with_multiple_clauses_and_after_block_test()
         "    } catch {\n"
         "    match :error ->\n"
         "        :error\n"
-        "    match :error ->\n"
+        "    match :failure ->\n"
         "        :failure\n"
         "    } after {\n"
         "        cleanup()\n"
@@ -1513,7 +1513,7 @@ parse_function_with_try_catch_block_with_multiple_clauses_and_after_block_test()
                             match_expr =>
                                 {atom_lit, #{
                                     line => 7,
-                                    spec => error,
+                                    spec => failure,
                                     type =>
                                         {type, #{line => 7, spec => atom}}
                                 }}
@@ -1529,6 +1529,133 @@ parse_function_with_try_catch_block_with_multiple_clauses_and_after_block_test()
                     ]
                 }}
             ],
+            line => 1,
+            params => [],
+            return_type => {type, #{line => 1, spec => atom}},
+            spec => 'Maybe'
+        }}
+    ],
+    ?assertEqual(Expected, Forms).
+
+parse_function_with_try_catch_block_with_multiple_clauses_and_after_block_each_with_multiple_expressions_test() ->
+    RufusText =
+        "func Maybe() atom {\n"
+        "    try {\n"
+        "        :ok\n"
+        "    } catch {\n"
+        "    match :error ->\n"
+        "        log(\"oh no\")\n"
+        "        :error\n"
+        "    match :failure ->\n"
+        "        log(\"oh no\")\n"
+        "        :failure\n"
+        "    } after {\n"
+        "        log(\"oh no\")\n"
+        "        cleanup()\n"
+        "    }\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [
+        {func, #{
+            exprs =>
+                [
+                    {try_catch_after, #{
+                        after_exprs =>
+                            [
+                                {call, #{
+                                    args =>
+                                        [
+                                            {string_lit, #{
+                                                line => 12,
+                                                spec => <<"oh no">>,
+                                                type =>
+                                                    {type, #{line => 12, spec => string}}
+                                            }}
+                                        ],
+                                    line => 12,
+                                    spec => log
+                                }},
+                                {call, #{args => [], line => 13, spec => cleanup}}
+                            ],
+                        catch_clauses =>
+                            [
+                                {catch_clause, #{
+                                    exprs =>
+                                        [
+                                            {call, #{
+                                                args =>
+                                                    [
+                                                        {string_lit, #{
+                                                            line => 6,
+                                                            spec => <<"oh no">>,
+                                                            type =>
+                                                                {type, #{line => 6, spec => string}}
+                                                        }}
+                                                    ],
+                                                line => 6,
+                                                spec => log
+                                            }},
+                                            {atom_lit, #{
+                                                line => 7,
+                                                spec => error,
+                                                type =>
+                                                    {type, #{line => 7, spec => atom}}
+                                            }}
+                                        ],
+                                    line => 5,
+                                    match_expr =>
+                                        {atom_lit, #{
+                                            line => 5,
+                                            spec => error,
+                                            type =>
+                                                {type, #{line => 5, spec => atom}}
+                                        }}
+                                }},
+                                {catch_clause, #{
+                                    exprs =>
+                                        [
+                                            {call, #{
+                                                args =>
+                                                    [
+                                                        {string_lit, #{
+                                                            line => 9,
+                                                            spec => <<"oh no">>,
+                                                            type =>
+                                                                {type, #{line => 9, spec => string}}
+                                                        }}
+                                                    ],
+                                                line => 9,
+                                                spec => log
+                                            }},
+                                            {atom_lit, #{
+                                                line => 10,
+                                                spec => failure,
+                                                type =>
+                                                    {type, #{line => 10, spec => atom}}
+                                            }}
+                                        ],
+                                    line => 8,
+                                    match_expr =>
+                                        {atom_lit, #{
+                                            line => 8,
+                                            spec => failure,
+                                            type =>
+                                                {type, #{line => 8, spec => atom}}
+                                        }}
+                                }}
+                            ],
+                        line => 2,
+                        try_exprs =>
+                            [
+                                {atom_lit, #{
+                                    line => 3,
+                                    spec => ok,
+                                    type => {type, #{line => 3, spec => atom}}
+                                }}
+                            ]
+                    }}
+                ],
             line => 1,
             params => [],
             return_type => {type, #{line => 1, spec => atom}},
