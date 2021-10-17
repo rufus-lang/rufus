@@ -596,3 +596,104 @@ parse_function_with_case_block_with_catch_all_clause_test() ->
         }}
     ],
     ?assertEqual(Expected, Forms).
+
+parse_function_with_case_block_and_clauses_with_multiple_expressions_test() ->
+    RufusText =
+        "func Convert(value atom) string {\n"
+        "    case value {\n"
+        "    match :true ->\n"
+        "        log(\"oh no\")\n"
+        "        \"true\"\n"
+        "    match _ ->\n"
+        "        log(\"oh no\")\n"
+        "        \"false\"\n"
+        "    }\n"
+        "}\n",
+    {ok, Tokens} = rufus_tokenize:string(RufusText),
+    {ok, Forms} = rufus_parse:parse(Tokens),
+    Expected = [
+        {func, #{
+            exprs =>
+                [
+                    {'case', #{
+                        clauses =>
+                            [
+                                {case_clause, #{
+                                    exprs =>
+                                        [
+                                            {call, #{
+                                                args =>
+                                                    [
+                                                        {string_lit, #{
+                                                            line => 4,
+                                                            spec => <<"oh no">>,
+                                                            type =>
+                                                                {type, #{line => 4, spec => string}}
+                                                        }}
+                                                    ],
+                                                line => 4,
+                                                spec => log
+                                            }},
+                                            {string_lit, #{
+                                                line => 5,
+                                                spec => <<"true">>,
+                                                type =>
+                                                    {type, #{line => 5, spec => string}}
+                                            }}
+                                        ],
+                                    line => 3,
+                                    match_expr =>
+                                        {atom_lit, #{
+                                            line => 3,
+                                            spec => true,
+                                            type =>
+                                                {type, #{line => 3, spec => atom}}
+                                        }}
+                                }},
+                                {case_clause, #{
+                                    exprs =>
+                                        [
+                                            {call, #{
+                                                args =>
+                                                    [
+                                                        {string_lit, #{
+                                                            line => 7,
+                                                            spec => <<"oh no">>,
+                                                            type =>
+                                                                {type, #{line => 7, spec => string}}
+                                                        }}
+                                                    ],
+                                                line => 7,
+                                                spec => log
+                                            }},
+                                            {string_lit, #{
+                                                line => 8,
+                                                spec => <<"false">>,
+                                                type =>
+                                                    {type, #{line => 8, spec => string}}
+                                            }}
+                                        ],
+                                    line => 6,
+                                    match_expr =>
+                                        {identifier, #{line => 6, spec => '_'}}
+                                }}
+                            ],
+                        line => 2,
+                        match_expr =>
+                            {identifier, #{line => 2, spec => value}}
+                    }}
+                ],
+            line => 1,
+            params =>
+                [
+                    {param, #{
+                        line => 1,
+                        spec => value,
+                        type => {type, #{line => 1, spec => atom}}
+                    }}
+                ],
+            return_type => {type, #{line => 1, spec => string}},
+            spec => 'Convert'
+        }}
+    ],
+    ?assertEqual(Expected, Forms).
