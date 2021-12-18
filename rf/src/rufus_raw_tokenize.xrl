@@ -6,8 +6,9 @@ Semicolon            = \;
 Underscore           = _
 UnicodeLetter        = [A-Za-z]
 Digit                = [0-9]
-Letter               = ({UnicodeLetter}|'_')
+Letter               = {UnicodeLetter}|'_'
 Whitespace           = [\s\t]
+Comment              = //.*
 
 Module               = module
 Import               = import
@@ -31,7 +32,7 @@ StringType           = string
 ListType             = {List}\[Identifier\]
 
 AtomLiteral          = {Colon}({UnicodeLetter}+({Digit}|{UnicodeLetter})?|\'({Digit}|{UnicodeLetter}|{Whitespace})+\')
-BoolLiteral          = (true|false)
+BoolLiteral          = true|false
 Exponent             = (e|E)?(\+|\-)?{Digit}+
 FloatLiteral         = (\+|\-)?{Digit}+\.{Digit}+{Exponent}?
 IntLiteral           = (\+|\-)?{Digit}+
@@ -67,6 +68,7 @@ Rules.
 {Whitespace}+          : skip_token.
 {Newline}+             : {token, {eol, TokenLine}}.
 {Semicolon}+           : {token, {';', TokenLine}}.
+{Comment}              : {token, {comment, TokenLine, TokenChars}}.
 
 {Module}               : {token, {module, TokenLine}}.
 {Import}               : {token, {import, TokenLine}}.

@@ -29,7 +29,7 @@
 string(RufusText) ->
     case rufus_raw_tokenize:string(RufusText) of
         {ok, Tokens, _Lines} ->
-            insert_semicolons(Tokens);
+            insert_semicolons(discard_comments(Tokens));
         {error, Reason, _LineNumber} ->
             {error, Reason}
     end.
@@ -43,6 +43,18 @@ terminate(Acc = [{';', _TokenLine1} | _T], _TokenLine2) ->
     Acc;
 terminate(Acc, TokenLine) ->
     [make_semicolon_token(TokenLine) | Acc].
+
+%% discard_comments discards comment tokens.
+-spec discard_comments(list(tuple())) -> list(tuple()).
+discard_comments(Tokens) ->
+    discard_comments([], Tokens).
+
+discard_comments(Acc, [{comment, _TokenLine, _TokenChars} | T]) ->
+    discard_comments(Acc, T);
+discard_comments(Acc, [Token | T]) ->
+    discard_comments([Token | Acc], T);
+discard_comments(Acc, []) ->
+    lists:reverse(Acc).
 
 %% insert_semicolons inserts `;` tokens after some `eol` tokens to terminate
 %% expressions. All `eol` tokens are discarded in the resulting list of tokens.
