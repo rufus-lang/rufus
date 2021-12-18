@@ -26,6 +26,32 @@ string_inserts_semicolon_after_last_identifier_in_line_test() ->
         Tokens
     ).
 
+string_discards_last_comment_in_source_text_test() ->
+    {ok, Tokens} = rufus_tokenize:string("const Name = \"Rufus\" // name"),
+    ?assertEqual(
+        [
+            {const, 1},
+            {identifier, 1, "Name"},
+            {'=', 1},
+            {string_lit, 1, "Rufus"},
+            {';', 1}
+        ],
+        Tokens
+    ).
+
+string_discards_comment_in_line_test() ->
+    {ok, Tokens} = rufus_tokenize:string("const Name = \"Rufus\" // name\n"),
+    ?assertEqual(
+        [
+            {const, 1},
+            {identifier, 1, "Name"},
+            {'=', 1},
+            {string_lit, 1, "Rufus"},
+            {';', 1}
+        ],
+        Tokens
+    ).
+
 string_inserts_semicolon_after_last_atom_lit_in_source_text_test() ->
     {ok, Tokens} = rufus_tokenize:string("const Name = :rufus"),
     ?assertEqual(
