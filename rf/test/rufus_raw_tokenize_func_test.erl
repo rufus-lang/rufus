@@ -176,10 +176,38 @@ string_with_function_takes_an_int_and_a_string_and_returning_a_float_test() ->
         Tokens
     ).
 
-%% TODO(jkakar): Implement these tests:
-%%
-%% string_with_function_takes_an_unused_argument_test() ->
-%%     {ok, Tokens, _} = rufus_raw_tokenize:string("func unused(_ int) int { 0 }")
-%%
-%% string_with_function_takes_an_unused_named_argument_test() ->
-%%     {ok, Tokens, _} = rufus_raw_tokenize:string("func unused(_num int) int { 0 }")
+string_with_function_takes_an_unused_argument_test() ->
+    {ok, Tokens, _} = rufus_raw_tokenize:string("func unused(_ int) int { 0 }"),
+    ?assertEqual(
+        [
+            {func, 1},
+            {identifier, 1, "unused"},
+            {'(', 1},
+            {identifier, 1, "_"},
+            {int, 1},
+            {')', 1},
+            {int, 1},
+            {'{', 1},
+            {int_lit, 1, 0},
+            {'}', 1}
+        ],
+        Tokens
+    ).
+
+string_with_function_takes_an_unused_named_argument_test() ->
+    {ok, Tokens, _} = rufus_raw_tokenize:string("func unused(_num int) int { 0 }"),
+    ?assertEqual(
+        [
+            {func, 1},
+            {identifier, 1, "unused"},
+            {'(', 1},
+            {identifier, 1, "_num"},
+            {int, 1},
+            {')', 1},
+            {int, 1},
+            {'{', 1},
+            {int_lit, 1, 0},
+            {'}', 1}
+        ],
+        Tokens
+    ).

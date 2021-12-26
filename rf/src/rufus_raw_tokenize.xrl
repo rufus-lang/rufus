@@ -36,7 +36,7 @@ BoolLiteral          = true|false
 Exponent             = (e|E)?(\+|\-)?{Digit}+
 FloatLiteral         = (\+|\-)?{Digit}+\.{Digit}+{Exponent}?
 IntLiteral           = (\+|\-)?{Digit}+
-StringLiteral        = \"({Digit}|{UnicodeLetter}|{Whitespace})+\"
+StringLiteral        = \"(\\.|[^"\\])*\"
 
 LeftBrace            = \{
 RightBrace           = \}
