@@ -23,6 +23,7 @@ Terminals
     func identifier
     try catch after throw
     case match
+    print
     atom atom_lit
     bool bool_lit
     float float_lit
@@ -91,8 +92,8 @@ binary_op -> expr '>=' expr      : rufus_form:make_binary_op('>=', '$1', '$3', l
 
 block -> '{' exprs '}' ';'       : '$2'.
 
+call -> print '(' args ')'       : rufus_form:make_call(print, '$3', line('$1')).
 call -> identifier '(' args ')'  : rufus_form:make_call(list_to_atom(text('$1')), '$3', line('$1')).
-
 cons -> list_type '{' expr '|' expr '}' :
                                    rufus_form:make_cons('$1', '$3', '$5', line('$1')).
 cons -> list_type '{' expr '|' '{' args '}' '}' :

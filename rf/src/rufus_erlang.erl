@@ -67,6 +67,11 @@ forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}
 forms(Acc, [{bool_lit, _Context} = BoolLit | T]) ->
     Form = box(BoolLit),
     forms([Form | Acc], T);
+forms(Acc, [{call, #{spec := print, args := Args, line := Line}} | T]) ->
+    {ok, ArgsForms} = forms([], Args),
+    Name = {remote, Line, {atom, Line, io}, {atom, Line, format}},
+    Form = {call, Line, Name, ArgsForms},
+    forms([Form | Acc], T);
 forms(Acc, [{call, Context = #{spec := Spec, args := Args, line := Line}} | T]) ->
     {ok, ArgsForms} = forms([], Args),
     Name =

@@ -418,8 +418,9 @@ typecheck_and_annotate_cons(
 
 %% func form helpers
 
-%% typecheck_and_annotate_func_params resolves and annotates types for each parameter
-%% in a function parameter list to ensure they satisfy type constraints.
+%% typecheck_and_annotate_func_params resolves and annotates types for each
+%% parameter in a function parameter list to ensure they satisfy type
+%% constraints.
 -spec typecheck_and_annotate_func_params(rufus_stack(), func_form()) ->
     {ok, func_form()} | no_return().
 typecheck_and_annotate_func_params(
