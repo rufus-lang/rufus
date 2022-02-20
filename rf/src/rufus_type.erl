@@ -226,6 +226,13 @@ allow_type_pair_with_comparison_operator(_, _) -> false.
 
 -spec resolve_call_type(rufus_stack(), globals(), call_form()) -> {ok, type_form()} | no_return().
 resolve_call_type(
+    _Stack,
+    _Globals,
+    _Form = {call, #{spec := print}}
+) ->
+    FuncType = {type, #{kind => func, spec => 'func(string) atom'}},
+    {ok, FuncType};
+resolve_call_type(
     Stack,
     Globals,
     Form = {call, #{spec := Spec, args := Args, locals := Locals}}
