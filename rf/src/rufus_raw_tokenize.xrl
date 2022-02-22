@@ -21,7 +21,6 @@ Catch                = catch
 After                = after
 Match                = match
 Arrow                = \->
-Print                = print
 
 List                 = list
 
