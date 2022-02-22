@@ -67,6 +67,29 @@ forms(Acc, [{binary_op, #{line := Line, op := Op, left := Left, right := Right}}
 forms(Acc, [{bool_lit, _Context} = BoolLit | T]) ->
     Form = box(BoolLit),
     forms([Form | Acc], T);
+forms(Acc, [{call, #{spec := print, args := [Arg], line := Line}} | T]) ->
+    Name = {remote, Line, {atom, Line, io}, {atom, Line, format}},
+    FormatSpec =
+        case Arg of
+            {atom_lit, _Context} ->
+                "~s";
+            {bool_lit, _Context} ->
+                "~s";
+            {float_lit, _Context} ->
+                "~p";
+            {int_lit, _Context} ->
+                "~B";
+            {list_lit, _Context} ->
+                "~p";
+            {string_lit, _Context} ->
+                "~s"
+        end,
+    Form =
+        {call, Line, Name, [
+            {string, Line, FormatSpec},
+            {cons, Line, erlang_box(Arg), {nil, Line}}
+        ]},
+    forms([Form | Acc], T);
 forms(Acc, [{call, Context = #{spec := Spec, args := Args, line := Line}} | T]) ->
     {ok, ArgsForms} = forms([], Args),
     Name =
@@ -294,6 +317,32 @@ box({list_lit, #{elements := Elements, line := Line}}) ->
 box({string_lit, #{line := Line, spec := Value}}) ->
     StringExpr = {bin_element, Line, {string, Line, binary_to_list(Value)}, default, default},
     {tuple, Line, [{atom, Line, string}, {bin, Line, [StringExpr]}]}.
+
+%% erlang_box converts a Rufus literal to its representation in Erlang
+%% compatible with builtin functions. atom and bool are represented as scalar
+%% values in Erlang, while string is represented as a binary value tuple.
+-spec erlang_box(
+    atom_lit_form()
+    | bool_lit_form()
+    | float_lit_form()
+    | int_lit_form()
+    | list_lit_form()
+    | string_lit_form()
+) ->
+    (erlang3_form() | erlang4_form()).
+erlang_box(V = {atom_lit, _Context}) ->
+    box(V);
+erlang_box(V = {bool_lit, _Context}) ->
+    box(V);
+erlang_box(V = {float_lit, _Context}) ->
+    box(V);
+erlang_box(V = {int_lit, _Context}) ->
+    box(V);
+erlang_box(V = {list_lit, _Context}) ->
+    box(V);
+erlang_box({string_lit, #{line := Line, spec := Value}}) ->
+    StringExpr = {bin_element, Line, {string, Line, binary_to_list(Value)}, default, default},
+    {bin, Line, [StringExpr]}.
 
 %% Visibility helpers
 

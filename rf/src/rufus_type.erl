@@ -228,6 +228,27 @@ allow_type_pair_with_comparison_operator(_, _) -> false.
 resolve_call_type(
     Stack,
     Globals,
+    Form = {call, #{spec := print, args := Args}}
+) ->
+    case length(Args) of
+        1 ->
+            [{_, #{type := {_, #{spec := ArgTypeSpec}}}}] = Args,
+            Spec = list_to_atom(
+                unicode:characters_to_list(["func(", atom_to_list(ArgTypeSpec), ") atom"])
+            ),
+            Type = {type, #{kind => func, spec => Spec}},
+            {ok, Type};
+        _ ->
+            Data = #{
+                form => Form,
+                globals => Globals,
+                stack => Stack
+            },
+            throw({error, unknown_func, Data})
+    end;
+resolve_call_type(
+    Stack,
+    Globals,
     Form = {call, #{spec := Spec, args := Args, locals := Locals}}
 ) ->
     FuncTypes = maps:get(Spec, Globals, undefined),
